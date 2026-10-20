@@ -38,23 +38,42 @@
 #
 #############################################################################
 
+# Layouts handled, relative to each standard prefix (/usr, /usr/local,
+# C:/Program Files, ${CMAKE_PREFIX_PATH}, ...):
+#   <prefix>/include/Aria.h            (ARIA_HOME or custom prefix)
+#   <prefix>/include/Aria/Aria.h       (e.g. /usr/include/Aria)
+#   <prefix>/Aria/include/Aria.h       (e.g. /usr/local/Aria/include)
+#   <prefix>/MobileRobots/Aria/include (Windows)
+set(ARIA_INCLUDE_SUFFIXES
+  include
+  Aria
+  Aria/include
+  MobileRobots/Aria/include
+)
+
+if(CMAKE_CL_64)
+  set(ARIA_LIB_SUFFIXES lib64 Aria/lib64 MobileRobots/Aria/lib64)
+else()
+  set(ARIA_LIB_SUFFIXES lib Aria/lib MobileRobots/Aria/lib)
+endif()
+
 find_path(ARIA_INCLUDE_DIR Aria.h
-  $ENV{ARIA_HOME}/include
-  /usr/local/Aria/include
-  /usr/Aria/include
-  /usr/include/Aria
-  /usr/local/include/Aria
-  "C:/Program Files/MobileRobots/Aria/include"
+  HINTS
+    ${ARIA_HOME}
+    $ENV{ARIA_HOME}
+  PATH_SUFFIXES
+    ${ARIA_INCLUDE_SUFFIXES}
 )
 #message("DBG ARIA_INCLUDE_DIR=${ARIA_INCLUDE_DIR}")
 
 if(UNIX)
   find_library(ARIA_LIBRARY
     NAMES Aria
-    PATHS
-    $ENV{ARIA_HOME}/lib
-    /usr/local/Aria/lib
-    /usr/Aria/lib
+    HINTS
+      ${ARIA_HOME}
+      $ENV{ARIA_HOME}
+    PATH_SUFFIXES
+      ${ARIA_LIB_SUFFIXES}
   )
   #message("DBG ARIA_LIBRARY=${ARIA_LIBRARY}")
 else()
@@ -74,24 +93,21 @@ else()
     set(ARIA_SUFFIX_NAME "")
   endif()
 
-  set(ARIA_LIB_SEARCH_PATH "")
-  if(CMAKE_CL_64)
-    list(APPEND ARIA_LIB_SEARCH_PATH "C:/Program Files/MobileRobots/Aria/lib64")
-    list(APPEND ARIA_LIB_SEARCH_PATH $ENV{ARIA_HOME}/lib64)
-  else()
-    list(APPEND ARIA_LIB_SEARCH_PATH "C:/Program Files/MobileRobots/Aria/lib")
-    list(APPEND ARIA_LIB_SEARCH_PATH $ENV{ARIA_HOME}/lib)
-  endif()
-
   find_library(ARIA_LIBRARY_DEBUG
     NAMES AriaDebug${ARIA_SUFFIX_NAME}
-    PATHS
-      ${ARIA_LIB_SEARCH_PATH}
+    HINTS
+      ${ARIA_HOME}
+      $ENV{ARIA_HOME}
+    PATH_SUFFIXES
+      ${ARIA_LIB_SUFFIXES}
   )
   find_library(ARIA_LIBRARY_RELEASE
     NAMES Aria${ARIA_SUFFIX_NAME}
-    PATHS
-      ${ARIA_LIB_SEARCH_PATH}
+    HINTS
+      ${ARIA_HOME}
+      $ENV{ARIA_HOME}
+    PATH_SUFFIXES
+      ${ARIA_LIB_SUFFIXES}
   )
 endif()
 
@@ -110,12 +126,11 @@ else()
     list(APPEND ARIA_LIBRARIES optimized ${ARIA_LIBRARY_RELEASE})
     set(ARIA_FOUND TRUE)
   endif()
-  IF(ARIA_LIBRARY_DEBUG AND ARIA_INCLUDE_DIR)
+  if(ARIA_LIBRARY_DEBUG AND ARIA_INCLUDE_DIR)
     set(ARIA_INCLUDE_DIRS ${ARIA_INCLUDE_DIR})
     list(APPEND ARIA_LIBRARIES debug ${ARIA_LIBRARY_DEBUG})
     set(ARIA_FOUND TRUE)
   endif()
-
 endif()
 
 mark_as_advanced(
@@ -123,5 +138,4 @@ mark_as_advanced(
   ARIA_LIBRARY
   ARIA_LIBRARY_DEBUG
   ARIA_LIBRARY_RELEASE
-  ARIA_LIB_SEARCH_PATH
 )

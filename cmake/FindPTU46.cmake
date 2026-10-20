@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,85 +38,79 @@
 #
 #############################################################################
 
-IF(NOT UNIX)
-  # MESSAGE("FindPTU46.cmake: Ptu-46 only available for Unix.")
-  SET(PTU46_FOUND FALSE)
-ELSE(NOT UNIX)
 
-  FIND_PATH(PTU46_INCLUDE_DIR ptu.h
-    $ENV{PTU46_HOME}/include
-    /udd/fspindle/robot/Ptu-Evi/current/include
-    /local/soft/Ptu-Evi/current/include
-    )
-  #MESSAGE("DBG PTU46_INCLUDE_DIR=${PTU46_INCLUDE_DIR}")
+if(NOT UNIX)
+  # message("FindPTU46.cmake: Ptu-46 only available for Unix.")
+  set(PTU46_FOUND FALSE)
+else()
+  set(PTU46_SEARCH_HINTS
+    ${PTU46_HOME}
+    $ENV{PTU46_HOME}
+  )
+  # Inria specific install locations
+  set(PTU46_SEARCH_PATHS
+    /udd/fspindle/robot/Ptu-Evi/current
+    /local/soft/Ptu-Evi/current
+  )
 
-  FIND_LIBRARY(PTUPTU46_LIBRARY
+  find_path(PTU46_INCLUDE_DIR ptu.h
+    HINTS ${PTU46_SEARCH_HINTS}
+    PATHS ${PTU46_SEARCH_PATHS}
+    PATH_SUFFIXES include
+  )
+  #message("DBG PTU46_INCLUDE_DIR=${PTU46_INCLUDE_DIR}")
+
+  find_library(PTUPTU46_LIBRARY
     NAMES ptu
-    PATHS
-    $ENV{PTU46_HOME}/lib
-    /udd/fspindle/robot/Ptu-Evi/current/lib
-    /local/soft/Ptu-Evi/current/lib
-    )
-  FIND_LIBRARY(EVIPTU46_LIBRARY
+    HINTS ${PTU46_SEARCH_HINTS}
+    PATHS ${PTU46_SEARCH_PATHS}
+    PATH_SUFFIXES lib
+  )
+  find_library(EVIPTU46_LIBRARY
     NAMES evi
-    PATHS
-    $ENV{PTU46_HOME}/lib
-    /udd/fspindle/robot/Ptu-Evi/current/lib
-    /local/soft/Ptu-Evi/current/lib
-    )
-  FIND_LIBRARY(SERIALPTU46_LIBRARY
+    HINTS ${PTU46_SEARCH_HINTS}
+    PATHS ${PTU46_SEARCH_PATHS}
+    PATH_SUFFIXES lib
+  )
+  find_library(SERIALPTU46_LIBRARY
     NAMES serial
-    PATHS
-    $ENV{PTU46_HOME}/lib
-    /udd/fspindle/robot/Ptu-Evi/current/lib
-    /local/soft/Ptu-Evi/current/lib
-    )
-  #MESSAGE("DBG PTU46_LIBRARY=${PTU46_LIBRARY}")
+    HINTS ${PTU46_SEARCH_HINTS}
+    PATHS ${PTU46_SEARCH_PATHS}
+    PATH_SUFFIXES lib
+  )
 
-  ## --------------------------------
-
-  IF(PTUPTU46_LIBRARY AND EVIPTU46_LIBRARY AND SERIALPTU46_LIBRARY)
+  if(PTU46_INCLUDE_DIR AND PTUPTU46_LIBRARY AND EVIPTU46_LIBRARY AND SERIALPTU46_LIBRARY)
     # The material is found. Check if it works on the requested architecture
     include(CheckCXXSourceCompiles)
 
-    SET(CMAKE_REQUIRED_LIBRARIES ${PTUPTU46_LIBRARY} ${SERIALPTU46_LIBRARY})
-    SET(CMAKE_REQUIRED_INCLUDES ${PTU46_INCLUDE_DIR})
-    CHECK_CXX_SOURCE_COMPILES("
+    set(CMAKE_REQUIRED_LIBRARIES ${PTUPTU46_LIBRARY} ${SERIALPTU46_LIBRARY})
+    set(CMAKE_REQUIRED_INCLUDES ${PTU46_INCLUDE_DIR})
+    check_cxx_source_compiles("
       #include <ptu.h> // Contrib for Ptu-46 robot
       int main()
       {
         Ptu ptu;
-	return 0;
+        return 0;
       }
       " PTU46_BUILD_TEST)
-    #MESSAGE("PTU46_BUILD_TEST: ${PTU46_BUILD_TEST}")
-    IF(PTU46_BUILD_TEST)
-      SET(PTU46_LIBRARIES ${PTUPTU46_LIBRARY} ${EVIPTU46_LIBRARY}
-        ${SERIALPTU46_LIBRARY})
-#    ELSE()
-#      MESSAGE("Ptu-46 library found but not compatible with architecture.")
-    ENDIF()
+    #message("PTU46_BUILD_TEST: ${PTU46_BUILD_TEST}")
 
-  ELSE(PTUPTU46_LIBRARY AND EVIPTU46_LIBRARY AND SERIALPTU46_LIBRARY)
-#     MESSAGE(SEND_ERROR "Ptu-46 library not found.")
-  ENDIF(PTUPTU46_LIBRARY AND EVIPTU46_LIBRARY AND SERIALPTU46_LIBRARY)
+    if(PTU46_BUILD_TEST)
+      set(PTU46_INCLUDE_DIRS ${PTU46_INCLUDE_DIR})
+      set(PTU46_LIBRARIES ${PTUPTU46_LIBRARY} ${EVIPTU46_LIBRARY} ${SERIALPTU46_LIBRARY})
+    endif()
+  endif()
 
-  IF(NOT PTU46_INCLUDE_DIR)
-#     MESSAGE(SEND_ERROR "Ptu-46 include dir not found.")
-  ENDIF(NOT PTU46_INCLUDE_DIR)
+  if(PTU46_INCLUDE_DIRS AND PTU46_LIBRARIES)
+    set(PTU46_FOUND TRUE)
+  else()
+    set(PTU46_FOUND FALSE)
+  endif()
 
-  IF(PTU46_LIBRARIES AND PTU46_INCLUDE_DIR)
-    SET(PTU46_INCLUDE_DIRS ${PTU46_INCLUDE_DIR})
-    SET(PTU46_FOUND TRUE)
-  ELSE(PTU46_LIBRARIES AND PTU46_INCLUDE_DIR)
-    SET(PTU46_FOUND FALSE)
-  ENDIF(PTU46_LIBRARIES AND PTU46_INCLUDE_DIR)
-
-  MARK_AS_ADVANCED(
+  mark_as_advanced(
     PTU46_INCLUDE_DIR
-    PTU46_LIBRARIES
     PTUPTU46_LIBRARY
     EVIPTU46_LIBRARY
     SERIALPTU46_LIBRARY
-    )
-ENDIF(NOT UNIX)
+  )
+endif()

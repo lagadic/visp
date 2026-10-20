@@ -354,7 +354,7 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries pcl_dep
   mark_as_advanced(FLANN_LIBRARY_SHARED)       # Requested on macOS with pcl 1.12.1
   mark_as_advanced(FLANN_LIBRARY_STATIC)       # Requested on macOS with pcl 1.12.1
 
-  mark_as_advanced(GLEW_INCLUDE_DIR GLEW_GLEW_LIBRARY GLEW_cocoa_LIBRARY)
+  mark_as_advanced(GLEW_DIR GLEW_INCLUDE_DIR GLEW_GLEW_LIBRARY GLEW_cocoa_LIBRARY)
 
   mark_as_advanced(HDF5_C_LIBRARY_dl)          # Requested on macOS with pcl 1.12.1
   mark_as_advanced(HDF5_C_LIBRARY_hdf5)        # Requested on macOS with pcl 1.12.1
@@ -380,20 +380,13 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries pcl_dep
   mark_as_advanced(QHULL_LIBRARY_SHARED)       # Requested for pcl 1.13.1 on windows
   mark_as_advanced(Qhull_DIR)                  # Requested on macOS with pcl 1.12.1
 
-  mark_as_advanced(Qt5Core_DIR Qt5Gui_DIR Qt5Network_DIR Qt5WebKit_DIR Qt5Widgets_DIR Qt5Sql_DIR)
-  mark_as_advanced(Qt5OpenGL_DIR)              # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Qt5QmlModels_DIR)           # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Qt5Qml_DIR)                 # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Qt5Quick_DIR)               # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Qt5_DIR)                    # Requested on macOS with pcl 1.12.1
-
-  # Requested on macOS with pcl 1.13.1
-  mark_as_advanced(Qt6CoreTools_DIR Qt6Core_DIR Qt6BusTools_DIR Qt6GuiTools_DIR Qt6Gui_DIR Qt6OpenGLWidgets_DIR)
-  mark_as_advanced(Qt6OpenGL_DIR Qt6WidgetsTools_DIR Qt6Widgets_DIR)
-  mark_as_advanced(Qt6DBusTools_DIR Qt6DBus_DIR Qt6Network_DIR Qt6QmlCompilerPlusPrivate_DIR)
-  mark_as_advanced(Qt6QmlIntegration_DIR Qt6QmlModels_DIR Qt6QmlTools_DIR Qt6Qml_DIR Qt6Quick_DIR Qt6Sql_DIR)
-  mark_as_advanced(Qt6QmlBuiltins_DIR Qt6QuickTools_DIR)
-  mark_as_advanced(Qt6_DIR)
+  # Qt5/Qt6 modules found through VTK (Qt5Core_DIR, Qt6QmlMeta_DIR, ...); the list depends on Qt and VTK versions
+  get_cmake_property(_cache_vars CACHE_VARIABLES)
+  foreach(_var ${_cache_vars})
+    if(_var MATCHES "^Qt[56][A-Za-z0-9]*_DIR$")
+      mark_as_advanced(${_var})
+    endif()
+  endforeach()
   mark_as_advanced(QT_ADDITIONAL_HOST_PACKAGES_PREFIX_PATH)
   mark_as_advanced(QT_ADDITIONAL_PACKAGES_PREFIX_PATH)
   mark_as_advanced(MACDEPLOYQT_EXECUTABLE)
@@ -423,6 +416,12 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries pcl_dep
     mark_as_advanced(Boost_SERIALIZATION_LIBRARY_${config}) # Requested on macOS with pcl 1.12.1
     mark_as_advanced(Boost_SYSTEM_LIBRARY_${config})        # Requested on macOS with pcl 1.12.1
   endforeach()
+  # Boost config packages (Boost_DIR, boost_system_DIR, boost_headers_DIR, ...)
+  foreach(_var ${_cache_vars})
+    if(_var MATCHES "^(Boost|boost_[A-Za-z0-9_]+)_DIR$")
+      mark_as_advanced(${_var})
+    endif()
+  endforeach()
 
   mark_as_advanced(libusb_INCLUDE_DIR)                  # Requested on macOS with pcl 1.12.1
   mark_as_advanced(netCDF_DIR)                          # Requested on macOS with pcl 1.12.1
@@ -441,7 +440,7 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries pcl_dep
 
   mark_as_advanced(synchronization_LOCATION)            # Requested for pcl 1.13.1 on windows
   mark_as_advanced($<$<CONFIG:debug:bcrypt_LOCATION)    # Requested for pcl 1.13.1 on windows
-  mark_as_advanced($<$<CONFIG:release:bcrypt_LOCATION)            # Requested for pcl 1.13.1 on windows
+  mark_as_advanced($<$<CONFIG:release:bcrypt_LOCATION)  # Requested for pcl 1.13.1 on windows
 endmacro()
 
 # Find pcl modules

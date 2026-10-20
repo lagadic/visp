@@ -42,80 +42,75 @@
 if(NOT UNIX AND NOT WIN32)
   # message("FindBICLOPS.cmake: macro only for Unix and Windows for the moment.")
   set(BICLOPS_FOUND FALSE)
-else(NOT UNIX AND NOT WIN32)
-
-  find_path(BICLOPS_INCLUDE_DIR Biclops.h
-    $ENV{BICLOPS_HOME}/include
+else()
+  set(BICLOPS_SEARCH_HINTS
+    ${BICLOPS_HOME}
+    $ENV{BICLOPS_HOME}
+  )
+  set(PMD_SEARCH_HINTS
+    ${BICLOPS_SEARCH_HINTS}
+    ${BICLOPS_PMD_HOME}
+    $ENV{BICLOPS_PMD_HOME}
+  )
+  set(UTILS_SEARCH_HINTS
+    ${BICLOPS_SEARCH_HINTS}
+    ${BICLOPS_UTILS_HOME}
+    $ENV{BICLOPS_UTILS_HOME}
   )
 
+  find_path(BICLOPS_INCLUDE_DIR Biclops.h
+    HINTS ${BICLOPS_SEARCH_HINTS}
+    PATH_SUFFIXES include
+  )
   #message("DBG BICLOPS_INCLUDE_DIR=${BICLOPS_INCLUDE_DIR}")
 
   find_path(PMD_INCLUDE_DIR PMD.h
-    $ENV{BICLOPS_HOME}/include
-    $ENV{BICLOPS_PMD_HOME}/include
+    HINTS ${PMD_SEARCH_HINTS}
+    PATH_SUFFIXES include
   )
 
   find_path(UTILS_INCLUDE_DIR utility.h
-    $ENV{BICLOPS_HOME}/include
-    $ENV{BICLOPS_UTILS_HOME}/include
+    HINTS ${UTILS_SEARCH_HINTS}
+    PATH_SUFFIXES include
   )
 
   find_library(BICLOPS_LIBRARY
     NAMES Biclops libBiclops libBiclopsD
-    PATHS
-      $ENV{BICLOPS_HOME}/lib
+    HINTS ${BICLOPS_SEARCH_HINTS}
+    PATH_SUFFIXES lib
   )
 
   find_library(PMD_LIBRARY
     NAMES PMD libPMD libPMDD
-    PATHS
-      $ENV{BICLOPS_HOME}/lib
-      $ENV{BICLOPS_PMD_HOME}/lib
+    HINTS ${PMD_SEARCH_HINTS}
+    PATH_SUFFIXES lib
   )
 
   find_library(UTILS_LIBRARY
     NAMES Utils libUtils libUtilsD
-    PATHS
-      $ENV{BICLOPS_HOME}/lib
-      $ENV{BICLOPS_UTILS_HOME}/lib
+    HINTS ${UTILS_SEARCH_HINTS}
+    PATH_SUFFIXES lib
   )
   #message("DBG BICLOPS_LIBRARY=${BICLOPS_LIBRARY}")
 
-  ## --------------------------------
-
   if(BICLOPS_LIBRARY AND PMD_LIBRARY AND UTILS_LIBRARY)
     set(BICLOPS_LIBRARIES ${BICLOPS_LIBRARY} ${PMD_LIBRARY} ${UTILS_LIBRARY})
-  else(BICLOPS_LIBRARY AND PMD_LIBRARY AND UTILS_LIBRARY)
-#     message(SEND_ERROR "Biclops library not found. Set USE_BICLOPS option OFF")
-  endif(BICLOPS_LIBRARY AND PMD_LIBRARY AND UTILS_LIBRARY)
-
-  if(NOT BICLOPS_INCLUDE_DIR)
-#     message(SEND_ERROR "Biclops include dir not found. Set USE_BICLOPS option OFF")
-  endif(NOT BICLOPS_INCLUDE_DIR)
-
-  if(NOT PMD_INCLUDE_DIR)
-#     message(SEND_ERROR "PMD include dir not found. Set USE_BICLOPS option OFF")
-  endif(NOT PMD_INCLUDE_DIR)
-
-  if(NOT UTILS_INCLUDE_DIR)
-#     message(SEND_ERROR "Utils include dir not found. Set USE_BICLOPS option OFF ")
-  endif(NOT UTILS_INCLUDE_DIR)
+  endif()
 
   if(BICLOPS_INCLUDE_DIR AND PMD_INCLUDE_DIR AND UTILS_INCLUDE_DIR)
     set(BICLOPS_INCLUDE_DIRS ${BICLOPS_INCLUDE_DIR} ${PMD_INCLUDE_DIR} ${UTILS_INCLUDE_DIR})
-  endif(BICLOPS_INCLUDE_DIR AND PMD_INCLUDE_DIR AND UTILS_INCLUDE_DIR)
+  endif()
 
-  if(BICLOPS_LIBRARIES AND BICLOPS_INCLUDE_DIR AND PMD_INCLUDE_DIR AND UTILS_INCLUDE_DIR)
+  if(BICLOPS_LIBRARIES AND BICLOPS_INCLUDE_DIRS)
     #message("BICLOPS_LIBRARIES: ${BICLOPS_LIBRARIES}")
     #message("BICLOPS_INCLUDE_DIRS: ${BICLOPS_INCLUDE_DIRS}")
 
     # Try to compile a sample code using Biclops library to see if GetHomedState() is available
-    #set(BICLOPS_HAVE_GET_HOMED_STATE_FUNCTION FALSE)
     include(CheckCXXSourceCompiles)
 
     set(CMAKE_REQUIRED_LIBRARIES ${BICLOPS_LIBRARIES})
     set(CMAKE_REQUIRED_INCLUDES  ${BICLOPS_INCLUDE_DIRS})
-    CHECK_CXX_SOURCE_COMPILES("
+    check_cxx_source_compiles("
       #include <PMDUtils.h>
       int main(){
         PMDAxisControl *axis;
@@ -127,9 +122,9 @@ else(NOT UNIX AND NOT WIN32)
     #message("DBG1 BICLOPS_HAVE_GET_HOMED_STATE_FUNCTION ${BICLOPS_HAVE_GET_HOMED_STATE_FUNCTION}")
 
     set(BICLOPS_FOUND TRUE)
-  else(BICLOPS_LIBRARIES AND BICLOPS_INCLUDE_DIR AND PMD_INCLUDE_DIR AND UTILS_INCLUDE_DIR)
+  else()
     set(BICLOPS_FOUND FALSE)
-  endif(BICLOPS_LIBRARIES AND BICLOPS_INCLUDE_DIR AND PMD_INCLUDE_DIR AND UTILS_INCLUDE_DIR)
+  endif()
 
   mark_as_advanced(
     BICLOPS_INCLUDE_DIR
@@ -139,5 +134,5 @@ else(NOT UNIX AND NOT WIN32)
     UTILS_INCLUDE_DIR
     PMD_LIBRARY
     UTILS_LIBRARY
-    )
-endif(NOT UNIX AND NOT WIN32)
+  )
+endif()

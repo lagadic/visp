@@ -39,91 +39,79 @@
 #
 #############################################################################
 
-set(ZBAR_INC_SEARCH_PATH)
-set(ZBAR_LIB_SEARCH_PATH)
+
+set(ZBAR_SEARCH_HINTS
+  ${ZBAR_DIR}
+  $ENV{ZBAR_DIR}
+)
+set(ZBAR_SEARCH_PATHS "")
 
 if(MSVC)
-  list(APPEND ZBAR_INC_SEARCH_PATH $ENV{ZBAR_DIR}/include)
-  list(APPEND ZBAR_INC_SEARCH_PATH "C:/ZBarWin64/include")
-  list(APPEND ZBAR_INC_SEARCH_PATH "C:/workspace/ZBarWin64/include")
-  list(APPEND ZBAR_INC_SEARCH_PATH "C:/zbar/ZBarWin64/include")
-
+  list(APPEND ZBAR_SEARCH_PATHS
+    "C:/ZBarWin64"
+    "C:/workspace/ZBarWin64"
+    "C:/zbar/ZBarWin64"
+  )
   if(CMAKE_CL_64)
-    list(APPEND ZBAR_LIB_SEARCH_PATH $ENV{ZBAR_DIR}/x64)
-    list(APPEND ZBAR_LIB_SEARCH_PATH "C:/ZBarWin64/x64")
-    list(APPEND ZBAR_LIB_SEARCH_PATH "C:/workspace/ZBarWin64/x64")
-    list(APPEND ZBAR_LIB_SEARCH_PATH "C:/zbar/ZBarWin64/x64")
+    set(_zbar_lib_dir x64)
   else()
-    list(APPEND ZBAR_LIB_SEARCH_PATH $ENV{ZBAR_DIR})
-    list(APPEND ZBAR_LIB_SEARCH_PATH "C:/ZBarWin64")
-    list(APPEND ZBAR_LIB_SEARCH_PATH "C:/workspace/ZBarWin64")
-    list(APPEND ZBAR_LIB_SEARCH_PATH "C:/zbar/ZBarWin64")
+    set(_zbar_lib_dir .)
   endif()
-
-else()
-  list(APPEND ZBAR_INC_SEARCH_PATH $ENV{ZBAR_DIR}/include)
 endif()
 
-find_path(ZBAR_INCLUDE_DIRS zbar.h
-  PATHS
-    ${ZBAR_INC_SEARCH_PATH}
+find_path(ZBAR_INCLUDE_DIR zbar.h
+  HINTS ${ZBAR_SEARCH_HINTS}
+  PATHS ${ZBAR_SEARCH_PATHS}
+  PATH_SUFFIXES include
 )
 
 if(MSVC)
-  set(ZBAR_LIB_SEARCH_PATH_OPT ${ZBAR_LIB_SEARCH_PATH})
-  set(ZBAR_LIB_SEARCH_PATH_DBG ${ZBAR_LIB_SEARCH_PATH})
-  foreach(p ${ZBAR_LIB_SEARCH_PATH})
-    list(APPEND ZBAR_LIB_SEARCH_PATH_OPT ${p}/Release)
-    list(APPEND ZBAR_LIB_SEARCH_PATH_DBG ${p}/Debug)
-  endforeach()
   find_library(ZBAR_LIBRARIES_OPT
     NAMES libzbar64-0
-    PATHS
-      ${ZBAR_LIB_SEARCH_PATH_OPT}
+    HINTS ${ZBAR_SEARCH_HINTS}
+    PATHS ${ZBAR_SEARCH_PATHS}
+    PATH_SUFFIXES ${_zbar_lib_dir} ${_zbar_lib_dir}/Release
   )
   find_library(ZBAR_LIBRARIES_DBG
     NAMES libzbar64-0
-    PATHS
-      ${ZBAR_LIB_SEARCH_PATH_DBG}
+    HINTS ${ZBAR_SEARCH_HINTS}
+    PATHS ${ZBAR_SEARCH_PATHS}
+    PATH_SUFFIXES ${_zbar_lib_dir} ${_zbar_lib_dir}/Debug
   )
 
   if(ZBAR_LIBRARIES_OPT AND ZBAR_LIBRARIES_DBG)
-    set(ZBAR_LIBRARIES optimized ${ZBAR_LIBRARIES_OPT})
-    list(APPEND ZBAR_LIBRARIES debug ${ZBAR_LIBRARIES_DBG})
+    set(ZBAR_LIBRARIES optimized ${ZBAR_LIBRARIES_OPT} debug ${ZBAR_LIBRARIES_DBG})
   elseif(ZBAR_LIBRARIES_OPT)
-    list(APPEND ZBAR_LIBRARIES ${ZBAR_LIBRARIES_OPT})
+    set(ZBAR_LIBRARIES ${ZBAR_LIBRARIES_OPT})
   elseif(ZBAR_LIBRARIES_DBG)
-    list(APPEND ZBAR_LIBRARIES ${ZBAR_LIBRARIES_DBG})
+    set(ZBAR_LIBRARIES ${ZBAR_LIBRARIES_DBG})
   endif()
 
   mark_as_advanced(ZBAR_LIBRARIES_OPT ZBAR_LIBRARIES_DBG)
 else()
-  find_library(ZBAR_LIBRARIES
+  find_library(ZBAR_LIBRARY
     NAMES zbar
-    PATHS
-      ${ZBAR_LIB_SEARCH_PATH}
+    HINTS ${ZBAR_SEARCH_HINTS}
+    PATH_SUFFIXES lib
   )
+  if(ZBAR_LIBRARY)
+    set(ZBAR_LIBRARIES ${ZBAR_LIBRARY})
+  endif()
+  mark_as_advanced(ZBAR_LIBRARY)
 endif()
 
-#message("ZBAR_INCLUDE_DIRS: ${ZBAR_INCLUDE_DIRS}")
-#message("ZBAR_LIBRARIES: ${ZBAR_LIBRARIES}")
-if(ZBAR_INCLUDE_DIRS AND ZBAR_LIBRARIES)
+if(ZBAR_INCLUDE_DIR AND ZBAR_LIBRARIES)
+  set(ZBAR_INCLUDE_DIRS ${ZBAR_INCLUDE_DIR})
   set(ZBAR_FOUND TRUE)
+  if(MSVC)
+    vp_parse_header("${ZBAR_INCLUDE_DIR}/config.h" ZBAR_VERSION_LINES LIB_VERSION_MAJOR LIB_VERSION_MINOR LIB_VERSION_REVISION)
+    set(ZBAR_VERSION "${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_REVISION}")
+  else()
+    get_filename_component(ZBAR_LIB_DIR ${ZBAR_LIBRARY} PATH)
+    vp_get_version_from_pkg("zbar" "${ZBAR_LIB_DIR}/pkgconfig" ZBAR_VERSION)
+  endif()
 else()
   set(ZBAR_FOUND FALSE)
 endif()
 
-if(ZBAR_FOUND)
-  if(MSVC)
-    vp_parse_header("${ZBAR_INCLUDE_DIRS}/config.h" ZBAR_VERSION_LINES LIB_VERSION_MAJOR LIB_VERSION_MINOR LIB_VERSION_REVISION)
-    set(ZBAR_VERSION "${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_REVISION}")
-  else()
-    get_filename_component(ZBAR_LIB_DIR ${ZBAR_LIBRARIES} PATH)
-    vp_get_version_from_pkg("zbar" "${ZBAR_LIB_DIR}/pkgconfig" ZBAR_VERSION)
-  endif()
-endif()
-
-mark_as_advanced(
-  ZBAR_INCLUDE_DIRS
-  ZBAR_LIBRARIES
-)
+mark_as_advanced(ZBAR_INCLUDE_DIR)

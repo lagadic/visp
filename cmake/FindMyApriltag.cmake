@@ -43,37 +43,49 @@
 #
 #############################################################################
 
-set(MyApriltag_INCLUDE_SEARCH_PATHS
-  $ENV{apriltag_DIR}/include
-  ${apriltag_DIR}/include
+
+set(MyApriltag_SEARCH_HINTS
+  ${apriltag_DIR}
+  $ENV{apriltag_DIR}
+  $ENV{CONDA_PREFIX}
+)
+set(MyApriltag_LIB_SUFFIXES lib)
+if(CMAKE_LIBRARY_ARCHITECTURE)
+  list(APPEND MyApriltag_LIB_SUFFIXES lib/${CMAKE_LIBRARY_ARCHITECTURE})
+endif()
+
+find_path(MyApriltag_INCLUDE_DIRS apriltag.h
+  HINTS ${MyApriltag_SEARCH_HINTS}
+  PATH_SUFFIXES include/apriltag apriltag
 )
 
-set(MyApriltag_LIBRARIES_SEARCH_PATHS
-  $ENV{apriltag_DIR}/lib
-  $ENV{apriltag_DIR}/lib/x86_64-linux-gnu
-  ${apriltag_DIR}/lib
-  ${apriltag_DIR}/lib/x86_64-linux-gnu
+find_library(MyApriltag_LIBRARIES
+  NAMES apriltag
+  HINTS ${MyApriltag_SEARCH_HINTS}
+  PATH_SUFFIXES ${MyApriltag_LIB_SUFFIXES}
 )
-
-set(MyApriltag_CMAKE_CONFIG_SEARCH_PATHS
-  $ENV{apriltag_DIR}/share
-  ${apriltag_DIR}/share
-  $ENV{CONDA_PREFIX}/lib
-  $ENV{CONDA_PREFIX}/share
-  /usr/share
-  /usr/local/share
-  ${MyApriltag_LIBRARIES_SEARCH_PATHS}
-)
-
-find_path(MyApriltag_INCLUDE_DIRS apriltag.h PATHS ${MyApriltag_INCLUDE_SEARCH_PATHS} PATH_SUFFIXES apriltag)
-
-find_library(MyApriltag_LIBRARIES NAMES "apriltag" PATHS ${MyApriltag_LIBRARIES_SEARCH_PATHS})
 
 if(MyApriltag_LIBRARIES)
-  # try to detect version
+  # Try to detect version from apriltagConfigVersion.cmake, searched from the hints
+  # and from the install prefix of the library (<prefix>/lib or <prefix>/lib/<arch>)
+  get_filename_component(_apriltag_lib_dir ${MyApriltag_LIBRARIES} DIRECTORY)
+  set(MyApriltag_CONFIG_SUFFIXES
+    share/apriltag/cmake
+    share/cmake/apriltag
+    lib/cmake/apriltag
+    lib/apriltag/cmake
+  )
+  if(CMAKE_LIBRARY_ARCHITECTURE)
+    list(APPEND MyApriltag_CONFIG_SUFFIXES lib/${CMAKE_LIBRARY_ARCHITECTURE}/cmake/apriltag)
+  endif()
   find_path(MyApriltagConfigVersion_DIR apriltagConfigVersion.cmake
-    PATHS ${MyApriltag_CMAKE_CONFIG_SEARCH_PATHS}
-    PATH_SUFFIXES "cmake/apriltag" "apriltag/cmake")
+    HINTS
+      ${MyApriltag_SEARCH_HINTS}
+      ${_apriltag_lib_dir}/..
+      ${_apriltag_lib_dir}/../..
+    PATH_SUFFIXES ${MyApriltag_CONFIG_SUFFIXES}
+  )
+
   if(MyApriltagConfigVersion_DIR)
     set(MyApriltagConfigVersion_FILE "${MyApriltagConfigVersion_DIR}/apriltagConfigVersion.cmake")
     if(EXISTS ${MyApriltagConfigVersion_FILE})
@@ -104,4 +116,8 @@ find_package_handle_standard_args(MyApriltag
   FOUND_VAR MyApriltag_FOUND
 )
 
-mark_as_advanced(MyApriltag_INCLUDE_DIRS MyApriltag_LIBRARIES MyApriltag_VERSION)
+mark_as_advanced(
+  MyApriltag_INCLUDE_DIRS
+  MyApriltag_LIBRARIES
+  MyApriltagConfigVersion_DIR
+)

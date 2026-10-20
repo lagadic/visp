@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,44 +37,40 @@
 #
 #############################################################################
 
+
 if(NOT UNIX)
   # message("FindCALINUX.cmake: only available for Unix.")
   set(CALINUX_FOUND FALSE)
 else()
+  set(CALINUX_SEARCH_HINTS
+    ${CALINUX_HOME}
+    $ENV{CALINUX_HOME}
+  )
+  # Inria specific install locations
+  set(CALINUX_SEARCH_PATHS
+    /local/soft/Cerebellum/CALinux/current
+    /home/soft/Cerebellum/CALinux/current
+    /home/soft/cerebellum/CALinux
+  )
 
   find_path(CALINUX_INCLUDE_DIR calinux.h
-    $ENV{CALINUX_HOME}/include
-    /local/soft/Cerebellum/CALinux/current/include
-    /home/soft/Cerebellum/CALinux/current/include
-    /home/soft/cerebellum/CALinux/include
+    HINTS ${CALINUX_SEARCH_HINTS}
+    PATHS ${CALINUX_SEARCH_PATHS}
+    PATH_SUFFIXES include
   )
   #message("DBG CALINUX_INCLUDE_DIR=${CALINUX_INCLUDE_DIR}")
 
   find_library(CALINUX_LIBRARY
     NAMES calinux
-    PATHS
-      $ENV{CALINUX_HOME}/lib
-      /local/soft/Cerebellum/CALinux/current/lib
-      /home/soft/Cerebellum/CALinux/current/lib
-      /home/soft/cerebellum/CALinux/lib
+    HINTS ${CALINUX_SEARCH_HINTS}
+    PATHS ${CALINUX_SEARCH_PATHS}
+    PATH_SUFFIXES lib
   )
-
   #message("DBG CALINUX_LIBRARY=${CALINUX_LIBRARY}")
 
-  ## --------------------------------
-
-  if(CALINUX_LIBRARY)
-    set(CALINUX_LIBRARIES ${CALINUX_LIBRARY})
-  else()
-#   message(SEND_ERROR "Calinux library not found.")
-  endif()
-
-  if(NOT CALINUX_INCLUDE_DIR)
-#    message(SEND_ERROR "Calinux include dir not found.")
-  endif()
-
-  if(CALINUX_LIBRARIES AND CALINUX_INCLUDE_DIR)
+  if(CALINUX_LIBRARY AND CALINUX_INCLUDE_DIR)
     set(CALINUX_INCLUDE_DIRS ${CALINUX_INCLUDE_DIR})
+    set(CALINUX_LIBRARIES ${CALINUX_LIBRARY})
     set(CALINUX_FOUND TRUE)
   else()
     set(CALINUX_FOUND FALSE)

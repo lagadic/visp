@@ -29,7 +29,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Try to find Cerebellum Irisa library API to dial with the robot Afma6
+# Try to find libfreenect library for Kinect sensor
 #
 # LIBFREENECT_FOUND
 # LIBFREENECT_INCLUDE_DIRS
@@ -39,38 +39,42 @@
 #############################################################################
 
 
+# Layouts handled, relative to each standard prefix and to LIBFREENECT_HOME:
+#   <prefix>/include/libfreenect (e.g. /usr/include/libfreenect)
+#   <prefix>/lib, <prefix>/build/lib
+set(LIBFREENECT_SEARCH_HINTS
+  ${LIBFREENECT_HOME}
+  $ENV{LIBFREENECT_HOME}
+)
+set(LIBFREENECT_INC_SEARCH_HINTS
+  ${LIBFREENECT_SEARCH_HINTS}
+  $ENV{LIBFREENECT_HPP_INCLUDE_DIR}
+  $ENV{LIBFREENECT_H_INCLUDE_DIR}
+)
+set(LIBFREENECT_LIB_SEARCH_HINTS
+  ${LIBFREENECT_SEARCH_HINTS}
+  $ENV{LIBFREENECT_LIBRARY_DIR}
+)
+set(LIBFREENECT_SEARCH_PATHS "")
 if(WIN32)
-  find_path(LIBFREENECT_HPP_INCLUDE_DIR libfreenect.hpp
-    $ENV{LIBFREENECT_HOME}/include
-    $ENV{LIBFREENECT_HPP_INCLUDE_DIR}
-    $ENV{LIBFREENECT_H_INCLUDE_DIR}
-  )
-  find_path(LIBFREENECT_H_INCLUDE_DIR libfreenect.h
-    $ENV{LIBFREENECT_HOME}/include
-    $ENV{LIBFREENECT_HPP_INCLUDE_DIR}
-    $ENV{LIBFREENECT_H_INCLUDE_DIR}
-  )
-  find_library(LIBFREENECT_LIBRARY freenect
-    $ENV{LIBFREENECT_HOME}/lib
-    $ENV{LIBFREENECT_LIBRARY_DIR}
-    "c:/libfreenect/lib"
-  )
-else()
-  find_path(LIBFREENECT_HPP_INCLUDE_DIR libfreenect.hpp
-    $ENV{LIBFREENECT_HOME}/include
-    /usr/include/libfreenect
-    /usr/local/include/libfreenect
-  )
-  find_path(LIBFREENECT_H_INCLUDE_DIR libfreenect.h
-    $ENV{LIBFREENECT_HOME}/include
-    /usr/include/libfreenect
-    /usr/local/include/libfreenect
-  )
-  find_library(LIBFREENECT_LIBRARY freenect
-    $ENV{LIBFREENECT_HOME}/lib
-    $ENV{LIBFREENECT_HOME}/build/lib
-  )
+  list(APPEND LIBFREENECT_SEARCH_PATHS "C:/libfreenect")
 endif()
+
+find_path(LIBFREENECT_HPP_INCLUDE_DIR libfreenect.hpp
+  HINTS ${LIBFREENECT_INC_SEARCH_HINTS}
+  PATHS ${LIBFREENECT_SEARCH_PATHS}
+  PATH_SUFFIXES include include/libfreenect libfreenect
+)
+find_path(LIBFREENECT_H_INCLUDE_DIR libfreenect.h
+  HINTS ${LIBFREENECT_INC_SEARCH_HINTS}
+  PATHS ${LIBFREENECT_SEARCH_PATHS}
+  PATH_SUFFIXES include include/libfreenect libfreenect
+)
+find_library(LIBFREENECT_LIBRARY freenect
+  HINTS ${LIBFREENECT_LIB_SEARCH_HINTS}
+  PATHS ${LIBFREENECT_SEARCH_PATHS}
+  PATH_SUFFIXES lib build/lib
+)
 
 ## --------------------------------
 if(LIBFREENECT_LIBRARY AND LIBFREENECT_HPP_INCLUDE_DIR AND LIBFREENECT_H_INCLUDE_DIR)
@@ -85,9 +89,7 @@ else()
 endif()
 
 mark_as_advanced(
-  LIBFREENECT_INCLUDE_DIRS
   LIBFREENECT_HPP_INCLUDE_DIR
   LIBFREENECT_H_INCLUDE_DIR
-  LIBFREENECT_LIBRARIES
   LIBFREENECT_LIBRARY
-  )
+)
