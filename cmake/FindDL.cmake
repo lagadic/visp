@@ -37,20 +37,23 @@
 #
 #############################################################################
 
+set(DL_SEARCH_HINTS
+  ${DL_HOME}
+  $ENV{DL_HOME}
+)
 
 find_library(DL_LIBRARY
   NAMES dl
-  PATHS
-    $ENV{DL_HOME}/lib
-  )
-
+  HINTS ${DL_SEARCH_HINTS}
+  PATH_SUFFIXES lib
+)
 #message("DBG DL_LIBRARY=${DL_LIBRARY}")
 
 if(DL_LIBRARY)
-  SET(DL_LIBRARIES ${DL_LIBRARY})
-  SET(DL_FOUND TRUE)
+  set(DL_LIBRARIES ${DL_LIBRARY})
+  set(DL_FOUND TRUE)
 else()
-  SET(DL_FOUND FALSE)
+  set(DL_FOUND FALSE)
 endif()
 
 mark_as_advanced(

@@ -38,28 +38,28 @@
 #
 #############################################################################
 
+set(VICON_SEARCH_HINTS
+  ${VICON_DIR}
+  $ENV{VICON_DIR}
+)
+
 find_path(VICON_INCLUDE_DIR
   NAMES DataStreamClient.h
-  PATHS
-    $ENV{VICON_DIR}
-    ${VICON_DIR}
+  HINTS ${VICON_SEARCH_HINTS}
 )
 
 find_library(VICON_LIBRARY
   NAMES ViconDataStreamSDK_CPP
-  PATHS
-    $ENV{VICON_DIR}
-    ${VICON_DIR}
-    $ENV{VICON_DIR}/bin/Release
-    ${VICON_DIR}/bin/Release
-    )
+  HINTS ${VICON_SEARCH_HINTS}
+  PATH_SUFFIXES bin/Release
+)
 
 if(VICON_LIBRARY AND VICON_INCLUDE_DIR)
-    set(VICON_INCLUDE_DIRS ${VICON_INCLUDE_DIR})
-    set(VICON_LIBRARIES ${VICON_LIBRARY})
-    set(VICON_FOUND TRUE)
+  set(VICON_INCLUDE_DIRS ${VICON_INCLUDE_DIR})
+  set(VICON_LIBRARIES ${VICON_LIBRARY})
+  set(VICON_FOUND TRUE)
 else()
-    set(VICON_FOUND FALSE)
+  set(VICON_FOUND FALSE)
 endif()
 
 mark_as_advanced(

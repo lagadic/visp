@@ -39,18 +39,21 @@
 #
 #############################################################################
 
+set(OIS_SEARCH_HINTS
+  ${OIS_DIR}
+  $ENV{OIS_DIR}
+)
+
 find_path(OIS_INCLUDE_DIR
   NAMES ois/OIS.h
-  PATHS
-    $ENV{OIS_DIR}/include/ois
-    ${OIS_DIR}/include/ois
+  HINTS ${OIS_SEARCH_HINTS}
+  PATH_SUFFIXES include
 )
 
 find_library(OIS_LIBRARY
   NAMES OIS
-  PATHS
-    $ENV{OIS_DIR}/lib
-    ${OIS_DIR}/lib
+  HINTS ${OIS_SEARCH_HINTS}
+  PATH_SUFFIXES lib
 )
 
 if(OIS_LIBRARY AND OIS_INCLUDE_DIR)

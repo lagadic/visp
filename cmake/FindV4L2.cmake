@@ -40,36 +40,40 @@
 #
 #############################################################################
 
+
 if(NOT UNIX)
   # message("FindV4L2.cmake: only available for Unix.")
   set(V4L2_FOUND FALSE)
-else(NOT UNIX)
+else()
+  set(V4L2_SEARCH_HINTS
+    ${V4L2_HOME}
+    $ENV{V4L2_HOME}
+    ${V4L2_DIR}
+    $ENV{V4L2_DIR}
+  )
 
   find_path(V4L2_INCLUDE_VIDEODEV2 linux/videodev2.h
-    $ENV{V4L2_HOME}/include
-    $ENV{V4L2_DIR}/include
-    /usr/src/linux/include
+    HINTS ${V4L2_SEARCH_HINTS}
+    PATH_SUFFIXES include
   )
   #message("DBG V4L2_INCLUDE_VIDEODEV2=${V4L2_INCLUDE_VIDEODEV2}")
 
   find_path(V4L2_INCLUDE_LIBV4L2 libv4l2.h
-    $ENV{V4L2_HOME}/include
-    $ENV{V4L2_DIR}/include
+    HINTS ${V4L2_SEARCH_HINTS}
+    PATH_SUFFIXES include
   )
   #message("DBG V4L2_INCLUDE_LIBV4L2=${V4L2_INCLUDE_LIBV4L2}")
 
   find_library(V4L2_LIBRARY_LIBV4L2
     NAMES v4l2
-    PATHS
-    $ENV{V4L2_HOME}/lib
-    $ENV{V4L2_DIR}/lib
+    HINTS ${V4L2_SEARCH_HINTS}
+    PATH_SUFFIXES lib
   )
 
   find_library(V4L2_LIBRARY_LIBV4LCONVERT
     NAMES v4lconvert
-    PATHS
-    $ENV{V4L2_HOME}/lib
-    $ENV{V4L2_DIR}/lib
+    HINTS ${V4L2_SEARCH_HINTS}
+    PATH_SUFFIXES lib
   )
 
   if(V4L2_INCLUDE_VIDEODEV2 AND V4L2_INCLUDE_LIBV4L2 AND V4L2_LIBRARY_LIBV4L2 AND V4L2_LIBRARY_LIBV4LCONVERT)
@@ -84,10 +88,9 @@ else(NOT UNIX)
   endif()
 
   mark_as_advanced(
-    V4L2_INCLUDE_DIRS
     V4L2_INCLUDE_VIDEODEV2
     V4L2_INCLUDE_LIBV4L2
     V4L2_LIBRARY_LIBV4L2
     V4L2_LIBRARY_LIBV4LCONVERT
-    )
+  )
 endif()

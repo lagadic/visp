@@ -37,32 +37,30 @@
 #
 #############################################################################
 
+
 if(UNIX)
+  set(SOXT_SEARCH_HINTS
+    ${COIN_DIR}
+    $ENV{COIN_DIR}
+    ${COINDIR}
+    $ENV{COINDIR}
+  )
 
   find_library(SOXT_LIBRARY
     NAMES SoXt
-    PATHS
-      "$ENV{COIN_DIR}/lib"
-      "$ENV{COINDIR}/lib"
-  )
-  mark_as_advanced(
-    SOXT_LIBRARY
+    HINTS ${SOXT_SEARCH_HINTS}
+    PATH_SUFFIXES lib
   )
   #message(STATUS "DBG SOXT_LIBRARY=${SOXT_LIBRARY}")
 
   if(SOXT_LIBRARY)
-		SET(SOXT_LIBRARIES ${SOXT_LIBRARY})
-    SET(SOXT_FOUND TRUE)
-    mark_as_advanced(
-      SOXT_LIBRARIES
-      )
+    set(SOXT_LIBRARIES ${SOXT_LIBRARY})
+    set(SOXT_FOUND TRUE)
   else()
-    SET(SOXT_FOUND FALSE)
-    #message("SoXt library not found.")
+    set(SOXT_FOUND FALSE)
   endif()
 
-  #message(STATUS "SOXT_FOUND : ${SOXT_FOUND}")
-
+  mark_as_advanced(SOXT_LIBRARY)
 else()
-  SET(SOXT_FOUND FALSE)
+  set(SOXT_FOUND FALSE)
 endif()

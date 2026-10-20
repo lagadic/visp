@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,6 +37,8 @@
 #############################################################################
 
 if(WIN32 AND NOT CYGWIN)
+  include(CheckLibraryExists)
+
   if(MINGW)
     set(WS2_32_LIBNAME "ws2_32.a")
     check_library_exists(${WS2_32_LIBNAME} getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
@@ -44,12 +46,17 @@ if(WIN32 AND NOT CYGWIN)
       set(WS2_32_LIBRARY ${WS2_32_LIBNAME})
       set(WS2_32_FOUND TRUE)
     else()
-      find_library(HAVE_LIBWS2_32 ${WS2_32_LIBNAME}
-        "$ENV{MINGW_DIR}/lib"
-        "$ENV{MINGW_DIR}/mingw/lib"
-        C:/mingw/mingw/lib)
-      if(HAVE_LIBWS2_32)
-        set(WS2_32_LIBRARY ${WS2_32_LIBNAME})
+      find_library(WS2_32_MINGW_LIBRARY
+        NAMES ws2_32
+        HINTS
+          ${MINGW_DIR}
+          $ENV{MINGW_DIR}
+        PATHS
+          C:/mingw
+        PATH_SUFFIXES lib mingw/lib
+      )
+      if(WS2_32_MINGW_LIBRARY)
+        set(WS2_32_LIBRARY ${WS2_32_MINGW_LIBRARY})
         set(WS2_32_FOUND TRUE)
       else()
         set(WS2_32_FOUND FALSE)
@@ -70,6 +77,5 @@ if(WIN32 AND NOT CYGWIN)
       set(WS2_32_FOUND FALSE)
     endif()
   endif()
-  mark_as_advanced(WS2_32_LIBNAME)
-  mark_as_advanced(HAVE_LIBWS2_32)
+  mark_as_advanced(WS2_32_MINGW_LIBRARY)
 endif()

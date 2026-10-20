@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2065 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,45 +38,39 @@
 #
 #############################################################################
 
+
 if(NOT UNIX)
   # message("FindRAW1394.cmake: libraw1394 only available for Unix.")
-  SET(RAW1394_FOUND FALSE)
+  set(RAW1394_FOUND FALSE)
 else()
+  set(RAW1394_SEARCH_HINTS
+    ${RAW1394_HOME}
+    $ENV{RAW1394_HOME}
+  )
 
   find_path(RAW1394_INCLUDE_DIR libraw1394/raw1394.h
-    $ENV{RAW1394_HOME}/include
+    HINTS ${RAW1394_SEARCH_HINTS}
+    PATH_SUFFIXES include
   )
   #message("DBG RAW1394_INCLUDE_DIR=${RAW1394_INCLUDE_DIR}")
 
   find_library(RAW1394_LIBRARY
     NAMES raw1394
-    PATHS
-    $ENV{RAW1394_HOME}/lib
+    HINTS ${RAW1394_SEARCH_HINTS}
+    PATH_SUFFIXES lib
   )
   #message("DBG RAW1394_LIBRARY=${RAW1394_LIBRARY}")
 
-  ## --------------------------------
-
-  if(RAW1394_LIBRARY)
-    SET(RAW1394_LIBRARIES ${RAW1394_LIBRARY})
+  if(RAW1394_LIBRARY AND RAW1394_INCLUDE_DIR)
+    set(RAW1394_INCLUDE_DIRS ${RAW1394_INCLUDE_DIR})
+    set(RAW1394_LIBRARIES ${RAW1394_LIBRARY})
+    set(RAW1394_FOUND TRUE)
   else()
-    #message("libraw1394 library not found.")
+    set(RAW1394_FOUND FALSE)
   endif()
 
-  if(NOT RAW1394_INCLUDE_DIR)
-    #message("libraw1394 include dir not found.")
-  endif()
-
-  if(RAW1394_LIBRARIES AND RAW1394_INCLUDE_DIR)
-    SET(RAW1394_INCLUDE_DIRS ${RAW1394_INCLUDE_DIR})
-    SET(RAW1394_FOUND TRUE)
-  else()
-    SET(RAW1394_FOUND FALSE)
-  endif()
-
-  MARK_AS_ADVANCED(
+  mark_as_advanced(
     RAW1394_INCLUDE_DIR
-    RAW1394_LIBRARIES
     RAW1394_LIBRARY
-    )
+  )
 endif()

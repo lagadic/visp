@@ -37,8 +37,14 @@
 #
 #############################################################################
 
+
+set(Panda3D_SEARCH_HINTS
+  ${Panda3D_DIR}
+  $ENV{Panda3D_DIR}
+)
+set(Panda3D_SEARCH_PATHS "")
 if(APPLE)
-  set(PANDA3D_EXTRA_PREFIX /Library/Developer/Panda3D)
+  list(APPEND Panda3D_SEARCH_PATHS /Library/Developer/Panda3D)
 endif()
 
 set(PANDA3D_LIBS
@@ -54,14 +60,10 @@ set(Panda3D_LIBRARIES "")
 set(ALL_LIBS_FOUND TRUE)
 foreach(lib_name ${PANDA3D_LIBS})
   find_library(Panda3D_${lib_name}_LIBRARY
-    NAMES
-      "lib${lib_name}"  ${lib_name}
-    HINTS
-      $ENV{Panda3D_DIR} ${Panda3D_DIR}
-    PATH_SUFFIXES
-      panda3d lib lib/panda3d built/lib bin
-    PATHS
-      ${PANDA3D_EXTRA_PREFIX}
+    NAMES "lib${lib_name}" ${lib_name}
+    HINTS ${Panda3D_SEARCH_HINTS}
+    PATHS ${Panda3D_SEARCH_PATHS}
+    PATH_SUFFIXES panda3d lib lib/panda3d built/lib bin
   )
   if(NOT Panda3D_${lib_name}_LIBRARY)
     set(ALL_LIBS_FOUND FALSE)
@@ -73,12 +75,9 @@ foreach(lib_name ${PANDA3D_LIBS})
 endforeach()
 
 find_path(Panda3D_INCLUDE_DIRS panda.h
-  HINTS
-    $ENV{Panda3D_DIR}  ${Panda3D_DIR}
-  PATH_SUFFIXES
-    panda3d include include/panda3d built/include
-  PATHS
-    ${PANDA3D_EXTRA_PREFIX}
+  HINTS ${Panda3D_SEARCH_HINTS}
+  PATHS ${Panda3D_SEARCH_PATHS}
+  PATH_SUFFIXES panda3d include include/panda3d built/include
 )
 
 include(FindPackageHandleStandardArgs)
