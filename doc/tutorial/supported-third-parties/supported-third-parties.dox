@@ -210,7 +210,7 @@ The \ref tutorial-flir-ptu-vs could be also useful.
 The Parrot Bebop2 drone is supported by ViSP using vpRobotBebop2,
 an interface over Parrot [ARDroneSDK3](https://developer.parrot.com/docs/SDK3/).
 
-Installation instructions are provided \ref bebop2_arsdk3_ubuntu and \ref bebop2_arsdk3_osx.
+Installation instructions for Ubuntu and macOS are provided in \ref bebop2_arsdk3.
 
 The \ref tutorial-bebop2-vs could be also useful.
 

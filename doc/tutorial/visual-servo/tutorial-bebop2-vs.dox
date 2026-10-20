@@ -22,78 +22,94 @@ ViSP must be built with OpenCV support if you want to get the video streamed by 
 \section bebop2_arsdk3 Build Parrot ARSDK3
 In order to use Parrot Bebop 2 drone with ViSP, you first need to build Parrot's SDK <a href="https://developer.parrot.com/docs/SDK3/">ARDroneSDK3</a> (as explained <a href="https://developer.parrot.com/docs/SDK3/#how-to-build-the-sdk">here</a>) :
 
-\subsection bebop2_arsdk3_ubuntu On Ubuntu
-The following steps allow to build ARSDK3 on Ubuntu (tested on 18.04).
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'ubuntu')">Ubuntu</button>
+    <button class="tab-btn" onclick="openTab(event, 'macos')">macOS</button>
+  </div>
 
-<b>1. Get the SDK source code</b>
+  <div data-tab="ubuntu" class="tab-content" style="display:block;">
+    The following steps allow to build ARSDK3 on Ubuntu (tested on 18.04).
 
-Create a workspace.
-\code{.sh}
+    <p><b>1. Get the SDK source code</b></p>
+    Create a workspace.
+    <pre class="fragment">
 $ cd ${VISP_WS}
 $ mkdir -p 3rdparty/ARDroneSDK3 && cd 3rdparty/ARDroneSDK3
-\endcode
-
-Initialize the repo.
-\code{.sh}
+    </pre>
+    Initialize the repo.
+    <pre class="fragment">
 $ sudo apt install repo
 $ repo init -u https://github.com/Parrot-Developers/arsdk_manifests.git -m release.xml
-\endcode
-
-\note Known issue with Ubuntu 20.04
-- The `repo` package is not available on Ubuntu 20.04. You need to install it manually running:
-  \code{.sh}
-  $ mkdir -p ~/.bin
-  $ PATH="${HOME}/.bin:${PATH}"
-  $ curl https://storage.googleapis.com/git-repo-downloads/repo > ~/.bin/repo
-  $ chmod a+rx ~/.bin/repo
-  \endcode
-  Now you should be able to initialize the repo using:
-  \code{.sh}
-  $ repo init -u https://github.com/Parrot-Developers/arsdk_manifests.git -m release.xml
-  \endcode
-
-You can then download all the repositories automatically, by executing the following command.
-\code{.sh}
+    </pre>
+    <dl class="section note">
+      <dt>Note</dt>
+      <dd>
+        Known issue with Ubuntu 20.04
+        <ul>
+          <li>
+            The <code>repo</code> package is not available on Ubuntu 20.04. You need to install it manually running:
+            <pre class="fragment">
+$ mkdir -p ~/.bin
+$ PATH="${HOME}/.bin:${PATH}"
+$ curl https://storage.googleapis.com/git-repo-downloads/repo > ~/.bin/repo
+$ chmod a+rx ~/.bin/repo
+            </pre>
+            Now you should be able to initialize the repo using:
+            <pre class="fragment">
+$ repo init -u https://github.com/Parrot-Developers/arsdk_manifests.git -m release.xml
+            </pre>
+          </li>
+        </ul>
+      </dd>
+    </dl>
+    You can then download all the repositories automatically, by executing the following command.
+    <pre class="fragment">
 $ repo sync
-\endcode
+    </pre>
 
-<b>2. Build the SDK</b>
-
-Install required 3rd parties:
-\code{.sh}
+    <p><b>2. Build the SDK</b></p>
+    Install required 3rd parties:
+    <pre class="fragment">
 $ sudo apt-get install git build-essential autoconf libtool libavahi-client-dev \
   libavcodec-dev libavformat-dev libswscale-dev libncurses5-dev mplayer
-\endcode
-Build the SDK:
-\code{.sh}
+    </pre>
+    Build the SDK:
+    <pre class="fragment">
 $ ./build.sh -p arsdk-native -t build-sdk -j
-\endcode
-The output will be located in `${VISP_WS}/3rdparty/ARDroneSDK3/out/arsdk-native/staging/usr`
-
-\note Known issues since Ubuntu 20.04 and with python 3
-- If you get the following error:
-\code{.sh}
+    </pre>
+    The output will be located in <code>${VISP_WS}/3rdparty/ARDroneSDK3/out/arsdk-native/staging/usr</code>
+    <dl class="section note">
+      <dt>Note</dt>
+      <dd>
+        Known issues since Ubuntu 20.04 and with python 3
+        <ul>
+          <li>
+            If you get the following error:
+            <pre class="fragment">
 /bin/bash: line 1: python: command not found
 make: *** [$VISP_WS/3rdparty/ARDroneSDK3/build/alchemy/main.mk:306: $VISP_WS/3rdparty/ARDroneSDK3/out/arsdk-native/build/libARMavlink/parrot.xml.done] Error 127
 
 MAKE ERROR DETECTED
 [E] Task 'build-sdk' failed (Command failed (returncode=254))
-\endcode
-you need to install the following package:
-\code{.sh}
+            </pre>
+            you need to install the following package:
+            <pre class="fragment">
 $ sudo apt-get install python-is-python3
-\endcode
-
-\note
-- If you get the next error:
-\code{.sh}
+            </pre>
+          </li>
+          <li>
+            If you get the next error:
+            <pre class="fragment">
 File "$VISP_WS/3rdparty/ARDroneSDK3/out/arsdk-native/staging-host/usr/lib/mavgen/pymavlink/generator/mavcrc.py", line 28, in accumulate_str
     bytes.fromstring(buf)
 AttributeError: 'array.array' object has no attribute 'fromstring'
-\endcode
-you may edit $VISP_WS/3rdparty/ARDroneSDK3/out/arsdk-native/staging-host/usr/lib/mavgen/pymavlink/generator/mavcrc.py
-and modify `accumulate_str()` replacing
-\code
+            </pre>
+            you may edit
+            <code>$VISP_WS/3rdparty/ARDroneSDK3/out/arsdk-native/staging-host/usr/lib/mavgen/pymavlink/generator/mavcrc.py</code>
+            and modify <code>accumulate_str()</code> replacing
+            <pre class="fragment">
     def accumulate_str(self, buf):
         '''add in some more bytes'''
         accum = self.crc
@@ -101,9 +117,9 @@ and modify `accumulate_str()` replacing
         bytes = array.array('B')
         bytes.fromstring(buf)
         self.accumulate(bytes)
-\endcode
-by
-\code
+            </pre>
+            by
+            <pre class="fragment">
     def accumulate_str(self, buf):
         '''add in some more bytes'''
         accum = self.crc
@@ -113,72 +129,72 @@ by
             bytes_array.frombytes(buf)
         except TypeError:  # if buf is str
             bytes_array.frombytes(buf.encode())
-        except AttributeError:  # Python < 3.2
+        except AttributeError:  # Python &lt; 3.2
             bytes_array.fromstring(buf)
         self.accumulate(bytes_array)
-\endcode
+            </pre>
+          </li>
+        </ul>
+      </dd>
+    </dl>
 
-<b>3. Set `ARSDK_DIR` environment variable</b>
-
-In order for ViSP to find ARDroneSDK3, set `ARSDK_DIR` environment variable:
-\code{.sh}
+    <p><b>3. Set <code>ARSDK_DIR</code> environment variable</b></p>
+    In order for ViSP to find ARDroneSDK3, set <code>ARSDK_DIR</code> environment variable:
+    <pre class="fragment">
 $ export ARSDK_DIR=${VISP_WS}/3rdparty/ARDroneSDK3
-\endcode
+    </pre>
 
-<b>4. Modify `LD_LIBRARY_PATH` environment variable to detect ARDroneSDK3 libraries</b>
-
-In order that ViSP binaries are able to find ARDroneSDK3 libraries, set `LD_LIBRARY_PATH` with:
-\code{.sh}
+    <p><b>4. Modify <code>LD_LIBRARY_PATH</code> environment variable to detect ARDroneSDK3 libraries</b></p>
+    In order that ViSP binaries are able to find ARDroneSDK3 libraries, set <code>LD_LIBRARY_PATH</code> with:
+    <pre class="fragment">
 $ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${ARSDK_DIR}/out/arsdk-native/staging/usr/lib
-\endcode
+    </pre>
+  </div>
 
-\subsection bebop2_arsdk3_osx On Mac OSX
-The following steps allow to build ARSDK3 on macOS Mojave 10.14.5.
+  <div data-tab="macos" class="tab-content" style="display:none;">
+    The following steps allow to build ARSDK3 on macOS Mojave 10.14.5.
 
-<b>1. Get the SDK source code</b>
-
-Create a workspace.
-\code{.sh}
+    <p><b>1. Get the SDK source code</b></p>
+    Create a workspace.
+    <pre class="fragment">
 $ cd ${VISP_WS}
 $ mkdir -p 3rdparty/ARDroneSDK3 && cd 3rdparty/ARDroneSDK3
-\endcode
-
-Initialize the repo.
-\code{.sh}
+    </pre>
+    Initialize the repo.
+    <pre class="fragment">
 $ brew install repo
 $ repo init -u https://github.com/Parrot-Developers/arsdk_manifests.git -m release.xml
-\endcode
-
-You can then download all the repositories automatically, by executing the following command.
-\code{.sh}
+    </pre>
+    You can then download all the repositories automatically, by executing the following command.
+    <pre class="fragment">
 $ repo sync
-\endcode
+    </pre>
 
-<b>2. Build the SDK</b>
-
-Install required 3rd parties:
-\code{.sh}
+    <p><b>2. Build the SDK</b></p>
+    Install required 3rd parties:
+    <pre class="fragment">
 $ brew install ffmpeg
-\endcode
-Build the SDK:
-\code{.sh}
+    </pre>
+    Build the SDK:
+    <pre class="fragment">
 $ ./build.sh -p arsdk-native -t build-sdk -j
-\endcode
-The output will be located in `${VISP_WS}/3rdparty/ARDroneSDK3/out/arsdk-native/staging/usr`
+    </pre>
+    The output will be located in <code>${VISP_WS}/3rdparty/ARDroneSDK3/out/arsdk-native/staging/usr</code>
 
-<b>3. Set `ARSDK_DIR` environment variable</b>
-
-In order for ViSP to find ARDroneSDK3, set `ARSDK_DIR` environment variable:
-\code{.sh}
+    <p><b>3. Set <code>ARSDK_DIR</code> environment variable</b></p>
+    In order for ViSP to find ARDroneSDK3, set <code>ARSDK_DIR</code> environment variable:
+    <pre class="fragment">
 $ export ARSDK_DIR=${VISP_WS}/3rdparty/ARDroneSDK3
-\endcode
+    </pre>
 
-<b>4. Modify `DYLD_LIBRARY_PATH` environment variable to detect ARDroneSDK3 libraries</b>
-
-In order that ViSP binaries are able to find ARDroneSDK3 libraries, set `DYLD_LIBRARY_PATH` with:
-\code{.sh}
+    <p><b>4. Modify <code>DYLD_LIBRARY_PATH</code> environment variable to detect ARDroneSDK3 libraries</b></p>
+    In order that ViSP binaries are able to find ARDroneSDK3 libraries, set <code>DYLD_LIBRARY_PATH</code> with:
+    <pre class="fragment">
 $ export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:${ARSDK_DIR}/out/arsdk-native/staging/usr/lib
-\endcode
+    </pre>
+  </div>
+</div>
+\endhtmlonly
 
 \section bebop2_visp_build Build ViSP to detect ARSDK3
 
