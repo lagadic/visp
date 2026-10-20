@@ -47,7 +47,28 @@ set(TENSORRT_SEARCH_HINTS
   $ENV{TENSORRT_DIR}
 )
 
-find_package(CUDA)
+# FindCUDA is deprecated since CMake 3.10 and removed by policy CMP0146 (CMake 3.27).
+# Use FindCUDAToolkit when available (CMake 3.17+) and expose the legacy CUDA_* variables.
+if(NOT CMAKE_VERSION VERSION_LESS 3.17)
+  find_package(CUDAToolkit QUIET)
+  if(CUDAToolkit_FOUND AND CUDA_cudart_LIBRARY)
+    set(CUDA_FOUND ON)
+    set(CUDA_VERSION ${CUDAToolkit_VERSION})
+    set(CUDA_INCLUDE_DIRS ${CUDAToolkit_INCLUDE_DIRS})
+    set(CUDA_LIBRARIES ${CUDA_cudart_LIBRARY})
+  else()
+    set(CUDA_FOUND OFF)
+  endif()
+else()
+  find_package(CUDA QUIET)
+  mark_as_advanced(
+    CUDA_HOST_COMPILER
+    CUDA_SDK_ROOT_DIR
+    CUDA_TOOLKIT_ROOT_DIR
+    CUDA_USE_STATIC_CUDA_RUNTIME
+    CUDA_rt_LIBRARY
+  )
+endif()
 
 find_library(NVINFER_LIBRARY
   NAMES nvinfer
@@ -106,9 +127,4 @@ mark_as_advanced(
   NVINFERPLUGIN_LIBRARY
   NVONNXPARSER_LIBRARY
   NVONNXPARSERRUNTIME_LIBRARY
-  CUDA_HOST_COMPILER
-  CUDA_SDK_ROOT_DIR
-  CUDA_TOOLKIT_ROOT_DIR
-  CUDA_USE_STATIC_CUDA_RUNTIME
-  CUDA_rt_LIBRARY
 )
