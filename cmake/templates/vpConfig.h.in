@@ -406,9 +406,6 @@ namespace vp = VISP_NAMESPACE_NAME;
 // Defined if Video For Linux Two available.
 #cmakedefine VISP_HAVE_V4L2
 
-// Defined if DirectShow library is available (only under Windows).
-#cmakedefine VISP_HAVE_DIRECTSHOW
-
 // Defined if FLIR FlyCapture SDK available.
 #cmakedefine VISP_HAVE_FLYCAPTURE
 

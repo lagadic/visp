@@ -606,7 +606,6 @@ General configuration information for ViSP 3.5.1
     Use DC1394-2.x:              no
     Use CMU 1394:                no
     Use V4L2:                    no
-    Use directshow:              no
     Use OpenCV:                  yes (ver 4.8.0)
     Use FLIR Flycapture:         no
     Use Basler Pylon:            no

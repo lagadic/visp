@@ -46,8 +46,6 @@ set(example_cpp
   grabDisk.cpp
   grabDiskFloat.cpp
   grabV4l2.cpp
-  grabDirectShow.cpp
-  grabDirectShowMulti.cpp
   grabFlyCapture.cpp
   grabRealSense2.cpp
   grabRealSense2_T265.cpp

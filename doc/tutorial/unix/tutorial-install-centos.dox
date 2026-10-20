@@ -480,7 +480,6 @@ General configuration information for ViSP 3.3.0
     Use DC1394-2.x:              no
     Use CMU 1394:                no
     Use V4L2:                    no
-    Use directshow:              no
     Use OpenCV:                  no
     Use Flycapture:              no
     Use Pylon:                   no

@@ -11,6 +11,7 @@ ViSP 3.7.1 (current version)
   - New classes
   - Deprecated
     . In vpDetectorAprilTag remove support for deprecated 25h7 family
+    . Remove deprecated vpDirectShowGrabber class
   - New features and improvements
     . The AprilTag 3rd-party integration has been completely redesigned. It now supports three flexible usage modes:
       - System Package: Use the library installed via your package manager (e.g., apt install libapriltag-dev),
