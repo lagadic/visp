@@ -4,7 +4,7 @@
 \tableofcontents
 
 
-\section intro_trace Introduction
+\section intro_trace 1. Introduction
 
 ViSP allows to introduce trace and debug printings that may help debugging. To this end ViSP provides C or C++ macros
 that allows to print messages to the standard output std::cout or to std::cerr. The following table summarizes the
@@ -23,7 +23,7 @@ macro defined in visp3/code/vpDebug.h header.
 |----------|-------|-------------------------------------|---------------------------------------|
 ~~~
 
-\subsection trace_macro Macros for trace
+\subsection trace_macro 1.1. Macros for trace
 
 Macro for tracing vpTRACE(), vpTRACE(level), vpERROR_TRACE(), vpERROR_TRACE(level),
 vpIN_FCT() and vpOUT_FCT()
@@ -33,7 +33,7 @@ and std::cerr. All these macro print messages only if VP_TRACE macro is defined.
 like vpTRACE(level) or vpERROR_TRACE(level) use an additional define named VP_DEBUG_MODE. They print only messages if
 VP_DEBUG_MODE >= \e level.
 
-\subsection debug_macro Macros for debug
+\subsection debug_macro 1.2. Macros for debug
 
 Macros for debug vpDEBUG_TRACE(), vpDEBUG_TRACE(level), vpDERROR_TRACE() and vpDERROR_TRACE(level)
 work like printf while vpCDEBUG(level) works like the C++ output stream std::cout.
@@ -44,7 +44,7 @@ if VP_DEBUG_MODE >= \e level.
 Moreover vpDEBUG_ENABLE(level) can be used to check if a given debug level is active; vpDEBUG_ENABLE(level) is
 equal to 1 if VP_DEBUG_MODE >= \e level, otherwise vpDEBUG_ENABLE(level) is equal to 0.
 
-\section debug_trace_usage Debug and trace usage in ViSP library
+\section debug_trace_usage 2. Debug and trace usage in ViSP library
 
 In ViSP, before an exception is thrown, trace macro are widely used to inform the user that an error occur. This is
 redundant, since the same trace message in generally associated to the exception that is thrown. Since ViSP 3.1.0,
@@ -68,7 +68,7 @@ variable.
 \note When \c ENABLE_DEBUG_LEVEL is set to 0 (this is the default behavior in ViSP), we don't define VP_TRACE and
 VP_DEBUG macro.
 
-\section example Debug and trace usage in your own project
+\section example 3. Debug and trace usage in your own project
 
 Note that all the material (source code) described in this tutorial is part of ViSP source code
 (in `tutorial/trace` folder) and could be found in

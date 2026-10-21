@@ -7,7 +7,7 @@ In this tutorial you will learn how to install ViSP from prebuilt ROS packages o
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_ros_package ViSP ROS package
+\section install_ros_package 1. ViSP ROS package
 
 ViSP is available as a [ROS package](http://wiki.ros.org/visp) for `kinetic`, `melodic` and `noetic` distros. Under Ubuntu, to get the package simply type:
 
@@ -15,7 +15,7 @@ ViSP is available as a [ROS package](http://wiki.ros.org/visp) for `kinetic`, `m
 $ sudo apt-get install ros-<distro>-visp
 \endcode
 
-\section install_ros_package_other Other ROS packages
+\section install_ros_package_other 2. Other ROS packages
 
 We provide also other ROS packages that exploit ViSP:
 
@@ -57,7 +57,7 @@ We provide also other ROS packages that exploit ViSP:
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/n3UmgCXw5lY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
 \endhtmlonly
 
-\section install_ros_package_next Next tutorial
+\section install_ros_package_next 3. Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
 

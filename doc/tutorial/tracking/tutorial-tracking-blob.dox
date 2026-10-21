@@ -3,7 +3,7 @@
 \page tutorial-tracking-blob Tutorial: Blob tracking
 \tableofcontents
 
-\section tracking_blob_intro Introduction
+\section tracking_blob_intro 1. Introduction
 
 With ViSP you can track a blob using either vpDot or vpDot2 classes. By blob we mean a region of the image that has the
 same gray level. The blob can be white on a black background, or black on a white background.
@@ -25,12 +25,12 @@ The next videos show the result of ViSP blob tracker on two different objects:
 Note that all the material (source code and images) described in this tutorial is part of ViSP source code
 (in `tutorial/tracking/blob` folder) and could be found in https://github.com/lagadic/visp/tree/master/tutorial/tracking/blob.
 
-\section tracking_blob_tracking Blob tracking
+\section tracking_blob_tracking 2. Blob tracking
 
 In the next subsections we explain how to achieve this kind of tracking, first using a firewire live camera, then using
 a v4l2 live camera that can be an usb camera, or a Raspberry Pi camera module.
 
-\subsection live-firewire From a firewire live camera
+\subsection live-firewire 2.1. From a firewire live camera
 
 The following code also available in tutorial-blob-tracker-live.cpp file provided in ViSP source code tree
 allows to grab images from a firewire camera and track a blob. The initialisation is done with a user mouse click on
@@ -56,7 +56,7 @@ Then we are waiting for a user initialization throw a mouse click event in the b
 The tracker is now initialized. The tracking can be performed on new images:
 \snippet tutorial-blob-tracker-live.cpp Track
 
-\subsection live-v4l2 From a v4l2 live camera
+\subsection live-v4l2 2.2. From a v4l2 live camera
 
 The following code also available in tutorial-blob-tracker-live.cpp file provided in ViSP source code tree allows
 to grab images from a camera compatible with video for linux two driver (v4l2) and track a blob. Webcams or more
@@ -80,7 +80,7 @@ If possible, it allows the tracker to overcome a previous tracking failure (due 
 on the next available images.
 
 
-\section tracking_blob_auto Blob auto detection and tracking
+\section tracking_blob_auto 3. Blob auto detection and tracking
 
 The following example also available in tutorial-blob-auto-tracker.cpp file provided in ViSP source code tree shows
 how to detect blobs in the first image and then track all the detected blobs. This functionality is only available
@@ -118,7 +118,7 @@ the blob that is tracked is not in the list of auto detected blobs. We add it to
 Finally, when a new image is available we do the tracking of all the blobs:
 \snippet tutorial-blob-auto-tracker.cpp Display
 
-\section tracking_blob_next Next tutorial
+\section tracking_blob_next 4. Next tutorial
 You are now ready to see the next \ref tutorial-tracking-keypoint.
 
 */

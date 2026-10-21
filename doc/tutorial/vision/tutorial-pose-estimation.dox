@@ -3,7 +3,7 @@
 \page tutorial-pose-estimation Tutorial: Pose estimation from points
 \tableofcontents
 
-\section tutorial_pose_intro Introduction
+\section tutorial_pose_intro 1. Introduction
 
 This tutorial focuses on pose estimation from planar or non planar points. From their 2D coordinates in the image plane,
 and their corresponding 3D coordinates specified in an object frame, ViSP is able to estimate the relative pose between
@@ -16,9 +16,9 @@ Note that all the material (source code and image) described in this tutorial is
 part of ViSP source code (in `tutorial/computer-vision` folder) and could be found in
 https://github.com/lagadic/visp/tree/master/tutorial/computer-vision.
 
-\section tutorial_pose_est Pose estimation from 4 planar points
+\section tutorial_pose_est 2. Pose estimation from 4 planar points
 
-\subsection tutorial_pose_est_image Principle on a single image
+\subsection tutorial_pose_est_image 2.1. Principle on a single image
 
 In this section we consider the case of four planar points. An image processing done by our blob tracker allows to
 extract the pixel coordinates of each blob center of gravity. Then using the camera intrinsic parameters we convert
@@ -115,7 +115,7 @@ Finally, we interrupt the infinite loop by a user mouse click in the window.
 We also introduce a 40 milliseconds sleep to slow down the loop and relax the CPU.
 \snippet tutorial-pose-from-points-image.cpp Slow down
 
-\subsection tutorial_pose_est_live Using a camera
+\subsection tutorial_pose_est_live 2.2. Using a camera
 
 We provide also an other example in tutorial-pose-from-points-live.cpp that works on live images acquired by a camera.
 Compared to the previous example, we replace the single image reader by one of the frame grabber available in ViSP (see \ref tutorial-grabber).
@@ -168,7 +168,7 @@ For example, if you want to force OpenCV usage to grab images, uncomment the lin
 
 After modification, build and run again this binary.
 
-\section tutorial_pose_next Next tutorial
+\section tutorial_pose_next 3. Next tutorial
 
 You are now ready to see the next \ref tutorial-pose-estimation-qrcode that gives a use case.
 

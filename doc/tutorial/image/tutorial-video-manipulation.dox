@@ -2,7 +2,7 @@
   \page tutorial-video-manipulation Tutorial: How to manipulate a video or a sequence of images
   \tableofcontents
 
-\section img_manip_seq_intro Introduction
+\section img_manip_seq_intro 1. Introduction
 
 In this tutorial you will learn how to manipulate a video or a sequence of successives images in order to rename the
 images, convert images format, or select some images that will constitute a dataset typically for deep learning purpose.
@@ -10,9 +10,9 @@ images, convert images format, or select some images that will constitute a data
 Note that all the material (source code and images) described in this tutorial is part of ViSP source code
 (in `tutorial/image` folder) and could be found in https://github.com/lagadic/visp/tree/master/tutorial/image.
 
-\section img_manip_seq_prereq Prerequisites
+\section img_manip_seq_prereq 2. Prerequisites
 
-\subsection img_manip_seq_create Sequence of images acquisition reminder
+\subsection img_manip_seq_create 2.1. Sequence of images acquisition reminder
 
 In ViSP you will find \ref tutorial-grabber that shows how to acquire a sequence of images.
 
@@ -65,7 +65,7 @@ I0021.png
 ...
 \endverbatim
 
-\section img_manip_seq_main Video or image sequence manipulation
+\section img_manip_seq_main 3. Video or image sequence manipulation
 
 We provide a tool which source code is given in tutorial-video-manipulation.cpp that allows video manipulation.
 To see what could be done, just get the helper message:
@@ -75,7 +75,7 @@ $ cd $VISP_WS/visp-build/tutorial/image
 $ ./tutorial-video-manipulation --help
 \endverbatim
 
-\subsection img_manip_seq_show Visualization
+\subsection img_manip_seq_show 3.1. Visualization
 
 The tutorial tutorial-video-manipulation.cpp allows to visualize a video or a sequence of images.
 
@@ -92,7 +92,7 @@ $ cd $VISP_WS/visp-build/tutorial/image
 ./tutorial-video-manipulation --in /tmp/myseq/png/I%04d.png
 \endverbatim
 
-\subsection img_manip_seq_convert Renaming and/or image format conversion
+\subsection img_manip_seq_convert 3.2. Renaming and/or image format conversion
 
 The tutorial tutorial-video-manipulation.cpp allows also to rename and convert the images format.
 
@@ -190,7 +190,7 @@ $ ./tutorial-video-manipulation --in /tmp/myseq/png/I%04d.png --out /tmp/myseq/p
 \endverbatim
 
 
-\subsection img_manip_seq_extract Images extraction from a video
+\subsection img_manip_seq_extract 3.3. Images extraction from a video
 
 The tutorial tutorial-video-manipulation.cpp allows also to extract images from a video file.
 
@@ -218,7 +218,7 @@ image-0010.jpeg
 ./tutorial-video-manipulation --in /tmp/cube/jpeg/image-%04d.jpeg
 \endverbatim
 
-\subsection img_manip_seq_select Images selection to create a new video or sequence
+\subsection img_manip_seq_select 3.4. Images selection to create a new video or sequence
 
 The tutorial tutorial-video-manipulation.cpp allows also to extract some images selected by the user during
 visualisation by user click. This feature could be useful to extract the images that will be part of a deep
@@ -237,7 +237,7 @@ image-0003.jpeg
 image-0004.jpeg
 \endverbatim
 
-\section img_manip_seq_next Next tutorial
+\section img_manip_seq_next 4. Next tutorial
 
 You are now ready to see how to continue with \ref tutorial-basic-drawings.
 

@@ -19,7 +19,7 @@ you on how to install and configure Conda first.
 If you are new to Conda, this <a href=https://docs.conda.io/projects/conda/en/latest/_downloads/843d9e0198f2a193a3484886fa28163c/conda-cheatsheet.pdf> cheat sheet</a>
 might be also very useful.
 
-\section install_conda Installing Conda
+\section install_conda 1. Installing Conda
 
 We recommend to install Conda from the installers provided by the conda-forge community, such as
 <a href=https://github.com/conda-forge/miniforge>Miniforge</a>, which will be already configured as desired.
@@ -37,7 +37,7 @@ Otherwise, we recommand you to update your Conda version:
 $ conda update -n base conda -c conda-forge
 \endverbatim
 
-\section check_conda_install Checking your Conda installation
+\section check_conda_install 2. Checking your Conda installation
 
 The initial Conda configuration can differ depending on the installer and distribution you have used. If you
 installed Conda using Miniforge distribution as in previous section, then you can skip this section
@@ -72,7 +72,7 @@ $ conda config --show channel_priority
 
 \note You can also directly access to your Conda configuration by editing the `~/.condarc` file.
 
-\section create_conda_env Optional: Creating a new Conda environment
+\section create_conda_env 3. Optional: Creating a new Conda environment
 
 After a fresh installation, your shell should have been configured to support Conda.
 The current active environment (default is `base`) should appear in your command prompt between parenthesis, e.g.:
@@ -113,14 +113,14 @@ Depending on how much populated your sysroot already is, you should have a direc
 
 \image html conda_sysroot.svg Typical sysroot directory hierarchy for each Conda environment. You may have more or less directories, depending on your Conda environment.
 
-\section install_visp_conda_package Installing ViSP Conda package
+\section install_visp_conda_package 4. Installing ViSP Conda package
 
 One line install:
 \verbatim
 $ conda install visp
 \endverbatim
 
-\section good_practices_conda Some good practices with Conda
+\section good_practices_conda 5. Some good practices with Conda
 
 - Minimize system-wide packages, install as much as possible from Conda in your dedicated environment.
 
@@ -147,14 +147,21 @@ $ conda create --prefix <project_source_dir>/envs
 $ conda activate <project_source_dir>/envs
 \endverbatim
 
-\section conda_package_config Configuration used for the Conda package
+\section conda_package_config 6. Configuration used for the Conda package
 
-To get an idea of the third parties available in the ViSP Conda package, we provide below the contents of the file
-ViSP-third-party.txt file for the Conda Linux-64, OSX-64 and Windows-64 packages.
+To get an idea of the third parties available in the ViSP Conda package, we provide below the contents of the
+`ViSP-third-party.txt` file for the Conda Linux-64, OSX-64 and Windows-64 packages.
 
-\subsection conda_package_config_linux_64 Configuration for the Linux-64 Conda package
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'linux-64')">Linux-64</button>
+    <button class="tab-btn" onclick="openTab(event, 'osx-64')">OSX-64</button>
+    <button class="tab-btn" onclick="openTab(event, 'windows-64')">Windows-64</button>
+  </div>
 
-\verbatim
+  <div data-tab="linux-64" class="tab-content" style="display:block;">
+    <pre class="fragment">
 ==========================================================
 General configuration information for ViSP 3.6.0
 
@@ -342,11 +349,11 @@ General configuration information for ViSP 3.6.0
   Install path:                  $PREFIX
 
 ==========================================================
-\endverbatim
+    </pre>
+  </div>
 
-\subsection conda_package_config_osx_64 Configuration for the OSX-64 Conda package
-
-\verbatim
+  <div data-tab="osx-64" class="tab-content" style="display:none;">
+    <pre class="fragment">
 ==========================================================
 General configuration information for ViSP 3.6.0
 
@@ -533,11 +540,11 @@ General configuration information for ViSP 3.6.0
   Install path:                  $PREFIX
 
 ==========================================================
-\endverbatim
+    </pre>
+  </div>
 
-\subsection conda_package_config_windows_64 Configuration for the Windows-64 Conda package
-
-\verbatim
+  <div data-tab="windows-64" class="tab-content" style="display:none;">
+    <pre class="fragment">
 ==========================================================
 General configuration information for ViSP 3.6.0
 
@@ -727,9 +734,12 @@ General configuration information for ViSP 3.6.0
   Install path:                  D:/bld/visp_1698083699413/_h_env/Library
 
 ==========================================================
-\endverbatim
+    </pre>
+  </div>
+</div>
+\endhtmlonly
 
-\section install_conda_package_next Next tutorial
+\section install_conda_package_next 7. Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
 

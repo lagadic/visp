@@ -704,7 +704,7 @@ Example configuration:
 
 
 
-\subsection rbt_python_options 4.3 Python specific configuration
+\subsection rbt_python_options 4.3. Python specific configuration
 
 \warning The features defined below are only available when using the Python bindings. To install and use the bindings see \ref tutorial-install-python-bindings.
 

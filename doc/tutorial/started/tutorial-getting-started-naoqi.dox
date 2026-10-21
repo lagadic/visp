@@ -16,7 +16,7 @@ This tutorial was tested on an Ubuntu 14.04 LTS host computer with:
 - Cross Toolchain 2.3.1 Linux 64 (\c ctc-linux32-atom-2.3.1.23) on Romeo robot
 - Cross Toolchain 2.4.3 Linux 64 (\c ctc-linux64-atom-2.4.3.28) on Pepper robot
 
-\section started_naoqi_code Create a workspace for your project
+\section started_naoqi_code 1. Create a workspace for your project
 
 We assume that as described in \ref tutorial-install-crosscompiling-naoqi, your workspace dedicated to visp contains
 the following folders:
@@ -36,18 +36,20 @@ https://github.com/lagadic/visp/tree/master/tutorial/image.
 
 \code
 $ ls $HOME/soft/tutorial/image
-CMakeLists.txt			monkey.png				           tutorial-draw-text.cpp			             tutorial-image-manipulation.cpp
-camera.xml				  monkey.ppm				           tutorial-event-keyboard.cpp		         tutorial-image-reader.cpp
-chessboard.jpg			tutorial-canny.cpp			     tutorial-export-image.cpp		           tutorial-image-viewer.cpp
-drawingHelpers.cpp  tutorial-draw-circle.cpp		 tutorial-image-colormap.cpp		         tutorial-undistort.cpp
-drawingHelpers.h		tutorial-draw-cross.cpp			 tutorial-image-converter.cpp		         tutorial-video-manipulation.cpp
-memorial.pfm				tutorial-draw-frame.cpp			 tutorial-image-display-scaled-auto.cpp	 tutorial-viewer.cpp
-monkey.bmp				  tutorial-draw-line.cpp			 tutorial-image-display-scaled-manu.cpp
-monkey.jpeg				  tutorial-draw-point.cpp			 tutorial-image-display.cpp
-monkey.pgm				  tutorial-draw-rectangle.cpp	 tutorial-image-filter.cpp
+CMakeLists.txt      tutorial-canny.cpp           tutorial-image-converter.cpp
+camera.xml          tutorial-draw-circle.cpp     tutorial-image-display-scaled-auto.cpp
+chessboard.jpg      tutorial-draw-cross.cpp      tutorial-image-display-scaled-manu.cpp
+drawingHelpers.cpp  tutorial-draw-frame.cpp      tutorial-image-display.cpp
+drawingHelpers.h    tutorial-draw-line.cpp       tutorial-image-filter.cpp
+memorial.pfm        tutorial-draw-point.cpp      tutorial-image-manipulation.cpp
+monkey.bmp          tutorial-draw-rectangle.cpp  tutorial-image-reader.cpp
+monkey.jpeg         tutorial-draw-text.cpp       tutorial-image-viewer.cpp
+monkey.pgm          tutorial-event-keyboard.cpp  tutorial-undistort.cpp
+monkey.png          tutorial-export-image.cpp    tutorial-video-manipulation.cpp
+monkey.ppm          tutorial-image-colormap.cpp  tutorial-viewer.cpp
 \endcode
 
-\section started_naoqi_build Cross-build your project
+\section started_naoqi_build 2. Cross-build your project
 
 Create first a build folder associated to your Cross Toolchain like:
 \code
@@ -66,7 +68,7 @@ Cross-build your project:
 $ make -j4
 \endcode
 
-\section started_naoqi_install Install the binaries on NAOqi
+\section started_naoqi_install 3. Install the binaries on NAOqi
 
 First create an archive for the binaries:
 \code
@@ -95,7 +97,7 @@ nao~ $ ./tutorial-undistort
 
 You are now ready to create your own project for Nao, Romeo or Pepper robots.
 
-\section naoqi_image_next Next tutorial
+\section naoqi_image_next 4. Next tutorial
 
 You are now ready to see the \ref tutorial-import-visp-into-EclipseIDE.
 */

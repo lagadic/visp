@@ -12,67 +12,96 @@ It can also be used in the Model-Based Tracker to check the visibility of the ob
 There is also the optional [OIS](https://github.com/wgois/OIS) library that can be used to animate the rendered object using the keyboard.
 
 \section tutorial-ogre-install 2. Ogre installation
-\subsection tutorial-ogre-install-ubuntu 2.1. Installation on Ubuntu
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'ubuntu')">Ubuntu</button>
+    <button class="tab-btn" onclick="openTab(event, 'windows')">Windows (MSVC)</button>
+    <button class="tab-btn" onclick="openTab(event, 'other')">Other platforms</button>
+  </div>
 
-- It is recommended to install Ogre and OIS from the apt packages.
+  <div data-tab="ubuntu" class="tab-content" style="display:block;">
+    <ul>
+      <li>
+        It is recommended to install Ogre and OIS from the apt packages.<br>
+        To install the 1.9 version of Ogre, run:
+        <pre class="fragment">
+$ sudo apt install libogre-1.9-dev libois-dev
+        </pre>
+        To install the 1.12 version of Ogre, run:
+        <pre class="fragment">
+$ sudo apt install libogre-1.12-dev libois-dev
+        </pre>
+        Other Ogre packages exist but their compatibility with ViSP has not been tested at the moment.
+      </li>
+      <li>
+        If you want newer versions of Ogre, you can download the sources and compile it manually.<br>
+        First, install Ogre dependencies:
+        <pre class="fragment">
+$ sudo apt install libgles2-mesa-dev libvulkan-dev glslang-dev libxrandr-dev libxaw7-dev libx11-dev libzzip-dev libsdl2-dev libois-dev
+        </pre>
+        Then, get Ogre sources and compile it:
+        <pre class="fragment">
+$ mkdir -p $VISP_WS/3rdparty
+$ cd $VISP_WS/3rdparty
+$ git clone https://github.com/OGRECave/ogre
+$ cd ogre
+$ git checkout $OGRE_VERSION # where OGRE_VERSION is a tag name corresponding to a version of ogre, such as v13.1.0 or v14.0.0
+$ mkdir build && mkdir install && cd build
+$ cmake ../ -DCMAKE_INSTALL_PREFIX=$VISP_WS/3rdparty/ogre/install
+$ make -j$(nproc) install
+        </pre>
+        <dl class="section note">
+          <dt>Note</dt>
+          <dd>Only the tags v1.12.10 , v13.1.0 and v14.0.0 were tested.</dd>
+        </dl>
+        Finally, to build ViSP with Ogre support, run the following commands:
+        <pre class="fragment">
+$ cd $VISP_WS/visp-build
+$ cmake ../visp -DOGRE_DIR=$VISP_WS/3rdparty/ogre/install/lib/OGRE/cmake/
+$ make -j$(nproc)
+        </pre>
+      </li>
+    </ul>
+  </div>
 
-  To install the 1.9 version of Ogre, run:
-  \code{.sh}
-  $ sudo apt install libogre-1.9-dev libois-dev
-  \endcode
-
-  To install the 1.12 version of Ogre, run:
-  \code{.sh}
-  $ sudo apt install libogre-1.12-dev libois-dev
-  \endcode
-
-  Other Ogre packages exist but their compatibility with ViSP has not been tested at the moment.
-
-- If you want newer versions of Ogre, you can download the sources and compile it manually.
-
-  First, install Ogre dependencies:
-  \code{.sh}
-  $ sudo apt install libgles2-mesa-dev libvulkan-dev glslang-dev libxrandr-dev libxaw7-dev libx11-dev libzzip-dev libsdl2-dev libois-dev
-  \endcode
-
-  Then, get Ogre sources and compile it:
-  \code{.sh}
-  $ mkdir -p $VISP_WS/3rdparty
-  $ cd $VISP_WS/3rdparty
-  $ git clone https://github.com/OGRECave/ogre
-  $ cd ogre
-  $ git checkout $OGRE_VERSION # where OGRE_VERSION is a tag name corresponding to a version of ogre, such as v13.1.0 or v14.0.0
-  $ mkdir build && mkdir install && cd build
-  $ cmake ../ -DCMAKE_INSTALL_PREFIX=$VISP_WS/3rdparty/ogre/install
-  $ make -j$(nproc) install
-  \endcode
-
-  \note Only the tags v1.12.10 , v13.1.0 and v14.0.0 were tested.
-
-  Finally, to build ViSP with Ogre support, run the following commands:
-  \code{.sh}
-  $ cd $VISP_WS/visp-build
-  $ cmake ../visp -DOGRE_DIR=$VISP_WS/3rdparty/ogre/install/lib/OGRE/cmake/
-  $ make -j$(nproc)
-  \endcode
-
-\subsection tutorial-ogre-install-windows 2.2. Installation on Windows (MSVC)
-
-- Download [Pre-built SDK](https://www.ogre3d.org/download/sdk/sdk-ogre#) for Windows (MSVC). At the time this tutorial
-  was written, we downloaded `ogre-sdk-v14.4.1-msvc142-x64.zip` file.
-- Unzip the Pre-built SDK in `%%VISP_WS%\3rdparty\ogre-sdk-v14.4.1-msvc142-x64`
-- Set `OGRE_DIR` environment var with the location of the SDK uding a Command (`cmd`) line terminal
-\code{.sh}
+  <div data-tab="windows" class="tab-content" style="display:none;">
+    <ul>
+      <li>
+        Download <a href="https://www.ogre3d.org/download/sdk/sdk-ogre#">Pre-built SDK</a> for Windows (MSVC). At the
+        time this tutorial was written, we downloaded <code>ogre-sdk-v14.4.1-msvc142-x64.zip</code> file.
+      </li>
+      <li>
+        Unzip the Pre-built SDK in <code>%VISP_WS%\3rdparty\ogre-sdk-v14.4.1-msvc142-x64</code>
+      </li>
+      <li>
+        Set <code>OGRE_DIR</code> environment var with the location of the SDK using a Command (<code>cmd</code>) line
+        terminal
+        <pre class="fragment">
 C:\> setx OGRE_DIR %VISP_WS%\3rdparty\ogre-sdk-v14.4.1-msvc142-x64
-\endcode
-- Modify `Path` environment variable to add the path to Ogre dlls. In our case we added `%%OGRE_DIR%\bin`.
-- Close all the Command line terminals to ensure that both environment variables are taken into account.
+        </pre>
+      </li>
+      <li>
+        Modify <code>Path</code> environment variable to add the path to Ogre dlls. In our case we added
+        <code>%OGRE_DIR%\bin</code>.
+      </li>
+      <li>
+        Close all the Command line terminals to ensure that both environment variables are taken into account.
+      </li>
+    </ul>
+  </div>
 
-\subsection tutorial-ogre-install-otherplatforms 2.3.Installation on other platforms
-
-- See [Ogre download section](https://www.ogre.org/download/sdk/sdk-ogre) to see the available binaries
-  or the [Ogre building guide](https://ogrecave.github.io/ogre/api/latest/building-ogre.html) to see how to compile
-  it from sources.
+  <div data-tab="other" class="tab-content" style="display:none;">
+    <ul>
+      <li>
+        See <a href="https://www.ogre3d.org/download/sdk/sdk-ogre">Ogre download section</a> to see the available
+        binaries or the <a href="https://ogrecave.github.io/ogre/api/latest/building-ogre.html">Ogre building guide</a>
+        to see how to compile it from sources.
+      </li>
+    </ul>
+  </div>
+</div>
+\endhtmlonly
 
 \section tutorial-ogre-usage 3.Using Ogre for rendering
 
