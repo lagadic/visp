@@ -2,7 +2,7 @@
   \page tutorial-hsv-segmentation-live Tutorial: Live color segmentation using HSV color scale
   \tableofcontents
 
-\section hsv_video_intro Introduction
+\section hsv_video_intro 1. Introduction
 
 This tutorial follows \ref tutorial-hsv-range-tuner.
 
@@ -17,7 +17,7 @@ Note that all the material (source code and images) described in this tutorial i
 (in `tutorial/segmentation/color` folder) and could be found in
 https://github.com/lagadic/visp/tree/master/tutorial/segmentation/color.
 
-\section hsv_video_recorded Color segmentation on a recorded video
+\section hsv_video_recorded 2. Color segmentation on a recorded video
 
 - If not already done, the first step is to record a video as described in \ref tutorial-grabber.
   Let us consider the case of a Realsense camera. To record a video you may run:
@@ -42,7 +42,7 @@ $ ./tutorial-hsv-range-tuner --image /tmp/seq/image-0001.png
 $ ./tutorial-hsv-segmentation --video /tmp/seq/image-%04d.png --hsv-thresholds calib/hsv-thresholds.yml
 \endverbatim
 
-\section hsv_video_live Color segmentation on a live stream
+\section hsv_video_live 3. Color segmentation on a live stream
 
 - We suppose here that you have a Realsense camera and that you install librealsense before building ViSP with
   librealsense 3rdparty support. If you are not familiar with these steps, follow one of the \ref tutorial_install_src
@@ -61,7 +61,7 @@ $ ./tutorial-hsv-range-tuner --hsv-thresholds calib/hsv-thresholds.yml
 $ ./tutorial-hsv-segmentation --hsv-thresholds calib/hsv-thresholds.yml
 \endverbatim
 
-\section hsv_video_next Next tutorial
+\section hsv_video_next 4. Next tutorial
 
 You are now ready to see how to continue with \ref tutorial-hsv-segmentation-pcl.
 

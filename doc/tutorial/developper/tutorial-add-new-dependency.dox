@@ -1,13 +1,13 @@
 /**\page tutorial-add-new-dependency Tutorial: Introduce a new class with 3rd-party dependencies
 \tableofcontents
 
-\section add_new_dep_intro Introduction
+\section add_new_dep_intro 1. Introduction
 
 This tutorial gives some guide lines to explain how to introduce a new class that depends on an external 3rd-party that has its own SDK.
 
 We suppose here that you followed one of the \ref tutorial_install_src tutorials.
 
-\section add_new_dep_overview Overview
+\section add_new_dep_overview 2. Overview
 
 Let us consider the case where we want to implement a new class with name `vpDummyWrapper` that belongs to `visp_robot` module and that is a wrapper over a 3rd-party SDK called `DummySDK`. This SDK contains headers and libraries that are organized like:
 
@@ -61,8 +61,8 @@ vpDummyWrapper::~vpDummyWrapper() {}
 #endif
 \endcode
 
-\section add_new_dep_modif Modify ViSP source code
-\subsection add_new_dep_modif_detect_sdk Add new 3rd-party detection
+\section add_new_dep_modif 3. Modify ViSP source code
+\subsection add_new_dep_modif_detect_sdk 3.1. Add new 3rd-party detection
 
 - The first step is to write the cmake file that allows finding `DummySDK` package. To this end you should introduce `FindDummySDK.cmake` file in ViSP `cmake` folder. The content of `$VISP_WS/visp/cmake/FindDummySDK.cmake` looks like:
 \code
@@ -117,7 +117,7 @@ Entering advanced mode by pressing `[t]` key, you should be also able to see the
  DUMMYSDK_LIBRARY                 /home/user/visp-ws/3rdparty/dummy-sdk/lib/libdummy_sdk.so
 \endcode
 
-\subsection add_new_dep_modif_macro Add VISP_HAVE 3rd-party macro
+\subsection add_new_dep_modif_macro 3.2. Add VISP_HAVE 3rd-party macro
 
 Now you should modify ViSP source code to define `VISP_HAVE_DUMMY_SDK` macro when `DummySDK` package is found. We recall that this macro is used to protect the class that should be build only if this macro is defined.
 
@@ -159,7 +159,7 @@ $ grep VISP_HAVE_DUMMY_SDK include/visp3/core/vpConfig.h
 #define VISP_HAVE_DUMMY_SDK
 \endcode
 
-\subsection add_new_dep_modif_class_header Add new class declaration
+\subsection add_new_dep_modif_class_header 3.3. Add new class declaration
 
 - You are now ready to introduce a new header file implemented in `$VISP_WS/visp/modules/robot/include/visp3/robot/vpDummyWrapper.h` that contains `vpDummyWrapper` class declaration.
 
@@ -190,7 +190,7 @@ public:
 \endverbatim
 where `VISP_HAVE_DUMMY_SDK` macro is used to ensure that the build doesn't fail when `DummySDK` package is not detected or not used. There is also the "\class" Doxygen directive that allows to expose `vpDummyWrapper` class in Doxygen documentation that is generated using `make visp_doc`.
 
-\subsection add_new_dep_modif_class_h Add new class definition
+\subsection add_new_dep_modif_class_h 3.4. Add new class definition
 
 - Similarly, introduce a new source file implemented in `$VISP_WS/visp/modules/robot/src/real-robot/dummy_sdk/vpDummyWrapper.cpp` that contains `vpDummyWrapper` class definition.
 
@@ -218,7 +218,7 @@ $ make visp_doc
 \endcode
 - Use Firefox or any other browser and navigate to `$VISP_WS/visp-build/doc/html/classes.html` to see the new class in the class index.
 
-\subsection add_new_dep_modif_class_cpp Link with 3rd-party
+\subsection add_new_dep_modif_class_cpp 3.5. Link with 3rd-party
 
 - Now we have to indicate how to build `vpDummyWrapper.h` and `vpDummyWrapper.cpp` files that belong to `visp_robot` module tree by making a link to `DummySDK` headers and library. This is simply achieved in `visp_robot` root `CMakeLists.txt` file adding the following lines in $VISP_WS/visp/modules/robot/CMakeLists.txt:
 \code
@@ -234,7 +234,7 @@ $ cd $VISP_WS/visp-build
 $ make visp_robot
 \endcode
 
-\subsection add_new_dep_modif_test Add a new test
+\subsection add_new_dep_modif_test 3.6. Add a new test
 
 - Adding a test is as simple as adding a new file in the module test folder. In our example we could create a new `modules/robot/dummy` folder and add the following file in `$VISP_WS/visp/modules/robot/test/dummy/testDummySDK.cpp` which contains for example:
 \verbatim
@@ -271,7 +271,7 @@ vp_add_tests(
   CTEST_EXCLUDE_FILE dummy/testDummySDK.cpp)
 \endcode
 
-\subsection add_new_dep_modif_example Add a new example
+\subsection add_new_dep_modif_example 3.7. Add a new example
 
 Here we explain how to introduce a new example in ViSP example folder.
 
@@ -337,7 +337,7 @@ $ cmake ../visp
 $ make exampleDummy
 \endcode
 
-\subsection add_new_dep_modif_doxy_tuto Add a new Doxygen tutorial
+\subsection add_new_dep_modif_doxy_tuto 3.8. Add a new Doxygen tutorial
 
 This sections explains how to add a new Doxygen tutorial like this one, that may appear in [ViSP main page documentation](https://visp-doc.inria.fr/doxygen/visp-daily/index.html#tutorial)
 
@@ -345,7 +345,7 @@ This sections explains how to add a new Doxygen tutorial like this one, that may
 \verbatim
 /**\page tutorial-dummy-robot Tutorial: How to start with dummy robot
 \tableofcontents
-\section dummy_intro Introduction
+\section dummy_intro 4. Introduction
 
 Bla Bla...
 
@@ -354,7 +354,7 @@ Bla Bla...
 
 - The next step is to reference this new page called `tutorial-dummy-robot` in ViSP main page documentation modifying `$VISP_WS/visp/doc/mainpage.dox.in`, either adding as bellow a new section (here called "Playing with robots"), either introducing the reference to this new page in an existing section:
 \verbatim
-\subsection tuto_robot Playing with robots
+\subsection tuto_robot 4.1. Playing with robots
 
 \ref tutorial-dummy-robot <br>This tutorial explains how to start with dummy robot.
 \endverbatim
@@ -379,7 +379,7 @@ $ make visp_doc
 \endcode
 - Open `$VISP_WS/visp-build/doc/html/tutorial-dummy-robot.html` in Firefox or any other browser to see the corresponding tutorial.
 
-\section add_new_ext_project Create your own project
+\section add_new_ext_project 5. Create your own project
 
 We suppose here that you \ref add_new_dep_modif and that you want to create your own external project that uses the new `dummyWrapper` class. This as simple as adding a new example inside ViSP as described in \ref add_new_dep_modif_example.
 - The first step is to create your external project. This could be done creating a new folder called `$VISP_WS/my-project` that may contain your main example and a `CMakeLists.txt` file. They could be simply the same as the one described in \ref add_new_dep_modif_example section:
@@ -443,7 +443,7 @@ $ cd $VISP_WS/my-project-build
 $ make
 \endcode
 
-\section add_new_use_case Use cases
+\section add_new_use_case 6. Use cases
 
 Bellow we give a list of some Pull Request to illustrate this tutorial with real use cases:
 - To see the changes introduced to support IIT force-torque sensor 3rd-party SDK, introducing vpForceTorqueIitSensor class and testForceTorqueIitSensor.cpp test, see [PR #686](https://github.com/lagadic/visp/pull/686)

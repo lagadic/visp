@@ -2,7 +2,7 @@
   \page tutorial-ukf Tutorial: Using Unscented Kalman Filter to filter your data
   \tableofcontents
 
-\section tuto-ukf-intro Introduction
+\section tuto-ukf-intro 1. Introduction
 
 The Unscented Kalman Filter (UKF) is a version of the Kalman filter that handles non-linearities.
 
@@ -28,7 +28,7 @@ radius of the revolution around the origin of the world frame.
 \endhtmlonly
 \image html img-tutorial-ukf-illustration.jpg
 
-\subsection tuto-ukf-intro-methods The maths beyond the Unscented Kalman Filter
+\subsection tuto-ukf-intro-methods 1.1. The maths beyond the Unscented Kalman Filter
 
 The maths beyond the Unscented Kalman Filter are explained in the documentation of the vpUnscentedKalman class.
 We will recall briefly the important steps of the UKF.
@@ -108,9 +108,9 @@ Finally, we can compute the new state estimate \f$ \textbf{x} \f$ and the new co
   \end{array}
 \f]
 
-\section tuto-ukf-tutorial Explanations about the tutorial
+\section tuto-ukf-tutorial 2. Explanations about the tutorial
 
-\subsection tuto-ukf-tutorial-howtorun How to run the tutorial
+\subsection tuto-ukf-tutorial-howtorun 2.1. How to run the tutorial
 
 To run the tutorial, please run the following commands:
 
@@ -127,7 +127,7 @@ The program does not take any argument. You should see something similar to the 
 
 Press `Return` to leave the program.
 
-\subsection tuto-ukf-tutorial-explained Detailed explanations about the UKF tutorial
+\subsection tuto-ukf-tutorial-explained 2.2. Detailed explanations about the UKF tutorial
 
 For this tutorial, we use the main program tutorial-ukf.cpp . The internal state of the UKF is
 the 3D position of the object expressed in the world frame, along with the pulsation \f$ \omega \f$ of the motion:
@@ -182,7 +182,7 @@ is given by:
 where \f$ {}^C\textbf{M}_W \f$ is the homogeneous matrix that expresses the pose of the world coordinate frame \f$ {F}_W \f$
 with regard to the camera frame \f$ {F}_C \f$.
 
-\subsubsection tuto-ukf-tutorial-explained-includes Details on the includes
+\subsubsection tuto-ukf-tutorial-explained-includes 2.2.1. Details on the includes
 
 To have a Graphical User Interface (GUI), we include the following files.
 
@@ -192,14 +192,14 @@ To be able to use the UKF, we use the following includes:
 
 \snippet tutorial-ukf.cpp UKF_includes
 
-\subsubsection tuto-ukf-tutorial-explained-plate Details on the class simulating a moving object
+\subsubsection tuto-ukf-tutorial-explained-plate 2.2.2. Details on the class simulating a moving object
 
 To make simpler the main loop of the program, we decided to implement a class that will update the 3D position
 of the object, expressed in the world frame, in a dedicated class.
 
 \snippet tutorial-ukf.cpp Object_simulator
 
-\subsubsection tuto-ukf-tutorial-explained-fx Details on the process function
+\subsubsection tuto-ukf-tutorial-explained-fx 2.2.3. Details on the process function
 
 As mentionned in \ref tuto-ukf-intro-methods, the UKF relies on a process function which project in time the internal state of the UKF.
 
@@ -259,7 +259,7 @@ As the process function is pretty simple, a simple function called here `fx()` i
 
 \snippet tutorial-ukf.cpp Process_function
 
-\subsubsection tuto-ukf-tutorial-explained-markers Details on the class simulating marker measurement
+\subsubsection tuto-ukf-tutorial-explained-markers 2.2.4. Details on the class simulating marker measurement
 
 The measurements of the projection of the markers in the image are handled by the following class:
 
@@ -288,7 +288,7 @@ measurement process:
 
 \snippet tutorial-ukf.cpp Noisy_measurements
 
-\subsubsection tuto-ukf-tutorial-explained-pose Details on the computation of the pose from noisy measurements
+\subsubsection tuto-ukf-tutorial-explained-pose 2.2.5. Details on the computation of the pose from noisy measurements
 
 The method <code>computePose</code> compute the 3D pose of an object from the 3D coordinates along with their projection
 in the image. Here, we use it to convert the noisy measurements in a noisy 3D pose, in order to
@@ -297,7 +297,7 @@ from the noisy measurements.
 
 \snippet tutorial-ukf.cpp Pose_for_display
 
-\subsubsection tuto-ukf-tutorial-explained-constants Details on the constants of the main loop
+\subsubsection tuto-ukf-tutorial-explained-constants 2.2.6. Details on the constants of the main loop
 
 In the main loop of the program, we first declare some constants that will be used later on:
 
@@ -322,7 +322,7 @@ generate camera parameters for a simulated camera as follow:
 
 \snippet tutorial-ukf.cpp Camera_for_measurements
 
-\subsubsection tuto-ukf-tutorial-explained-initukf Details on the initialization of the UKF
+\subsubsection tuto-ukf-tutorial-explained-initukf 2.2.7. Details on the initialization of the UKF
 
 To initialize the UKF, we need an object that will be able to compute the sigma points and their associated weights. To
 do so, we must create an instance of a class inheriting from the class vpUKSigmaDrawerAbstract. In our case, we decided
@@ -370,7 +370,7 @@ If the measurement space cannot use the standard addition and subtraction, it wo
 - a method permitting to subtract two measurement vectors (see vpUnscentedKalman::setMeasurementResidualFunction),
 - and a method permitting to compute the mean of several measurement vectors (see vpUnscentedKalman::setMeasurementMeanFunction).
 
-\subsubsection tuto-ukf-tutorial-explained-initgui Details on the initialization of the Graphical User Interface
+\subsubsection tuto-ukf-tutorial-explained-initgui 2.2.8. Details on the initialization of the Graphical User Interface
 
 If ViSP has been compiled with any of the third-party graphical libraries, we first begin by initializing the
 plot that will display the object x and y coordinates expressed in the world frame:
@@ -381,7 +381,7 @@ Then, we initialize the simple renderer that displays what the camera sees:
 
 \snippet tutorial-ukf.cpp Init_renderer
 
-\subsubsection tuto-ukf-tutorial-explained-initloop Details on the initialization of the loop
+\subsubsection tuto-ukf-tutorial-explained-initloop 2.2.9. Details on the initialization of the loop
 
 For the initialization of the loop, we initialize an instance of the vpObjectSimulator class that
 simulates the moving object. Then, we initialize the current ground-truth 3D position of the object expressed in the
@@ -390,7 +390,7 @@ vector.
 
 \snippet tutorial-ukf.cpp Init_simu
 
-\subsubsection tuto-ukf-tutorial-explained-loop Details on the loop
+\subsubsection tuto-ukf-tutorial-explained-loop 2.2.10. Details on the loop
 
 The main loop of the program is the following:
 
@@ -428,7 +428,7 @@ Finally, we update the renderer that displays the projection in the image of the
 
 The program stops once the `Return` key is pressed.
 
-\section tuto-ukf_next Next tutorial
+\section tuto-ukf_next 3. Next tutorial
 You are now ready to see the next \ref tutorial-pf.
 
 */

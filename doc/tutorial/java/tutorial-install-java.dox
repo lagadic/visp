@@ -12,145 +12,184 @@ is running Linux, OSX or Windows.
 
 \section java_ws 2. Create a workspace
 
-\subsection java_ws_unix 2.1. On Ubuntu, Debian or Mac OSX
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'unix')">Ubuntu, Debian or macOS</button>
+    <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+  </div>
 
-First create a workspace in `$HOME/visp-ws` that will contain ViSP sources, build and dataset.
-\code{.sh}
+  <div data-tab="unix" class="tab-content" style="display:block;">
+    First create a workspace in <code>$HOME/visp-ws</code> that will contain ViSP sources, build and dataset.
+    <pre class="fragment">
 $ export VISP_WS=$HOME/visp-ws
 $ mkdir -p $VISP_WS/3rdparty
-\endcode
+    </pre>
+  </div>
 
-\subsection java_ws_win 2.2. On Windows
-
-Follow instructions to \ref install_win11_msvc17_ws on Windows.
-
-We suppose now that you have set `%%VISP_WS%` var.
+  <div data-tab="windows" class="tab-content" style="display:none;">
+    Follow instructions to
+    <a href="tutorial-install-win11-msvc17.html#install_win11_msvc17_ws">Create a workspace</a> on Windows.<br>
+    We suppose now that you have set <code>%VISP_WS%</code> var.
+  </div>
+</div>
+\endhtmlonly
 
 \section java_install_jdk 3. Install Java Development Kit (JDK)
 
-\note At the time this tutorial was updated, the lastest Long Term Support Java SE Development Kit (JDK) is version 21.
+\note At the time this tutorial was updated, the latest Long Term Support Java SE Development Kit (JDK) is version 21.
 Here we recall \ref java_install_tips_uninstall_jdk if you need to upgrade or downgrade JDK version.
 
-\subsection java_install_jdk_unix 3.1. On Ubuntu or Debian
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'ubuntu')">Ubuntu or Debian</button>
+    <button class="tab-btn" onclick="openTab(event, 'macos')">macOS</button>
+    <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+  </div>
 
-From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download JDK 21 the
-latest Long Term Support release of the Java SE Platform. There exists also JDK 23 the latest release, but we
-experienced issues when using it in an Eclipse project on Ubuntu. That's why at the time this tutorial was updated, we
-considered JDK 21 and downloaded `jdk-21_linux-x64_bin.tar.gz` file.
-After JDK download and extraction of the files from the archive, you may set `JAVA_HOME` environment var to help `cmake`
-to detect JDK.
-\code{.sh}
+  <div data-tab="ubuntu" class="tab-content" style="display:block;">
+    From the <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Oracle</a> website, download
+    JDK 21 the latest Long Term Support release of the Java SE Platform. There exists also JDK 23 the latest release, but
+    we experienced issues when using it in an Eclipse project on Ubuntu. That's why at the time this tutorial was
+    updated, we considered JDK 21 and downloaded <code>jdk-21_linux-x64_bin.tar.gz</code> file.
+    After JDK download and extraction of the files from the archive, you may set <code>JAVA_HOME</code> environment var
+    to help <code>cmake</code> to detect JDK.
+    <pre class="fragment">
 $ tar xvzf ~/Downloads/jdk-21_linux-x64_bin.tar.gz -C $VISP_WS/3rdparty
 $ echo 'export JAVA_HOME=$VISP_WS/3rdparty/jdk-21.0.6' >> ~/.bashrc
 $ echo 'export PATH=${JAVA_HOME}/bin:${PATH}' >> ~/.bashrc
 $ source ~/.bashrc
-\endcode
-
-After installation check JDK version:
-\code{.sh}
+    </pre>
+    After installation check JDK version:
+    <pre class="fragment">
 $ java --version
 java 21.0.6 2025-01-21 LTS
 Java(TM) SE Runtime Environment (build 21.0.6+8-LTS-188)
 Java HotSpot(TM) 64-Bit Server VM (build 21.0.6+8-LTS-188, mixed mode, sharing)
-\endcode
+    </pre>
+  </div>
 
-\subsection java_install_jdk_osx 3.2. On Mac OSX
+  <div data-tab="macos" class="tab-content" style="display:none;">
+    There are two different ways to install JDK on macOS. We recommend the way using DMG installer.
 
-There are two different ways to install JDK on Mac OSX. We recommend the way using DMG installer.
-
-<b>3.2.1. Install JDK with DMG installer</b>
-
-Navigate to [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website and download the
-DMG installer that match your OS. At the time this tutorial was updated, we downloaded `jdk-23_macos-aarch64_bin.dmg`
-that corresponds to the JDK 23 version for a Macbook Pro M1.
-
-After installation, check that JDK and java are well detected:
-\code{.sh}
+    <p><b>1. Install JDK with DMG installer</b></p>
+    Navigate to <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Oracle</a> website and
+    download the DMG installer that match your OS. At the time this tutorial was updated, we downloaded
+    <code>jdk-23_macos-aarch64_bin.dmg</code> that corresponds to the JDK 23 version for a Macbook Pro M1.<br>
+    After installation, check that JDK and java are well detected:
+    <pre class="fragment">
 $ java -version
 java version "23.0.2" 2025-01-21
-\endcode
+    </pre>
 
-<b>3.2.2. Install OpenJDK with brew</b>
-
-\note If you already have an old JDK version you may remove it before installing OpenJDK:
-\code{.sh}
+    <p><b>2. Install OpenJDK with brew</b></p>
+    <dl class="section note">
+      <dt>Note</dt>
+      <dd>
+        If you already have an old JDK version you may remove it before installing OpenJDK:
+        <pre class="fragment">
 $ ls /Library/Java/JavaVirtualMachines/
 jdk-11.0.10.jdk
-\endcode
-Here it shows that `jdk-11.0.10` is installed. To remove this version, see \ref java_install_tips_uninstall_jdk.
-
-To install OpenJDK with brew:
-
-- run:
-\code{.sh}
+        </pre>
+        Here it shows that <code>jdk-11.0.10</code> is installed. To remove this version, see
+        <a href="#java_install_tips_uninstall_jdk">How to uninstall JDK</a>.
+      </dd>
+    </dl>
+    To install OpenJDK with brew:
+    <ul>
+      <li>
+        run:
+        <pre class="fragment">
 $ brew install openjdk
-\endcode
-
-- To know which version is installed:
-\code{.sh}
+        </pre>
+      </li>
+      <li>
+        To know which version is installed:
+        <pre class="fragment">
 $ brew info openjdk
 openjdk: stable 23.0.2 (bottled) [keg-only]
-\endcode
-
-- Now for the system Java wrappers to find this JDK, symlink it with:
-\code{.sh}
+        </pre>
+      </li>
+      <li>
+        Now for the system Java wrappers to find this JDK, symlink it with:
+        <pre class="fragment">
 $ sudo ln -sfn /opt/homebrew/opt/openjdk/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk.jdk
-\endcode
-\note Depending on the OpenJDK version, the symlink instruction can differ. To know which one is to use, follow
-instructions provided by `brew info openjdk`. At the time this tutorial was updated, we got:
-\code{.sh}
+        </pre>
+        <dl class="section note">
+          <dt>Note</dt>
+          <dd>
+            Depending on the OpenJDK version, the symlink instruction can differ. To know which one is to use, follow
+            instructions provided by <code>brew info openjdk</code>. At the time this tutorial was updated, we got:
+            <pre class="fragment">
 $ brew info openjdk
 For the system Java wrappers to find this JDK, symlink it with
   sudo ln -sfn /opt/homebrew/opt/openjdk/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk.jdk
-\endcode
-
-- Set `JAVA_HOME` env var to help JNI headers and libraries detection
-\code{.sh}
+            </pre>
+          </dd>
+        </dl>
+      </li>
+      <li>
+        Set <code>JAVA_HOME</code> env var to help JNI headers and libraries detection
+        <pre class="fragment">
 $ echo 'export JAVA_HOME=$(/usr/libexec/java_home)' >> ~/.zshrc
 $ source ~/.zshrc
-\endcode
-
-- After installation check that OpenJDK and java are well detected:
-\code{.sh}
+        </pre>
+      </li>
+      <li>
+        After installation check that OpenJDK and java are well detected:
+        <pre class="fragment">
 $ java --version
 openjdk 23.0.2 2025-01-21
-\endcode
+        </pre>
+      </li>
+    </ul>
+  </div>
 
-\subsection java_install_jdk_win 3.3. On Windows
-
-From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download JDK 23 to get
-`jdk-23_windows-x64_bin.exe` and run the binary. In order to make `java.exe` available, we had also to add its location
-`C:\Program Files\Java\jdk-17.0.2\bin` to the `%%PATH%` environment variable.
-
-After installation check JDK version:
-\code{.sh}
+  <div data-tab="windows" class="tab-content" style="display:none;">
+    From the <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Oracle</a> website, download
+    JDK 23 to get <code>jdk-23_windows-x64_bin.exe</code> and run the binary. In order to make <code>java.exe</code>
+    available, we had also to add its location <code>C:\Program Files\Java\jdk-23\bin</code> to the
+    <code>%PATH%</code> environment variable.<br>
+    After installation check JDK version:
+    <pre class="fragment">
 C:\> java -version
 java version 23.0.2 2025-01-21
-\endcode
+    </pre>
+  </div>
+</div>
+\endhtmlonly
 
 \section java_eclipse 4. Install the latest Eclipse version
 
 Download the latest Eclipse version at the [Eclipse Download page](https://www.eclipse.org/downloads/eclipse-packages/)
 choosing the <b> Eclipse IDE for Java Developers </b> version.
 
-\subsection java_eclipse_unix 4.1. On Ubuntu, Debian and Mac OSX
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'unix')">Ubuntu, Debian or macOS</button>
+    <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+  </div>
 
-On Ubuntu, Debian or Mac OSX you don’t need to install anything. Extract the downloaded compressed file and put the
-resulting folder wherever you want to, for example in `$VISP_WS/3rdparty/eclipse`.
-
-We suppose here that you have Eclipse installed `$VISP_WS/3rdparty/eclipse`:
-\code{.sh}
+  <div data-tab="unix" class="tab-content" style="display:block;">
+    On Ubuntu, Debian or macOS you don’t need to install anything. Extract the downloaded compressed file and put the
+    resulting folder wherever you want to, for example in <code>$VISP_WS/3rdparty/eclipse</code>.<br>
+    We suppose here that you have Eclipse installed in <code>$VISP_WS/3rdparty/eclipse</code>:
+    <pre class="fragment">
 $ ls $VISP_WS/3rdparty/eclipse
 artifacts.xml  configuration  dropins  eclipse  eclipse.ini  features  icon.xpm  p2  plugins  readme
-\endcode
+    </pre>
+  </div>
 
-\subsection java_eclipse_win 4.2. On Windows
-
-After downloading Eclipse simply open the installer and follow default installation instructions.
-At the time this tutorial was updated we downloaded `"Eclipse IDE 2024-12 R"`, getting `eclipse-inst-jre-win64.exe`
-installer.
-
-Eclipse was installed by default in `C:\Users\%USERNAME%\eclipse\java-2024-12\eclipse` folder.
+  <div data-tab="windows" class="tab-content" style="display:none;">
+    After downloading Eclipse simply open the installer and follow default installation instructions.
+    At the time this tutorial was updated we downloaded <code>"Eclipse IDE 2024-12 R"</code>, getting
+    <code>eclipse-inst-jre-win64.exe</code> installer.<br>
+    Eclipse was installed by default in <code>C:\Users\%USERNAME%\eclipse\java-2024-12\eclipse</code> folder.
+  </div>
+</div>
+\endhtmlonly
 
 \section java_prereq 5. Install Prerequisites
 
@@ -158,38 +197,69 @@ To build ViSP for java you have also to install [CMake](http://www.cmake.org/dow
 [Apache Ant](http://ant.apache.org/), and [Python 3](https://www.python.org/downloads/).
 If you don’t have any of these do the following:
 
-\subsection java_prereq_ubuntu 5.1. On Ubuntu/Debian
-\code{.sh}
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'ubuntu')">Ubuntu or Debian</button>
+    <button class="tab-btn" onclick="openTab(event, 'fedora')">Fedora or CentOS</button>
+    <button class="tab-btn" onclick="openTab(event, 'macos')">macOS</button>
+    <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+  </div>
+
+  <div data-tab="ubuntu" class="tab-content" style="display:block;">
+    <pre class="fragment">
 $ sudo apt-get install cmake-curses-gui ant python3
-\endcode
+    </pre>
+  </div>
 
-\subsection java_prereq_fedora 5.2. On Fedora/CentOS
-\code{.sh}
+  <div data-tab="fedora" class="tab-content" style="display:none;">
+    <pre class="fragment">
 $ sudo dnf install gcc-c++ cmake ant python3
-\endcode
+    </pre>
+  </div>
 
-\subsection java_prereq_mac 5.3. On Mac OSX
-\code{.sh}
+  <div data-tab="macos" class="tab-content" style="display:none;">
+    <pre class="fragment">
 $ brew install cmake ant python3
-\endcode
+    </pre>
+  </div>
 
-\subsection java_prereq_win 5.4. On Windows
-- Download the latest CMake release for Windows win64-x64 platform from http://www.cmake.org. At the time this
-  tutorial was written it was the file cmake-4.0.0-rc1-windows-x86_64.msi. To install just double click on the msi file.
-- Download the latest Python 3 release for Windows from https://www.python.org/downloads/. At the time this tutorial
-  was written, it was Python 3.13.2.
-- There is also Apache Ant that is needed. Download Apache Ant binary distribution from
-  https://ant.apache.org/bindownload.cgi. At the time this tutorial was updated we downloaded
-  `apache-ant-1.10.15-bin.zip` file. Unzip the file for example in `C:\Users\%USERNAME%\apache-ant-1.10.15-bin`.
-  To help Ant detection, set `ANT_HOME` var to your installation folder. In our case it becomes
-\code{.sh}
+  <div data-tab="windows" class="tab-content" style="display:none;">
+    <ul>
+      <li>
+        Download the latest CMake release for Windows win64-x64 platform from
+        <a href="http://www.cmake.org">http://www.cmake.org</a>. At the time this tutorial was written it was the file
+        <code>cmake-4.0.0-rc1-windows-x86_64.msi</code>. To install just double click on the msi file.
+      </li>
+      <li>
+        Download the latest Python 3 release for Windows from
+        <a href="https://www.python.org/downloads/">https://www.python.org/downloads/</a>. At the time this tutorial
+        was written, it was Python 3.13.2.
+      </li>
+      <li>
+        There is also Apache Ant that is needed. Download Apache Ant binary distribution from
+        <a href="https://ant.apache.org/bindownload.cgi">https://ant.apache.org/bindownload.cgi</a>. At the time this
+        tutorial was updated we downloaded <code>apache-ant-1.10.15-bin.zip</code> file. Unzip the file for example in
+        <code>C:\Users\%USERNAME%\apache-ant-1.10.15-bin</code>.
+        To help Ant detection, set <code>ANT_HOME</code> var to your installation folder. In our case it becomes
+        <pre class="fragment">
 C:\> setx ANT_HOME C:\Users\%USERNAME%\apache-ant-1.10.15-bin
-\endcode
-  You need also to add `"%ANT_HOME%\bin"` to the `"Path"` environment variable. To this end, open the environment
-  variables panel, and modify `"Path"` accordingly. In our case we added
-  `"C:\Users\%USERNAME%\apache-ant-1.10.15-bin\bin"` folder.
-  \note You can check that the `"%ANT_HOME%"` variable is correctly positioned by checking that the `ant.bat` file is
-  in the `"%ANT_HOME%\bin"` folder.
+        </pre>
+        You need also to add <code>"%ANT_HOME%\bin"</code> to the <code>"Path"</code> environment variable. To this
+        end, open the environment variables panel, and modify <code>"Path"</code> accordingly. In our case we added
+        <code>"C:\Users\%USERNAME%\apache-ant-1.10.15-bin\bin"</code> folder.
+        <dl class="section note">
+          <dt>Note</dt>
+          <dd>
+            You can check that the <code>"%ANT_HOME%"</code> variable is correctly positioned by checking that the
+            <code>ant.bat</code> file is in the <code>"%ANT_HOME%\bin"</code> folder.
+          </dd>
+        </dl>
+      </li>
+    </ul>
+  </div>
+</div>
+\endhtmlonly
 
 \section install_java_visp 6. Build ViSP from source code
 
@@ -225,26 +295,48 @@ ViSP from a zip or tarball. In that case, the source is rather in something like
 
 \subsection install_java_visp_config 6.2. Configuring ViSP from source
 
-- In the workspace, create first a directory named `visp-build` that will contain all the build material; generated
-  Makefiles or Visual Studio Solution files, object files, output libraries and binaries once build is done, and in a
-  second stage configure ViSP using CMake.
-  - **On Ubuntu/Debian like and on macOS**
-\code{.sh}
+In the workspace, create first a directory named `visp-build` that will contain all the build material; generated
+Makefiles or Visual Studio Solution files, object files, output libraries and binaries once build is done, and in a
+second stage configure ViSP using CMake.
+
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'unix')">Ubuntu/Debian or macOS</button>
+    <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+  </div>
+
+  <div data-tab="unix" class="tab-content" style="display:block;">
+    <pre class="fragment">
 $ mkdir $VISP_WS/visp-build
 $ cd $VISP_WS/visp-build
 $ cmake ../visp
-\endcode
-  - **On Windows**
-\code{.sh}
+    </pre>
+  </div>
+
+  <div data-tab="windows" class="tab-content" style="display:none;">
+    <pre class="fragment">
 C:\> mkdir %VISP_WS%\visp-build
 C:\> cd %VISP_WS%\visp-build
 C:\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\visp
-\endcode
+    </pre>
+  </div>
+</div>
+\endhtmlonly
 
-- At this point, in `$VISP_WS/visp-build/ViSP-third-party.txt` you should find something similar to the following
-  snapshot that shows that `python`, `ant` and `JNI` are found:
-  - **On Ubuntu/Debian like**
-\code{.sh}
+At this point, in `$VISP_WS/visp-build/ViSP-third-party.txt` you should find something similar to the following
+snapshot that shows that `python`, `ant` and `JNI` are found:
+
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'ubuntu')">Ubuntu/Debian</button>
+    <button class="tab-btn" onclick="openTab(event, 'macos')">macOS</button>
+    <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+  </div>
+
+  <div data-tab="ubuntu" class="tab-content" style="display:block;">
+    <pre class="fragment">
 ==========================================================
 General configuration information for ViSP 3.6.1
 
@@ -301,10 +393,11 @@ General configuration information for ViSP 3.6.1
     Java:                        no
     JNI:                         /home/username/visp-ws/3rdparty/jdk-21.0.6/include /home/username/visp-ws/3rdparty/jdk-21.0.6/include/linux /home/username/visp-ws/3rdparty/jdk-21.0.6/include
     Java wrappers:               yes (ANT)
-\endcode
+    </pre>
+  </div>
 
-  - **On macOS**
-\code{.sh}
+  <div data-tab="macos" class="tab-content" style="display:none;">
+    <pre class="fragment">
 $ more ViSP-third-party.txt
 ==========================================================
 General configuration information for ViSP 3.6.1
@@ -362,10 +455,11 @@ General configuration information for ViSP 3.6.1
     Java:                        no
     JNI:                         /opt/homebrew/Cellar/openjdk/23.0.2/libexec/openjdk.jdk/Contents/Home/include /opt/homebrew/Cellar/openjdk/23.0.2/libexec/openjdk.jdk/Contents/Home/include/darwin /opt/homebrew/Cellar/openjdk/23.0.2/libexec/openjdk.jdk/Contents/Home/include
     Java wrappers:               yes (ANT)
-\endcode
+    </pre>
+  </div>
 
-  - **On Windows**
-\code{.sh}
+  <div data-tab="windows" class="tab-content" style="display:none;">
+    <pre class="fragment">
 C:\> type ViSP-third-party.txt
 ==========================================================
 General configuration information for ViSP 3.6.1
@@ -425,34 +519,51 @@ General configuration information for ViSP 3.6.1
     Java:                        no
     JNI:                         C:/Program Files/Java/jdk-23/include C:/Program Files/Java/jdk-23/include/win32 C:/Program Files/Java/jdk-23/include
     Java wrappers:               yes (ANT)
-\endcode
+    </pre>
+  </div>
+</div>
+\endhtmlonly
 
-  \note If JNI is not found (ie. the line starting with `JNI:` is empty), we recommend to do a fresh build removing all
-  the files in the build folder and configuring again from scratch with CMake.
+\note If JNI is not found (ie. the line starting with `JNI:` is empty), we recommend to do a fresh build removing all
+the files in the build folder and configuring again from scratch with CMake.
 
 \subsection install_java_visp_build 6.3. Building ViSP libraries
 
-Depending on you platform, you can now build `visp_java` module:
+Depending on your platform, you can now build `visp_java` module:
 
-- **On Ubuntu/Debian like, proceed with:**
-\code{.sh}
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'ubuntu')">Ubuntu/Debian</button>
+    <button class="tab-btn" onclick="openTab(event, 'macos')">macOS</button>
+    <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+  </div>
+
+  <div data-tab="ubuntu" class="tab-content" style="display:block;">
+    <pre class="fragment">
 $ cd $VISP_WS/visp-build
 $ make -j$(nproc) visp_java
-\endcode
+    </pre>
+  </div>
 
-- **On macOS, proceed with:**
-\code{.sh}
+  <div data-tab="macos" class="tab-content" style="display:none;">
+    <pre class="fragment">
 $ cd $VISP_WS/visp-build
 $ make -j$(sysctl -n hw.ncpu) visp_java
-\endcode
+    </pre>
+  </div>
 
-- **On Windows, proceed with:**
-\code{.sh}
+  <div data-tab="windows" class="tab-content" style="display:none;">
+    <pre class="fragment">
 C:\> cd %VISP_WS%\visp-build
 C:\> cmake --build . --config Release --target visp_java
-\endcode
+    </pre>
+  </div>
+</div>
+\endhtmlonly
 
-Note that ViSP Java ARchive is now available in `$VISP_WS/visp-build/bin/visp-340.jar`.
+Note that ViSP Java ARchive is now available in `$VISP_WS/visp-build/bin/visp-<version>.jar`, where `<version>` is
+the ViSP version without dots (for example `visp-361.jar` for ViSP 3.6.1).
 
 \section create_user_library 7. Creating a user library in Eclipse
 
@@ -471,7 +582,7 @@ library (e.g `visp`) and press **OK** button.
 
 \image html img-tutorial-java-eclipse2.jpeg Create a new User Library
 
-Press `"Add External JARs"` button, browse to select <b>`$VISP_WS/visp-build/bin/visp-361.jar`</b> from your computer.
+Press `"Add External JARs"` button, browse to select <b>`$VISP_WS/visp-build/bin/visp-<version>.jar`</b> from your computer.
 
 \image html img-tutorial-java-eclipse21.jpg Add external JARs
 

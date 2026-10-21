@@ -3,7 +3,7 @@
 \page tutorial-boost-vs Tutorial: How to boost your visual servo control law
 \tableofcontents
 
-\section intro_boost_vs Introduction
+\section intro_boost_vs 1. Introduction
 
 This tutorial gives some hints to boost your visual servo control law in order to speed up the time to convergence.
 
@@ -51,7 +51,7 @@ while(1) {
 \endcode
 
 
-\section adaptive_gain Using an adaptive gain
+\section adaptive_gain 2. Using an adaptive gain
 
 As implemented in tutorial-ibvs-4pts-plotter-gain-adaptive.cpp it is possible to adapt the gain \f$ \lambda \f$ in
 order to depend on the infinity norm of the task Jacobian. The usage of an adaptive gain rather than a constant gain
@@ -81,7 +81,7 @@ vpAdaptiveGain lambda(4, 0.4, 30);   // lambda(0)=4, lambda(oo)=0.4 and lambda'(
 task.setLambda(lambda);
 \endcode
 
-\subsection adaptive_gain_tune How to tune adaptive gain
+\subsection adaptive_gain_tune 2.1. How to tune adaptive gain
 
 To adjust the adaptative gain to your current servoing task, you need to proceed step-by-step :
   - First, switch back to a constant gain by replacing
@@ -109,7 +109,7 @@ task.setLambda(lambda);
   - The last value, \f$\lambda'_0\f$, is the slope of the curve
     \f$ \lambda_{adapt} = f(s-s^*) \f$ where \f$ s-s^* = 0 \f$ . You can keep it at 30.
 
-\section continuous_adaptive_gain Continuous sequencing
+\section continuous_adaptive_gain 3. Continuous sequencing
 
 As implemented in tutorial-ibvs-4pts-plotter-continuous-gain-adaptive.cpp it is also possible to ensure continuous
 sequencing to avoid velocity discontinuities. This behavior is achieved by introducing an additional term to the
@@ -145,7 +145,7 @@ here after we give the new line of code that were introduced to ensure continuou
       vpColVector v = task.computeControlLaw(iter*robot.getSamplingTime());
 \endcode
 
-\section boost_vs_next Next tutorial
+\section boost_vs_next 4. Next tutorial
 
 You are now ready to see the \ref tutorial-franka-pbvs that will show how to use adaptive gain and task sequencing on
  a real robot.

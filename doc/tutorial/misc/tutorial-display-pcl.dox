@@ -3,7 +3,7 @@
 \page tutorial-display-pcl Tutorial: Threaded PCL viewer
 \tableofcontents
 
-\section pcl_viewer_intro Introduction
+\section pcl_viewer_intro 1. Introduction
 
 This tutorial shows how to use the `vpDisplayPCL` class.
 
@@ -14,12 +14,12 @@ The program first generate a polynomial surface, whose coordinates are expressed
 Then, a second surface is generated. It corresponds to the first surface, moved in another coordinates frame.
 Some noise is added to this second surface if requested by the user (by default it is not activated), to simulate sensor innacuracy. Finally, the point clouds are displayed using the `vpDisplayPCL`.
 
-\section pcl_viewer_requirements Requirements
+\section pcl_viewer_requirements 2. Requirements
 
 To enable `vpDisplayPCL` class usage, and thus use this tutorial, you need to have a version of ViSP build with PCL. To see how to install PCL library,
 please refer to the \ref soft_tool_pcl section.
 
-\section pcl_viewer_howtorun How to run the tutorial
+\section pcl_viewer_howtorun 3. How to run the tutorial
 
 To see the different options of the tutorial, please run the following commands:
 ```
@@ -38,7 +38,7 @@ $ ./tutorial-display-pcl
 ```
 To stop the program, please click in the viewer window and press the `q` key.
 
-\section pcl_viewer_example Point clouds visualization example explained
+\section pcl_viewer_example 4. Point clouds visualization example explained
 
 For this tutorial, we use the main program tutorial-display-pcl.cpp.
 
@@ -46,7 +46,7 @@ It uses the following class, which generates 3D coordinates and relies on the `v
 
 \include ClassUsingDisplayPCL.h
 
-\subsection pcl_viewer_main Main code explained
+\subsection pcl_viewer_main 4.1. Main code explained
 
 Let us first have a look at the main program.
 
@@ -74,9 +74,9 @@ of the program.
 
 \snippet tutorial-display-pcl.cpp Arguments parser
 
-\subsection pcl_viewer_class Code of the example class explained
+\subsection pcl_viewer_class 4.2. Code of the example class explained
 
-\subsubsection pcl_viewer_class_generation Generation of the polynomial surfaces used in this example
+\subsubsection pcl_viewer_class_generation 4.2.1. Generation of the polynomial surfaces used in this example
 
 For this example, we decided to modelize a polynomial 3D surface. The Z coordinate
 is computed from the X and Y coordinates thanks to the following method.
@@ -94,7 +94,7 @@ to the displaced surface.
 
 \snippet ClassUsingDisplayPCL.cpp Surface generator
 
-\subsubsection pcl_viewer_class_usage How to use the vpDisplayPCL class to display the point clouds
+\subsubsection pcl_viewer_class_usage 4.2.2. How to use the vpDisplayPCL class to display the point clouds
 
 To use the `vpDisplayPCL` class, you must first add the surfaces you want to display. For a textureless point cloud,
 you can either choose the color to use to render it
@@ -114,9 +114,9 @@ method to refresh the visualizer:
 
 \snippet ClassUsingDisplayPCL.cpp Display monothread
 
-\section pcl_viewer_known_issues Known issues
+\section pcl_viewer_known_issues 5. Known issues
 
-\subsection pcl_viewer_issues_MacOs Known issue on MacOS
+\subsection pcl_viewer_issues_MacOs 5.1. Known issue on MacOS
 
 On MacOS, you can face the following error:
 \code
@@ -127,7 +127,7 @@ This problem seems to be due to VTK library that does not like to be run in a no
 You can use the vpDisplayPCL class in monothread mode using the method vpDisplayPCL::display. See the
 [PCL issue](https://github.com/PointCloudLibrary/pcl/issues/253#issuecomment-29716100) for more details.
 
-\subsection pcl_viewer_issues_ubuntu Known issue on Ubuntu 22.04
+\subsection pcl_viewer_issues_ubuntu 5.2. Known issue on Ubuntu 22.04
 
 On Ubuntu 22.04, you can face the following error:
 \code
@@ -144,7 +144,7 @@ This is a [known compatibility issue](https://github.com/PointCloudLibrary/pcl/i
 The vpDisplayPCL can be used in monothread mode, or you may try to install PCL from source and then recompile
 ViSP.
 
-\subsection pcl_viewer_issues_xserver Known issue when using VTK and the server X backends
+\subsection pcl_viewer_issues_xserver 5.3. Known issue when using VTK and the server X backends
 
 When the PCL library relies on the VTK library and X11 library as backends for the viewer, you
 may face the following error if you create either two viewers in threaded mode or one viewer in

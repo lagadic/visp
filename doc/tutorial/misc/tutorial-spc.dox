@@ -2,7 +2,7 @@
   \page tutorial-spc Tutorial: Using Statistical Process Control to monitor your signal
   \tableofcontents
 
-\section tuto-spc-intro Introduction
+\section tuto-spc-intro 1. Introduction
 
 Statistical Process Control (SPC) is defined as the use of statistical methods to monitor
 if a signal is "in control".
@@ -10,7 +10,7 @@ if a signal is "in control".
 In this tutorial, we will use a Statistical Process Control method to monitor if a
 random signal following a normal distribution is "in control".
 
-\subsection tuto-spc-intro-methods Available methods
+\subsection tuto-spc-intro-methods 1.1. Available methods
 
 The different methods available in ViSP aim at detecting if the mean of a signal is
 changing, either due to an abrupt jump or due to a slow drift.
@@ -25,9 +25,9 @@ The different methods that are available are the following:
 We refer the reader to the documentation of each class to have more detailed information on
 each method.
 
-\section tuto-spc-tutorial Explanations about the tutorial
+\section tuto-spc-tutorial 2. Explanations about the tutorial
 
-\subsection tuto-spc-tutorial-howtorun How to run the tutorial
+\subsection tuto-spc-tutorial-howtorun 2.1. How to run the tutorial
 
 To see the different options of the tutorial, please run the following commands:
 
@@ -46,7 +46,7 @@ console, and which are its parameters. A monitoring loop stops once an alarm
 is raised. When the alarm is raised, some information about the alarm and the
 test signal(s) + limits of the SPC method are given. Press `Return` to leave the program.
 
-\subsection tuto-spc-tutorial-explained Detailed explanations about the SPC tutorial
+\subsection tuto-spc-tutorial-explained 2.2. Detailed explanations about the SPC tutorial
 
 For this tutorial, we use the main program tutorial-meandrift.cpp .
 

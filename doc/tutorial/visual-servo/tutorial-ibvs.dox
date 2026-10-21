@@ -3,7 +3,7 @@
 \page tutorial-ibvs Tutorial: Image-based visual servo (IBVS)
 \tableofcontents
 
-\section ibvs_intro Introduction
+\section ibvs_intro 1. Introduction
 
 The aim of all vision-based control schemes is to minimize an
 error \f${\bf e}(t)\f$, which is typically defined by \f${\bf e}(t) = {\bf s}[{\bf m}(t), {\bf a}]-{\bf s}^*\f$.
@@ -56,7 +56,7 @@ Note that all the material (source code and image) described in this tutorial is
 part of ViSP source code (in `tutorial/visual-servoing/ibvs` folder) and could be found in
 https://github.com/lagadic/visp/tree/master/tutorial/visual-servoing/ibvs.
 
-\section ibvs_basic Basic IBVS simulation
+\section ibvs_basic 2. Basic IBVS simulation
 
 The following example available in tutorial-ibvs-4pts.cpp shows how to use ViSP to implement an IBVS simulation
 using 4 points as visual features.
@@ -194,7 +194,7 @@ Before exiting the program, we free all the memory by killing the task.
 The next \ref tutorial-plotter shows how to modify the previous example to plot some curves that illustrate the
 visual servo behavior.
 
-\section ibvs_display IBVS simulation with basic viewers
+\section ibvs_display 3. IBVS simulation with basic viewers
 
 The previous IBVS simulation can be modified easily to introduce a basic internal and external camera viewer.
 This is implemented in tutorial-ibvs-4pts-display.cpp and given below:
@@ -309,7 +309,7 @@ Finally, at each iteration of the servo loop we update the viewers:
     vpDisplay::flush(Iext);
 \endcode
 
-\section ibvs_wireframe IBVS simulation with wireframe viewers
+\section ibvs_wireframe 4. IBVS simulation with wireframe viewers
 
 The IBVS simulation presented section \ref ibvs_basic can also be modified to introduce a wireframe internal and
 external camera viewer. This is implemented in tutorial-ibvs-4pts-wireframe-camera.cpp and given below:
@@ -378,7 +378,7 @@ on a Viper arm.
 <iframe width="560" height="315" src="https://www.youtube.com/embed/g0B5ug0ooYo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 \endhtmlonly
 
-\section ibvs_tracking IBVS simulation with image processing
+\section ibvs_tracking 5. IBVS simulation with image processing
 
 \note In this section we assume that you are familiar with:
 - the blob tracker presented in \ref tutorial-tracking-blob
@@ -459,6 +459,6 @@ projecting each 3D point of the target in the camera frame using:
     }
 \endcode
 
-\section ibvs_next Next tutorial
+\section ibvs_next 6. Next tutorial
 You are now ready to see the \ref tutorial-simu-robot-pioneer and \ref tutorial-boost-vs.
 */

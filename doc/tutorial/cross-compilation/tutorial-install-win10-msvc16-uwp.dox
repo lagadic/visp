@@ -92,11 +92,22 @@ We suppose now that ViSP source is in `%%VISP_WS%\visp`.
 
 \subsection install_msvc16_uwp_build_ws_10 4.1. Build for Windows Store 10.0
 
-\subsubsection install_msvc16_uwp_build_ws_10_x86 4.1.1. Targeting a x86 platform
+The installation folder is the same for all the targeted platforms (x86, x64 and ARM) to ensure a unique
+installation folder.
 
-With CMake configure ViSP specifying options for cross compiling for `"Windows Store"` operating system in version
-`"10"` targeting a `"x86"` platform, by opening a `cmd` Command Prompt and running:
-\verbatim
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'x86')">x86</button>
+    <button class="tab-btn" onclick="openTab(event, 'x64')">x64</button>
+    <button class="tab-btn" onclick="openTab(event, 'arm')">ARM</button>
+  </div>
+
+  <div data-tab="x86" class="tab-content" style="display:block;">
+    With CMake configure ViSP specifying options for cross compiling for <code>"Windows Store"</code> operating
+    system in version <code>"10.0"</code> targeting a <code>"x86"</code> platform, by opening a <code>cmd</code>
+    Command Prompt and running:
+    <pre class="fragment">
 C:\> mkdir %VISP_WS%\visp-build-vc16-uwp-ws-10-x86
 C:\> cd %VISP_WS%\visp-build-vc16-uwp-ws-10-x86
 C:\> cmake.exe -G "Visual Studio 16 2019" -A "Win32" ^
@@ -110,25 +121,17 @@ C:\> cmake.exe -G "Visual Studio 16 2019" -A "Win32" ^
                -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc16-uwp-ws-10-install ^
                ..\visp
 C:\> cmake --build . --config Release --target install
-\endverbatim
+    </pre>
+    If everything goes right you will find ViSP libraries and headers in
+    <code>%VISP_WS%/visp-build-vc16-uwp-ws-10-install</code> folder. Libraries are located in
+    <code>x86/vc16/bin</code> subfolder and headers in <code>include</code> subfolder.
+  </div>
 
-If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc16-uwp-ws-10-install`
-folder. Libraries are located in `x86/vc16/bin` subfolder and headers in `include` subfolder.
-
-\note An other way to build ViSP is to use Visual Studio.
-- To this end open File Explorer, navigate to `%%VISP_WS%\visp-build-vc16-uwp-ws-10-x86` folder and just double click
-  on `VISP.sln` solution file. This action will open ViSP solution in Visual Studio C++.
-- With Visual Studio to build and install the solution, select first `"Release"` configuration and build `"INSTALL"`
-  project. To this end, in Visual Studio right panel apply a left click on `"INSTALL"` to select the project, then a
-  right click to enter in the `"Build"` menu.
-\image html img-win10-msvc16-uwp-install.png
-
-\subsubsection install_msvc16_uwp_build_ws_10_x64 4.1.2. Targeting a x64 platform
-
-The same process could be applied except that during cmake configuration you have to use `"Visual Studio 16 2019 Win64"`
-generator. Installation folder is the same to ensure a unique installation folder for all the targeted platforms:
-
-\verbatim
+  <div data-tab="x64" class="tab-content" style="display:none;">
+    With CMake configure ViSP specifying options for cross compiling for <code>"Windows Store"</code> operating
+    system in version <code>"10.0"</code> targeting a <code>"x64"</code> platform, by opening a <code>cmd</code>
+    Command Prompt and running:
+    <pre class="fragment">
 C:\> mkdir %VISP_WS%\visp-build-vc16-uwp-ws-10-x64
 C:\> cd %VISP_WS%\visp-build-vc16-uwp-ws-10-x64
 C:\> cmake.exe -G "Visual Studio 16 2019" -A "x64" ^
@@ -142,17 +145,17 @@ C:\> cmake.exe -G "Visual Studio 16 2019" -A "x64" ^
                -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc16-uwp-ws-10-install ^
                ..\visp
 C:\> cmake --build . --config Release --target install
-\endverbatim
+    </pre>
+    If everything goes right you will find ViSP libraries and headers in
+    <code>%VISP_WS%/visp-build-vc16-uwp-ws-10-install</code> folder. Libraries are located in
+    <code>x64/vc16/bin</code> subfolder and headers in <code>include</code> subfolder.
+  </div>
 
-If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc16-uwp-ws-10-install`
-folder. Libraries are located in `x64/vc16/bin` subfolder and headers in `include` subfolder.
-
-\subsubsection install_msvc16_uwp_build_ws_10_arm 4.1.3. Targeting an ARM platform
-
-The same process could be applied except that during cmake configuration you have to use `"Visual Studio 16 2019 ARM"`
-generator. Installation folder is the same to ensure a unique installation folder for all the targeted platforms:
-
-\verbatim
+  <div data-tab="arm" class="tab-content" style="display:none;">
+    With CMake configure ViSP specifying options for cross compiling for <code>"Windows Store"</code> operating
+    system in version <code>"10.0"</code> targeting a <code>"ARM"</code> platform, by opening a <code>cmd</code>
+    Command Prompt and running:
+    <pre class="fragment">
 C:\> mkdir %VISP_WS%\visp-build-vc16-uwp-ws-10-arm
 C:\> cd %VISP_WS%\visp-build-vc16-uwp-ws-10-arm
 C:\> cmake.exe -G "Visual Studio 16 2019" -A "ARM" ^
@@ -166,10 +169,22 @@ C:\> cmake.exe -G "Visual Studio 16 2019" -A "ARM" ^
                -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc16-uwp-ws-10-install ^
                ..\visp
 C:\> cmake --build . --config Release --target install
-\endverbatim
+    </pre>
+    If everything goes right you will find ViSP libraries and headers in
+    <code>%VISP_WS%/visp-build-vc16-uwp-ws-10-install</code> folder. Libraries are located in
+    <code>ARM/vc16/bin</code> subfolder and headers in <code>include</code> subfolder.
+  </div>
+</div>
+\endhtmlonly
 
-If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc16-uwp-ws-10-install`
-folder. Libraries are located in `ARM/vc16/bin` subfolder and headers in `include` subfolder.
+\note An other way to build ViSP is to use Visual Studio.
+- To this end open File Explorer, navigate to the build folder corresponding to your target platform, for example
+  `%%VISP_WS%\visp-build-vc16-uwp-ws-10-x86`, and just double click on `VISP.sln` solution file. This action will open
+  ViSP solution in Visual Studio C++.
+- With Visual Studio to build and install the solution, select first `"Release"` configuration and build `"INSTALL"`
+  project. To this end, in Visual Studio right panel apply a left click on `"INSTALL"` to select the project, then a
+  right click to enter in the `"Build"` menu.
+\image html img-win10-msvc16-uwp-install.png
 
 \section install_msvc16_uwp_tips 5. Tips and tricks
 \subsection install_msvc16_uwp_tips_msvc 5.1. How to add Universal Windows App Development Tools support
