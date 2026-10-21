@@ -1,5 +1,30 @@
 {
   "classes": {
+    "vpHSV": {
+      "specializations": [
+        {
+          "python_name": "HSVucLimitedScale",
+          "arguments": [
+            "unsigned char",
+            "false"
+          ]
+        },
+        {
+          "python_name": "HSVucFullScale",
+          "arguments": [
+            "unsigned char",
+            "true"
+          ]
+        },
+        {
+          "python_name": "HSVDouble",
+          "arguments": [
+            "double",
+            "true"
+          ]
+        }
+      ]
+    },
     "vpImage": {
       "ignore_repr": true,
       "additional_bindings": "bindings_vpImage",
@@ -50,6 +75,24 @@
           "python_name": "ImageRGBf",
           "arguments": [
             "vpRGBf"
+          ]
+        },
+        {
+          "python_name": "ImageHSVucLS",
+          "arguments": [
+            "vpHSV<unsigned char, false>"
+          ]
+        },
+        {
+          "python_name": "ImageHSVucFS",
+          "arguments": [
+            "vpHSV<unsigned char, true>"
+          ]
+        },
+        {
+          "python_name": "ImageHSVd",
+          "arguments": [
+            "vpHSV<double, true>"
           ]
         }
       ],
@@ -669,6 +712,42 @@
           "signature": "void demosaicRGGBToRGBaMalvar(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
           "ignore": true,
           "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void convert(const vpImage<vpRGBa> &, vpImage<vpHSV<T, useFullScale>> &)",
+          "specializations": [
+            [
+              "unsigned char",
+              "false"
+            ],
+            [
+              "unsigned char",
+              "true"
+            ],
+            [
+              "double",
+              "true"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void convert(const vpImage<vpHSV<T, useFullScale>> &, vpImage<vpRGBa> &)",
+          "specializations": [
+            [
+              "unsigned char",
+              "false"
+            ],
+            [
+              "unsigned char",
+              "true"
+            ],
+            [
+              "double",
+              "true"
+            ]
+          ]
         }
       ]
     }

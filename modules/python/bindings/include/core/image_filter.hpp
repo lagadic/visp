@@ -640,6 +640,97 @@ py::arg("backend") = vpImageFilter::CANNY_VISP_BACKEND,
 py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
+template<typename ArithmeticType, bool useFullScale, typename FilterType>
+void define_computeCannyThresholdHSV(
+  py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
+  pyClass.def_static(
+    "computeCannyThreshold",
+    [](const vpImage<vpHSV<ArithmeticType, useFullScale>> &I,
+       const std::optional<vpImage<FilterType>> &dIx, std::optional<vpImage<FilterType>> &dIy,
+       const unsigned int &gaussianKernelSize,
+       const FilterType &gaussianStdev, const unsigned int &apertureGradient,
+       const float &lowerThresholdRatio, const float &upperThresholdRatio,
+       const vpImageFilter::vpCannyFilteringAndGradientType &filteringType,
+       const std::optional<vpImage<bool>> &mask) {
+         const vpImage<FilterType> *p_dIx = (dIx ? &(dIx.value()) : nullptr);
+         const vpImage<FilterType> *p_dIy = (dIy ? &(dIy.value()) : nullptr);
+         const vpImage<bool> *p_mask = (mask ? &(mask.value()) : nullptr);
+         float lowerThresh = 0.;
+         float upperThresh = vpImageFilter::computeCannyThreshold(I, lowerThresh, p_dIx, p_dIy, gaussianKernelSize, gaussianStdev, apertureGradient, lowerThresholdRatio, upperThresholdRatio, filteringType, p_mask);
+         return py::make_tuple(lowerThresh, upperThresh);
+    },
+    R"doc(
+Compute the upper Canny edge filter threshold, using Gaussian blur + Sobel or + Scharr operators to compute the gradient of the image.
+
+:param I: The input image.
+:param dIx: If different from None, must contain the gradient of the image with regard to the horizontal axis.
+:param dIy: If different from None, must contain the gradient of the image with regard to the vertical axis.
+:param gaussianKernelSize: Gaussian filter size. This value should be odd.
+:param gaussianStdev: Gaussian standard deviation. If it is zero or negative, it is computed from the filter size as ``(size - 1) / 6``.
+:param apertureGradient: Gradient filter size. This value should be odd.
+:param lowerThresholdRatio: The ratio of the upper threshold the lower threshold must be equal to.
+:param upperThresholdRatio: The ratio of pixels whose absolute gradient Gabs is lower or equal to define the upper threshold.
+:param filteringType: The type of filters to apply to compute the gradients.
+:param mask: Optional mask indicating which pixels to consider. True means that the pixel is considered, while False means that it is ignored.
+
+:return: The upper threshold for the Canny filter.
+Example usage:
+
+.. testcode::
+
+  from visp.core import ImageGray, ImageDouble, ImageBool, ImageFilter
+  import numpy as np
+
+  Iin = ImageGray(100, 100, 0)
+  Iin.numpy()[25:75, 25:75] = np.random.randint(0,256,size=(50,50))
+
+  (lowerThresh, upperThresh) = ImageFilter.computeCannyThreshold(Iin)
+
+  assert lowerThresh != 0.
+  assert upperThresh != 0.
+
+  mask = ImageBool(100, 100, True)
+
+  (lowerThresh, upperThresh) = ImageFilter.computeCannyThreshold(
+    Iin,
+    dIx=None, dIy=None,
+    gaussianKernelSize=5, gaussianStdev=2.,
+    apertureGradient=3,
+    lowerThresholdRatio=0.6,
+    upperThresholdRatio=0.8,
+    filteringType=ImageFilter.CANNY_GBLUR_SOBEL_FILTERING,
+    mask=mask
+  )
+
+  assert lowerThresh != 0.
+  assert upperThresh != 0.
+)doc",
+py::arg("I"),
+py::arg("dIx").none(true) = static_cast<std::optional<vpImage<FilterType>>>(std::nullopt),
+py::arg("dIy").none(true) = static_cast<std::optional<vpImage<FilterType>>>(std::nullopt),
+py::arg("gaussianKernelSize") = 5,
+py::arg("gaussianStdev") = 2.,
+py::arg("apertureGradient") = 3,
+py::arg("lowerThresholdRatio") = 0.6,
+py::arg("upperThresholdRatio") = 0.8,
+py::arg("filteringType") = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING,
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+
+  define_computeCannyThresholdHSV<unsigned char, false, float>(pyClass);
+  define_computeCannyThresholdHSV<unsigned char, false, double>(pyClass);
+  define_computeCannyThresholdHSV<unsigned char, true, float>(pyClass);
+  define_computeCannyThresholdHSV<unsigned char, true, double>(pyClass);
+  define_computeCannyThresholdHSV<float, true, float>(pyClass);
+  define_computeCannyThresholdHSV<float, true, double>(pyClass);
+  define_computeCannyThresholdHSV<double, true, float>(pyClass);
+  define_computeCannyThresholdHSV<double, true, double>(pyClass);
+}
+
 template<typename FilterType>
 void define_computeCannyThreshold(
   py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
