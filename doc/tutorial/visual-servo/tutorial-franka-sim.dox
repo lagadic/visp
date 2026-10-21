@@ -2,7 +2,7 @@
 
 \page tutorial-franka-sim Tutorial: FrankaSim a Panda 7-dof robot from Franka Emika simulator
 
-\section franka_sim_intro Introduction
+\section franka_sim_intro 1. Introduction
 
 FrankaSim is a new open-source simulator based on [ROS](https://wiki.ros.org) and
 [CoppeliaSim](https://www.coppeliarobotics.com/) for the popular [Franka Emika](https://franka.de/) Panda robot fully integrated
@@ -17,7 +17,7 @@ as well as, in general, for any pedagogical purpose in robotics. All the
 software, models and CoppeliaSim scenes are
 publicly available under free GPL-2.0 license in [visp_ros](https://github.com/lagadic/visp_ros).
 
-\section franka_sim_tuto Tutorial
+\section franka_sim_tuto 2. Tutorial
 
 We propose a [tutorial](http://docs.ros.org/en/noetic/api/visp_ros/html/tutorial-franka-coppeliasim.html)
 that shows how to use FrankaSim to simulate:
@@ -27,7 +27,7 @@ that shows how to use FrankaSim to simulate:
 To compare simulated versus real robot control we propose also some examples that you can run on a real
 Panda robot equipped with a D435 Intel Realsense camera.
 
-\section franka_sim_next Next tutorial
+\section franka_sim_next 3. Next tutorial
 
 If you are interested in visual-servoing on a real robot, you can continue with \ref tutorial-franka-pbvs and \ref tutorial-franka-ibvs.
 There is also the \ref tutorial-boost-vs that could be useful.

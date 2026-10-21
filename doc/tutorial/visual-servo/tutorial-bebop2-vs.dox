@@ -3,13 +3,13 @@
 \page tutorial-bebop2-vs Tutorial: Visual-servoing with Parrot Bebop 2 drone
 \tableofcontents
 
-\section bebop2_intro Introduction
+\section bebop2_intro 1. Introduction
 
 This tutorial explains how to do an image-based servoing with a Parrot Bebop 2 drone on Ubuntu or OSX.
 
 \image html img-bebop2.jpg
 
-\section bebop2_prereq Prerequisites
+\section bebop2_prereq 2. Prerequisites
 
 The following material is necessary :
 - Parrot Bebop 2 drone
@@ -19,7 +19,7 @@ ViSP must be built with OpenCV support if you want to get the video streamed by 
 
 \note Before continuing, we recommend that you succeed to complete \ref tutorial-detection-apriltag.
 
-\section bebop2_arsdk3 Build Parrot ARSDK3
+\section bebop2_arsdk3 3. Build Parrot ARSDK3
 In order to use Parrot Bebop 2 drone with ViSP, you first need to build Parrot's SDK <a href="https://developer.parrot.com/docs/SDK3/">ARDroneSDK3</a> (as explained <a href="https://developer.parrot.com/docs/SDK3/#how-to-build-the-sdk">here</a>) :
 
 \htmlonly
@@ -196,7 +196,7 @@ $ export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:${ARSDK_DIR}/out/arsdk-native/st
 </div>
 \endhtmlonly
 
-\section bebop2_visp_build Build ViSP to detect ARSDK3
+\section bebop2_visp_build 4. Build ViSP to detect ARSDK3
 
 In order that ViSP takes into account ARSDK3 fresh installation you need to configure and build ViSP again.
 
@@ -223,16 +223,16 @@ At this point you should see in `Real robots` section that ARSDK and ffmpeg are 
 $ make -j4
 \endcode
 
-\section bebop2_ibvs Image-based visual-servoing
+\section bebop2_ibvs 5. Image-based visual-servoing
 
-\subsection bebop2_ibvs_code Source code access
+\subsection bebop2_ibvs_code 5.1. Source code access
 
 An example of image-based visual servoing is implemented in servoBebop2.cpp.
 
 The corresponding source code and `CMakeLists.txt` file can be found in
 https://github.com/lagadic/visp/tree/master/example/servo-bebop2.
 
-\subsection bebop2_ibvs_controller Understanding the controller
+\subsection bebop2_ibvs_controller 5.2. Understanding the controller
 First, to get the basics of image-based visual servoing, you can read \ref tutorial-ibvs.
 
 The following image shows the frames attached to the drone:
@@ -278,7 +278,7 @@ where:
 
 To make the relation between this controller description and the code, check the comments in servoBebop2.cpp.
 
-\subsection bebop2_ibvs_run Running the program
+\subsection bebop2_ibvs_run 5.3. Running the program
 
 The next step is now to run the image-based visual servoing example implemented in servoBebop2.cpp.
 
@@ -364,8 +364,8 @@ In this graph :
 Clicking on the drone view display will make the drone land, safely disconnect everything and quit the program.
 
 
-\section bebop2_tips Tips & Tricks
-\subsection bebop2_change_ip Changing Bebop 2 IP address
+\section bebop2_tips 6. Tips & Tricks
+\subsection bebop2_change_ip 6.1. Changing Bebop 2 IP address
 If you need to change the drone IP address, for flying multiple drones for instance, you can follow these steps :
 - Turn on your drone and connect to its WiFi network.
 - Press the drone on/off button 4 times.
@@ -400,7 +400,7 @@ $ vi broadcom_setup.sh
 - Exit Bebop 2 file system by entering `exit`.
 - Restart your drone. It's IP should now be changed. You will have to adapt your programs accordingly.
 
-\subsection bebop2_connect_multiple Connecting multiple Bebop 2 drones to a single computer
+\subsection bebop2_connect_multiple 6.2. Connecting multiple Bebop 2 drones to a single computer
 If you want to control multiple drones using one single computer, you're going to need to change the drones ip, by
 following \ref bebop2_change_ip.
 
@@ -430,7 +430,7 @@ In your own programs, you can specify the IP in the constructor of vpRobotBebop2
 vpRobotBebop2 drone(false, true, "192.168.43.1"); // This creates the drone with low verbose level, settings reset and corresponding IP
 \endcode
 
-\section bebop2_next Next tutorial
+\section bebop2_next 7. Next tutorial
 
 If needed, you can see \ref tutorial-grabber corresponding section dedicated to Parrot Bebop 2 to get images of the
 calibration grid.\n

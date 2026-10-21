@@ -4,14 +4,14 @@
 
 \tableofcontents
 
-\section intro Introduction
+\section intro 1. Introduction
 
 This tutorial shows how to estimate an homography from points. Two cases are considered in the next sections:
 - points are matched without possible mismatches. In that case vpHomography::DLT() or vpHomography::HLM() are used
   to estimate the homography,
 - points are matched with possible mismatches. In that case vpHomography::ransac() or vpHomography::robust() are used.
 
-\section homography Homography estimation
+\section homography 2. Homography estimation
 
 Note that all the material (source code) described in this tutorial is
 part of ViSP source code (in `tutorial/computer-vision` folder) and could be found in
@@ -81,7 +81,7 @@ Estimation from homography: Point 3 in pixels in frame a: 353.8501593, 486.18518
 \endcode
 
 
-\section tutorial-homography-ransac Ransac or robust homography estimation
+\section tutorial-homography-ransac 3. Ransac or robust homography estimation
 
 Note that all the material (source code) described in this tutorial is
 part of ViSP source code (in `tutorial/detection/matching` folder) and could be found in

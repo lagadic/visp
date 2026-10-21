@@ -3,7 +3,7 @@
 \page tutorial-mb-generic-json Tutorial: Loading a model-based generic tracker from JSON
 \tableofcontents
 
-\section tutorial-mb-generic-json-intro Introduction
+\section tutorial-mb-generic-json-intro 1. Introduction
 
 Since ViSP 3.6.0, a 3rd party library was introduced to allow the seamless use of JSON (JavaScript Object Notation) in ViSP.
 The library that is used is <a target="_blank" href="https://github.com/nlohmann/json">JSON for modern C++</a>.
@@ -22,7 +22,7 @@ possible: either setting a model common to all the cameras by putting the `model
 `trackers` attribute, or setting one model for each camera by setting the `model` attribute inside the description of
 each camera.
 
-\section tutorial-mb-generic-json-structure JSON file structure
+\section tutorial-mb-generic-json-structure 2. JSON file structure
 Let us first examine the structure of a JSON file used to load a vpMbGenericTracker, given below:
 \include realsense-color-and-depth.json
 
@@ -32,7 +32,7 @@ Beware however, that previously defined cameras that are not in the .json file a
 
 As this file is fairly dense, let us examine each part separetely so that you may tweak it for your use case.
 
-\subsection json-global-tracker-settings Global tracker settings
+\subsection json-global-tracker-settings 2.1. Global tracker settings
 
 Let us first examine the global settings (located at the root of the JSON structure). Some settings are optional such as:
 
@@ -130,7 +130,7 @@ Some settings such as the "vvs" options, are only defined globally
 </tr>
 </table>
 
-\subsection json-per-tracker-settings Individual camera tracker settings
+\subsection json-per-tracker-settings 2.2. Individual camera tracker settings
 
 Each camera has a name (the key in the "trackers" dictionary, e.g., "Color", "Depth") and is associated to a combination of tracker.
 
@@ -229,7 +229,7 @@ Other common settings include:
 <tr><td colspan="5">See \ref json-global-tracker-settings</td></tr>
 </table>
 
-\subsection json-feature-settings Tracker Feature settings
+\subsection json-feature-settings 2.3. Tracker Feature settings
 
 Each type of tracked feature can be customized in the JSON file.
 
@@ -258,7 +258,7 @@ See vpMbDepthNormalTracker for more details.
 The configuration for the dense depth features only contain the sampling step, as shown below:
 \snippet realsense-color-and-depth.json.example DepthDense
 
-\section json-settings-usage Example: Initializing a tracker from a JSON file
+\section json-settings-usage 3. Example: Initializing a tracker from a JSON file
 
 Let's now look at an example of how to use JSON to track an object.
 
@@ -308,7 +308,7 @@ We then initialize tracking by click:
 Finally, we can start tracking:
 \snippet tutorial-mb-generic-tracker-rgbd-realsense-json.cpp Tracking
 
-\section json-settings-next Next tutorial
+\section json-settings-next 4. Next tutorial
 
 - If you want to introduce JSON usage in your code, you can continue with \ref tutorial-json.
 

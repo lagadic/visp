@@ -425,7 +425,7 @@ The full code of tutorial-panda3d-renderer.cpp is given below.
 \endhtmlonly
 
 \section tutorial-panda3d-issue 7. Known issues
-\subsection tutorial-panda3d-issue-library-macOS 7.1 Library not loaded: libpanda.1.11.dylib
+\subsection tutorial-panda3d-issue-library-macOS 7.1. Library not loaded: libpanda.1.11.dylib
 
 This error occurs on macOS.
 
@@ -438,14 +438,14 @@ dyld[1795]: Library not loaded: @loader_path/../lib/libpanda.1.11.dylib
 zsh: abort      ./tutorial-panda3d-renderer
 \endcode
 
-It occurs when you didn't follow carefully the instructions mentionned in \ref tutorial-panda3d-install-macos section.
+It occurs when you didn't follow carefully the instructions mentioned in the macOS tab of \ref tutorial-panda3d-install section.
 
 A quick fix is to add the path to the library in `DYLD_LIBRARY_PATH` env var:
 \code{.sh}
 $ export DYLD_LIBRARY_PATH=/Library/Developer/Panda3D/lib:$DYLD_LIBRARY_PATH
 \endcode
 
-\subsection tutorial-panda3d-issue-segfault-macOS 7.2 Segfault: :framework(error): Unable to create window
+\subsection tutorial-panda3d-issue-segfault-macOS 7.2. Segfault: :framework(error): Unable to create window
 
 This error occurs on macOS.
 
@@ -512,7 +512,7 @@ $ cmake ../visp -DUSE_PCL=OFF
 $ make -j$(sysctl -n hw.logicalcpu)
 \endcode
 
-\subsection tutorial-panda3d-issue-MacOSX-sdk-not-found 7.3 Couldn't find any suitable MacOSX SDK!
+\subsection tutorial-panda3d-issue-MacOSX-sdk-not-found 7.3. Couldn't find any suitable MacOSX SDK!
 
 The following error may occur when building Panda3D from source on macOS Sequoia 15.3.1.
 \code{.sh}
@@ -549,7 +549,7 @@ Now you should be able to build Panda3D with:
 created: $VISP_WS/3rdparty/panda3d/panda3d/Panda3D-1.11.0.dmg
 \endcode
 
-\subsection tutorial-panda3d-issue-typeinfo 7.4 Link issue: undefined reference to typeinfo
+\subsection tutorial-panda3d-issue-typeinfo 7.4. Link issue: undefined reference to typeinfo
 
 The following linking issue can occur when you mix `-fno-rtti` and `-frtti` compiler flags.
 \code{.sh}

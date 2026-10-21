@@ -7,13 +7,13 @@
 
 In this tutorial you will learn how to use ViSP without using CMake.
 
-\section started_makefile Using a classical Makefile
+\section started_makefile 1. Using a classical Makefile
 
 There are two ways to integrate ViSP as a 3rd-party in a `Makefile`:
 - either using `pkg-config` over `visp.pc` file that you may find in ViSP installation folder; typically in `/usr/local/lib/pkgconfig` folder,
 - either using `visp-config` shell script file that you may find in ViSP build folder; typically in `$VISP_WS/visp-build/bin` folder.
 
-\subsection started_makefile_pkg_config Using pkg_config
+\subsection started_makefile_pkg_config 1.1. Using pkg_config
 
 - To get compiler flags use:
 \verbatim
@@ -42,7 +42,7 @@ clean:
 	rm -f *~ HelloWorld
 \endverbatim
 
-\subsection started_makefile_visp_config Using visp-config
+\subsection started_makefile_visp_config 1.2. Using visp-config
 
 - To get compiler flags use:
 \verbatim
@@ -69,7 +69,7 @@ clean:
 \endverbatim
 
 
-\section started_makefile_next Next tutorial
+\section started_makefile_next 2. Next tutorial
 
 You are now ready to see the \ref tutorial-image-display.
 There is also the \ref tutorial-contrib-module that could be useful to understand how to introduce new developments in ViSP.

@@ -3,7 +3,7 @@
 \page tutorial-tracking-keypoint Tutorial: Keypoint tracking
 \tableofcontents
 
-\section tracking_keypoint_intro Introduction
+\section tracking_keypoint_intro 1. Introduction
 
 With ViSP it is possible to track keypoints using OpenCV KLT tracker, an implementation of the Kanade-Lucas-Tomasi
 feature tracker.
@@ -12,7 +12,7 @@ Note that all the material (source code and videos) described in this tutorial i
 (in `tutorial/tracking/keypoint` folder) and could be found in
 https://github.com/lagadic/visp/tree/master/tutorial/tracking/keypoint.
 
-\section tracking_keypoint_klt KLT tracker
+\section tracking_keypoint_klt 2. KLT tracker
 
 The following example code available in tutorial-klt-tracker.cpp shows how to use ViSP vpKltOpencv class to track KLT
 keypoints. This class is a wrapper over the OpenCV KLT tracker implementation.
@@ -101,7 +101,7 @@ We are waiting for a mouse click event on image \c I to end the program.
 
 \snippet tutorial-klt-tracker.cpp Wait click
 
-\section tracking_keypoint_klt_init KLT tracker with re-initialisation
+\section tracking_keypoint_klt_init 3. KLT tracker with re-initialisation
 
 Once initialized, the number of tracked features decreases over the time. Depending on a criteria, it may sense to
 detect and track new features online. A possible criteria is for example to compare the number of currently tracked
@@ -162,7 +162,7 @@ In this code we do the following:
   terms of geometric distance to a newly detected one, it is rejected (in our case less than 2 pixels). If not, it is
   added to the list of detected features.
 
-\section tracking_keypoint_next Next tutorial
+\section tracking_keypoint_next 4. Next tutorial
 You are now ready to see the next \ref tutorial-tracking-me.
 
 */

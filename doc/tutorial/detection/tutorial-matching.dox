@@ -3,7 +3,7 @@
 \page tutorial-matching Tutorial: Keypoints matching
 \tableofcontents
 
-\section intro_matching Introduction
+\section intro_matching 1. Introduction
 
 This tutorial focuses on keypoints detection and matching. You will learn how to detect keypoints on a reference image
 considered here as the first image of an mpeg video. Then in the next images of the video, keypoints that match those
@@ -18,7 +18,7 @@ Note that all the material (source code and image) described in this tutorial is
 \note We assume that you are familiar with video framegrabbing described in \ref tutorial-grabber and with the way to
 display an image in a window described in \ref tutorial-getting-started.
 
-\section orb_keypoints ORB keypoints detection and matching
+\section orb_keypoints 2. ORB keypoints detection and matching
 
 Let us consider the following source code also available in tutorial-matching-keypoint.cpp.
 
@@ -73,7 +73,7 @@ Next we draw green lines between the matched points:
 At the end of the iteration, we flush all the previous display to the render window:
 \snippet tutorial-matching-keypoint.cpp Display flush
 
-\section other_keypoints Using others types of keypoints
+\section other_keypoints 3. Using others types of keypoints
 
 Using other types of detectors / descriptors (SIFT, SURF, etc.) or matchers (Brute Force, Flann based matcher) is also
 possible. This can be easily done by using the correct OpenCV identifier name. For example, if you want to use the
