@@ -400,14 +400,8 @@ namespace vp = VISP_NAMESPACE_NAME;
 #  define VISP_HAVE_DC1394_2_FIND_CAMERAS
 #endif
 
-// Defined if CMU 1394 Digital Camera SDK available.
-#cmakedefine VISP_HAVE_CMU1394
-
 // Defined if Video For Linux Two available.
 #cmakedefine VISP_HAVE_V4L2
-
-// Defined if DirectShow library is available (only under Windows).
-#cmakedefine VISP_HAVE_DIRECTSHOW
 
 // Defined if FLIR FlyCapture SDK available.
 #cmakedefine VISP_HAVE_FLYCAPTURE
