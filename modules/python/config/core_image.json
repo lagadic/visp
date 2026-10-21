@@ -748,6 +748,12 @@
               "true"
             ]
           ]
+        },
+        {
+          "static": true,
+          "signature": "std::enable_if<!std::is_same<T, U>::value, void>::type convert(const vpImage<vpHSV<T, useFullScale1>> &, vpImage<vpHSV<U, useFullScale2>> &)",
+          "ignore": true,
+          "custom_implem": true
         }
       ]
     }
