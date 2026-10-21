@@ -164,6 +164,49 @@
           "static": false,
           "signature": "vpRGBa& operator=(vpRGBa&&)",
           "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "std::enable_if<std::is_same<U, float>::value&&std::is_same<T, unsigned char>::value, vpRGBa&>::type buildFrom(const vpHSV<T, useFullScale>&)",
+          "ignore": false,
+          "specializations": [
+            [
+              "unsigned char",
+              "true",
+              "float"
+            ],
+            [
+              "unsigned char",
+              "false",
+              "float"
+            ]
+          ],
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "std::enable_if<std::is_floating_point<T>::value, vpRGBa&>::type buildFrom(const vpHSV<T, useFullScale>&)",
+          "specializations": [
+            [
+              "double",
+              "true"
+            ]
+          ],
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
         }
       ]
     },
