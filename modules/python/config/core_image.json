@@ -354,6 +354,120 @@
               "float"
             ]
           ]
+        },
+        {
+          "static": true,
+          "signature": "int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, const std::vector<RangeType>&, vpImage<bool>&)",
+          "specializations": [
+            [
+              "unsigned char",
+              "false",
+              "int"
+            ],
+            [
+              "unsigned char",
+              "true",
+              "int"
+            ],
+            [
+              "double",
+              "true",
+              "double"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, const std::vector<RangeType>&, vpImage<unsigned char>&)",
+          "specializations": [
+            [
+              "unsigned char",
+              "false",
+              "int"
+            ],
+            [
+              "unsigned char",
+              "true",
+              "int"
+            ],
+            [
+              "double",
+              "true",
+              "double"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, const vpColVector&, vpImage<bool>&)",
+          "specializations": [
+            [
+              "unsigned char",
+              "false"
+            ],
+            [
+              "unsigned char",
+              "true"
+            ],
+            [
+              "double",
+              "true"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, const vpColVector&, vpImage<unsigned char>&)",
+          "specializations": [
+            [
+              "unsigned char",
+              "false"
+            ],
+            [
+              "unsigned char",
+              "true"
+            ],
+            [
+              "double",
+              "true"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "int inMask(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, const vpImage<bool>&, vpImage<vpHSV<ArithmeticType, useFullScale>>&)",
+          "specializations": [
+            [
+              "unsigned char",
+              "false"
+            ],
+            [
+              "unsigned char",
+              "true"
+            ],
+            [
+              "double",
+              "true"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "int inMask(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, const vpImage<unsigned char>&, vpImage<vpHSV<ArithmeticType, useFullScale>>&)",
+          "specializations": [
+            [
+              "unsigned char",
+              "false"
+            ],
+            [
+              "unsigned char",
+              "true"
+            ],
+            [
+              "double",
+              "true"
+            ]
+          ]
         }
       ]
     },
