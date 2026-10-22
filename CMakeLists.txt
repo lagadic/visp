@@ -112,9 +112,6 @@ endif()
 if(POLICY CMP0075)
   cmake_policy(SET CMP0075 NEW) # For check_include_file and cmake 3.12.0
 endif()
-if(POLICY CMP0146)
-  cmake_policy(SET CMP0146 OLD) # The ``FindCUDA`` module deprecated since CMake 3.10
-endif()
 
 if(APPLE)
   # Fix following errors for libpng and libjpeg detection:
