@@ -4,14 +4,15 @@
 \tableofcontents
 
 \section dnn_trt_intro 1. Introduction
+
 This tutorial shows how to run object detection inference using NVIDIA
 <a href="https://developer.nvidia.com/tensorrt">TensorRT</a> inference SDK.
 
-For this tutorial, you'll need `ssd_mobilenet.onnx` pre-trained model, and `pascal-voc-labels.txt` label's file
+For this tutorial, you'll need `ssd-mobilenet.onnx` pre-trained model, and `pascal-voc-labels.txt` labels file
 containing the corresponding labels.
 These files can be found in <a href="https://github.com/lagadic/visp-images">visp-images</a> dataset.
 
-Note that all the material (source code and network mode) described in this tutorial is part of ViSP source code
+Note that all the material (source code and network model) described in this tutorial is part of ViSP source code
 (in `tutorial/detection/dnn` folder) and could be found in https://github.com/lagadic/visp/tree/master/tutorial/detection/dnn.
 
 Before running this tutorial, you need to install:
@@ -22,125 +23,162 @@ Before running this tutorial, you need to install:
 
 We **strongly** recommend to install CUDA, cuDNN and TensorRT in a conda environment, because
 installing these libraries can quickly become a nightmare. Consequently, in this tutorial, we will
-give the installation instruction assuming that you have installed [Miniforge](https://github.com/conda-forge/miniforge) as instructed in \ref py_bindings_build_conda
+give the installation instructions assuming that you have installed [Miniforge](https://github.com/conda-forge/miniforge)
+as instructed in \ref py_bindings_build_conda.
 
 Installation instructions are provided in \ref dnn_trt_prereq section.
 
-The tutorial was tested on multiple hardwares of NVIDIA. The following table details the versions of CUDA and TensorRT
+The tutorial was tested on several NVIDIA GPUs. The following table details the versions of CUDA, TensorRT and cuDNN
 used for each GPU:
 
-| NVIDIA hardware | OS | CUDA | TensorRT | CuDNN |
+| NVIDIA hardware | OS | CUDA | TensorRT | cuDNN |
 | ------------- | ------------- | ------------- | ------------- | ------------- |
 | Jetson TX2 | Ubuntu 18.04 (JetPack 4.4) | 10.2  | 7.1.3  | 8.0 |
 | GeForce GTX 1080 | Ubuntu 16.04 | 11.0 | 8.0 GA | 8.0 |
 | Quadro RTX 6000 | Ubuntu 18.04 | 11.3 | 8.0 GA Update 1 | 8.2 |
 | NVIDIA RTX A1000 Laptop GPU | Ubuntu 24.04 | 12.4 | 11.0.0 | 9.23.1.3 |
+| RTX 4000 Ada Generation Laptop GPU | Ubuntu 24.04 | 13.0 | 11.1.0 | 9.27.0.42 |
 
 \note Issues were encountered when using TensorRT 8.2 EA with CUDA 11.3 on NVIDIA Quadro RTX 6000, the tutorial didn't
 work as expected. There were plenty of bounding boxes in any given image.
 
 \section dnn_trt_prereq 2. Prerequisites
-\subsection dnn_trt_cuda_cudnn_install 2.1. Install CUDA and cuDNN
+\subsection dnn_trt_cuda_cudnn_install 2.1. Install CUDA, cuDNN and TensorRT
+
 CUDA is a parallel computing platform and programming model invented by <a href="https://nvidia.com">NVIDIA</a>.
+It consists of two parts:
+- the **NVIDIA driver**, installed on the system, that gives access to the GPU,
+- the **CUDA Toolkit** (`nvcc` compiler, `libcudart`, `cuBLAS`...), required to build and run CUDA applications.
 
-- To know if CUDA NVidia driver is already installed on your machine, on Ubuntu you can use `nvidia-smi`
-```
+cuDNN (CUDA Deep Neural Network library) is a GPU-accelerated library of primitives for deep neural networks, such as
+convolution, pooling, normalization and activation layers. It is used by the CUDA backend of OpenCV DNN module
+to run these layers efficiently on NVIDIA GPUs.
+More information is available on <a href="https://developer.nvidia.com/cudnn">NVIDIA cuDNN</a> page.
+
+TensorRT is a C++ library that facilitates high-performance inference on NVIDIA GPUs.
+More information is available on <a href="https://developer.nvidia.com/tensorrt">NVIDIA TensorRT</a> page.
+
+In this tutorial, the CUDA Toolkit, cuDNN and TensorRT are installed in a conda environment (see below).
+There is no need to install them system-wide. Only the NVIDIA driver has to be installed on your machine.
+
+- To know if the NVIDIA driver is already installed on your machine, on Ubuntu you can use `nvidia-smi`
+\code{.sh}
 $ nvidia-smi | grep CUDA
-| NVIDIA-SMI 465.27       Driver Version: 465.27       CUDA Version: 11.3     |
-```
-Here the output shows that CUDA NVidia driver version 11.3 is installed.
+| NVIDIA-SMI 580.178.04             Driver Version: 580.178.04     CUDA Version: 13.0     |
+\endcode
+  Here the output shows that NVIDIA driver 580.178.04 is installed. `CUDA Version: 13.0` is the highest CUDA major
+  version supported by this driver; the CUDA Toolkit installed in the conda environment has to be 13.x or older.
 
-- Then, create a conda environment with the following command:
-```
-$ conda create -n cuda_cudnn_tensorrt -c nvidia/label/cuda-12.4.0 -c conda-forge \
+- If `nvidia-smi` is not found, install the recommended NVIDIA driver for your GPU with:
+\code{.sh}
+$ sudo ubuntu-drivers install
+$ sudo reboot
+\endcode
+  You can list the available drivers with `ubuntu-drivers devices`. After rebooting, check again with `nvidia-smi`.
+
+- Then, create a conda environment embedding the CUDA Toolkit, cuDNN and TensorRT with the following command (modify
+  `cuda-version=13.0` and the conda channel name `nvidia/label/cuda-13.0` to match the CUDA version given by
+  `nvidia-smi`):
+\code{.sh}
+$ conda create -n cuda_cudnn_tensorrt -c nvidia/label/cuda-13.0 -c conda-forge \
+    cuda-version=13.0 \
     cuda-toolkit \
     cudnn \
+    libnvinfer-devel libnvinfer-plugin-devel libnvonnxparser-devel \
     python=3.12.* \
-    cmake make gxx_linux-64=13 gcc_linux-64=13 \
-    ffmpeg pkg-config \
-    zlib libaec nlohmann_json
-```
+    cxx-compiler cmake make pkg-config \
+    ffmpeg zlib libaec nlohmann_json \
+    xorg-libx11 xorg-xorgproto \
+    catch2
+\endcode
+\note `cuda-version=13.0` pins the CUDA Toolkit version. Without it, conda may install a more recent CUDA Toolkit
+from `conda-forge` channel (e.g. 13.4) than the one supported by the NVIDIA driver.
 
-\subsection dnn_trt_trt_install 2.2. Install TensorRT
-TensorRT is a C++ library that facilitates high-performance inference on NVIDIA GPUs.
-To download and install TensorRT, please follow this step-by-step <a href="https://docs.nvidia.com/deeplearning/tensorrt/latest/installing-tensorrt/install-tar.html">guide</a>.
+\subsection dnn_trt_opencv_install 2.2. Install OpenCV from source
 
-Let us consider the installation of `TensorRT 11.0.0 GA for x86_64 Architecture`. In that case you need to
-download "TensorRT 11.0.0 GA for Linux x86_64 and CUDA 12.0 to 12.9" TAR Package and extract its content in `$VISP_WS/3rdparty`.
-```
-$ ls ${VISP_WS}/3rdparty
-TensorRT-11.0.0.114 ...
-```
-Following the installation [instructions](https://docs.nvidia.com/deeplearning/tensorrt/install-guide/index.html#installing-tar):
-- Add the absolute path to the TensorRTlib directory to the environment variable LD_LIBRARY_PATH:
-```
-$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VISP_WS/3rdparty/TensorRT-11.0.0.114/lib
-```
+To be able to run the tutorial, you should install OpenCV from source, since some required extra modules
+(`cudev`, `cudaarithm` and `cudawarping`) are not included in `libopencv-contrib-dev` package. In our case we will
+consider OpenCV 5.0.0 latest release.
 
-\subsection dnn_trt_opencv_install 2.3. Install OpenCV from source
-To be able to run the tutorial, you should install OpenCV from source, since some extra modules are required
-(`cudev`, `cudaarithm` and `cudawarping` are not included in `libopencv-contrib-dev` package).
-To do so, proceed as follows:
-
-- In `$VISP_WS/3rdparty`, clone `opencv` and `opencv_contrib` repos:
-\code
-$ cd ${VISP_WS}/3rdparty
-$ git clone https://github.com/opencv/opencv
-$ git clone https://github.com/opencv/opencv_contrib
+- As described in \ref install_ubuntu_ws, we suppose here that you have created a workspace and set `VISP_WS` env var
+  accordingly.
+- In `$VISP_WS/3rdparty`, clone `opencv` and `opencv_contrib` latest releases (in our case we consider
+  OpenCV 5.0.0 release):
+\code{.sh}
+$ cd $VISP_WS/3rdparty
+$ git clone --branch 5.0.0 https://github.com/opencv/opencv
+$ git clone --branch 5.0.0 https://github.com/opencv/opencv_contrib
 \endcode
 
-\note When writing this tutorial, we switched to the 4.13.0 tags of both `opencv` and `opencv_contrib`.
-
 - Create `build` directory in `opencv` directory
-\code
+\code{.sh}
 $ cd opencv && mkdir build && cd build
 \endcode
 
-- To install opencv with extra modules, execute the following command:
-\code
+- Configure OpenCV with extra modules, executing the following command:
+\code{.sh}
 $ conda activate cuda_cudnn_tensorrt
+(cuda_cudnn_tensorrt) $ export PKG_CONFIG_PATH=
 (cuda_cudnn_tensorrt) $ cmake .. -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
-                                -DWITH_CUDA=ON \
-                                -DBUILD_opencv_cudev=ON -DBUILD_opencv_cudaarithm=ON -DBUILD_opencv_cudawarping=ON \
-                                -DCMAKE_INSTALL_PREFIX=${VISP_WS}/3rdparty/opencv/install \
-                                -DOPENCV_CMAKE_CUDA_DEBUG=1 \
-                                -DCUDA_ARCH_BIN=`nvidia-smi --query-gpu=compute_cap --format=csv,noheader` \
-                                -DCUDA_CUDA_LIBRARY=/usr/lib/x86_64-linux-gnu/libcuda.so.1 \
-                                -DCMAKE_C_COMPILER=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-gcc \
-                                -DCMAKE_CXX_COMPILER=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-g++ \
-                                -DCUDA_HOST_COMPILER=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-g++ \
-                                -DWITH_OPENCL=OFF -DBUILD_JAVA=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF
+                                 -DWITH_CUDA=ON \
+                                 -DBUILD_opencv_cudev=ON -DBUILD_opencv_cudaarithm=ON -DBUILD_opencv_cudawarping=ON \
+                                 -DCMAKE_INSTALL_PREFIX=../install \
+                                 -DCUDA_ARCH_BIN=`nvidia-smi --query-gpu=compute_cap --format=csv,noheader` \
+                                 -DCUDA_CUDA_LIBRARY=/usr/lib/x86_64-linux-gnu/libcuda.so.1 \
+                                 -DCUDA_NVCC_EXECUTABLE=$CONDA_PREFIX/bin/nvcc \
+                                 -DCMAKE_C_COMPILER=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-gcc \
+                                 -DCMAKE_CXX_COMPILER=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-g++ \
+                                 -DCUDA_HOST_COMPILER=$CONDA_PREFIX/bin/x86_64-conda-linux-gnu-g++ \
+                                 -DOPENCV_EXTRA_FLAGS=-fvisibility=hidden \
+                                 -DWITH_OPENCL=OFF -DWITH_FFMPEG=OFF \
+                                 -DBUILD_opencv_hdf=OFF \
+                                 -DBUILD_JAVA=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF \
+                                 -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                                 -DCMAKE_FIND_ROOT_PATH="$CONDA_PREFIX;$CONDA_PREFIX/x86_64-conda-linux-gnu/sysroot" \
+                                 -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                                 -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                                 -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY
 \endcode
-Note here that installation folder is set to `$VISP_WS/3rdparty/opencv/install` instead of the default `/usr/local`.
-This allows to preserve any other existing OpenCV installation on your machine.
-
-- Note that if you want a more advanced way to configure the build process, you can use `ccmake`:
-\code
-$ ccmake -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules ../
-\endcode
+\note Some explanations about the previous command:
+<ul>
+<li>The installation folder is set to `$VISP_WS/3rdparty/opencv/install` instead of the default `/usr/local`.
+  This allows to preserve any other existing OpenCV installation on your machine.</li>
+<li>`-DCUDA_CUDA_LIBRARY` points to `libcuda.so.1` that is part of the NVIDIA driver installed on the system.</li>
+<li>`-DCUDA_NVCC_EXECUTABLE=$CONDA_PREFIX/bin/nvcc` is required to let `nvcc` find its `nvcc.profile` configuration
+  file. Without this option, `nvcc` fails with `cicc: not found` error during the build.</li>
+<li>`-DOPENCV_EXTRA_FLAGS=-fvisibility=hidden` is required in a conda environment. Conda sets `CXXFLAGS` with
+  `-fvisibility-inlines-hidden`, which prevents OpenCV from adding `-fvisibility=hidden` by itself. Without this
+  option, linking `libopencv_dnn.so` fails with
+  `undefined reference to MlasHGemmSupported(CBLAS_TRANSPOSE, CBLAS_TRANSPOSE)`.</li>
+<li>`-DWITH_FFMPEG=OFF` is required as a work around to avoid the following error:
+  <code>'AVCodec' {aka 'struct AVCodec'} has no member named 'pix_fmts'</code>.</li>
+<li>`-DBUILD_opencv_hdf=OFF` disables `hdf` extra module that is not used by ViSP. Without this option, if HDF5 is
+  installed on the system but not in the conda environment, linking `libopencv_hdf.so` fails with `cannot find -lhdf5`.</li>
+<li>`CMAKE_FIND_ROOT_PATH*` options restrict the search of third-party libraries and headers to the conda environment.
+  Emptying `PKG_CONFIG_PATH` prevents `pkg-config` from finding libraries outside the conda environment.</li>
+</ul>
 
 - At this point, you can check if `cudev`, `cudaarithm` and `cudawarping` extra modules are enabled as expected:
-\verbatim
-$ grep cudev version_string.tmp
+\code{.sh}
+(cuda_cudnn_tensorrt) $ grep cudev version_string.tmp
 "    To be built:                 ... cudev ...
-$ grep cudaarithm version_string.tmp
+(cuda_cudnn_tensorrt) $ grep cudaarithm version_string.tmp
 "    To be built:                 ... cudaarithm ...
-$ grep cudawarping version_string.tmp
+(cuda_cudnn_tensorrt) $ grep cudawarping version_string.tmp
 "    To be built:                 ... cudawarping ...
-\endverbatim
-If this is not the case, it means that something is wrong, either in CUDA installation, either in OpenCV configuration
-with `cmake`.
+\endcode
+  If this is not the case, it means that something is wrong, either in CUDA installation, either in OpenCV
+  configuration with `cmake`.
 
-- Launch build process:
-\code
-(cuda_cudnn_tensorrt) $ export PATH=$CONDA_PREFIX/nvvm/bin:$PATH
-(cuda_cudnn_tensorrt) $ make -j$(nproc)
-(cuda_cudnn_tensorrt) $ make install
+- Build and install OpenCV:
+\code{.sh}
+(cuda_cudnn_tensorrt) $ cmake --build . -j$(nproc)
+(cuda_cudnn_tensorrt) $ cmake --build . --target install
 \endcode
 
-- Modify `LD_LIBRARY_PATH` to find OpenCV libraries
-\code
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VISP_WS/3rdparty/opencv/install/lib
+- Modify `LD_LIBRARY_PATH` to find OpenCV libraries:
+\code{.sh}
+(cuda_cudnn_tensorrt) $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VISP_WS/3rdparty/opencv/install/lib
 \endcode
 
 \section dnn_trt_visp 3. Build ViSP with TensorRT support
@@ -148,28 +186,86 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VISP_WS/3rdparty/opencv/install/lib
 Next step is here to build ViSP from source enabling TensorRT support.
 As described in \ref install_ubuntu_visp_get_source, we suppose here that you have ViSP source code in ViSP workspace
 folder: `$VISP_WS`.
-If you follow \ref dnn_trt_prereq, you should also find TensorRT and OpenCV in the `3rdparty` folder of the same workspace.
+If you followed \ref dnn_trt_prereq, you should also find OpenCV in the `3rdparty` folder of the same workspace.
 
-\code
+\code{.sh}
 $ ls $VISP_WS
 3rdparty visp
 \endcode
 
-Now to ensure that ViSP is build TensorRT, create and enter build folder before configuring ViSP with TensorRT and
-OpenCV path
-\code
+Now to ensure that ViSP is built with TensorRT support, create and enter build folder before configuring ViSP with
+OpenCV path:
+\code{.sh}
+$ cd $VISP_WS
 $ mkdir visp-build; cd visp-build
 $ conda activate cuda_cudnn_tensorrt
+(cuda_cudnn_tensorrt) $ export PKG_CONFIG_PATH=
 (cuda_cudnn_tensorrt) $ cmake ../visp \
-        -DTENSORRT_DIR=$VISP_WS/3rdparty/TensorRT-11.0.0.114 \
-        -DOpenCV_DIR=$VISP_WS/3rdparty/opencv/install/lib/cmake/opencv4
+        -DOpenCV_DIR=$VISP_WS/3rdparty/opencv/install/lib/cmake/opencv5 \
+        -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+        -DCMAKE_FIND_ROOT_PATH="$CONDA_PREFIX;$CONDA_PREFIX/x86_64-conda-linux-gnu/sysroot" \
+        -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+        -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+        -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+        -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+\endcode
+\note `CMAKE_FIND_ROOT_PATH*` options restrict the search of third-party libraries and headers to the conda environment.
+Without them, libraries installed in `/usr/lib/x86_64-linux-gnu` may be mixed with the ones of the conda environment,
+leading to `Cannot generate a safe runtime search path` warnings. OpenCV is still found since `OpenCV_DIR` is set
+explicitly. Emptying `PKG_CONFIG_PATH` prevents `pkg-config` from finding libraries outside the conda environment.
+
+At this point, you can check that CUDA and TensorRT are detected:
+\code{.sh}
+(cuda_cudnn_tensorrt) $ grep -A2 "DNN:" ViSP-third-party.txt
+  DNN:
+    Use CUDA Toolkit:            yes (ver 13.0.88)
+    Use TensorRT:                yes (ver 11.1.0)
 \endcode
 
-\section dnn_trt_example 4. Tutorial description
+Then build ViSP, including the tutorials:
+\code{.sh}
+(cuda_cudnn_tensorrt) $ cmake --build . -j$(nproc)
+\endcode
+
+\section tutorial_usage 4. Tutorial usage
+
+To use this tutorial, you need a USB webcam and you should have downloaded an **onnx** file of a model with its
+corresponding labels in **txt** file format. To start, you may download the **ssd-mobilenet.onnx** model
+and **pascal-voc-labels.txt** file from
+<a href="https://github.com/lagadic/visp-images/tree/master/dnn/object_detection">here</a> or install
+\ref install_ubuntu_dataset cloning Github repository.
+
+To see the options, run:
+\code{.sh}
+$ conda activate cuda_cudnn_tensorrt
+(cuda_cudnn_tensorrt) $ cd $VISP_WS/visp-build/tutorial/detection/dnn
+(cuda_cudnn_tensorrt) $ ./tutorial-dnn-tensorrt-live --help
+\endcode
+
+Considering that you installed \ref install_ubuntu_dataset and set `VISP_INPUT_IMAGE_PATH` env var accordingly, the
+model and labels files are found in `$VISP_INPUT_IMAGE_PATH/dnn/object_detection` folder. To run object detection on
+images from webcam, you may just run:
+\code{.sh}
+(cuda_cudnn_tensorrt) $ ./tutorial-dnn-tensorrt-live
+\endcode
+
+Considering that you downloaded the files (model and labels) in another folder, run rather:
+\code{.sh}
+(cuda_cudnn_tensorrt) $ ./tutorial-dnn-tensorrt-live --model <path>/ssd-mobilenet.onnx --labels <path>/pascal-voc-labels.txt
+\endcode
+
+\note The first time the tutorial is launched, TensorRT builds the inference engine from the ONNX model, which may take
+a while. The engine is then saved next to the model in a file with `.engine` extension (e.g.
+`ssd-mobilenet.onnx.engine`) and reused at next launches.
+
+Running the above example will show results like the following:
+\image html img-detection-objects.jpeg
+
+\section dnn_trt_example 5. Tutorial description
 In the following section is a detailed description of the tutorial. The complete source code is available in
 tutorial-dnn-tensorrt-live.cpp file.
 
-\subsection header_files 4.1. Include header files
+\subsection header_files 5.1. Include header files
 Include header files for required extra modules to handle CUDA.
 \snippet tutorial-dnn-tensorrt-live.cpp OpenCV CUDA header files
 
@@ -181,18 +277,18 @@ Include TensorRT header files.
 `NvOnnxParser.h` is the API for the <a href="https://onnx.ai/">ONNX</a> Parser.
 \snippet tutorial-dnn-tensorrt-live.cpp TRT header files
 
-\subsection preprocessing 4.2. Pre-processing
+\subsection preprocessing 5.2. Pre-processing
 Prepare input image for inference with OpenCV.
 First, upload image to GPU, resize it to match model's input dimensions, normalize with `meanR` `meanG` `meanB` being
 the values used for mean subtraction.
 Transform data to tensor (copy data to channel by channel to `gpu_input`).
-In the case of `ssd_mobilenet.onnx`, the input dimension is 1x3x300x300.
+In the case of `ssd-mobilenet.onnx`, the input dimension is 1x3x300x300.
 \snippet tutorial-dnn-tensorrt-live.cpp Preprocess image
 
-\subsection postprocessing 4.3. Post-processing
+\subsection postprocessing 5.3. Post-processing
 After running the inference, depending on the model used, you will get different results dimensions on the output.
 These results should be post processed.
-In the case of `ssd_mobilenet.onnx`, there is 2 outputs:
+In the case of `ssd-mobilenet.onnx`, there are 2 outputs:
 - `scores` of dimension : 1x3000x21
 - `boxes` of dimension : 1x3000x4
 
@@ -201,11 +297,11 @@ The result of the inference being on the GPU, we should first proceed by copying
 Post processing consists of filtering the predictions where we're not sure about the class detected and then merging
 multiple detections that can occur approximately at the same locations.
 `confThresh` is the confidence threshold used to filter the detections after inference.
-`nmsThresh` is the Non-Maximum Threshold. It is used to merge multiple detections being in the same location
-approximately.
+`nmsThresh` is the Non-Maximum Suppression threshold. It is used to merge multiple detections being in the same
+location approximately.
 \snippet tutorial-dnn-tensorrt-live.cpp PostProcess results
 
-\subsection parseOnnx 4.4. Parse ONNX Model
+\subsection parseOnnx 5.4. Parse ONNX Model
 Parse ONNX model.
 \snippet tutorial-dnn-tensorrt-live.cpp ParseOnnxModel
 `model_path` is the path to **onnx** file.
@@ -228,7 +324,7 @@ configured to select the amount of GPU memory to be used for tactic selection or
 Create **engine** and **context** to be used in the main pipeline, and serialize and save the engine for later use.
 \snippet tutorial-dnn-tensorrt-live.cpp ParseOnnxModel engine does not exist
 
-\subsection Main_pipeline 4.5. Main pipeline
+\subsection Main_pipeline 5.5. Main pipeline
 Start by parsing the model and creating **engine** and **context**.
 \snippet tutorial-dnn-tensorrt-live.cpp Create GIE
 
@@ -238,6 +334,7 @@ Using **engine**, we can get the dimensions of the input and outputs, and create
 Create a grabber to retrieve image from webcam (or external camera) or read images from image or video.
 \snippet tutorial-dnn-tensorrt-live.cpp OpenCV VideoCapture
 
+Finally in a while loop, we:
 - Capture a new frame from the grabber,
 - Convert this frame to vpImage used for display,
 - Call **preprocessImage()** function to copy the `frame` to GPU and store in `input` buffer,
@@ -246,27 +343,45 @@ Create a grabber to retrieve image from webcam (or external camera) or read imag
 - Display the image with the bounding boxes.
 \snippet tutorial-dnn-tensorrt-live.cpp Main loop
 
-\section tutorial_usage 5. Usage
-To use this tutorial, you need an USB webcam and you should have downloaded an **onnx** file of a model with its
-corresponding labels in *txt* file format. To start, you may download the **ssd_mobilenet.onnx** model and
-**pascal-voc-labels.txt** file from <a href="https://github.com/lagadic/visp-images/dnn/">here</a> or install
-\ref install_ubuntu_dataset cloning Github repository.
+\section dnn_trt_tips 6. Tips & Tricks
 
-To see the options, run:
-\code
-$ conda activate cuda_cudnn_tensorrt
-(cuda_cudnn_tensorrt) $ ./tutorial-dnn-tensorrt-live --help
+\subsection dnn_trt_tips_remove_env 6.1. How to remove the conda environment
+
+You may need to remove the conda environment, for example to create a new one with another CUDA version.
+
+- First deactivate the environment, since an active environment cannot be removed, then remove it:
+\code{.sh}
+(cuda_cudnn_tensorrt) $ conda deactivate
+$ conda env remove -n cuda_cudnn_tensorrt
 \endcode
 
-Consider you downloaded the files (model and labels), to run object detection on images from webcam, run:
-\code
-$ conda activate cuda_cudnn_tensorrt
-(cuda_cudnn_tensorrt) $ ./tutorial-dnn-tensorrt-live --model ssd_mobilenet.onnx --labels pascal-voc-labels.txt
+- Check that `cuda_cudnn_tensorrt` environment is no longer listed:
+\code{.sh}
+$ conda env list
+\endcode
+  If a `$HOME/miniforge3/envs/cuda_cudnn_tensorrt` folder remains (for example because files were added manually in
+  the environment), remove it:
+\code{.sh}
+$ rm -rf $HOME/miniforge3/envs/cuda_cudnn_tensorrt
 \endcode
 
-Running the above example on an image will show results like the following:
-\image html img-detection-objects.jpeg
+- Optionally, free disk space by removing downloaded packages from conda cache (TensorRT `libnvinfer` package alone
+  is about 1.8 GB). Note that they will be downloaded again when you create a new environment:
+\code{.sh}
+$ conda clean --all
+\endcode
 
-An example of the object detection can be viewed in this <a href="">video</a>.
+\warning OpenCV and ViSP were built with the libraries of the conda environment (CUDA Toolkit, cuDNN, compiler...).
+Once the environment is removed, they are no longer usable:
+- Remove OpenCV build and install folders, and build OpenCV again following \ref dnn_trt_opencv_install
+  in the new environment:
+\code{.sh}
+$ rm -rf $VISP_WS/3rdparty/opencv/build $VISP_WS/3rdparty/opencv/install
+\endcode
+- Build ViSP again in an empty build folder following \ref dnn_trt_visp. Note that if you installed ViSP with
+  `-DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX`, this installation was removed with the environment.
+\code{.sh}
+$ rm -rf $VISP_WS/visp-build
+\endcode
 
 */
