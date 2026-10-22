@@ -58,6 +58,7 @@ ViSP 3.7.1 (current version)
     . [#2006] Fix outdated robot state retrieval in vpRobotFranka::getPosition()
     . [#2031] libvisp_core.so not reproducible: is not the same every time it is built
     . [#2039] Stack overflow when running wireframe simulator
+    . [#2050] visp-calibrate-camera.cpp doesn't build with OpenCV 4.7.0
 
 ----------------------------------------------
 ViSP 3.7.0 (released December 19, 2025)

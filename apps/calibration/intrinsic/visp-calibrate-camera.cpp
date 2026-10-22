@@ -58,7 +58,7 @@
 #include <opencv2/calib.hpp>
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+#if (VISP_HAVE_OPENCV_VERSION > 0x040700)
 #include <opencv2/objdetect/charuco_detector.hpp>
 #endif
 
@@ -343,7 +343,7 @@ int main(int argc, const char *argv[])
     std::vector<vpCalibration> calibrator;
 
     // Create board 3D object points
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+#if (VISP_HAVE_OPENCV_VERSION > 0x040700)
     unsigned int boardHeight = static_cast<unsigned int>(s.boardSize.height), boardHeightMinusOne = static_cast<unsigned int>(s.boardSize.height)-1U;
     unsigned int boardWidth = static_cast<unsigned int>(s.boardSize.width), boardWidthMinusOne = static_cast<unsigned int>(s.boardSize.width)-1U;
     if (s.calibrationPattern == Settings::CHARUCOBOARD) {
@@ -400,7 +400,7 @@ int main(int argc, const char *argv[])
       vpImageConvert::convert(I, cvI);
 
       tee << "Process frame: " << frame_name;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+#if (VISP_HAVE_OPENCV_VERSION > 0x040700)
       bool found = extractCalibrationPoints(s, cvI, pointBuf, ch_detector);
 #else
       bool found = extractCalibrationPoints(s, cvI, pointBuf);
@@ -495,7 +495,7 @@ int main(int argc, const char *argv[])
     }
 
     // Display calibration pattern occupancy
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+#if (VISP_HAVE_OPENCV_VERSION > 0x040700)
     drawCalibrationOccupancy(I, calib_info,
                              static_cast<unsigned int>(s.boardSize.width),
                              s.calibrationPattern == Settings::CHARUCOBOARD);
@@ -571,7 +571,7 @@ int main(int argc, const char *argv[])
       ss_additional_info << "Circles grid";
       break;
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+#if (VISP_HAVE_OPENCV_VERSION > 0x040700)
     case Settings::CHARUCOBOARD:
       ss_additional_info << "ChArUco";
       break;
@@ -762,7 +762,7 @@ int main(int argc, const char *argv[])
                                  "Draw lines from first / last points.", vpColor::red);
           std::vector<vpImagePoint> grid_points = calib_info[idx].m_imPts;
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+#if (VISP_HAVE_OPENCV_VERSION > 0x040700)
           const int offset = (s.calibrationPattern == Settings::CHARUCOBOARD) ? -1 : 0;
 #else
           const int offset = 0;
@@ -791,7 +791,7 @@ int main(int argc, const char *argv[])
           std::vector<cv::Point2f> pointBuf;
           vpImageConvert::convert(I_undist, cvI);
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+#if (VISP_HAVE_OPENCV_VERSION > 0x040700)
           bool found = extractCalibrationPoints(s, cvI, pointBuf, ch_detector);
 #else
           bool found = extractCalibrationPoints(s, cvI, pointBuf);
@@ -1174,7 +1174,7 @@ int main(int argc, const char *argv[])
       case Settings::CIRCLES_GRID:
         cv_patternType = CV_CIRCLES_GRID;
         break;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+#if (VISP_HAVE_OPENCV_VERSION > 0x040700)
       case Settings::CHARUCOBOARD:
         cv_patternType = CV_CHARUCOBOARD;
         break;
@@ -1184,7 +1184,7 @@ int main(int argc, const char *argv[])
         throw vpException(vpException::badValue, "Unsupported calibration pattern type between ViSP and OpenCV.");
       }
       float cv_squareSize = s.squareSize;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+#if (VISP_HAVE_OPENCV_VERSION > 0x040700)
       float cv_grid_width = cv_squareSize *
         (cv_patternType != CV_CHARUCOBOARD ? (cv_boardSize.width - 1) : (cv_boardSize.width - 2));
 #else
@@ -1310,7 +1310,7 @@ int main(int argc, const char *argv[])
                                    15 * static_cast<int>(vpDisplay::getDownScalingFactor(I_dist_undist)),
                                    "Draw lines from first / last points.", vpColor::red);
             std::vector<vpImagePoint> grid_points = calib_info[idx].m_imPts;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+#if (VISP_HAVE_OPENCV_VERSION > 0x040700)
             const int offset = (s.calibrationPattern == Settings::CHARUCOBOARD) ? -1 : 0;
 #else
             const int offset = 0;
@@ -1338,7 +1338,7 @@ int main(int argc, const char *argv[])
             std::vector<cv::Point2f> pointBuf;
             vpImageConvert::convert(I_undist, cvI);
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040700)
+#if (VISP_HAVE_OPENCV_VERSION > 0x040700)
             bool found = extractCalibrationPoints(s, cvI, pointBuf, ch_detector);
 #else
             bool found = extractCalibrationPoints(s, cvI, pointBuf);
