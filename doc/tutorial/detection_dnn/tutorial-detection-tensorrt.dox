@@ -262,8 +262,27 @@ Running the above example will show results like the following:
 \image html img-detection-objects.jpeg
 
 \section dnn_trt_example 5. Tutorial description
+
 In the following section is a detailed description of the tutorial. The complete source code is available in
 tutorial-dnn-tensorrt-live.cpp file.
+
+This program performs real-time object detection on an NVIDIA GPU with TensorRT. It:
+- loads an ONNX model (by default `ssd-mobilenet.onnx` from \ref install_ubuntu_dataset) and builds a TensorRT
+  inference engine optimized for your GPU. Since building the engine takes time, it is saved in a file with `.engine`
+  extension next to the model and reused at next launches,
+- grabs images from a webcam (selected with `--device` option) or reads images from a video file (`--input` option),
+- pre-processes each image on the GPU using OpenCV CUDA modules (resize, mean subtraction, scaling and conversion to
+  a tensor),
+- runs the inference with TensorRT on the GPU,
+- post-processes the outputs to keep the detections whose confidence is greater than `--confThresh` threshold and
+  merges overlapping detections with Non-Maximum Suppression using `--nmsThresh` threshold,
+- displays the image with the bounding boxes and class names of the detected objects, read from the labels file given
+  with `--labels` option, as well as the processing time in ms (pre-processing, inference and post-processing).
+
+A click in the display window stops the program.
+
+\note The post-processing implemented in this tutorial is specific to SSD-MobileNet model outputs (`scores` and
+`boxes`). To use another model, `postprocessResults()` function has to be adapted.
 
 \subsection header_files 5.1. Include header files
 Include header files for required extra modules to handle CUDA.
