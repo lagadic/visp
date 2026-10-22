@@ -550,6 +550,7 @@ template <> inline float vpImage<float>::getMaxValue(bool onlyFiniteVal) const
   return m;
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 template <>
 inline vpHSV<unsigned char, false> vpImage<vpHSV<unsigned char, false>>::getMaxValue(bool onlyFiniteVal) const
 {
@@ -633,6 +634,7 @@ inline vpHSV<double, true> vpImage<vpHSV<double, true>>::getMaxValue(bool onlyFi
   }
   return m;
 }
+#endif
 
 /*!
  * \brief Return the minimum value within the bitmap
@@ -718,6 +720,7 @@ template <> inline float vpImage<float>::getMinValue(bool onlyFiniteVal) const
   return m;
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 template <>
 inline vpHSV<unsigned char, false> vpImage<vpHSV<unsigned char, false>>::getMinValue(bool onlyFiniteVal) const
 {
@@ -801,6 +804,7 @@ inline vpHSV<double, true> vpImage<vpHSV<double, true>>::getMinValue(bool onlyFi
   }
   return m;
 }
+#endif
 
 /*!
  * \brief Look for the minimum and the maximum value within the bitmap
