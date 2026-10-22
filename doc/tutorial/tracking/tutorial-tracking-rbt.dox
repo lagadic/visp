@@ -75,11 +75,11 @@ To correctly process your model, here is a small overview of the steps to follow
 
 To make sure your model is correct, you should start by setting the scale and orientation of your 3D model.
 
-You should first import your model in Blender. In the top left corner of the Blender window, click on
-**File > Import > (Your model type)**, then pick your object in the popup window.
+You should first import your model in Blender. In the top left corner of the Blender window, click
+on **File > Import > (Your model type)**, then pick your object in the popup window.
 
-Your model should have been imported and should be visible in the 3D viewer. You should then click on it and press
-**N** to bring up the Transform panel in the top right corner. Then you should press **Ctrl+A** to open the **Apply**
+Your model should have been imported and should be visible in the 3D viewer. You should then click on it and
+press **N** to bring up the Transform panel in the top right corner. Then you should press **Ctrl+A** to open the **Apply**
 menu and click on the **All transforms** item.
 When you do this, you will not see any change applied to the model itself,
 but this will ensure that what you see in Blender is what is observed by the tracker and that both use the same orientation and scale.

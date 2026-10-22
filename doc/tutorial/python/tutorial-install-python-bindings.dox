@@ -1018,10 +1018,10 @@ $HOME/visp_ws/visp/modules/gui/src/display/vpDisplayX.cpp:100:5: error: use of u
     ^
 \endcode
 
-It occurs when you forgot to install `xorg-libx11`, `xorg-libxfixes` and `xorg-xorgprot` conda packages.
+It occurs when you forgot to install `xorg-libx11`, `xorg-libxfixes` and `xorg-xorgproto` conda packages.
 To fix this build issue:
 \code{.sh}
-(visp-conda-ws) $ conda install xorg-libx11 xorg-libxfixes xorg-xorgprot
+(visp-conda-ws) $ conda install xorg-libx11 xorg-libxfixes xorg-xorgproto
 (visp-conda-ws) $ cd visp-build-bindings
 (visp-conda-ws) $ cmake ../visp \
                     -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
