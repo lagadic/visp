@@ -294,6 +294,133 @@ template <> inline vpRGBf vpImage<vpRGBf>::getValue(double i, double j) const
   return vpRGBf(static_cast<float>(valueR), static_cast<float>(valueG), static_cast<float>(valueB));
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+/*!
+  \relates vpImage
+ */
+template <> inline vpHSV<unsigned char, false> vpImage<vpHSV<unsigned char, false>>::getValue(double i, double j) const
+{
+  if ((i < 0) || (j < 0) || ((i + 1) > height) || ((j + 1) > width)) {
+    throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
+  }
+  if ((height * width) == 0) {
+    throw vpException(vpImageException::notInitializedError, "Empty image!");
+  }
+
+  unsigned int iround = static_cast<unsigned int>(floor(i));
+  unsigned int jround = static_cast<unsigned int>(floor(j));
+
+  double rratio = i - static_cast<double>(iround);
+  double cratio = j - static_cast<double>(jround);
+
+  double rfrac = 1.0 - rratio;
+  double cfrac = 1.0 - cratio;
+
+  unsigned int iround_1 = std::min<unsigned int>(height - 1, iround + 1);
+  unsigned int jround_1 = std::min<unsigned int>(width - 1, jround + 1);
+
+  double valueH =
+    (((static_cast<double>(row[iround][jround].H) * rfrac) + (static_cast<double>(row[iround_1][jround].H) * rratio)) *
+    cfrac) +
+    (((static_cast<double>(row[iround][jround_1].H) * rfrac) + (static_cast<double>(row[iround_1][jround_1].H) * rratio)) *
+    cratio);
+  double valueS =
+    (((static_cast<double>(row[iround][jround].S) * rfrac) + (static_cast<double>(row[iround_1][jround].S) * rratio)) *
+    cfrac) +
+    (((static_cast<double>(row[iround][jround_1].S) * rfrac) + (static_cast<double>(row[iround_1][jround_1].S) * rratio)) *
+    cratio);
+  double valueV =
+    (((static_cast<double>(row[iround][jround].V) * rfrac) + (static_cast<double>(row[iround_1][jround].V) * rratio)) *
+    cfrac) +
+    (((static_cast<double>(row[iround][jround_1].V) * rfrac) + (static_cast<double>(row[iround_1][jround_1].V) * rratio)) *
+    cratio);
+
+  return vpHSV<unsigned char, false>(static_cast<unsigned char>(vpMath::round(valueH)), static_cast<unsigned char>(vpMath::round(valueS)),
+                static_cast<unsigned char>(vpMath::round(valueV)));
+}
+
+template <> inline vpHSV<unsigned char, true> vpImage<vpHSV<unsigned char, true>>::getValue(double i, double j) const
+{
+  if ((i < 0) || (j < 0) || ((i + 1) > height) || ((j + 1) > width)) {
+    throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
+  }
+  if ((height * width) == 0) {
+    throw vpException(vpImageException::notInitializedError, "Empty image!");
+  }
+
+  unsigned int iround = static_cast<unsigned int>(floor(i));
+  unsigned int jround = static_cast<unsigned int>(floor(j));
+
+  double rratio = i - static_cast<double>(iround);
+  double cratio = j - static_cast<double>(jround);
+
+  double rfrac = 1.0 - rratio;
+  double cfrac = 1.0 - cratio;
+
+  unsigned int iround_1 = std::min<unsigned int>(height - 1, iround + 1);
+  unsigned int jround_1 = std::min<unsigned int>(width - 1, jround + 1);
+
+  double valueH =
+    (((static_cast<double>(row[iround][jround].H) * rfrac) + (static_cast<double>(row[iround_1][jround].H) * rratio)) *
+    cfrac) +
+    (((static_cast<double>(row[iround][jround_1].H) * rfrac) + (static_cast<double>(row[iround_1][jround_1].H) * rratio)) *
+    cratio);
+  double valueS =
+    (((static_cast<double>(row[iround][jround].S) * rfrac) + (static_cast<double>(row[iround_1][jround].S) * rratio)) *
+    cfrac) +
+    (((static_cast<double>(row[iround][jround_1].S) * rfrac) + (static_cast<double>(row[iround_1][jround_1].S) * rratio)) *
+    cratio);
+  double valueV =
+    (((static_cast<double>(row[iround][jround].V) * rfrac) + (static_cast<double>(row[iround_1][jround].V) * rratio)) *
+    cfrac) +
+    (((static_cast<double>(row[iround][jround_1].V) * rfrac) + (static_cast<double>(row[iround_1][jround_1].V) * rratio)) *
+    cratio);
+
+  return vpHSV<unsigned char, true>(static_cast<unsigned char>(vpMath::round(valueH)), static_cast<unsigned char>(vpMath::round(valueS)),
+                static_cast<unsigned char>(vpMath::round(valueV)));
+}
+
+template <> inline vpHSV<double> vpImage<vpHSV<double>>::getValue(double i, double j) const
+{
+  if ((i < 0) || (j < 0) || ((i + 1) > height) || ((j + 1) > width)) {
+    throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
+  }
+  if ((height * width) == 0) {
+    throw vpException(vpImageException::notInitializedError, "Empty image!");
+  }
+
+  unsigned int iround = static_cast<unsigned int>(floor(i));
+  unsigned int jround = static_cast<unsigned int>(floor(j));
+
+  double rratio = i - static_cast<double>(iround);
+  double cratio = j - static_cast<double>(jround);
+
+  double rfrac = 1.0 - rratio;
+  double cfrac = 1.0 - cratio;
+
+  unsigned int iround_1 = std::min<unsigned int>(height - 1, iround + 1);
+  unsigned int jround_1 = std::min<unsigned int>(width - 1, jround + 1);
+
+  double valueH =
+    (((row[iround][jround].H * rfrac) + (row[iround_1][jround].H * rratio)) *
+    cfrac) +
+    (((row[iround][jround_1].H * rfrac) + (row[iround_1][jround_1].H * rratio)) *
+    cratio);
+  double valueS =
+    (((row[iround][jround].S * rfrac) + (row[iround_1][jround].S * rratio)) *
+    cfrac) +
+    (((row[iround][jround_1].S * rfrac) + (row[iround_1][jround_1].S * rratio)) *
+    cratio);
+  double valueV =
+    (((row[iround][jround].V * rfrac) + (row[iround_1][jround].V * rratio)) *
+    cfrac) +
+    (((row[iround][jround_1].V * rfrac) + (row[iround_1][jround_1].V * rratio)) *
+    cratio);
+
+  return vpHSV<double>(valueH, valueS, valueV);
+}
+#endif
+
 /*!
   Retrieves pixel value from an image containing values of type \e Type with
   sub-pixel accuracy.
@@ -423,6 +550,92 @@ template <> inline float vpImage<float>::getMaxValue(bool onlyFiniteVal) const
   return m;
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+template <>
+inline vpHSV<unsigned char, false> vpImage<vpHSV<unsigned char, false>>::getMaxValue(bool onlyFiniteVal) const
+{
+  (void)onlyFiniteVal;
+  if (npixels == 0) {
+    throw(vpException(vpException::fatalError, "Cannot compute maximum value of an empty image"));
+  }
+  vpHSV<unsigned char, false> m = bitmap[0];
+  for (unsigned int i = 1; i < npixels; ++i) {
+    if (bitmap[i].H > m.H) {
+      m.H = bitmap[i].H;
+    }
+    if (bitmap[i].S > m.S) {
+      m.S = bitmap[i].S;
+    }
+    if (bitmap[i].V > m.V) {
+      m.V = bitmap[i].V;
+    }
+  }
+  return m;
+}
+
+template <>
+inline vpHSV<unsigned char, true> vpImage<vpHSV<unsigned char, true>>::getMaxValue(bool onlyFiniteVal) const
+{
+  (void)onlyFiniteVal;
+  if (npixels == 0) {
+    throw(vpException(vpException::fatalError, "Cannot compute maximum value of an empty image"));
+  }
+  vpHSV<unsigned char, true> m = bitmap[0];
+  for (unsigned int i = 1; i < npixels; ++i) {
+    if (bitmap[i].H > m.H) {
+      m.H = bitmap[i].H;
+    }
+    if (bitmap[i].S > m.S) {
+      m.S = bitmap[i].S;
+    }
+    if (bitmap[i].V > m.V) {
+      m.V = bitmap[i].V;
+    }
+  }
+  return m;
+}
+
+template <>
+inline vpHSV<double, true> vpImage<vpHSV<double, true>>::getMaxValue(bool onlyFiniteVal) const
+{
+  if (npixels == 0) {
+    throw(vpException(vpException::fatalError, "Cannot compute maximum value of an empty image"));
+  }
+  vpHSV<double, true> m = bitmap[0];
+  for (unsigned int i = 1; i < npixels; ++i) {
+    if (onlyFiniteVal) {
+      if (vpMath::isFinite(bitmap[i].H)) {
+        if (bitmap[i].H > m.H) {
+          m.H = bitmap[i].H;
+        }
+      }
+      if (vpMath::isFinite(bitmap[i].S)) {
+        if (bitmap[i].S > m.S) {
+          m.S = bitmap[i].S;
+        }
+      }
+      if (vpMath::isFinite(bitmap[i].V)) {
+        if (bitmap[i].V > m.V) {
+          m.V = bitmap[i].V;
+        }
+      }
+    }
+    else {
+      if (bitmap[i].H > m.H) {
+        m.H = bitmap[i].H;
+      }
+      if (bitmap[i].S > m.S) {
+        m.S = bitmap[i].S;
+      }
+      if (bitmap[i].V > m.V) {
+        m.V = bitmap[i].V;
+      }
+    }
+  }
+  return m;
+}
+#endif
+
 /*!
  * \brief Return the minimum value within the bitmap
  * \param onlyFiniteVal : This parameter is ignored for non double or non float bitmap.
@@ -506,6 +719,92 @@ template <> inline float vpImage<float>::getMinValue(bool onlyFiniteVal) const
   }
   return m;
 }
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+template <>
+inline vpHSV<unsigned char, false> vpImage<vpHSV<unsigned char, false>>::getMinValue(bool onlyFiniteVal) const
+{
+  (void)onlyFiniteVal;
+  if (npixels == 0) {
+    throw(vpException(vpException::fatalError, "Cannot compute maximum value of an empty image"));
+  }
+  vpHSV<unsigned char, false> m = bitmap[0];
+  for (unsigned int i = 1; i < npixels; ++i) {
+    if (bitmap[i].H < m.H) {
+      m.H = bitmap[i].H;
+    }
+    if (bitmap[i].S < m.S) {
+      m.S = bitmap[i].S;
+    }
+    if (bitmap[i].V < m.V) {
+      m.V = bitmap[i].V;
+    }
+  }
+  return m;
+}
+
+template <>
+inline vpHSV<unsigned char, true> vpImage<vpHSV<unsigned char, true>>::getMinValue(bool onlyFiniteVal) const
+{
+  (void)onlyFiniteVal;
+  if (npixels == 0) {
+    throw(vpException(vpException::fatalError, "Cannot compute maximum value of an empty image"));
+  }
+  vpHSV<unsigned char, true> m = bitmap[0];
+  for (unsigned int i = 1; i < npixels; ++i) {
+    if (bitmap[i].H < m.H) {
+      m.H = bitmap[i].H;
+    }
+    if (bitmap[i].S < m.S) {
+      m.S = bitmap[i].S;
+    }
+    if (bitmap[i].V < m.V) {
+      m.V = bitmap[i].V;
+    }
+  }
+  return m;
+}
+
+template <>
+inline vpHSV<double, true> vpImage<vpHSV<double, true>>::getMinValue(bool onlyFiniteVal) const
+{
+  if (npixels == 0) {
+    throw(vpException(vpException::fatalError, "Cannot compute maximum value of an empty image"));
+  }
+  vpHSV<double, true> m = bitmap[0];
+  for (unsigned int i = 1; i < npixels; ++i) {
+    if (onlyFiniteVal) {
+      if (vpMath::isFinite(bitmap[i].H)) {
+        if (bitmap[i].H < m.H) {
+          m.H = bitmap[i].H;
+        }
+      }
+      if (vpMath::isFinite(bitmap[i].S)) {
+        if (bitmap[i].S < m.S) {
+          m.S = bitmap[i].S;
+        }
+      }
+      if (vpMath::isFinite(bitmap[i].V)) {
+        if (bitmap[i].V < m.V) {
+          m.V = bitmap[i].V;
+        }
+      }
+    }
+    else {
+      if (bitmap[i].H < m.H) {
+        m.H = bitmap[i].H;
+      }
+      if (bitmap[i].S < m.S) {
+        m.S = bitmap[i].S;
+      }
+      if (bitmap[i].V < m.V) {
+        m.V = bitmap[i].V;
+      }
+    }
+  }
+  return m;
+}
+#endif
 
 /*!
  * \brief Look for the minimum and the maximum value within the bitmap
@@ -694,6 +993,150 @@ template <> inline void vpImage<vpRGBf>::getMinMaxValue(vpRGBf &min, vpRGBf &max
     }
   }
 }
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+/*!
+ * \relates vpImage
+ * \brief Look for the minimum and the maximum value within the 3-channels float bitmap
+ * \param min : The minimal values within the bitmap.
+ * \param max : The maximal values within the bitmap.
+ * \param onlyFiniteVal : If true, consider only finite values.
+ *
+ * \sa getMaxValue()
+ * \sa getMinValue()
+ * \sa getMinMaxLoc()
+ */
+template <> inline void vpImage<vpHSV<double, true>>::getMinMaxValue(vpHSV<double, true> &min, vpHSV<double, true> &max, bool onlyFiniteVal) const
+{
+  if (npixels == 0) {
+    throw(vpException(vpException::fatalError, "Cannot get minimum/maximum values of an empty image"));
+  }
+
+  min = bitmap[0];
+  max = bitmap[0];
+  if (onlyFiniteVal) {
+    for (unsigned int i = 0; i < npixels; ++i) {
+      if (vpMath::isFinite(bitmap[i].H)) {
+        if (bitmap[i].H < min.H) {
+          min.H = bitmap[i].H;
+        }
+        if (bitmap[i].H > max.H) {
+          max.H = bitmap[i].H;
+        }
+      }
+      if (vpMath::isFinite(bitmap[i].S)) {
+        if (bitmap[i].S < min.S) {
+          min.S = bitmap[i].S;
+        }
+        if (bitmap[i].S > max.S) {
+          max.S = bitmap[i].S;
+        }
+      }
+      if (vpMath::isFinite(bitmap[i].V)) {
+        if (bitmap[i].V < min.V) {
+          min.V = bitmap[i].V;
+        }
+        if (bitmap[i].V > max.V) {
+          max.V = bitmap[i].V;
+        }
+      }
+    }
+  }
+  else {
+    for (unsigned int i = 0; i < npixels; ++i) {
+      if (bitmap[i].H < min.H) {
+        min.H = bitmap[i].H;
+      }
+      if (bitmap[i].H > max.H) {
+        max.H = bitmap[i].H;
+      }
+
+      if (bitmap[i].S < min.S) {
+        min.S = bitmap[i].S;
+      }
+      if (bitmap[i].S > max.S) {
+        max.S = bitmap[i].S;
+      }
+
+      if (bitmap[i].V < min.V) {
+        min.V = bitmap[i].V;
+      }
+      if (bitmap[i].V > max.V) {
+        max.V = bitmap[i].V;
+      }
+    }
+  }
+}
+
+template <> inline void vpImage<vpHSV<unsigned char, true>>::getMinMaxValue(vpHSV<unsigned char, true> &min, vpHSV<unsigned char, true> &max, bool onlyFiniteVal) const
+{
+  (void)onlyFiniteVal;
+  if (npixels == 0) {
+    throw(vpException(vpException::fatalError, "Cannot get minimum/maximum values of an empty image"));
+  }
+
+  min = bitmap[0];
+  max = bitmap[0];
+
+  for (unsigned int i = 0; i < npixels; ++i) {
+    if (bitmap[i].H < min.H) {
+      min.H = bitmap[i].H;
+    }
+    if (bitmap[i].H > max.H) {
+      max.H = bitmap[i].H;
+    }
+
+    if (bitmap[i].S < min.S) {
+      min.S = bitmap[i].S;
+    }
+    if (bitmap[i].S > max.S) {
+      max.S = bitmap[i].S;
+    }
+
+    if (bitmap[i].V < min.V) {
+      min.V = bitmap[i].V;
+    }
+    if (bitmap[i].V > max.V) {
+      max.V = bitmap[i].V;
+    }
+  }
+
+}
+
+template <> inline void vpImage<vpHSV<unsigned char, false>>::getMinMaxValue(vpHSV<unsigned char, false> &min, vpHSV<unsigned char, false> &max, bool onlyFiniteVal) const
+{
+  (void)onlyFiniteVal;
+  if (npixels == 0) {
+    throw(vpException(vpException::fatalError, "Cannot get minimum/maximum values of an empty image"));
+  }
+
+  min = bitmap[0];
+  max = bitmap[0];
+
+  for (unsigned int i = 0; i < npixels; ++i) {
+    if (bitmap[i].H < min.H) {
+      min.H = bitmap[i].H;
+    }
+    if (bitmap[i].H > max.H) {
+      max.H = bitmap[i].H;
+    }
+
+    if (bitmap[i].S < min.S) {
+      min.S = bitmap[i].S;
+    }
+    if (bitmap[i].S > max.S) {
+      max.S = bitmap[i].S;
+    }
+
+    if (bitmap[i].V < min.V) {
+      min.V = bitmap[i].V;
+    }
+    if (bitmap[i].V > max.V) {
+      max.V = bitmap[i].V;
+    }
+  }
+}
+#endif
 
 /*!
   \brief Get the position of the minimum and/or the maximum pixel value within the bitmap and
