@@ -5,7 +5,7 @@ TEMPLATE_EXPANSION_MAP: Dict[str, List[str]] = {
   'TypePythonScalar': ['int', 'double'], # Python itself doesn't make the distinction between int, uint, int16_t etc.
   'TypeFilterable': ['unsigned char', 'float', 'double'],
   'TypeErodableDilatable': ['unsigned char', 'float', 'double'],
-  'TypeImage': ['unsigned char', 'uint16_t', 'float', 'double', 'bool', 'vpRGBa', 'vpRGBf'],
+  'TypeImage': ['unsigned char', 'uint16_t', 'float', 'double', 'bool', 'vpRGBa', 'vpRGBf', 'vpHSV<unsigned char, false>', 'vpHSV<unsigned char, true>', 'vpHSV<double, true>'],
 
   'TypeBaseImagePixel': ['unsigned char', 'vpRGBa']
 }

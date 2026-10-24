@@ -38,6 +38,15 @@ AprilTag Detection
 
     detection/tutorial-detection-apriltag.rst
 
+Segmentation
+------------
+
+.. toctree::
+    :glob:
+    :maxdepth: 1
+
+    segmentation/tutorial-color-segmentation.rst
+
 Visual Servoing
 -----------------------
 

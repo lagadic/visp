@@ -55,6 +55,9 @@ class vpHSV;
 template <typename T, bool useFullScale>
 std::ostream &operator<<(std::ostream &os, const vpHSV<T, useFullScale> &hsv);
 
+template <typename T, bool useFullScale>
+vpHSV<T, useFullScale> operator*(const double &x, const vpHSV<T, useFullScale> &hsv);
+
 #ifndef VISP_PYTHON_PREPROCESSOR_RUNNING
 namespace
 {
@@ -130,7 +133,7 @@ struct UniformLawVariance<unsigned char, false>
  * - \ref tutorial-hsv-segmentation-intro
  */
 template<typename T, bool useFullScale>
-class vpHSV
+class vpHSV final
 {
 public:
   /**
@@ -144,7 +147,7 @@ public:
     : H(static_cast<T>(H_))
     , S(static_cast<T>(S_))
     , V(static_cast<T>(V_))
-  { }
+  {}
 
   /**
    * \brief Construct a new vpHSV object from a vpColVector.
@@ -223,15 +226,6 @@ public:
   {
     buildFrom(rgba);
   }
-
-  /**
-   * Default destructor.
-   */
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-  virtual ~vpHSV() = default;
-#else
-  virtual ~vpHSV() { }
-#endif
 
   /**
    * \brief Modify the object to be the result of the conversion of the vpRGBa object into HSV format.
@@ -528,9 +522,11 @@ public:
    *
    * \return std::string
    */
-  virtual std::string toString() const;
+  std::string toString() const;
 
   friend std::ostream &operator<< <>(std::ostream &os, const vpHSV<T, useFullScale> &hsv);
+
+  friend vpHSV<T, useFullScale> operator* <>(const double &x, const vpHSV<T, useFullScale> &hsv);
 
 public:
   T H; /*!< The Hue channel.*/
@@ -635,6 +631,29 @@ std::ostream &operator<<(std::ostream &os, const vpHSV<T, useFullScale> &hsv)
 {
   os << hsv.toString();
   return os;
+}
+
+template <typename T, bool useFullScale>
+vpHSV<T, useFullScale> operator* (const double &x, const vpHSV<T, useFullScale> &hsv)
+{
+  vpHSV<T, useFullScale> result;
+  result.H = static_cast<T>(static_cast<double>(hsv.H) * x);
+  result.S = static_cast<T>(static_cast<double>(hsv.S) * x);
+  result.V = static_cast<T>(static_cast<double>(hsv.V) * x);
+  return result;
+}
+
+template <>
+inline vpHSV<unsigned char, false> operator*(const double &x, const vpHSV<unsigned char, false> &hsv)
+{
+  vpHSV<unsigned char, false> result;
+  result.H = static_cast<unsigned char>(static_cast<double>(hsv.H) * x);
+  if (result.H > vpHSV<unsigned char, false>::maxHueUsingLimitedRange) {
+    throw(vpException(vpException::fatalError, "H became out of bound when multiplied by x"));
+  }
+  result.S = static_cast<unsigned char>(static_cast<double>(hsv.S) * x);
+  result.V = static_cast<unsigned char>(static_cast<double>(hsv.V) * x);
+  return result;
 }
 
 template<>

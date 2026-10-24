@@ -42,6 +42,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpEndian.h>
 #include <visp3/core/vpException.h>
+#include <visp3/core/vpHSV.h>
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpRGBa.h>

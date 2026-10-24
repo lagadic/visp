@@ -73,6 +73,7 @@ Example usage:
   filter = np.zeros((1,1))
   ImageFilter.getGaussianKernel(filter, size, sigma, normalize)
   assert filter.shape[0] == 1 and filter.shape[1] == ((size + 1)/2)
+  assert filter.numpy().any()
     )doc", py::arg("filter"), py::arg("size"), py::arg("sigma") = 0., py::arg("normalize") = true);
 
   pyClass.def_static("getGaussianKernel", [](vpArray2D<FilterType> &filter, unsigned int size, FilterType sigma, bool normalize) -> void {
@@ -97,6 +98,7 @@ Example usage:
   filter = ArrayDouble2D(1,1)
   ImageFilter.getGaussianKernel(filter, size, sigma, normalize)
   assert filter.getRows() == 1 and filter.getCols() == ((size + 1)/2)
+  assert filter.numpy().any()
     )doc", py::arg("filter"), py::arg("size"), py::arg("sigma") = 0., py::arg("normalize") = true);
 
   pyClass.def_static("getGaussianDerivativeKernel", [](py::array_t<FilterType> &filter, unsigned int size, FilterType sigma, bool normalize) -> void {
@@ -147,6 +149,7 @@ Example usage:
   filter = ArrayDouble2D(1,1)
   ImageFilter.getGaussianDerivativeKernel(filter, size, sigma, normalize)
   assert filter.getRows() == 1 and filter.getCols() == ((size + 1)/2)
+  assert filter.numpy().any()
     )doc", py::arg("filter"), py::arg("size"), py::arg("sigma") = 0., py::arg("normalize") = true);
 }
 
@@ -183,10 +186,12 @@ Example usage:
   Iout = ImageDouble()
   ImageFilter.getGradX(Iin, Iout, None)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
   Iout = ImageDouble()
   mask = ImageBool(100,100,True)
   ImageFilter.getGradX(Iin, Iout, mask)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
     )doc", py::arg("input"), py::arg("output"), py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 
   pyClass.def_static("getGradY", [](const vpImage<unsigned char> &input, vpImage<FilterType> &output, const std::optional<vpImage<bool>> &mask) -> void {
@@ -215,10 +220,12 @@ Example usage:
   Iout = ImageDouble()
   ImageFilter.getGradY(Iin, Iout, None)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
   Iout = ImageDouble()
   mask = ImageBool(100,100,True)
   ImageFilter.getGradY(Iin, Iout, mask)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
 )doc", py::arg("input"), py::arg("output"), py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
@@ -270,10 +277,12 @@ Example usage:
   Iout = ImageDouble()
   ImageFilter.getGradX(Iin, Iout, filter, size, None)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
   Iout = ImageDouble()
   mask = ImageBool(100,100,True)
   ImageFilter.getGradX(Iin, Iout, filter, size, mask)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
     )doc", py::arg("input"), py::arg("output"), py::arg("filter"), py::arg("size"), py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 
   pyClass.def_static("getGradX", [](const vpImage<ImageType> &input, vpImage<FilterType> &output, const vpArray2D<FilterType> &filter, unsigned int size, const std::optional<vpImage<bool>> &mask) -> void {
@@ -315,10 +324,12 @@ Example usage:
   Iout = ImageDouble()
   ImageFilter.getGradX(Iin, Iout, filter, size, None)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
   Iout = ImageDouble()
   mask = ImageBool(100,100,True)
   ImageFilter.getGradX(Iin, Iout, filter, size, mask)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
 )doc", py::arg("input"), py::arg("output"), py::arg("filter"), py::arg("size"), py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 
   pyClass.def_static("getGradY", [](const vpImage<ImageType> &input, vpImage<FilterType> &output, const py::array_t<FilterType> &filter, unsigned int size, const std::optional<vpImage<bool>> &mask) -> void {
@@ -362,10 +373,12 @@ Example usage:
   Iout = ImageDouble()
   ImageFilter.getGradY(Iin, Iout, filter, size, None)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
   Iout = ImageDouble()
   mask = ImageBool(100,100,True)
   ImageFilter.getGradY(Iin, Iout, filter, size, mask)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
 )doc", py::arg("input"), py::arg("output"), py::arg("filter"), py::arg("size"), py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 
   pyClass.def_static("getGradY", [](const vpImage<ImageType> &input, vpImage<FilterType> &output, const vpArray2D<FilterType> &filter, unsigned int size, const std::optional<vpImage<bool>> &mask) -> void {
@@ -407,10 +420,12 @@ Example usage:
   Iout = ImageDouble()
   ImageFilter.getGradY(Iin, Iout, filter, size, None)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
   Iout = ImageDouble()
   mask = ImageBool(100,100,True)
   ImageFilter.getGradY(Iin, Iout, filter, size, mask)
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
+  assert Iout.numpy().any()
 )doc", py::arg("input"), py::arg("output"), py::arg("filter"), py::arg("size"), py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
@@ -426,9 +441,9 @@ void define_gaussianFilter(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, s
   pyClass.def_static(
     "gaussianFilter",
     [](const vpImage<ImageType> &input,
-      unsigned int r,
-      unsigned int c) -> double {
-        return vpImageFilter::gaussianFilter(input, r, c);
+       unsigned int r,
+       unsigned int c) -> double {
+         return vpImageFilter::gaussianFilter(input, r, c);
       }, R"doc(
 Apply a 5x5 Gaussian filter to one image pixel.
 
@@ -450,9 +465,9 @@ Example usage:
   filtered_value = ImageFilter.gaussianFilter(Iin, 50, 50)
   assert isinstance(filtered_value, float)
 )doc",
-    py::arg("input"),
-    py::arg("r"),
-    py::arg("c"));
+py::arg("input"),
+py::arg("r"),
+py::arg("c"));
 }
 
 template<typename ImageType, typename FilterType>
@@ -466,26 +481,107 @@ void define_gaussianBlur(
   pyClass.def_static(
     "gaussianBlur",
     [](const vpImage<ImageType> &input,
-      vpImage<FilterType> &output,
-      unsigned int size,
-      double sigma,
-      bool normalize,
-      const std::optional<vpImage<bool>> &mask) -> void {
-        if (!mask) {
-          vpImageFilter::gaussianBlur(input, output, size, sigma, normalize, nullptr);
-        }
-        else {
-          vpImageFilter::gaussianBlur(input, output, size, sigma, normalize, &(mask.value()));
-				}
+       vpImage<FilterType> &output,
+       unsigned int size,
+       double sigma,
+       bool normalize,
+       const std::optional<vpImage<bool>> &mask) -> void {
+         if (!mask) {
+           vpImageFilter::gaussianBlur(input, output, size, sigma, normalize, nullptr);
+         }
+         else {
+           vpImageFilter::gaussianBlur(input, output, size, sigma, normalize, &(mask.value()));
+         }
     },
     R"doc(
-Apply a Gaussian blur to an image.
+  Apply a Gaussian blur to an image.
 
-:param input: The input image.
-:param output: The resulting blurred image.
-:param size: Filter size. This value should be odd.
-:param sigma: Gaussian standard deviation. If it is zero or negative, it is computed from the filter size as ``(size - 1) / 6``.
+  :param input: The input image.
+  :param output: The resulting blurred image.
+  :param size: Filter size. This value should be odd.
+  :param sigma: Gaussian standard deviation. If it is zero or negative, it is computed from the filter size as ``(size - 1) / 6``.
+  :param normalize: If True, normalize the Gaussian filter coefficients.
+  :param mask: Optional mask indicating which pixels to consider. True means that the pixel is considered, while False means that it is ignored.
+
+  Example usage:
+
+  .. testcode::
+
+    from visp.core import ImageGray, ImageDouble, ImageBool, ImageFilter
+
+    Iin = ImageGray(100, 100, 0)
+    Iin[25:75, 25:75] = 50
+
+    Iout = ImageDouble()
+    ImageFilter.gaussianBlur(Iin, Iout)
+
+    assert Iout.getRows() == Iin.getRows()
+    assert Iout.getCols() == Iin.getCols()
+    assert Iout.numpy().any()
+
+    mask = ImageBool(100, 100, True)
+
+    Iout = ImageDouble()
+    ImageFilter.gaussianBlur(
+      Iin,
+      Iout,
+      size=7,
+      sigma=0.0,
+      normalize=True,
+      mask=mask
+    )
+
+    assert Iout.getRows() == Iin.getRows()
+    assert Iout.getCols() == Iin.getCols()
+    assert Iout.numpy().any()
+  )doc",
+  py::arg("input"),
+  py::arg("output"),
+  py::arg("size") = 7,
+  py::arg("sigma") = 0.,
+  py::arg("normalize") = true,
+  py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+}
+
+template<typename ImageType, typename FilterType>
+void define_partialDerivative(
+  py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
+  pyClass.def_static(
+    "computePartialDerivatives",
+    [](const vpImage<ImageType> &I,
+       vpImage<FilterType> &dIx, vpImage<FilterType> &dIy,
+       const bool &computeDx, const bool &computeDy, const bool &normalize,
+       const unsigned int &gaussianKernelSize, const FilterType &gaussianStdev,
+       const unsigned int &apertureGradient,
+       const vpImageFilter::vpCannyFilteringAndGradientType &filteringType,
+       const vpImageFilter::vpCannyBackendType &backend,
+       const std::optional<vpImage<bool>> &mask) -> void {
+         if (!mask) {
+           vpImageFilter::computePartialDerivatives(I, dIx, dIy, computeDx, computeDy, normalize, gaussianKernelSize, gaussianStdev, apertureGradient, filteringType, backend, nullptr);
+         }
+         else {
+           vpImageFilter::computePartialDerivatives(I, dIx, dIy, computeDx, computeDy, normalize, gaussianKernelSize, gaussianStdev, apertureGradient, filteringType, backend, &(mask.value()));
+         }
+    },
+    R"doc(
+Compute the partial derivatives (i.e. horizontal and vertical gradients) of the input image.
+
+:param I: The input image.
+:param dIx: The horizontal partial derivative, i.e. horizontal gradient.
+:param dIy: The vertical partial derivative, i.e. vertical gradient.
+:param computeDx: Indicate if we must compute  the horizontal gradient.
+:param computeDy: Indicate if we must compute  the vertical gradient.
 :param normalize: If True, normalize the Gaussian filter coefficients.
+:param gaussianKernelSize: Gaussian filter size. This value should be odd.
+:param gaussianStdev: Gaussian standard deviation. If it is zero or negative, it is computed from the filter size as ``(size - 1) / 6``.
+:param apertureGradient: Gradient filter size. This value should be odd.
+:param filteringType: The type of filters to apply to compute the gradients.
+:param backend: The type of backend to use to compute the gradients.
 :param mask: Optional mask indicating which pixels to consider. True means that the pixel is considered, while False means that it is ignored.
 
 Example usage:
@@ -497,33 +593,224 @@ Example usage:
   Iin = ImageGray(100, 100, 0)
   Iin[25:75, 25:75] = 50
 
-  Iout = ImageDouble()
-  ImageFilter.gaussianBlur(Iin, Iout)
+  dIx = ImageDouble()
+  dIy = ImageDouble()
+  ImageFilter.computePartialDerivatives(Iin, dIx, dIy)
 
-  assert Iout.getRows() == Iin.getRows()
-  assert Iout.getCols() == Iin.getCols()
+  assert dIx.getRows() == Iin.getRows()
+  assert dIx.getCols() == Iin.getCols()
+  assert dIx.numpy().any()
+  assert dIy.getRows() == Iin.getRows()
+  assert dIy.getCols() == Iin.getCols()
+  assert dIy.numpy().any()
 
   mask = ImageBool(100, 100, True)
 
-  Iout = ImageDouble()
-  ImageFilter.gaussianBlur(
+  dIx = ImageDouble()
+  dIy = ImageDouble()
+  ImageFilter.computePartialDerivatives(
     Iin,
-    Iout,
-    size=7,
-    sigma=0.0,
-    normalize=True,
+    dIx, dIy,
+    computeDx=True, computeDy=True,
+    normalize=True, gaussianKernelSize=5, gaussianStdev=2.,
+    apertureGradient=3,
+    filteringType=ImageFilter.CANNY_GBLUR_SOBEL_FILTERING,
+    backend=ImageFilter.CANNY_VISP_BACKEND,
     mask=mask
   )
 
-  assert Iout.getRows() == Iin.getRows()
-  assert Iout.getCols() == Iin.getCols()
+  assert dIx.getRows() == Iin.getRows()
+  assert dIx.getCols() == Iin.getCols()
+  assert dIx.numpy().any()
+  assert dIy.getRows() == Iin.getRows()
+  assert dIy.getCols() == Iin.getCols()
+  assert dIy.numpy().any()
 )doc",
-  py::arg("input"),
-  py::arg("output"),
-  py::arg("size") = 7,
-  py::arg("sigma") = 0.,
-  py::arg("normalize") = true,
-  py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+py::arg("I"),
+py::arg("dIx"),
+py::arg("dIy"),
+py::arg("computeDx") = true,
+py::arg("computeDy") = true,
+py::arg("normalize") = true,
+py::arg("gaussianKernelSize") = 5,
+py::arg("gaussianStdev") = 2.,
+py::arg("apertureGradient") = 3,
+py::arg("filteringType") = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING,
+py::arg("backend") = vpImageFilter::CANNY_VISP_BACKEND,
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+}
+
+template<typename ArithmeticType, bool useFullScale, typename FilterType>
+void define_computeCannyThresholdHSV(
+  py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
+  pyClass.def_static(
+    "computeCannyThreshold",
+    [](const vpImage<vpHSV<ArithmeticType, useFullScale>> &I,
+       const std::optional<vpImage<FilterType>> &dIx, std::optional<vpImage<FilterType>> &dIy,
+       const unsigned int &gaussianKernelSize,
+       const FilterType &gaussianStdev, const unsigned int &apertureGradient,
+       const float &lowerThresholdRatio, const float &upperThresholdRatio,
+       const vpImageFilter::vpCannyFilteringAndGradientType &filteringType,
+       const std::optional<vpImage<bool>> &mask) {
+         const vpImage<FilterType> *p_dIx = (dIx ? &(dIx.value()) : nullptr);
+         const vpImage<FilterType> *p_dIy = (dIy ? &(dIy.value()) : nullptr);
+         const vpImage<bool> *p_mask = (mask ? &(mask.value()) : nullptr);
+         float lowerThresh = 0.;
+         float upperThresh = vpImageFilter::computeCannyThreshold(I, lowerThresh, p_dIx, p_dIy, gaussianKernelSize, gaussianStdev, apertureGradient, lowerThresholdRatio, upperThresholdRatio, filteringType, p_mask);
+         return py::make_tuple(lowerThresh, upperThresh);
+    },
+    R"doc(
+Compute the upper Canny edge filter threshold, using Gaussian blur + Sobel or + Scharr operators to compute the gradient of the image.
+
+:param I: The input image.
+:param dIx: If different from None, must contain the gradient of the image with regard to the horizontal axis.
+:param dIy: If different from None, must contain the gradient of the image with regard to the vertical axis.
+:param gaussianKernelSize: Gaussian filter size. This value should be odd.
+:param gaussianStdev: Gaussian standard deviation. If it is zero or negative, it is computed from the filter size as ``(size - 1) / 6``.
+:param apertureGradient: Gradient filter size. This value should be odd.
+:param lowerThresholdRatio: The ratio of the upper threshold the lower threshold must be equal to.
+:param upperThresholdRatio: The ratio of pixels whose absolute gradient Gabs is lower or equal to define the upper threshold.
+:param filteringType: The type of filters to apply to compute the gradients.
+:param mask: Optional mask indicating which pixels to consider. True means that the pixel is considered, while False means that it is ignored.
+
+:return: The upper threshold for the Canny filter.
+Example usage:
+
+.. testcode::
+
+  from visp.core import ImageGray, ImageDouble, ImageBool, ImageFilter
+  import numpy as np
+
+  Iin = ImageGray(100, 100, 0)
+  Iin.numpy()[25:75, 25:75] = np.random.randint(0,256,size=(50,50))
+
+  (lowerThresh, upperThresh) = ImageFilter.computeCannyThreshold(Iin)
+
+  assert lowerThresh != 0.
+  assert upperThresh != 0.
+
+  mask = ImageBool(100, 100, True)
+
+  (lowerThresh, upperThresh) = ImageFilter.computeCannyThreshold(
+    Iin,
+    dIx=None, dIy=None,
+    gaussianKernelSize=5, gaussianStdev=2.,
+    apertureGradient=3,
+    lowerThresholdRatio=0.6,
+    upperThresholdRatio=0.8,
+    filteringType=ImageFilter.CANNY_GBLUR_SOBEL_FILTERING,
+    mask=mask
+  )
+
+  assert lowerThresh != 0.
+  assert upperThresh != 0.
+)doc",
+py::arg("I"),
+py::arg("dIx").none(true) = static_cast<std::optional<vpImage<FilterType>>>(std::nullopt),
+py::arg("dIy").none(true) = static_cast<std::optional<vpImage<FilterType>>>(std::nullopt),
+py::arg("gaussianKernelSize") = 5,
+py::arg("gaussianStdev") = 2.,
+py::arg("apertureGradient") = 3,
+py::arg("lowerThresholdRatio") = 0.6,
+py::arg("upperThresholdRatio") = 0.8,
+py::arg("filteringType") = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING,
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+
+  define_computeCannyThresholdHSV<unsigned char, false, float>(pyClass);
+  define_computeCannyThresholdHSV<unsigned char, false, double>(pyClass);
+  define_computeCannyThresholdHSV<unsigned char, true, float>(pyClass);
+  define_computeCannyThresholdHSV<unsigned char, true, double>(pyClass);
+  define_computeCannyThresholdHSV<float, true, float>(pyClass);
+  define_computeCannyThresholdHSV<float, true, double>(pyClass);
+  define_computeCannyThresholdHSV<double, true, float>(pyClass);
+  define_computeCannyThresholdHSV<double, true, double>(pyClass);
+}
+
+template<typename FilterType>
+void define_computeCannyThreshold(
+  py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
+  pyClass.def_static(
+    "computeCannyThreshold",
+    [](const vpImage<unsigned char> &I,
+       const std::optional<vpImage<FilterType>> &dIx, std::optional<vpImage<FilterType>> &dIy,
+       const unsigned int &gaussianKernelSize,
+       const FilterType &gaussianStdev, const unsigned int &apertureGradient,
+       const float &lowerThresholdRatio, const float &upperThresholdRatio,
+       const vpImageFilter::vpCannyFilteringAndGradientType &filteringType,
+       const std::optional<vpImage<bool>> &mask) {
+         const vpImage<FilterType> *p_dIx = (dIx ? &(dIx.value()) : nullptr);
+         const vpImage<FilterType> *p_dIy = (dIy ? &(dIy.value()) : nullptr);
+         const vpImage<bool> *p_mask = (mask ? &(mask.value()) : nullptr);
+         float lowerThresh = 0.;
+         float upperThresh = vpImageFilter::computeCannyThreshold(I, lowerThresh, p_dIx, p_dIy, gaussianKernelSize, gaussianStdev, apertureGradient, lowerThresholdRatio, upperThresholdRatio, filteringType, p_mask);
+         return py::make_tuple(lowerThresh, upperThresh);
+    },
+    R"doc(
+Compute the upper Canny edge filter threshold, using Gaussian blur + Sobel or + Scharr operators to compute the gradient of the image.
+
+:param I: The input image.
+:param dIx: If different from None, must contain the gradient of the image with regard to the horizontal axis.
+:param dIy: If different from None, must contain the gradient of the image with regard to the vertical axis.
+:param gaussianKernelSize: Gaussian filter size. This value should be odd.
+:param gaussianStdev: Gaussian standard deviation. If it is zero or negative, it is computed from the filter size as ``(size - 1) / 6``.
+:param apertureGradient: Gradient filter size. This value should be odd.
+:param lowerThresholdRatio: The ratio of the upper threshold the lower threshold must be equal to.
+:param upperThresholdRatio: The ratio of pixels whose absolute gradient Gabs is lower or equal to define the upper threshold.
+:param filteringType: The type of filters to apply to compute the gradients.
+:param mask: Optional mask indicating which pixels to consider. True means that the pixel is considered, while False means that it is ignored.
+
+:return: The upper threshold for the Canny filter.
+Example usage:
+
+.. testcode::
+
+  from visp.core import ImageGray, ImageDouble, ImageBool, ImageFilter
+  import numpy as np
+
+  Iin = ImageGray(100, 100, 0)
+  Iin.numpy()[25:75, 25:75] = np.random.randint(0,256,size=(50,50))
+
+  (lowerThresh, upperThresh) = ImageFilter.computeCannyThreshold(Iin)
+
+  assert lowerThresh != 0.
+  assert upperThresh != 0.
+
+  mask = ImageBool(100, 100, True)
+
+  (lowerThresh, upperThresh) = ImageFilter.computeCannyThreshold(
+    Iin,
+    dIx=None, dIy=None,
+    gaussianKernelSize=5, gaussianStdev=2.,
+    apertureGradient=3,
+    lowerThresholdRatio=0.6,
+    upperThresholdRatio=0.8,
+    filteringType=ImageFilter.CANNY_GBLUR_SOBEL_FILTERING,
+    mask=mask
+  )
+
+  assert lowerThresh != 0.
+  assert upperThresh != 0.
+)doc",
+py::arg("I"),
+py::arg("dIx").none(true) = static_cast<std::optional<vpImage<FilterType>>>(std::nullopt),
+py::arg("dIy").none(true) = static_cast<std::optional<vpImage<FilterType>>>(std::nullopt),
+py::arg("gaussianKernelSize") = 5,
+py::arg("gaussianStdev") = 2.,
+py::arg("apertureGradient") = 3,
+py::arg("lowerThresholdRatio") = 0.6,
+py::arg("upperThresholdRatio") = 0.8,
+py::arg("filteringType") = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING,
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
 void define_canny(
@@ -536,18 +823,18 @@ void define_canny(
   pyClass.def_static(
     "canny",
     [](const vpImage<unsigned char> &input,
-      vpImage<unsigned char> &output,
-      unsigned int gaussianFilterSize,
-      float lowerThreshold,
-      float upperThreshold,
-      unsigned int apertureGradient,
-      float gaussianStdev,
-      float lowerThresholdRatio,
-      float upperThresholdRatio,
-      bool normalizeGradients,
-      vpImageFilter::vpCannyBackendType cannyBackend,
-      vpImageFilter::vpCannyFilteringAndGradientType cannyFilteringSteps,
-      const std::optional<vpImage<bool>> &mask) -> void
+       vpImage<unsigned char> &output,
+       const unsigned int &gaussianFilterSize,
+       const float &lowerThreshold,
+       const float &upperThreshold,
+       const unsigned int &apertureGradient,
+       const float &gaussianStdev,
+       const float &lowerThresholdRatio,
+       const float &upperThresholdRatio,
+       const bool &normalizeGradients,
+       const vpImageFilter::vpCannyBackendType &cannyBackend,
+       const vpImageFilter::vpCannyFilteringAndGradientType &cannyFilteringSteps,
+       const std::optional<vpImage<bool>> &mask) -> void
       {
         if (!mask) {
           vpImageFilter::canny(input, output, gaussianFilterSize, lowerThreshold, upperThreshold, apertureGradient, gaussianStdev,
@@ -556,7 +843,7 @@ void define_canny(
         else {
           vpImageFilter::canny(input, output, gaussianFilterSize, lowerThreshold, upperThreshold, apertureGradient, gaussianStdev,
             lowerThresholdRatio, upperThresholdRatio, normalizeGradients, cannyBackend, cannyFilteringSteps, &(mask.value()));
-				}
+        }
       },
     R"doc(
 Apply the Canny edge detector to a grayscale image.
@@ -575,20 +862,23 @@ Apply the Canny edge detector to a grayscale image.
 :param cannyFilteringSteps	: The filtering + gradient operators to apply to compute the gradient in the early stage of the Canny algorithm.
 :param mask	: Optional mask. True pixels are processed and False pixels are ignored.
 )doc",
-    py::arg("input"),
-    py::arg("output"),
-    py::arg("gaussianFilterSize"),
-    py::arg("lowerThreshold"),
-    py::arg("upperThreshold"),
-    py::arg("apertureGradient"),
-    py::arg("gaussianStdev"),
-    py::arg("lowerThresholdRatio"),
-    py::arg("upperThresholdRatio"),
-    py::arg("normalizeGradients"),
-    py::arg("cannyBackend"),
-    py::arg("cannyFilteringSteps"),
-    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
-  );
+py::arg("input"),
+py::arg("output"),
+py::arg("gaussianFilterSize"),
+py::arg("lowerThreshold"),
+py::arg("upperThreshold"),
+py::arg("apertureGradient"),
+py::arg("gaussianStdev"),
+py::arg("lowerThresholdRatio"),
+py::arg("upperThresholdRatio"),
+py::arg("normalizeGradients"),
+py::arg("cannyBackend"),
+py::arg("cannyFilteringSteps"),
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
+);
+
+  define_computeCannyThreshold<float>(pyClass);
+  define_computeCannyThreshold<double>(pyClass);
 }
 
 
@@ -620,6 +910,11 @@ bindings_vpImageFilter(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::
   define_gaussianBlur<float, float>(pyImageFilter);
   define_gaussianBlur<double, double>(pyImageFilter);
   define_gaussianBlur<vpRGBa, vpRGBa>(pyImageFilter);
+
+  define_partialDerivative<unsigned char, float>(pyImageFilter);
+  define_partialDerivative<unsigned char, double>(pyImageFilter);
+  define_partialDerivative<float, float>(pyImageFilter);
+  define_partialDerivative<double, double>(pyImageFilter);
 
   define_canny(pyImageFilter);
 }
