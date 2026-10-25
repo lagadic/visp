@@ -163,7 +163,7 @@ jobs:
     - name: Diagnose OpenBLAS kernel
       working-directory: build
       run: |
-        OPENBLAS_VERBOSE=2 ./example/direct-visual-servoing/photometricMappingVisualServoing -c -d -n 200 -m pca -k 64 -p 100 -l 30.0 | grep -E 'Core|Explained|Time' || true
+        OPENBLAS_VERBOSE=2 ./example/.../photometricMappingVisualServoing ... | tail -5; echo "exit=${PIPESTATUS[0]}"
         OPENBLAS_CORETYPE=Haswell ./example/direct-visual-servoing/photometricMappingVisualServoing -c -d -n 200 -m pca -k 64 -p 100 -l 30.0 | tail -10
 
     - name: Run unit tests
