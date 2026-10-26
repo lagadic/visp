@@ -49,6 +49,8 @@
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/visual_features/vpFeatureLuminanceMapping.h>
 
+#include <algorithm>
+#include <limits>
 #include <stdlib.h>
 
 #ifdef ENABLE_VISP_NAMESPACE
@@ -474,6 +476,9 @@ int main(int argc, const char **argv)
     int iter = 1;
     int iterGN = opt_niter / 8;
     double normError = 0;
+    double normErrorPrev = std::numeric_limits<double>::max();
+    const double mu_min = 0.0001; // Damping factor bounds used during Gauss-Newton
+    const double mu_max = 1.0;
     vpColVector v; // camera velocity sent to the robot
     vpColVector error(sI.dimension_s(), 0);
 
@@ -498,13 +503,24 @@ int main(int argc, const char **argv)
       sI.buildFrom(I);
       sI.getMapping()->inverse(sI.get_s(), Irec);
 
-      // Specific parameters for Gauss-Newton
-      if (iter > iterGN) {
-        mu = 0.0001;
-        lambda = opt_lambda_gauss_newton;
-      }
       sI.interaction(L);
       sI.error(sId, error);
+      normError = error.sumSquare();
+
+      // Specific parameters for Gauss-Newton
+      if (iter > iterGN) {
+        lambda = opt_lambda_gauss_newton;
+        // Adapt the damping factor as in a Levenberg-Marquardt scheme: if the error increased, the previous
+        // step was too large and we move towards a gradient descent, otherwise we move towards Gauss-Newton.
+        // This makes the convergence less sensitive to small numerical differences (e.g. BLAS kernels).
+        if (normError > normErrorPrev) {
+          mu = std::min(mu * 10.0, mu_max);
+        }
+        else {
+          mu = std::max(mu / 10.0, mu_min);
+        }
+      }
+      normErrorPrev = normError;
 
       Hs = L.AtA();
       for (unsigned int i = 0; i < n; i++) {
@@ -513,7 +529,6 @@ int main(int argc, const char **argv)
       H = ((mu * diagHs) + Hs).inverseByLU();
       // Compute the control law
       v = -lambda * H * L.t() * error;
-      normError = error.sumSquare();
 
       std::cout << " |e| = " << normError << std::endl;
       std::cout << " |v| = " << sqrt(v.sumSquare()) << std::endl;

@@ -160,6 +160,16 @@ jobs:
           echo "warnings.log not found (build likely failed before it could be generated)"
         fi
 
+    - name: Diagnose OpenBLAS kernel
+      working-directory: build
+      run: |
+        status=0
+        OPENBLAS_VERBOSE=2 ./example/direct-visual-servoing/photometricMappingVisualServoing -c -d -n 200 -m pca -k 64 -p 100 -l 30.0 > openblas-diag.log 2>&1 || status=$?
+        grep -E 'Core|Explained' openblas-diag.log || true
+        tail -7 openblas-diag.log
+        echo "exit=${status}"
+        OPENBLAS_CORETYPE=Haswell ./example/direct-visual-servoing/photometricMappingVisualServoing -c -d -n 200 -m pca -k 64 -p 100 -l 30.0 | tail -10
+
     - name: Run unit tests
       working-directory: build
       run: ctest -j$(nproc) --output-on-failure
