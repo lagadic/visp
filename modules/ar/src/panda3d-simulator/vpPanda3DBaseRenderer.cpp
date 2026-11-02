@@ -171,12 +171,12 @@ void vpPanda3DBaseRenderer::setRenderParameters(const vpPanda3DRenderParameters 
 
   if (resize) {
     for (GraphicsOutput *buffer: m_buffers) {
-      //buffer->get_type().is_derived_from()
-      GraphicsBuffer *buf = dynamic_cast<GraphicsBuffer *>(buffer);
-      if (buf == nullptr) {
+      // Use Panda3D type system rather than dynamic_cast, since Panda3D may be built without RTTI
+      if ((buffer == nullptr) || (!buffer->is_of_type(GraphicsBuffer::get_class_type()))) {
         throw vpException(vpException::fatalError, "Panda3D: could not cast to GraphicsBuffer when rendering.");
       }
       else {
+        GraphicsBuffer *buf = static_cast<GraphicsBuffer *>(buffer);
         buf->set_size(static_cast<int>(m_renderParameters.getImageWidth()),
                       static_cast<int>(m_renderParameters.getImageHeight()));
       }
@@ -250,13 +250,14 @@ void vpPanda3DBaseRenderer::computeNearAndFarPlanesFromNode(const std::string &n
   if (!fast) {
     LPoint3 minP, maxP;
     object.calc_tight_bounds(minP, maxP);
-    const BoundingBox box(minP, maxP);
     float minZ = std::numeric_limits<float>::max(), maxZ = 0.f;
     const vpHomogeneousMatrix wTcam = getCameraPose();
     const vpHomogeneousMatrix wTobj = getNodePose(name) * vpPanda3DBaseRenderer::PANDA_T_VISP;
     const vpHomogeneousMatrix camTobj = wTcam.inverse() * wTobj;
+    // Enumerate the 8 corners of the box without instantiating a BoundingBox. Building a Panda3D
+    // bounding volume here would emit TypedReferenceCount typeinfo, which requires Panda3D to be built with RTTI
     for (int i = 0; i < 8; ++i) {
-      const LPoint3 p = box.get_point(i);
+      const LPoint3 p((i & 4) ? maxP[0] : minP[0], (i & 2) ? maxP[1] : minP[1], (i & 1) ? maxP[2] : minP[2]);
       const vpColVector pv = vpColVector({ p.get_x(), -p.get_z(), p.get_y(), 1.0 });
       vpColVector cpV = camTobj * pv;
       cpV /= cpV[3];
