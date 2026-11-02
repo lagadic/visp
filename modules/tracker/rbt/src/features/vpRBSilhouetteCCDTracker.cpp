@@ -181,7 +181,7 @@ void vpRBSilhouetteCCDTracker::extractFeatures(const vpRBFeatureTrackerInput &fr
 #endif
     std::vector<vpRBSilhouetteControlPoint> localControlPoints;
 #ifdef VISP_HAVE_OPENMP
-#pragma omp for
+#pragma omp for schedule(static)
 #endif
     for (int i = 0; i < static_cast<int>(frame.silhouettePoints.size()); ++i) {
       const vpRBSilhouettePoint sp = frame.silhouettePoints[static_cast<unsigned int>(i)];
@@ -779,7 +779,7 @@ void sumGradientsAndHessians(const std::vector<vpColVector> &gradients, const st
     vpMatrix localHessian(hessian.getRows(), hessian.getCols(), 0.0);
 
 #ifdef VISP_HAVE_OPENMP
-#pragma omp for
+#pragma omp for schedule(static)
 #endif
     for (int ii = 0; ii < static_cast<int>(gradients.size()); ++ii) {
       const unsigned int i = static_cast<unsigned int>(ii);

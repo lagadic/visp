@@ -60,7 +60,7 @@ ViSP 3.7.1 (current version)
     . [#2039] Stack overflow when running wireframe simulator
     . [#2050] visp-calibrate-camera.cpp doesn't build with OpenCV 4.7.0
     . [#2054] Built-in Lapack dlamch() is not thread-safe, so SVD can fail when called from several threads
-
+    . [#2060] Non-deterministic results of RBT trackers with OpenMP
 ----------------------------------------------
 ViSP 3.7.0 (released December 19, 2025)
   - Contributors:

@@ -102,7 +102,7 @@ void vpRBDenseDepthTracker::extractFeatures(const vpRBFeatureTrackerInput &frame
 #endif
 
 #ifdef VISP_HAVE_OPENMP
-#pragma omp for
+#pragma omp for schedule(static)
 #endif
     for (int i = static_cast<int>(bb.getTop()); i < static_cast<int>(bb.getBottom()); i += static_cast<int>(m_step)) {
       for (int j = static_cast<int>(bb.getLeft()); j < static_cast<int>(bb.getRight()); j += static_cast<int>(m_step)) {
