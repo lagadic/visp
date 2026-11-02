@@ -922,6 +922,71 @@ py::arg("filter"),
 py::arg("size"),
 py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
 );
+
+  pyClass.def_static(
+      "filter",
+      [](const vpImage<ImageType> &input,
+         vpImage<OutputType> &output,
+         const vpArray2D<OutputType> &filter,
+         bool convolve,
+         const std::optional<vpImage<bool>> &mask) -> void
+        {
+          if (!mask) {
+            vpImageFilter::filter(input, output, filter, convolve, nullptr);
+          }
+          else {
+            vpImageFilter::filter(input, output, filter, convolve, &(mask.value()));
+          }
+        },
+      R"doc(
+Apply a separable filter.
+
+:param input	 : The original image.
+:param output	 : The filtered image.
+:param filter	 : The separable filter.
+:param convolve: If true, perform a convolution otherwise a correlation.
+:param mask	   : Optional mask. True pixels are processed and False pixels are ignored.
+)doc",
+py::arg("input"),
+py::arg("output"),
+py::arg("filter"),
+py::arg("convolve"),
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
+);
+
+  pyClass.def_static(
+        "filter",
+        [](const vpImage<ImageType> &input,
+           vpImage<OutputType> &Iu,
+           vpImage<OutputType> &Iv,
+           const vpArray2D<OutputType> &filter,
+           bool convolve,
+           const std::optional<vpImage<bool>> &mask) -> void
+          {
+            if (!mask) {
+              vpImageFilter::filter(input, Iu, Iv, filter, convolve, nullptr);
+            }
+            else {
+              vpImageFilter::filter(input, Iu, Iv, filter, convolve, &(mask.value()));
+            }
+          },
+        R"doc(
+Apply a separable filter.
+
+:param input	 : The original image.
+:param Iu      : Filtered image along the horizontal axis (u = columns).
+:param Iv      : Filtered image along the vertical axis (v = rows).
+:param filter	 : The filter kernel.
+:param convolve: If true, perform a convolution otherwise a correlation.
+:param mask	   : Optional mask. True pixels are processed and False pixels are ignored.
+)doc",
+py::arg("input"),
+py::arg("Iu"),
+py::arg("Iv"),
+py::arg("filter"),
+py::arg("convolve"),
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
+);
 }
 
   /*
