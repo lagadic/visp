@@ -881,7 +881,48 @@ py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::null
   define_computeCannyThreshold<double>(pyClass);
 }
 
+template<typename ImageType, typename OutputType>
+void define_filter(
+  py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 
+  pyClass.def_static(
+    "filter",
+    [](const vpImage<ImageType> &input,
+       vpImage<OutputType> &output,
+       const py::array_t<OutputType, py::array::c_style> &filter,
+       unsigned int size,
+       const std::optional<vpImage<bool>> &mask) -> void
+      {
+        py::buffer_info filterInfo = filter.request();
+
+        const OutputType *filter_ptr = static_cast<OutputType *>(filterInfo.ptr);
+        if (!mask) {
+          vpImageFilter::filter(input, output, filter_ptr, size, nullptr);
+        }
+        else {
+          vpImageFilter::filter(input, output, filter_ptr, size, &(mask.value()));
+        }
+      },
+    R"doc(
+Apply a separable filter.
+
+:param input	: The original image.
+:param output	: The filtered image.
+:param filter	: The separable filter.
+:param size	: The size of the filter.
+:param mask	: Optional mask. True pixels are processed and False pixels are ignored.
+)doc",
+py::arg("input"),
+py::arg("output"),
+py::arg("filter"),
+py::arg("size"),
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
+);
+}
 
   /*
    * vpImageFilter
@@ -915,6 +956,11 @@ bindings_vpImageFilter(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::
   define_partialDerivative<unsigned char, double>(pyImageFilter);
   define_partialDerivative<float, float>(pyImageFilter);
   define_partialDerivative<double, double>(pyImageFilter);
+
+  define_filter<unsigned char, float>(pyImageFilter);
+  define_filter<unsigned char, double>(pyImageFilter);
+  define_filter<float, float>(pyImageFilter);
+  define_filter<double, double>(pyImageFilter);
 
   define_canny(pyImageFilter);
 }

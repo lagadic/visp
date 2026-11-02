@@ -1130,6 +1130,150 @@
             false,
             false
           ]
+        },
+        {
+          "static": true,
+          "signature": "void canny(const vpImage<unsigned char>&, vpImage<unsigned char>&, const unsigned int&, const float&, const float&, const unsigned int&, const float&, const float&, const float&, const bool&, const vpImageFilter::vpCannyBackendType&, const vpImageFilter::vpCannyFilteringAndGradientType&, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "float computeCannyThreshold(const cv::Mat&, const cv::Mat*, const cv::Mat*, float&, const unsigned int&, const float&, const unsigned int&, const float&, const float&, const vpImageFilter::vpCannyFilteringAndGradientType&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void computePartialDerivatives(const vpImage<ImageType>&, vpImage<FilterType>&, vpImage<FilterType>&, const bool&, const bool&, const bool&, const unsigned int&, const FilterType&, const unsigned int&, const vpImageFilter::vpCannyFilteringAndGradientType&, const vpImageFilter::vpCannyBackendType&, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "float computeCannyThreshold(const vpImage<unsigned char>&, float&, const vpImage<OutType>*, const vpImage<OutType>*, const unsigned int&, const OutType&, const unsigned int&, const float&, const float&, const vpImageFilter::vpCannyFilteringAndGradientType&, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "float computeCannyThreshold(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, float&, const vpImage<OutType>*, const vpImage<OutType>*, const unsigned int&, const OutType&, const float&, const float&, const vpImageFilter::vpCannyFilteringAndGradientType&, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "FilterType derivativeFilterX(const vpImage<ImageType>&, unsigned int, unsigned int, const FilterType*, unsigned int)",
+          "specializations": [
+            [
+              "unsigned char",
+              "float"
+            ],
+            [
+              "unsigned char",
+              "double"
+            ],
+            [
+              "float",
+              "float"
+            ],
+            [
+              "float",
+              "double"
+            ],
+            [
+              "double",
+              "double"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "FilterType derivativeFilterY(const vpImage<ImageType>&, unsigned int, unsigned int, const FilterType*, unsigned int)",
+          "specializations": [
+            [
+              "unsigned char",
+              "float"
+            ],
+            [
+              "unsigned char",
+              "double"
+            ],
+            [
+              "float",
+              "float"
+            ],
+            [
+              "float",
+              "double"
+            ],
+            [
+              "double",
+              "double"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void filter(const vpImage<ImageType>&, vpImage<FilterType>&, const vpArray2D<FilterType>&, bool, const vpImage<bool>*)",
+          "specializations": [
+            [
+              "unsigned char",
+              "float"
+            ],
+            [
+              "unsigned char",
+              "double"
+            ],
+            [
+              "float",
+              "float"
+            ],
+            [
+              "float",
+              "double"
+            ],
+            [
+              "double",
+              "double"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "FilterType filter(const vpImage<FilterType>&, const vpArray2D<FilterType>&, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void filter(const vpImage<ImageType>&, vpImage<FilterType>&, vpImage<FilterType>&, const vpArray2D<FilterType>&, bool, const vpImage<bool>*)",
+          "specializations": [
+            [
+              "unsigned char",
+              "float"
+            ],
+            [
+              "unsigned char",
+              "double"
+            ],
+            [
+              "float",
+              "float"
+            ],
+            [
+              "float",
+              "double"
+            ],
+            [
+              "double",
+              "double"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void filter(const vpImage<ImageType>&, vpImage<FilterType>&, const FilterType*, unsigned int, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
         }
       ]
     },
