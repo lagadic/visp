@@ -567,7 +567,18 @@ VP_CHECK_PACKAGE(IRISA)
 # check for linux/parport.h
 VP_CHECK_PACKAGE(PARPORT)
 # OpenGL
-VP_CHECK_PACKAGE(OpenGL)
+if(APPLE)
+  # Since CMAKE_FIND_FRAMEWORK is set to LAST, XQuartz libGL (/opt/X11 or /usr/X11R6) would be preferred over the
+  # native OpenGL.framework. Linking with XQuartz libGL makes Panda3D crash at runtime when it resolves GL functions
+  # like glGetStringi(). Here we ensure that OpenGL.framework is found first.
+  set(CMAKE_FIND_FRAMEWORK_SAVE ${CMAKE_FIND_FRAMEWORK})
+  set(CMAKE_FIND_FRAMEWORK FIRST)
+  VP_CHECK_PACKAGE(OpenGL)
+  set(CMAKE_FIND_FRAMEWORK ${CMAKE_FIND_FRAMEWORK_SAVE})
+  unset(CMAKE_FIND_FRAMEWORK_SAVE)
+else()
+  VP_CHECK_PACKAGE(OpenGL)
+endif()
 # for pioneer
 VP_CHECK_PACKAGE(RT)
 VP_CHECK_PACKAGE(DL)
