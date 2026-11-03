@@ -1247,9 +1247,115 @@ void define_getGradXYGauss2D(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter,
   );
 }
 
-  /*
-   * vpImageFilter
-   */
+template<typename ArithmeticType, bool useFullScale, typename FilterType>
+void define_gradientFilterHSV(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  pyClass.def_static(
+    "gradientFilterX",
+    [](const vpImage<vpHSV<ArithmeticType, useFullScale>> &input,
+       vpImage<FilterType> &output,
+       const int &nbThread,
+       const std::optional<vpImage<bool>> &mask,
+       const vpImageFilter::vpCannyFilteringAndGradientType &filterType
+       ) -> void
+      {
+        if (!mask) {
+          vpImageFilter::gradientFilterX(input, output, nbThread, nullptr, filterType);
+        }
+        else {
+          vpImageFilter::gradientFilterX(input, output, nbThread, &(mask.value()), filterType);
+        }
+      },
+    R"doc(
+    Gradient filter along the X-axis for HSV images.
+
+    :param input	   : The original image.
+    :param output	   : Gradient along X.
+    :param nbThread  : The number of threads to use to compute the gradient. Setting -1 use the maximum number of thread.
+    :param mask	     : Optional mask. True pixels are processed and False pixels are ignored.
+    :param filterType: The type of the gradient filter.
+    )doc",
+    py::arg("input"),
+    py::arg("output"),
+    py::arg("nbThread"),
+    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt),
+    py::arg("filterType")
+  );
+
+  pyClass.def_static(
+    "gradientFilterY",
+    [](const vpImage<vpHSV<ArithmeticType, useFullScale>> &input,
+       vpImage<FilterType> &output,
+       const int &nbThread,
+       const std::optional<vpImage<bool>> &mask,
+       const vpImageFilter::vpCannyFilteringAndGradientType &filterType
+       ) -> void
+      {
+        if (!mask) {
+          vpImageFilter::gradientFilterY(input, output, nbThread, nullptr, filterType);
+        }
+        else {
+          vpImageFilter::gradientFilterY(input, output, nbThread, &(mask.value()), filterType);
+        }
+      },
+    R"doc(
+    Gradient filter along the Y-axis for HSV images.
+
+    :param input	   : The original image.
+    :param output	   : Gradient along Y.
+    :param nbThread  : The number of threads to use to compute the gradient. Setting -1 use the maximum number of thread.
+    :param mask	     : Optional mask. True pixels are processed and False pixels are ignored.
+    :param filterType: The type of the gradient filter.
+    )doc",
+    py::arg("input"),
+    py::arg("output"),
+    py::arg("nbThread"),
+    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt),
+    py::arg("filterType")
+  );
+
+  pyClass.def_static(
+    "gradientFilterY",
+    [](const vpImage<vpHSV<ArithmeticType, useFullScale>> &input,
+       vpImage<FilterType> &GIx,
+       vpImage<FilterType> &GIy,
+       const int &nbThread,
+       const std::optional<vpImage<bool>> &mask,
+       const vpImageFilter::vpCannyFilteringAndGradientType &filterType
+       ) -> void
+      {
+        if (!mask) {
+          vpImageFilter::gradientFilter(input, GIx, GIy, nbThread, nullptr, filterType);
+        }
+        else {
+          vpImageFilter::gradientFilter(input, GIx, GIy, nbThread, &(mask.value()), filterType);
+        }
+      },
+    R"doc(
+    Compute the horizontal and vertical gradients for HSV images.
+
+    :param input	   : The original image.
+    :param GIx  	   : Gradient along X.
+    :param GIy  	   : Gradient along Y.
+    :param nbThread  : The number of threads to use to compute the gradient. Setting -1 use the maximum number of thread.
+    :param mask	     : Optional mask. True pixels are processed and False pixels are ignored.
+    :param filterType: The type of the gradient filter.
+    )doc",
+    py::arg("input"),
+    py::arg("GIx"),
+    py::arg("GIy"),
+    py::arg("nbThread"),
+    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt),
+    py::arg("filterType")
+  );
+}
+
+/*
+ * vpImageFilter
+ */
 void
 bindings_vpImageFilter(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyImageFilter)
 {
@@ -1313,6 +1419,13 @@ bindings_vpImageFilter(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::
   define_getGradXYGauss2D<unsigned char, double>(pyImageFilter);
   define_getGradXYGauss2D<float, float>(pyImageFilter);
   define_getGradXYGauss2D<double, double>(pyImageFilter);
+
+  define_gradientFilterHSV<unsigned char, false, float>(pyImageFilter);
+  define_gradientFilterHSV<unsigned char, false, double>(pyImageFilter);
+  define_gradientFilterHSV<unsigned char, true, float>(pyImageFilter);
+  define_gradientFilterHSV<unsigned char, true, double>(pyImageFilter);
+  define_gradientFilterHSV<double, true, float>(pyImageFilter);
+  define_gradientFilterHSV<double, true, double>(pyImageFilter);
 
   define_canny(pyImageFilter);
 }

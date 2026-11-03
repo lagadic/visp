@@ -1333,6 +1333,24 @@
           "signature": "void getGradYGauss2D(const vpImage<ImageType>&, vpImage<FilterType>&, const FilterType*, const FilterType*, unsigned int, const vpImage<bool>*)",
           "ignore": true,
           "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, vpImage<FilterType>&, const int&, const vpImage<bool>*, const vpImageFilter::vpCannyFilteringAndGradientType&)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, vpImage<FilterType>&, const int&, const vpImage<bool>*, const vpImageFilter::vpCannyFilteringAndGradientType&)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void gradientFilter(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, vpImage<FilterType>&, vpImage<FilterType>&, const int&, const vpImage<bool>*, const vpImageFilter::vpCannyFilteringAndGradientType&)",
+          "ignore": true,
+          "custom_implem": true
         }
       ]
     },
