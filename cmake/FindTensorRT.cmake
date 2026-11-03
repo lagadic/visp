@@ -62,29 +62,6 @@ if(UNIX AND NOT APPLE)
   unset(_tensorrt_multiarch)
 endif()
 
-# FindCUDA is deprecated since CMake 3.10 and removed by policy CMP0146 (CMake 3.27).
-# Use FindCUDAToolkit when available (CMake 3.17+) and expose the legacy CUDA_* variables.
-if(NOT CMAKE_VERSION VERSION_LESS 3.17)
-  find_package(CUDAToolkit QUIET)
-  if(CUDAToolkit_FOUND AND CUDA_cudart_LIBRARY)
-    set(CUDA_FOUND ON)
-    set(CUDA_VERSION ${CUDAToolkit_VERSION})
-    set(CUDA_INCLUDE_DIRS ${CUDAToolkit_INCLUDE_DIRS})
-    set(CUDA_LIBRARIES ${CUDA_cudart_LIBRARY})
-  else()
-    set(CUDA_FOUND OFF)
-  endif()
-else()
-  find_package(CUDA QUIET)
-  mark_as_advanced(
-    CUDA_HOST_COMPILER
-    CUDA_SDK_ROOT_DIR
-    CUDA_TOOLKIT_ROOT_DIR
-    CUDA_USE_STATIC_CUDA_RUNTIME
-    CUDA_rt_LIBRARY
-  )
-endif()
-
 find_library(NVINFER_LIBRARY
   NAMES nvinfer
   HINTS ${TENSORRT_SEARCH_HINTS}
@@ -110,6 +87,32 @@ find_path(NVINFER_INCLUDE_DIR NvInfer.h
   HINTS ${TENSORRT_SEARCH_HINTS}
   PATH_SUFFIXES ${TENSORRT_INC_SUFFIXES}
 )
+
+# Look for CUDA only when TensorRT is found. This avoids an unnecessary CUDA detection and
+# a FindCUDAToolkit failure with CMake 4.4 when only part of the CUDA toolkit is installed (see #2063).
+set(CUDA_FOUND OFF)
+if(NVINFER_LIBRARY AND NVINFERPLUGIN_LIBRARY AND NVONNXPARSER_LIBRARY AND NVINFER_INCLUDE_DIR)
+  # FindCUDA is deprecated since CMake 3.10 and removed by policy CMP0146 (CMake 3.27).
+  # Use FindCUDAToolkit when available (CMake 3.17+) and expose the legacy CUDA_* variables.
+  if(NOT CMAKE_VERSION VERSION_LESS 3.17)
+    find_package(CUDAToolkit QUIET)
+    if(CUDAToolkit_FOUND AND CUDA_cudart_LIBRARY)
+      set(CUDA_FOUND ON)
+      set(CUDA_VERSION ${CUDAToolkit_VERSION})
+      set(CUDA_INCLUDE_DIRS ${CUDAToolkit_INCLUDE_DIRS})
+      set(CUDA_LIBRARIES ${CUDA_cudart_LIBRARY})
+    endif()
+  else()
+    find_package(CUDA QUIET)
+    mark_as_advanced(
+      CUDA_HOST_COMPILER
+      CUDA_SDK_ROOT_DIR
+      CUDA_TOOLKIT_ROOT_DIR
+      CUDA_USE_STATIC_CUDA_RUNTIME
+      CUDA_rt_LIBRARY
+    )
+  endif()
+endif()
 
 # If it is ALL there, export libraries as a single package
 if(CUDA_FOUND AND NVINFER_LIBRARY AND NVINFERPLUGIN_LIBRARY AND NVONNXPARSER_LIBRARY AND NVINFER_INCLUDE_DIR)
