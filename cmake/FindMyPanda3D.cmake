@@ -40,6 +40,7 @@
 
 set(Panda3D_SEARCH_HINTS
   ${Panda3D_DIR}
+  ${Panda3D_DIR_HINT} # Panda3D_DIR value set by the user before being reset by find_package(Panda3D) in config mode
   $ENV{Panda3D_DIR}
 )
 set(Panda3D_SEARCH_PATHS "")

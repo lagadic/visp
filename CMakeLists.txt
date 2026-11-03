@@ -640,6 +640,12 @@ VP_OPTION(USE_DIRECT3D    DIRECT3D    ""    "Include d3d support"             ""
 VP_OPTION(USE_OPENMP      OpenMP      ""    "Include openmp support"           "" ON)
 VP_OPTION(USE_EIGEN3      Eigen3      QUIET "Include eigen3 support"           "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_COIN3D      Coin3D      ""    "Include coin3d support"           "" ON IF OPENGL_FOUND AND NOT WINRT AND NOT IOS)
+# When Panda3D is built with makepanda, there is no Panda3DConfig.cmake file. In that case find_package(Panda3D) in
+# config mode resets Panda3D_DIR to Panda3D_DIR-NOTFOUND. Keep the value set by the user as a hint for
+# FindMyPanda3D.cmake
+if(Panda3D_DIR)
+  set(Panda3D_DIR_HINT "${Panda3D_DIR}")
+endif()
 VP_OPTION(USE_PANDA3D     "Panda3D;MyPanda3D;COMPONENTS;Core;Contrib;Direct;Egg;Framework;TinyDisplay" QUIET "Include Panda3D support"          "" ON IF NOT IOS)
 VP_OPTION(USE_YARP        YARP        QUIET "Include yarp support"             "YARP_DIR" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_OGRE        OGRE        QUIET "Include Ogre3D support"           "OGRE_DIR" ON IF NOT WINRT AND NOT IOS)
