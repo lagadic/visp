@@ -101,21 +101,10 @@ $ cd $VISP_WS/3rdparty/panda3d
 $ git clone https://github.com/panda3d/panda3d
 $ cd panda3d
             </pre>
-            At this point you need to patch Panda3D source code to ensure Panda3D is build with <code>-frtti</code> compiler flag as
-            described in <a href="#tutorial-panda3d-issue-typeinfo">Panda3D issue with RTTI</a> section. This could be done by modifying
-            <code>dtool/CompilerFlags.cmake</code> file replacing:
-            <pre class="fragment">
-add_compile_options(
-  "$<${cxx_rtti_property}:${cxx_rtti_on}>"
-  "$<$<NOT:${cxx_rtti_property}>:${cxx_rtti_off}>")
-            </pre>
-            with:
-            <pre class="fragment">
-add_compile_options(
-  "$<${cxx_rtti_property}:${cxx_rtti_on}>"
-  "$<$<NOT:${cxx_rtti_property}>:${cxx_rtti_on}>")
-            </pre>
-            Then build and install Panda3D
+            Since ViSP 3.7.1, there is no need to patch Panda3D source code to enable the <code>-frtti</code> compiler flag.
+            ViSP can be used with Panda3D built with or without RTTI. With an older ViSP version, see
+            <a href="#tutorial-panda3d-issue-typeinfo">Panda3D issue with RTTI</a> section.<br>
+            Build and install Panda3D
             <pre class="fragment">
 $ mkdir build && cd build
 $ cmake .. -DCMAKE_BUILD_TYPE=Release -DHAVE_AUDIO=OFF
@@ -176,132 +165,165 @@ $ make -j&#36;(nproc)
   </div>
 
   <div data-tab="macos" class="tab-content" style="display:none;">
-    There are two different ways to install Panda3D.
-    <ol>
+    <ul>
       <li>
-        Installers are available for macOS by browsing the <a href="https://www.panda3d.org/download/">download</a>
-        page.
-        <dl class="section note">
-          <dt>Note</dt>
-          <dd>
-            For the latest Panda3D 1.10.15 SDK, there is an <code>Installer for macOS X 10.9+</code> that is only
-            compatible with the <code>x86_64</code> architecture. If you are using a Mac M1 or M2, there is no
-            Panda3D SDK available yet for <code>arm64</code> architecture. The solution is to build Panda3D from
-            source.
-          </dd>
-        </dl>
+        It is recommended to install the assimp package before installing Panda3D. This will allow you to load
+        <code>.obj</code> files, which is a common and easily exportable format.
+        Without it, you will be restricted to <code>.bam</code> files, which is a panda specific format. To
+        convert to a <code>.bam</code> file, see <a href="#tutorial-panda3d-file-conversion">Converting a mesh to
+        Panda's file format</a>.<br>
+        To install assimp, run:
+        <pre class="fragment">
+$ brew install assimp
+        </pre>
       </li>
       <li>
-        Hereafter you will find the instructions to build Panda3D from source on macOS with <code>makepanda.py</code>.
-        <ul>
+        There are two different ways to install Panda3D on macOS.
+        <ol>
+          <dl class="section note">
+            <dt>Note</dt>
+            <dd>
+              Installers are available for macOS by browsing the <a href="https://www.panda3d.org/download/">download</a>
+              page.
+              For Panda3D 1.10.15 SDK and the latest Panda3D 1.10.16 SDK, there is an
+              <code>Installer for macOS X 10.9+</code> that is only
+              compatible with the <code>x86_64</code> architecture. If you are using a Mac M1 or M2, there is no
+              Panda3D SDK available yet for <code>arm64</code> architecture. The solution is to build Panda3D from
+              source.
+            </dd>
+          </dl>
           <li>
-            It is recommended to install the assimp package before installing Panda3D. This will allow you to load
-            <code>.obj</code> files, which is a common and easily exportable format.
-            Without it, you will be restricted to <code>.bam</code> files, which is a panda specific format. To
-            convert to a <code>.bam</code> file, see <a href="#tutorial-panda3d-file-conversion">Converting a mesh to
-            Panda's file format</a>.<br>
-            To install assimp, run:
-            <pre class="fragment">
-$ brew install assimp
-            </pre>
-          </li>
-          <li>
-            On macOS, you will need to download a set of precompiled third-party packages in order to compile Panda3D.
-            Navigate to Panda3D <a href="https://www.panda3d.org/download/">download page</a>, select the lastest SDK
-            (in our case SDK 1.10.15), and under <code>&lt;/&gt; Source Code</code> section, download
-            <a href="https://www.panda3d.org/download/panda3d-1.10.15/panda3d-1.10.15-tools-mac.tar.gz">Thirdparty tools for macOS</a>
-            (in our case <code>panda3d-1.10.15-tools-mac.tar.gz</code>).
-          </li>
-          <li>
-            Extract third-party tools for macOS from downloaded archive
-            <pre class="fragment">
+            The first way is to build Panda3D from source on macOS with <code>makepanda.py</code>.
+            <ul>
+              <li>
+                On macOS, you will need to download a set of precompiled third-party packages in order to compile Panda3D.
+                Navigate to Panda3D <a href="https://www.panda3d.org/download/">download page</a>, select the lastest SDK
+                (in our case SDK 1.10.16), and under <code>&lt;/&gt; Source Code</code> section, download
+                <a href="https://www.panda3d.org/download/panda3d-1.10.16/panda3d-1.10.16-tools-mac.tar.gz">Thirdparty tools for macOS</a>
+                (in our case <code>panda3d-1.10.16-tools-mac.tar.gz</code>).
+              </li>
+              <li>
+                Extract third-party tools for macOS from downloaded archive
+                <pre class="fragment">
 $ cd ~/Downloads
-$ tar xvzf panda3d-1.10.15-tools-mac.tar.gz
-            </pre>
+$ tar xvzf panda3d-1.10.16-tools-mac.tar.gz
+                </pre>
+              </li>
+              <li>
+                Once done clone Panda3D and checkout the latest release (in our case 1.10.16) in a dedicated folder:
+                <pre class="fragment">
+$ mkdir -p $VISP_WS/3rdparty/panda3d
+$ cd $VISP_WS/3rdparty/panda3d
+$ git clone https://github.com/panda3d/panda3d
+$ cd panda3d
+                </pre>
+              </li>
+              <li>
+                Move the downloaded third-party tools in Panda3D source code folder
+                <pre class="fragment">
+$ mv ~/Downloads/panda3d-1.10.16/thirdparty .
+                </pre>
+              </li>
+              <li>
+                Build Panda3D from source. In our case we disabled OpenCV, OpenEXR, Python and PNG support to avoid build
+                issues.
+                <pre class="fragment">
+$ python3 makepanda/makepanda.py --everything --installer --no-opencv --no-openexr  --no-python --no-png --threads $(sysctl -n hw.logicalcpu)
+...
+created: $VISP_WS/3rdparty/panda3d/panda3d/Panda3D-1.11.0.dmg
+                </pre>
+                If you encounter the following issue <a href="#tutorial-panda3d-issue-MacOSX-sdk-not-found">MacOSX SDK
+                not found</a>, see the corresponding section.<br>
+              </li>
+              <li>
+                At this point you can either
+                <ol>
+                  <li>
+                    install the produced <code>Panda3D-1.11.0.dmg</code> file (recommended) just by double clicking on it. In
+                    the installer window, don't forget to enable the <code>C++ Header Files</code> check box before pressing
+                    the installation button.<br>
+                    After that you have to set <code>DYLIB_LIBRARY_PATH</code> environment var:
+                    <pre class="fragment">
+$ export DYLD_LIBRARY_PATH=/Library/Developer/Panda3D/lib:$DYLD_LIBRARY_PATH
+                    </pre>
+                    Now to build ViSP with Panda3D support when <code>.dmg</code> file <code>Panda3D-1.11.0.dmg</code> is
+                    installed, you can just run cmake as usual.
+                    <pre class="fragment">
+$ cd $VISP_WS/visp-build
+$ cmake ../visp
+$ make -j$(sysctl -n hw.logicalcpu)
+                    </pre>
+                  </li>
+                  <li>
+                    or use the Panda3D libraries located in the <code>built</code> folder without installing <code>.dmg</code>
+                    file, but in that case you need to set <code>DYLIB_LIBRARY_PATH</code> environment var:
+                    <pre class="fragment">
+$ export DYLD_LIBRARY_PATH=$VISP_WS/3rdparty/panda3d/panda3d/built/lib:$DYLD_LIBRARY_PATH
+                    </pre>
+                    Without setting <code>DYLD_LIBRARY_PATH</code> you may experience the following error when running a binary
+                    that uses Panda3D capabilities:
+                    <pre class="fragment">
+$ ./tutorial-panda3d-renderer
+dyld[257]: Library not loaded: @loader_path/../lib/libpanda.1.11.dylib
+                    </pre>
+                    Now to build ViSP with Panda3D libraries located in the <code>built</code> folder without installing <code>.dmg</code>
+                    file, you can either:
+                    <ol>
+                      <li>
+                        Set <code>Panda3D_DIR</code> cmake var to the Panda3D cloned folder
+                        <pre class="fragment">
+$ cd $VISP_WS/visp-build
+$ cmake ../visp -DPanda3D_DIR=$VISP_WS/3rdparty/panda3d/panda3d
+$ make -j$(sysctl -n hw.logicalcpu)
+                        </pre>
+                      </li>
+                      <li>
+                        Or set <code>Panda3D_DIR</code> environment variable
+                        <pre class="fragment">
+$ export Panda3D_DIR=$VISP_WS/3rdparty/panda3d/panda3d
+$ cd $VISP_WS/visp-build
+$ cmake ../visp
+$ make -j$(sysctl -n hw.logicalcpu)
+                        </pre>
+                      </li>
+                    </ol>
+                  </li>
+                </ol>
+              </li>
+            </ul>
           </li>
           <li>
-            Once done clone Panda3D:
+            The second way is to install Panda3D from source using <code>cmake</code>:
             <pre class="fragment">
 $ mkdir -p $VISP_WS/3rdparty/panda3d
 $ cd $VISP_WS/3rdparty/panda3d
 $ git clone https://github.com/panda3d/panda3d
 $ cd panda3d
             </pre>
-          </li>
-          <li>
-            Move the downloaded third-party tools in Panda3D source code folder
+            Since ViSP 3.7.1, there is no need to patch Panda3D source code to enable the <code>-frtti</code> compiler flag.
+            ViSP can be used with Panda3D built with or without RTTI. With an older ViSP version, see
+            <a href="#tutorial-panda3d-issue-typeinfo">Panda3D issue with RTTI</a> section.<br>
+            Build and install Panda3D. In our case we disabled GTK-3 and SDL support to avoid build issues.
             <pre class="fragment">
-$ mv ~/Downloads/panda3d-1.10.15/thirdparty .
+$ mkdir build && cd build
+$ cmake .. -DCMAKE_BUILD_TYPE=Release -DHAVE_AUDIO=OFF -DHAVE_GTK3=OFF -DHAVE_SDL=OFF
+$ make -j&#36;(nproc)
+$ sudo make install
             </pre>
-          </li>
-          <li>
-            Build Panda3D from source
+            By default, Panda3D is installed in <code>/usr/local/</code>. ViSP is then able to detect Panda3D by using
+            <code>/usr/local/lib/cmake/Panda3D/Panda3DConfig.cmake</code> file.<br>
+            <br>
+            Now to build ViSP with Panda3D support just run cmake as usual.
             <pre class="fragment">
-$ python3 makepanda/makepanda.py --everything --installer --no-opencv --no-python --threads $(sysctl -n hw.logicalcpu)
-...
-created: $VISP_WS/3rdparty/panda3d/panda3d/Panda3D-1.11.0.dmg
+$ cd $VISP_WS/visp-build
+$ cmake ../visp
+$ make -j$(sysctl -n hw.logicalcpu)
             </pre>
-            If you encounter the following issue <a href="#tutorial-panda3d-issue-MacOSX-sdk-not-found">MacOSX SDK
-            not found</a>, see the corresponding section.<br>
+
           </li>
-          <li>
-            At this point you can either
-            <ol>
-              <li>
-                install the produced <code>Panda3D-1.11.0.dmg</code> file (recommended) just by double clicking on it. In
-                the installer window, don't forget to enable the <code>C++ Header Files</code> check box before pressing
-                the installation button.<br>
-                After that you have to set <code>DYLIB_LIBRARY_PATH</code> environment var:
-                <pre class="fragment">
-    $ export DYLD_LIBRARY_PATH=/Library/Developer/Panda3D/lib:$DYLD_LIBRARY_PATH
-                </pre>
-              </li>
-              <li>
-                or use the Panda3D libraries located in the <code>built</code> folder without installing <code>.dmg</code>
-                file, but in that case you need to set <code>DYLIB_LIBRARY_PATH</code> environment var:
-                <pre class="fragment">
-    $ export DYLD_LIBRARY_PATH=$VISP_WS/3rdparty/panda3d/panda3d/built/lib:$DYLD_LIBRARY_PATH
-                </pre>
-                Without setting <code>DYLD_LIBRARY_PATH</code> you may experience the following error when running a binary
-                that uses Panda3D capabilities:
-                <pre class="fragment">
-    $ ./tutorial-panda3d-renderer
-    dyld[257]: Library not loaded: @loader_path/../lib/libpanda.1.11.dylib
-                </pre>
-              </li>
-            </ol>
-          </li>
-        </ul>
+        </ol>
       </li>
-    </ol>
-    Now to build ViSP with Panda3D support when <code>.dmg</code> file <code>Panda3D-1.11.0.dmg</code> is
-    installed, you can just run cmake as usual. Note that PCL is not compatible with Panda3D, that's why we disable
-    here PCL usage (see <a href="#tutorial-panda3d-issue-segfault-macOS">Segfault on macOS</a>).
-    <pre class="fragment">
-$ cd $VISP_WS/visp-build
-$ cmake ../visp -DUSE_PCL=OFF
-$ make -j$(sysctl -n hw.logicalcpu)
-    </pre>
-    There is also the possibility to build ViSP with Panda3D support without installing the <code>.dmg</code> file
-    <ol>
-      <li>
-        By setting <code>Panda3D_DIR</code> cmake var to the Panda3D cloned folder
-        <pre class="fragment">
-$ cd $VISP_WS/visp-build
-$ cmake ../visp -DUSE_PCL=OFF -DPanda3D_DIR=$VISP_WS/3rdparty/panda3d/panda3d
-$ make -j$(sysctl -n hw.logicalcpu)
-        </pre>
-      </li>
-      <li>
-        Or by setting <code>Panda3D_DIR</code> environment variable
-        <pre class="fragment">
-$ export Panda3D_DIR=$VISP_WS/3rdparty/panda3d/panda3d
-$ cd $VISP_WS/visp-build
-$ cmake ../visp -DUSE_PCL=OFF
-$ make -j$(sysctl -n hw.logicalcpu)
-        </pre>
-      </li>
-    </ol>
+    </ul>
   </div>
 
   <div data-tab="windows" class="tab-content" style="display:none;">
@@ -551,7 +573,11 @@ created: $VISP_WS/3rdparty/panda3d/panda3d/Panda3D-1.11.0.dmg
 
 \subsection tutorial-panda3d-issue-typeinfo 7.4. Link issue: undefined reference to typeinfo
 
-The following linking issue can occur when you mix `-fno-rtti` and `-frtti` compiler flags.
+\note This issue is fixed since ViSP 3.7.1, that no longer relies on Panda3D RTTI. ViSP can now be used with Panda3D
+built with or without the `-frtti` compiler flag. The following only applies to older ViSP versions.
+
+With ViSP versions older than 3.7.1, the following linking issue can occur when you mix `-fno-rtti` and `-frtti`
+compiler flags.
 \code{.sh}
 [100%] Linking CXX executable catchPanda
 /usr/bin/ld: ../../lib/libvisp_ar.so.3.6.1: undefined reference to `typeinfo for GraphicsOutput'
@@ -563,7 +589,8 @@ collect2: error: ld returned 1 exit status
 ViSP needs to be built with `-frtti` to avoid build issues in vpIoTools.cpp, while
 Panda3D enables `-frtti` when built in `Debug` mode and enables `-fno-rtti` otherwise.
 We cannot have one library built with `-frtti` and another one with the `-fno-rtti` flag.
-The solution here is to patch Panda3D's source code to always enable the `-frtti` flag.
+The solution is either to upgrade ViSP to 3.7.1 or later, or to patch Panda3D's source code to always enable the
+`-frtti` flag.
 This can be achieved by modifying the `dtool/CompilerFlags.cmake` file:
 \code{.sh}
 diff --git a/dtool/CompilerFlags.cmake b/dtool/CompilerFlags.cmake
@@ -579,5 +606,14 @@ index 31d96279e3..4321872323 100644
  set_property(DIRECTORY "${PROJECT_SOURCE_DIR}" APPEND PROPERTY
    COMPILE_DEFINITIONS "$<${cxx_rtti_property}:HAVE_RTTI>")
 \endcode
+
+\subsection tutorial-panda3d-issue-segfault-xquartz 7.5. Segfault on macOS when XQuartz is installed
+
+On macOS, when [XQuartz](https://www.xquartz.org/) is installed, any binary using Panda3D rendering may crash with a
+segmentation fault in `GLGraphicsStateGuardian::reset()` as soon as the renderer is initialized.
+This happens when ViSP libraries are linked with the XQuartz OpenGL library instead of the native macOS
+`OpenGL.framework`.
+
+See \ref rbt_segfault_xquartz section in \ref tutorial-tracking-rbt to check if you are concerned and how to fix it.
 
 */
