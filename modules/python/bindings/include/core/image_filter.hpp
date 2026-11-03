@@ -989,6 +989,83 @@ py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::null
 );
 }
 
+template<typename ImageType, typename OutputType, typename FilterType>
+void define_directional_filter(
+  py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
+  pyClass.def_static(
+    "filterX",
+    [](const vpImage<ImageType> &input,
+       vpImage<OutputType> &output,
+       const py::array_t<FilterType, py::array::c_style> &filter,
+       unsigned int size,
+       const std::optional<vpImage<bool>> &mask) -> void
+      {
+        py::buffer_info filterInfo = filter.request();
+
+        const FilterType *filter_ptr = static_cast<FilterType *>(filterInfo.ptr);
+        if (!mask) {
+          vpImageFilter::filterX(input, output, filter_ptr, size, nullptr);
+        }
+        else {
+          vpImageFilter::filterX(input, output, filter_ptr, size, &(mask.value()));
+        }
+      },
+    R"doc(
+    Filter along the horizontal direction.
+
+    :param input	: The original image.
+    :param output	: The filtered image.
+    :param filter	: The coefficients of the filter.
+    :param size	: The size of the filter.
+    :param mask	: Optional mask. True pixels are processed and False pixels are ignored.
+    )doc",
+    py::arg("input"),
+    py::arg("output"),
+    py::arg("filter"),
+    py::arg("size"),
+    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
+  );
+
+  pyClass.def_static(
+    "filterY",
+    [](const vpImage<ImageType> &input,
+       vpImage<OutputType> &output,
+       const py::array_t<FilterType, py::array::c_style> &filter,
+       unsigned int size,
+       const std::optional<vpImage<bool>> &mask) -> void
+      {
+        py::buffer_info filterInfo = filter.request();
+
+        const FilterType *filter_ptr = static_cast<FilterType *>(filterInfo.ptr);
+        if (!mask) {
+          vpImageFilter::filterY(input, output, filter_ptr, size, nullptr);
+        }
+        else {
+          vpImageFilter::filterY(input, output, filter_ptr, size, &(mask.value()));
+        }
+      },
+    R"doc(
+    Filter along the vertical direction.
+
+    :param input	: The original image.
+    :param output	: The filtered image.
+    :param filter	: The coefficients of the filter.
+    :param size	: The size of the filter.
+    :param mask	: Optional mask. True pixels are processed and False pixels are ignored.
+    )doc",
+    py::arg("input"),
+    py::arg("output"),
+    py::arg("filter"),
+    py::arg("size"),
+    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
+  );
+}
+
   /*
    * vpImageFilter
    */
@@ -1026,6 +1103,27 @@ bindings_vpImageFilter(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::
   define_filter<unsigned char, double>(pyImageFilter);
   define_filter<float, float>(pyImageFilter);
   define_filter<double, double>(pyImageFilter);
+
+  define_directional_filter<unsigned char, float, float>(pyImageFilter);
+  define_directional_filter<unsigned char, float, double>(pyImageFilter);
+  define_directional_filter<unsigned char, double, float>(pyImageFilter);
+  define_directional_filter<unsigned char, double, double>(pyImageFilter);
+  define_directional_filter<float, float, float>(pyImageFilter);
+  define_directional_filter<float, float, double>(pyImageFilter);
+  define_directional_filter<float, double, float>(pyImageFilter);
+  define_directional_filter<float, double, double>(pyImageFilter);
+  define_directional_filter<double, float, float>(pyImageFilter);
+  define_directional_filter<double, float, double>(pyImageFilter);
+  define_directional_filter<double, double, float>(pyImageFilter);
+  define_directional_filter<double, double, double>(pyImageFilter);
+  define_directional_filter<vpRGBa, vpRGBa, float>(pyImageFilter);
+  define_directional_filter<vpRGBa, vpRGBa, double>(pyImageFilter);
+  define_directional_filter<vpHSV<unsigned char, false>, vpHSV<unsigned char, false>, float>(pyImageFilter);
+  define_directional_filter<vpHSV<unsigned char, false>, vpHSV<unsigned char, false>, double>(pyImageFilter);
+  define_directional_filter<vpHSV<unsigned char, true>, vpHSV<unsigned char, true>, float>(pyImageFilter);
+  define_directional_filter<vpHSV<unsigned char, true>, vpHSV<unsigned char, true>, double>(pyImageFilter);
+  define_directional_filter<vpHSV<double, true>, vpHSV<double, true>, float>(pyImageFilter);
+  define_directional_filter<vpHSV<double, true>, vpHSV<double, true>, double>(pyImageFilter);
 
   define_canny(pyImageFilter);
 }

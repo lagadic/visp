@@ -1298,6 +1298,54 @@
           "signature": "void filter(const vpImage<ImageType>&, vpImage<FilterType>&, vpImage<FilterType>&, const vpArray2D<FilterType>&, bool, const vpImage<bool>*)",
           "ignore": true,
           "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "std::enable_if<std::is_arithmetic<ImageType>::value, void>::type filterX(const vpImage<ImageType>&, OutputType&, unsigned int, unsigned int, const FilterType*, unsigned int)",
+          "ignore": true,
+          "comment": "Low-level method"
+        },
+        {
+          "static": true,
+          "signature": "std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type filterX(const vpImage<ImageType>&, OutputType&, unsigned int, unsigned int, const FilterType*, unsigned int)",
+          "ignore": true,
+          "comment": "Low-level method"
+        },
+        {
+          "static": true,
+          "signature": "std::enable_if<std::is_arithmetic<ImageType>::value, void>::type filterY(const vpImage<ImageType>&, OutputType&, unsigned int, unsigned int, const FilterType*, unsigned int)",
+          "ignore": true,
+          "comment": "Low-level method"
+        },
+        {
+          "static": true,
+          "signature": "std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type filterY(const vpImage<ImageType>&, OutputType&, unsigned int, unsigned int, const FilterType*, unsigned int)",
+          "ignore": true,
+          "comment": "Low-level method"
+        },
+        {
+          "static": true,
+          "signature": "void gaussianBlur(const vpImage<ImageType>&, vpImage<OutputType>&, unsigned int, FilterType, bool, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "double gaussianFilter(const vpImage<T>&, unsigned int, unsigned int)",
+          "ignore": true,
+          "comment": "Low-level method"
+        },
+        {
+          "static": true,
+          "signature": "void getGaussianKernel(FilterType*, unsigned int, FilterType, bool)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void getGaussianDerivativeKernel(FilterType*, unsigned int, FilterType, bool)",
+          "ignore": true,
+          "custom_implem": true
         }
       ]
     },
