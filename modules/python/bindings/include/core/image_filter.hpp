@@ -1162,6 +1162,91 @@ void define_getKernels(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::
   );
 }
 
+template<typename ImageType, typename FilterType>
+void define_getGradXYGauss2D(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  pyClass.def_static(
+    "getGradXGauss2D",
+    [](const vpImage<ImageType> &input,
+       vpImage<FilterType> &output,
+       const py::array_t<FilterType, py::array::c_style> &gaussianKernel,
+       const py::array_t<FilterType, py::array::c_style> &gaussianDerivativeKernel,
+       unsigned int size,
+       const std::optional<vpImage<bool>> &mask) -> void
+      {
+        py::buffer_info gaussianInfo = gaussianKernel.request();
+        const FilterType *gaussian_ptr = static_cast<FilterType *>(gaussianInfo.ptr);
+
+        py::buffer_info derivativeInfo = gaussianDerivativeKernel.request();
+        const FilterType *derivative_ptr = static_cast<FilterType *>(derivativeInfo.ptr);
+        if (!mask) {
+          vpImageFilter::getGradXGauss2D(input, output, gaussian_ptr, derivative_ptr, size, nullptr);
+        }
+        else {
+          vpImageFilter::getGradXGauss2D(input, output, gaussian_ptr, derivative_ptr, size, &(mask.value()));
+        }
+      },
+    R"doc(
+    Compute the gradient along X after applying a gaussian filter along Y.
+
+    :param input	                 : The original image.
+    :param output	                 : Gradient along X.
+    :param gaussianKernel          : Gaussian kernel which values should be computed using ImageFilter.getGaussianKernel().
+    :param gaussianDerivativeKernel: Gaussian derivative kernel which values should be computed using ImageFilter.getGaussianDerivativeKernel().
+    :param size	                   : The size of the filter.
+    :param mask	                   : Optional mask. True pixels are processed and False pixels are ignored.
+    )doc",
+    py::arg("input"),
+    py::arg("output"),
+    py::arg("gaussianKernel"),
+    py::arg("gaussianDerivativeKernel"),
+    py::arg("size"),
+    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
+  );
+
+  pyClass.def_static(
+    "getGradYGauss2D",
+    [](const vpImage<ImageType> &input,
+       vpImage<FilterType> &output,
+       const py::array_t<FilterType, py::array::c_style> &gaussianKernel,
+       const py::array_t<FilterType, py::array::c_style> &gaussianDerivativeKernel,
+       unsigned int size,
+       const std::optional<vpImage<bool>> &mask) -> void
+      {
+        py::buffer_info gaussianInfo = gaussianKernel.request();
+        const FilterType *gaussian_ptr = static_cast<FilterType *>(gaussianInfo.ptr);
+
+        py::buffer_info derivativeInfo = gaussianDerivativeKernel.request();
+        const FilterType *derivative_ptr = static_cast<FilterType *>(derivativeInfo.ptr);
+        if (!mask) {
+          vpImageFilter::getGradYGauss2D(input, output, gaussian_ptr, derivative_ptr, size, nullptr);
+        }
+        else {
+          vpImageFilter::getGradYGauss2D(input, output, gaussian_ptr, derivative_ptr, size, &(mask.value()));
+        }
+      },
+    R"doc(
+    Compute the gradient along Y after applying a gaussian filter along X.
+
+    :param input	                 : The original image.
+    :param output	                 : Gradient along Y.
+    :param gaussianKernel          : Gaussian kernel which values should be computed using ImageFilter.getGaussianKernel().
+    :param gaussianDerivativeKernel: Gaussian derivative kernel which values should be computed using ImageFilter.getGaussianDerivativeKernel().
+    :param size	                   : The size of the filter.
+    :param mask	                   : Optional mask. True pixels are processed and False pixels are ignored.
+    )doc",
+    py::arg("input"),
+    py::arg("output"),
+    py::arg("gaussianKernel"),
+    py::arg("gaussianDerivativeKernel"),
+    py::arg("size"),
+    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
+  );
+}
+
   /*
    * vpImageFilter
    */
@@ -1223,6 +1308,11 @@ bindings_vpImageFilter(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::
 
   define_getKernels<float>(pyImageFilter);
   define_getKernels<double>(pyImageFilter);
+
+  define_getGradXYGauss2D<unsigned char, float>(pyImageFilter);
+  define_getGradXYGauss2D<unsigned char, double>(pyImageFilter);
+  define_getGradXYGauss2D<float, float>(pyImageFilter);
+  define_getGradXYGauss2D<double, double>(pyImageFilter);
 
   define_canny(pyImageFilter);
 }

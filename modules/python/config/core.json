@@ -1313,12 +1313,26 @@
         {
           "static": true,
           "signature": "FilterType getSobelKernelX(FilterType*, unsigned int)",
-          "ignore": true
+          "ignore": true,
+          "custom_implem": true
         },
         {
           "static": true,
           "signature": "FilterType getSobelKernelY(FilterType*, unsigned int)",
-          "ignore": true
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void getGradXGauss2D(const vpImage<ImageType>&, vpImage<FilterType>&, const FilterType*, const FilterType*, unsigned int, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void getGradYGauss2D(const vpImage<ImageType>&, vpImage<FilterType>&, const FilterType*, const FilterType*, unsigned int, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
         }
       ]
     },
