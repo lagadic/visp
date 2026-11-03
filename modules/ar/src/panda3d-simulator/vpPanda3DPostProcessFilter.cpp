@@ -145,12 +145,12 @@ void vpPanda3DPostProcessFilter::setRenderParameters(const vpPanda3DRenderParame
   }
   if (resize) {
     for (GraphicsOutput *buffer: m_buffers) {
-      //buffer->get_type().is_derived_from()
-      GraphicsBuffer *buf = dynamic_cast<GraphicsBuffer *>(buffer);
-      if (buf == nullptr) {
+      // Use Panda3D type system rather than dynamic_cast, since Panda3D may be built without RTTI
+      if ((buffer == nullptr) || (!buffer->is_of_type(GraphicsBuffer::get_class_type()))) {
         throw vpException(vpException::fatalError, "Panda3D: could not cast to GraphicsBuffer when rendering.");
       }
       else {
+        GraphicsBuffer *buf = static_cast<GraphicsBuffer *>(buffer);
         buf->set_size(static_cast<int>(m_renderParameters.getImageWidth()), static_cast<int>(m_renderParameters.getImageHeight()));
       }
     }
