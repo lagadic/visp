@@ -716,7 +716,8 @@ void vpRBTracker::loadConfigurationFile(const std::string &filename)
   }
   nlohmann::json settings;
   try {
-    settings = nlohmann::json::parse(jsonFile);
+    // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+    settings = nlohmann::json::parse(jsonFile, nullptr, true, true);
   }
   catch (nlohmann::json::parse_error &e) {
     std::stringstream msg;

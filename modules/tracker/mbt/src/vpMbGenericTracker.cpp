@@ -2927,7 +2927,8 @@ void vpMbGenericTracker::loadConfigFileJSON(const std::string &settingsFile, boo
   }
   json settings;
   try {
-    settings = json::parse(jsonFile);
+    // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+    settings = json::parse(jsonFile, nullptr, true, true);
   }
   catch (json::parse_error &e) {
     std::stringstream msg;
@@ -3080,9 +3081,9 @@ void vpMbGenericTracker::saveConfigFile(const std::string &settingsFile) const
   }
   j["trackers"] = trackers;
   j["vvs"] = json {
-    {"lambda", m_lambda},
-    {"maxIter", m_maxIter},
-    {"initialMu", m_initialMu}
+    { "lambda", m_lambda },
+    { "maxIter", m_maxIter },
+    { "initialMu", m_initialMu }
   };
 
   std::ofstream f(settingsFile);
@@ -4802,7 +4803,7 @@ void vpMbGenericTracker::setOgreVisibilityTest(const bool &v)
     it != m_mapOfTrackers.end(); ++it) {
     TrackerWrapper *tracker = it->second;
     tracker->faces.getOgreContext()->setWindowName("Multi Generic MBT (" + it->first + ")");
-  }
+}
 #endif
 }
 
@@ -6445,7 +6446,7 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<unsigned char> &I
     ) {
     if (useOgre)
       faces.displayOgre(cMo);
-  }
+}
 #endif
 }
 
@@ -6529,7 +6530,7 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<vpRGBa> &I, const
     ) {
     if (useOgre)
       faces.displayOgre(cMo);
-  }
+}
 #endif
 }
 
@@ -7311,7 +7312,7 @@ void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> *c
     } while (i != 0);
 
     cleanPyramid(Ipyramid);
-  }
+}
 #else
   if (m_trackerType & EDGE_TRACKER) {
     vpMbEdgeTracker::initMovingEdge(I ? *I : m_I, m_cMo);

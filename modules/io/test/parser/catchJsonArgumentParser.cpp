@@ -71,7 +71,8 @@ json loadJson(const std::string &path)
   if (!json_file.good()) {
     throw vpException(vpException::ioError, "Could not open JSON settings file");
   }
-  json j = json::parse(json_file);
+  // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+  json j = json::parse(json_file, nullptr, true, true);
   json_file.close();
   return j;
 }
@@ -117,13 +118,13 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
   GIVEN("Some JSON parameters saved in a file, and some C++ variables")
   {
     json j = json {
-      {"a", 2},
-      {"b", 2.0},
-      {"c", "a string"},
-      {"d", true},
-      {"flag", true},
-      {"flagDefaultTrue", true},
-      {"e", {{"a", 5} }
+      { "a", 2 },
+      { "b", 2.0 },
+      { "c", "a string" },
+      { "d", true },
+      { "flag", true },
+      { "flagDefaultTrue", true },
+      { "e", { { "a", 5 } }
     }
     };
     saveJson(j, jsonPath);

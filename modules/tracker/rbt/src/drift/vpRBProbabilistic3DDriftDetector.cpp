@@ -374,8 +374,8 @@ void vpRBProbabilistic3DDriftDetector::loadRepresentation(const std::string &fil
   if (!f.good()) {
     throw vpException(vpException::ioError, "Could not open file %s", filename.c_str());
   }
-
-  nlohmann::json j = nlohmann::json::parse(f);
+  // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+  nlohmann::json j = nlohmann::json::parse(f, nullptr, true, true);
   f.close();
   m_points = j;
 }

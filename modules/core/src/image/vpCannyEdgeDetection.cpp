@@ -152,7 +152,8 @@ vpCannyEdgeDetection::initFromJSON(const std::string &jsonPath)
   }
   json j;
   try {
-    j = json::parse(file);
+    // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+    j = json::parse(file, nullptr, true, true);
   }
   catch (json::parse_error &e) {
     std::stringstream msg;
