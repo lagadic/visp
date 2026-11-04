@@ -25,6 +25,7 @@ ViSP 3.7.1 (current version)
       - Embedded Build: Fall back to the built-in version available directly in the 3rdparty/catch2 folder. This
         version was upgraded to Catch2 3.13.0
     . Fix warnings detected on Ubuntu with -Wshadow -Wfloat-equal -Wsign-conversion
+    . In vpRobotFranka class handle Panda and FR3 joint limits that differ
   - Applications
     . Camera intrinsic calibration app: visp-calibrate-camera.cpp
       - Add lens distortion displacement map visualization
