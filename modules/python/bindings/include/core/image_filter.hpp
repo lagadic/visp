@@ -881,11 +881,481 @@ py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::null
   define_computeCannyThreshold<double>(pyClass);
 }
 
+template<typename ImageType, typename OutputType>
+void define_filter(
+  py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
 
+  pyClass.def_static(
+    "filter",
+    [](const vpImage<ImageType> &input,
+       vpImage<OutputType> &output,
+       const py::array_t<OutputType, py::array::c_style> &filter,
+       unsigned int size,
+       const std::optional<vpImage<bool>> &mask) -> void
+      {
+        py::buffer_info filterInfo = filter.request();
 
-  /*
-   * vpImageFilter
-   */
+        const OutputType *filter_ptr = static_cast<OutputType *>(filterInfo.ptr);
+        if (!mask) {
+          vpImageFilter::filter(input, output, filter_ptr, size, nullptr);
+        }
+        else {
+          vpImageFilter::filter(input, output, filter_ptr, size, &(mask.value()));
+        }
+      },
+    R"doc(
+Apply a separable filter.
+
+:param input	: The original image.
+:param output	: The filtered image.
+:param filter	: The separable filter.
+:param size	: The size of the filter.
+:param mask	: Optional mask. True pixels are processed and False pixels are ignored.
+)doc",
+py::arg("input"),
+py::arg("output"),
+py::arg("filter"),
+py::arg("size"),
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
+);
+
+  pyClass.def_static(
+      "filter",
+      [](const vpImage<ImageType> &input,
+         vpImage<OutputType> &output,
+         const vpArray2D<OutputType> &filter,
+         bool convolve,
+         const std::optional<vpImage<bool>> &mask) -> void
+        {
+          if (!mask) {
+            vpImageFilter::filter(input, output, filter, convolve, nullptr);
+          }
+          else {
+            vpImageFilter::filter(input, output, filter, convolve, &(mask.value()));
+          }
+        },
+      R"doc(
+Apply a separable filter.
+
+:param input	 : The original image.
+:param output	 : The filtered image.
+:param filter	 : The separable filter.
+:param convolve: If true, perform a convolution otherwise a correlation.
+:param mask	   : Optional mask. True pixels are processed and False pixels are ignored.
+)doc",
+py::arg("input"),
+py::arg("output"),
+py::arg("filter"),
+py::arg("convolve"),
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
+);
+
+  pyClass.def_static(
+        "filter",
+        [](const vpImage<ImageType> &input,
+           vpImage<OutputType> &Iu,
+           vpImage<OutputType> &Iv,
+           const vpArray2D<OutputType> &filter,
+           bool convolve,
+           const std::optional<vpImage<bool>> &mask) -> void
+          {
+            if (!mask) {
+              vpImageFilter::filter(input, Iu, Iv, filter, convolve, nullptr);
+            }
+            else {
+              vpImageFilter::filter(input, Iu, Iv, filter, convolve, &(mask.value()));
+            }
+          },
+        R"doc(
+Apply a separable filter.
+
+:param input	 : The original image.
+:param Iu      : Filtered image along the horizontal axis (u = columns).
+:param Iv      : Filtered image along the vertical axis (v = rows).
+:param filter	 : The filter kernel.
+:param convolve: If true, perform a convolution otherwise a correlation.
+:param mask	   : Optional mask. True pixels are processed and False pixels are ignored.
+)doc",
+py::arg("input"),
+py::arg("Iu"),
+py::arg("Iv"),
+py::arg("filter"),
+py::arg("convolve"),
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
+);
+}
+
+template<typename ImageType, typename OutputType, typename FilterType>
+void define_directional_filter(
+  py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
+  pyClass.def_static(
+    "filterX",
+    [](const vpImage<ImageType> &input,
+       vpImage<OutputType> &output,
+       const py::array_t<FilterType, py::array::c_style> &filter,
+       unsigned int size,
+       const std::optional<vpImage<bool>> &mask) -> void
+      {
+        py::buffer_info filterInfo = filter.request();
+
+        const FilterType *filter_ptr = static_cast<FilterType *>(filterInfo.ptr);
+        if (!mask) {
+          vpImageFilter::filterX(input, output, filter_ptr, size, nullptr);
+        }
+        else {
+          vpImageFilter::filterX(input, output, filter_ptr, size, &(mask.value()));
+        }
+      },
+    R"doc(
+    Filter along the horizontal direction.
+
+    :param input	: The original image.
+    :param output	: The filtered image.
+    :param filter	: The coefficients of the filter.
+    :param size	: The size of the filter.
+    :param mask	: Optional mask. True pixels are processed and False pixels are ignored.
+    )doc",
+    py::arg("input"),
+    py::arg("output"),
+    py::arg("filter"),
+    py::arg("size"),
+    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
+  );
+
+  pyClass.def_static(
+    "filterY",
+    [](const vpImage<ImageType> &input,
+       vpImage<OutputType> &output,
+       const py::array_t<FilterType, py::array::c_style> &filter,
+       unsigned int size,
+       const std::optional<vpImage<bool>> &mask) -> void
+      {
+        py::buffer_info filterInfo = filter.request();
+
+        const FilterType *filter_ptr = static_cast<FilterType *>(filterInfo.ptr);
+        if (!mask) {
+          vpImageFilter::filterY(input, output, filter_ptr, size, nullptr);
+        }
+        else {
+          vpImageFilter::filterY(input, output, filter_ptr, size, &(mask.value()));
+        }
+      },
+    R"doc(
+    Filter along the vertical direction.
+
+    :param input	: The original image.
+    :param output	: The filtered image.
+    :param filter	: The coefficients of the filter.
+    :param size	: The size of the filter.
+    :param mask	: Optional mask. True pixels are processed and False pixels are ignored.
+    )doc",
+    py::arg("input"),
+    py::arg("output"),
+    py::arg("filter"),
+    py::arg("size"),
+    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
+  );
+}
+
+template<typename FilterType>
+void define_getKernels(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
+  pyClass.def_static(
+    "getScharrKernelX",
+    [](py::array_t<FilterType, py::array::c_style> &filter,
+       unsigned int size) -> FilterType
+      {
+        py::buffer_info filterInfo = filter.request();
+
+        FilterType *filter_ptr = static_cast<FilterType *>(filterInfo.ptr);
+        return vpImageFilter::getScharrKernelX(filter_ptr, size);
+      }
+      ,
+    R"doc(
+    Get Scharr kernel for X-direction.
+
+    :param filter	: Numpy-array-like object whose size has already been set.
+    :param size	: The kernel size is computed as: kernel_size = size*2 + 1 (max size is 20).
+    :return: Scaling factor to normalize the Scharr kernel.
+    )doc",
+    py::arg("filter"),
+    py::arg("size")
+  );
+
+  pyClass.def_static(
+    "getScharrKernelY",
+    [](py::array_t<FilterType, py::array::c_style> &filter,
+       unsigned int size) -> FilterType
+      {
+        py::buffer_info filterInfo = filter.request();
+
+        FilterType *filter_ptr = static_cast<FilterType *>(filterInfo.ptr);
+        return vpImageFilter::getScharrKernelY(filter_ptr, size);
+      }
+      ,
+    R"doc(
+    Get Scharr kernel for Y-direction.
+
+    :param filter	: Numpy-array-like object whose size has already been set.
+    :param size	: The kernel size is computed as: kernel_size = size*2 + 1 (max size is 20).
+    :return: Scaling factor to normalize the Scharr kernel.
+    )doc",
+    py::arg("filter"),
+    py::arg("size")
+  );
+
+  pyClass.def_static(
+    "getSobelKernelX",
+    [](py::array_t<FilterType, py::array::c_style> &filter,
+       unsigned int size) -> FilterType
+      {
+        py::buffer_info filterInfo = filter.request();
+
+        FilterType *filter_ptr = static_cast<FilterType *>(filterInfo.ptr);
+        return vpImageFilter::getSobelKernelX(filter_ptr, size);
+      }
+      ,
+    R"doc(
+    Get Sobel kernel for X-direction.
+
+    :param filter	: Numpy-array-like object whose size has already been set.
+    :param size	: The kernel size is computed as: kernel_size = size*2 + 1 (max size is 20).
+    :return: Scaling factor to normalize the Sobel kernel.
+    )doc",
+    py::arg("filter"),
+    py::arg("size")
+  );
+
+  pyClass.def_static(
+    "getSobelKernelY",
+    [](py::array_t<FilterType, py::array::c_style> &filter,
+       unsigned int size) -> FilterType
+      {
+        py::buffer_info filterInfo = filter.request();
+
+        FilterType *filter_ptr = static_cast<FilterType *>(filterInfo.ptr);
+        return vpImageFilter::getSobelKernelY(filter_ptr, size);
+      }
+      ,
+    R"doc(
+    Get Sobel kernel for Y-direction.
+
+    :param filter	: Numpy-array-like object whose size has already been set.
+    :param size	: The kernel size is computed as: kernel_size = size*2 + 1 (max size is 20).
+    :return: Scaling factor to normalize the Sobel kernel.
+    )doc",
+    py::arg("filter"),
+    py::arg("size")
+  );
+}
+
+template<typename ImageType, typename FilterType>
+void define_getGradXYGauss2D(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  pyClass.def_static(
+    "getGradXGauss2D",
+    [](const vpImage<ImageType> &input,
+       vpImage<FilterType> &output,
+       const py::array_t<FilterType, py::array::c_style> &gaussianKernel,
+       const py::array_t<FilterType, py::array::c_style> &gaussianDerivativeKernel,
+       unsigned int size,
+       const std::optional<vpImage<bool>> &mask) -> void
+      {
+        py::buffer_info gaussianInfo = gaussianKernel.request();
+        const FilterType *gaussian_ptr = static_cast<FilterType *>(gaussianInfo.ptr);
+
+        py::buffer_info derivativeInfo = gaussianDerivativeKernel.request();
+        const FilterType *derivative_ptr = static_cast<FilterType *>(derivativeInfo.ptr);
+        if (!mask) {
+          vpImageFilter::getGradXGauss2D(input, output, gaussian_ptr, derivative_ptr, size, nullptr);
+        }
+        else {
+          vpImageFilter::getGradXGauss2D(input, output, gaussian_ptr, derivative_ptr, size, &(mask.value()));
+        }
+      },
+    R"doc(
+    Compute the gradient along X after applying a gaussian filter along Y.
+
+    :param input	                 : The original image.
+    :param output	                 : Gradient along X.
+    :param gaussianKernel          : Gaussian kernel which values should be computed using ImageFilter.getGaussianKernel().
+    :param gaussianDerivativeKernel: Gaussian derivative kernel which values should be computed using ImageFilter.getGaussianDerivativeKernel().
+    :param size	                   : The size of the filter.
+    :param mask	                   : Optional mask. True pixels are processed and False pixels are ignored.
+    )doc",
+    py::arg("input"),
+    py::arg("output"),
+    py::arg("gaussianKernel"),
+    py::arg("gaussianDerivativeKernel"),
+    py::arg("size"),
+    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
+  );
+
+  pyClass.def_static(
+    "getGradYGauss2D",
+    [](const vpImage<ImageType> &input,
+       vpImage<FilterType> &output,
+       const py::array_t<FilterType, py::array::c_style> &gaussianKernel,
+       const py::array_t<FilterType, py::array::c_style> &gaussianDerivativeKernel,
+       unsigned int size,
+       const std::optional<vpImage<bool>> &mask) -> void
+      {
+        py::buffer_info gaussianInfo = gaussianKernel.request();
+        const FilterType *gaussian_ptr = static_cast<FilterType *>(gaussianInfo.ptr);
+
+        py::buffer_info derivativeInfo = gaussianDerivativeKernel.request();
+        const FilterType *derivative_ptr = static_cast<FilterType *>(derivativeInfo.ptr);
+        if (!mask) {
+          vpImageFilter::getGradYGauss2D(input, output, gaussian_ptr, derivative_ptr, size, nullptr);
+        }
+        else {
+          vpImageFilter::getGradYGauss2D(input, output, gaussian_ptr, derivative_ptr, size, &(mask.value()));
+        }
+      },
+    R"doc(
+    Compute the gradient along Y after applying a gaussian filter along X.
+
+    :param input	                 : The original image.
+    :param output	                 : Gradient along Y.
+    :param gaussianKernel          : Gaussian kernel which values should be computed using ImageFilter.getGaussianKernel().
+    :param gaussianDerivativeKernel: Gaussian derivative kernel which values should be computed using ImageFilter.getGaussianDerivativeKernel().
+    :param size	                   : The size of the filter.
+    :param mask	                   : Optional mask. True pixels are processed and False pixels are ignored.
+    )doc",
+    py::arg("input"),
+    py::arg("output"),
+    py::arg("gaussianKernel"),
+    py::arg("gaussianDerivativeKernel"),
+    py::arg("size"),
+    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt)
+  );
+}
+
+template<typename ArithmeticType, bool useFullScale, typename FilterType>
+void define_gradientFilterHSV(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyClass)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  pyClass.def_static(
+    "gradientFilterX",
+    [](const vpImage<vpHSV<ArithmeticType, useFullScale>> &input,
+       vpImage<FilterType> &output,
+       const int &nbThread,
+       const std::optional<vpImage<bool>> &mask,
+       const vpImageFilter::vpCannyFilteringAndGradientType &filterType
+       ) -> void
+      {
+        if (!mask) {
+          vpImageFilter::gradientFilterX(input, output, nbThread, nullptr, filterType);
+        }
+        else {
+          vpImageFilter::gradientFilterX(input, output, nbThread, &(mask.value()), filterType);
+        }
+      },
+    R"doc(
+    Gradient filter along the X-axis for HSV images.
+
+    :param input	   : The original image.
+    :param output	   : Gradient along X.
+    :param nbThread  : The number of threads to use to compute the gradient. Setting -1 use the maximum number of thread.
+    :param mask	     : Optional mask. True pixels are processed and False pixels are ignored.
+    :param filterType: The type of the gradient filter.
+    )doc",
+    py::arg("input"),
+    py::arg("output"),
+    py::arg("nbThread"),
+    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt),
+    py::arg("filterType")
+  );
+
+  pyClass.def_static(
+    "gradientFilterY",
+    [](const vpImage<vpHSV<ArithmeticType, useFullScale>> &input,
+       vpImage<FilterType> &output,
+       const int &nbThread,
+       const std::optional<vpImage<bool>> &mask,
+       const vpImageFilter::vpCannyFilteringAndGradientType &filterType
+       ) -> void
+      {
+        if (!mask) {
+          vpImageFilter::gradientFilterY(input, output, nbThread, nullptr, filterType);
+        }
+        else {
+          vpImageFilter::gradientFilterY(input, output, nbThread, &(mask.value()), filterType);
+        }
+      },
+    R"doc(
+    Gradient filter along the Y-axis for HSV images.
+
+    :param input	   : The original image.
+    :param output	   : Gradient along Y.
+    :param nbThread  : The number of threads to use to compute the gradient. Setting -1 use the maximum number of thread.
+    :param mask	     : Optional mask. True pixels are processed and False pixels are ignored.
+    :param filterType: The type of the gradient filter.
+    )doc",
+    py::arg("input"),
+    py::arg("output"),
+    py::arg("nbThread"),
+    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt),
+    py::arg("filterType")
+  );
+
+  pyClass.def_static(
+    "gradientFilterY",
+    [](const vpImage<vpHSV<ArithmeticType, useFullScale>> &input,
+       vpImage<FilterType> &GIx,
+       vpImage<FilterType> &GIy,
+       const int &nbThread,
+       const std::optional<vpImage<bool>> &mask,
+       const vpImageFilter::vpCannyFilteringAndGradientType &filterType
+       ) -> void
+      {
+        if (!mask) {
+          vpImageFilter::gradientFilter(input, GIx, GIy, nbThread, nullptr, filterType);
+        }
+        else {
+          vpImageFilter::gradientFilter(input, GIx, GIy, nbThread, &(mask.value()), filterType);
+        }
+      },
+    R"doc(
+    Compute the horizontal and vertical gradients for HSV images.
+
+    :param input	   : The original image.
+    :param GIx  	   : Gradient along X.
+    :param GIy  	   : Gradient along Y.
+    :param nbThread  : The number of threads to use to compute the gradient. Setting -1 use the maximum number of thread.
+    :param mask	     : Optional mask. True pixels are processed and False pixels are ignored.
+    :param filterType: The type of the gradient filter.
+    )doc",
+    py::arg("input"),
+    py::arg("GIx"),
+    py::arg("GIy"),
+    py::arg("nbThread"),
+    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt),
+    py::arg("filterType")
+  );
+}
+
+/*
+ * vpImageFilter
+ */
 void
 bindings_vpImageFilter(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImageFilter>> &pyImageFilter)
 {
@@ -915,6 +1385,47 @@ bindings_vpImageFilter(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter, std::
   define_partialDerivative<unsigned char, double>(pyImageFilter);
   define_partialDerivative<float, float>(pyImageFilter);
   define_partialDerivative<double, double>(pyImageFilter);
+
+  define_filter<unsigned char, float>(pyImageFilter);
+  define_filter<unsigned char, double>(pyImageFilter);
+  define_filter<float, float>(pyImageFilter);
+  define_filter<double, double>(pyImageFilter);
+
+  define_directional_filter<unsigned char, float, float>(pyImageFilter);
+  define_directional_filter<unsigned char, float, double>(pyImageFilter);
+  define_directional_filter<unsigned char, double, float>(pyImageFilter);
+  define_directional_filter<unsigned char, double, double>(pyImageFilter);
+  define_directional_filter<float, float, float>(pyImageFilter);
+  define_directional_filter<float, float, double>(pyImageFilter);
+  define_directional_filter<float, double, float>(pyImageFilter);
+  define_directional_filter<float, double, double>(pyImageFilter);
+  define_directional_filter<double, float, float>(pyImageFilter);
+  define_directional_filter<double, float, double>(pyImageFilter);
+  define_directional_filter<double, double, float>(pyImageFilter);
+  define_directional_filter<double, double, double>(pyImageFilter);
+  define_directional_filter<vpRGBa, vpRGBa, float>(pyImageFilter);
+  define_directional_filter<vpRGBa, vpRGBa, double>(pyImageFilter);
+  define_directional_filter<vpHSV<unsigned char, false>, vpHSV<unsigned char, false>, float>(pyImageFilter);
+  define_directional_filter<vpHSV<unsigned char, false>, vpHSV<unsigned char, false>, double>(pyImageFilter);
+  define_directional_filter<vpHSV<unsigned char, true>, vpHSV<unsigned char, true>, float>(pyImageFilter);
+  define_directional_filter<vpHSV<unsigned char, true>, vpHSV<unsigned char, true>, double>(pyImageFilter);
+  define_directional_filter<vpHSV<double, true>, vpHSV<double, true>, float>(pyImageFilter);
+  define_directional_filter<vpHSV<double, true>, vpHSV<double, true>, double>(pyImageFilter);
+
+  define_getKernels<float>(pyImageFilter);
+  define_getKernels<double>(pyImageFilter);
+
+  define_getGradXYGauss2D<unsigned char, float>(pyImageFilter);
+  define_getGradXYGauss2D<unsigned char, double>(pyImageFilter);
+  define_getGradXYGauss2D<float, float>(pyImageFilter);
+  define_getGradXYGauss2D<double, double>(pyImageFilter);
+
+  define_gradientFilterHSV<unsigned char, false, float>(pyImageFilter);
+  define_gradientFilterHSV<unsigned char, false, double>(pyImageFilter);
+  define_gradientFilterHSV<unsigned char, true, float>(pyImageFilter);
+  define_gradientFilterHSV<unsigned char, true, double>(pyImageFilter);
+  define_gradientFilterHSV<double, true, float>(pyImageFilter);
+  define_gradientFilterHSV<double, true, double>(pyImageFilter);
 
   define_canny(pyImageFilter);
 }
