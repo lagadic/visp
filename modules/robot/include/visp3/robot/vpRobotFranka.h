@@ -225,6 +225,18 @@ BEGIN_VISP_NAMESPACE
 */
 class VISP_EXPORT vpRobotFranka : public vpRobot
 {
+public:
+  /*!
+   * Franka robot model, set when connecting to the robot. It follows from the libfranka version ViSP is built
+   * with: a Panda (robot server version <= 5) only accepts libfranka <= 0.9, an FR3 (robot server version >= 6)
+   * requires libfranka >= 0.10.
+   */
+  enum class vpFrankaModel
+  {
+    kPanda, //!< Franka Emika Panda (libfranka <= 0.9)
+    kFR3    //!< Franka Research 3 (libfranka >= 0.10)
+  };
+
 private:
   /*!
    * Copy constructor not allowed.
@@ -236,6 +248,8 @@ private:
   void getDisplacement(const vpRobot::vpControlFrameType, vpColVector &) VP_OVERRIDE {}
 
   void init() VP_OVERRIDE;
+  void setJointLimits(const vpFrankaModel &model);
+  bool setJointLimitsFromRobotModel();
 
   franka::Robot *m_handler;   //!< Robot handler
   franka::Gripper *m_gripper; //!< Gripper handler
@@ -260,6 +274,7 @@ private:
   std::array<double, 7> m_q_max;   // Joint max position
   std::array<double, 7> m_dq_max;  // Joint max velocity
   std::array<double, 7> m_ddq_max; // Joint max acceleration
+  vpFrankaModel m_franka_model;    // Robot model detected when connecting
 
   franka::RobotState m_robot_state; // Robot state protected by mutex
   std::mutex m_mutex;               // Mutex to protect m_robot_state
@@ -332,8 +347,16 @@ public:
     return m_handler;
   }
 
+  /*!
+   * Get the Franka robot model detected when connecting to the robot with connect().
+   * Before connecting, kPanda is returned.
+   */
+  vpFrankaModel getFrankaModel() const { return m_franka_model; }
+
   vpColVector getJointMin() const;
   vpColVector getJointMax() const;
+  vpColVector getJointVelocityMax() const;
+  vpColVector getJointAccelerationMax() const;
 
   void getMass(vpMatrix &mass);
 
