@@ -3,7 +3,7 @@
 
 \tableofcontents
 
-\section tuto-npz-intro Introduction
+\section tuto-npz-intro 1. Introduction
 
 \note
 Please refer to the <a href="tutorial-read-write-NPZ-format.html">Python tutorial</a> for a short overview of the NPZ
@@ -20,7 +20,7 @@ library, available under the MIT license. Additional example code can be found d
 <a href="https://github.com/rogersce/cnpy/blob/master/example1.cpp">rogersce/cnpy repository</a>.
 
 
-\subsection tuto-npz-intro-comparison Comparison with some other file formats
+\subsection tuto-npz-intro-comparison 1.1. Comparison with some other file formats
 
 The NPZ binary format is intended to provide a quick and efficient mean to read/save large arrays of data, mostly for
 debugging purpose. While the first and direct option for saving data would be to use file text, the choice of the NPZ
@@ -51,9 +51,9 @@ You can refer to this Wikipedia page for an exhaustive comparison of
 <a href="https://en.wikipedia.org/wiki/Comparison_of_data-serialization_formats">data-serialization formats</a>.
 
 
-\section tuto-npz-hands-on Hands-on
+\section tuto-npz-hands-on 2. Hands-on
 
-\subsection tuto-npz-hands-on-save-string How to save/read string data
+\subsection tuto-npz-hands-on-save-string 2.1. How to save/read string data
 
 Saving C++ `std::string` data can be achieved the following way:
   - create a `string` object and convert it to a `vector<char>` object:
@@ -108,7 +108,7 @@ Array of string data can also be saved using @ref visp::cnpy::npz_save() functio
   - the shape of the array: `std::vector<size_t>`
 
 
-\subsection tuto-npz-hands-on-save-basic How to save basic data types
+\subsection tuto-npz-hands-on-save-basic 2.2. How to save basic data types
 
 Saving C++ basic data type such as `int32_t`, `float` or even `std::complex<double>` is straightforward:
 
@@ -119,7 +119,7 @@ Reading back the data can be done easily:
 \snippet tutorial-npz.cpp Read_basic_types
 
 
-\subsection tuto-npz-hands-on-save-img How to save a vpImage
+\subsection tuto-npz-hands-on-save-img 2.3. How to save a vpImage
 
 Finally, one of the advantages of the `NPZ` is the possibility to save multi-dimensional arrays easily.
 As an example, we will save first a `vpImage<vpRGBa>`.
@@ -144,7 +144,7 @@ The `vpImage` constructor accepting a `vpRGBa` pointer is used, with the appropr
 Finally, the image is displayed.
 
 
-\subsection tuto-npz-hands-on-save-multi How to save a multi-dimensional array
+\subsection tuto-npz-hands-on-save-multi 2.4. How to save a multi-dimensional array
 
 Similarly, the following code shows how to save a multi-dimensional array with a shape corresponding to `{H x W x 3}`:
 

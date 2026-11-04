@@ -797,6 +797,7 @@ void poperr(void)
     fprintf(stderr, "%s: error stack underflow\n", proc_name);
     throw vpException(vpException::fatalError, "Error in poperr");
   }
+  --size_stack;
 }
 
 /*

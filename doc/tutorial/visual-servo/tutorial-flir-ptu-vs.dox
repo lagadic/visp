@@ -3,7 +3,7 @@
 \page tutorial-flir-ptu-vs Tutorial: Visual servoing with FLIR Pan Tilt Unit
 \tableofcontents
 
-\section flir_ptu_intro Introduction
+\section flir_ptu_intro 1. Introduction
 
 This tutorial explains how to do an image-based visual-servoing with a FLIR PTU-46 equipped with a FLIR camera (in our case a FLIR PTU-5 and a Grashopper3 GigE camera with a 300 mm lens).
 
@@ -15,9 +15,9 @@ In this tutorial the considered target is an AprilTag.
 
 The goal of the servoing is to center the target in the middle of the image despite PTU and target motion.
 
-\section flir_ptu_prereq Prerequisites
+\section flir_ptu_prereq 2. Prerequisites
 
-\subsection flir_ptu_prereq_hardware Hardware
+\subsection flir_ptu_prereq_hardware 2.1. Hardware
 
 We suppose here that you have:
 - a <a href="https://www.flir.com/browse/camera-cores-amp-components/pan-tilts/">FLIR PTU</a> that will be controlled throw vpRobotFlirPtu class. To this end you need to \ref flir_ptu_prereq_ptu_sdk. Note that FLIR PTU-46 factory settings are:
@@ -31,7 +31,7 @@ Pan/tilt vel max [deg/s]:   120 120
 
   \note We strongly recommend to communicate with the PTU using network interface. We experienced communication issues using serial communication.
 
-\subsection flir_ptu_prereq_ptu_sdk Install FLIR PTU SDK
+\subsection flir_ptu_prereq_ptu_sdk 2.2. Install FLIR PTU SDK
 
 In order to control FLIR PTU you need to build the corresponding SDK. Here we give the steps to build `sdk-2.0.2` or `sdk-2.0.4`.
 
@@ -101,7 +101,7 @@ C:\> setx FLIRPTUSDK_HOME "%VISP_WS%\sdk-2.0.4"
 C:\> exit
 \endcode
 
-\subsection flir_ptu_prereq_flycap_sdk Install FLIR FlyCapture SDK
+\subsection flir_ptu_prereq_flycap_sdk 2.3. Install FLIR FlyCapture SDK
 
 This SDK is used to get images acquired by a FLIR Camera, in our case a [Grashopper3 GigE camera](https://www.flir.com/products/grasshopper3-gige/).
 
@@ -115,13 +115,13 @@ This SDK is used to get images acquired by a FLIR Camera, in our case a [Grashop
 - If you are using Visual C++ 2017 (vc15) follow \ref install_win10_msvc15_3rdparty_flycapture installation tutorial
 - If you are using Visual C++ 2019 (vc16) follow \ref install_win10_msvc16_3rdparty_flycapture installation tutorial
 
-\subsection flir_ptu_prereq_target Print an Apriltag target
+\subsection flir_ptu_prereq_target 2.4. Print an Apriltag target
 
 We provide a ready to print `36h11` tag that is 12 by 12 cm square <a href="http://visp-doc.inria.fr/download/apriltag/tag36_11_00000-120x120.pdf">[download]</a> that you may print.
 
 If you are interested to get other tags, follow the steps described in \ref apriltag_detection_print.
 
-\subsection flir_ptu_prereq_visp_build Configure and build ViSP
+\subsection flir_ptu_prereq_visp_build 2.5. Configure and build ViSP
 
 Since you have just installed FLIR PTU SDK and FLIR FlyCapture SDK 3rd parties, you need to configure again ViSP with cmake in order that ViSP is able to use these SDKs.
 
@@ -138,9 +138,9 @@ Since you have just installed FLIR PTU SDK and FLIR FlyCapture SDK 3rd parties, 
 - If you are using Visual C++ 2019 (vc16) follow \ref install_win10_msvc16_config. At this step you should see new `USE_FLIRPTUSDK` and `USE_FLYCAPTURE` cmake vars appearing in the CMake GUI. Then follow the instructions to \ref install_win10_msvc16_build.
 
 
-\section flir_ptu_ibvs Image-based visual servoing
+\section flir_ptu_ibvs 3. Image-based visual servoing
 
-\subsection flir_ptu_ibvs_setup Setup material
+\subsection flir_ptu_ibvs_setup 3.1. Setup material
 
 Before starting visual-servoing example, you need to:
 
@@ -151,7 +151,7 @@ Before starting visual-servoing example, you need to:
 - Connect your computer to the Ethernet switch using an Ethernet cable
 - Plug the FLIR PTU USB adapter to your computer
 
-\subsection flir_ptu_prereq_calib_extrinsic Determine extrinsic camera parameters
+\subsection flir_ptu_prereq_calib_extrinsic 3.2. Determine extrinsic camera parameters
 
 These parameters correspond to the position of the camera frame in the end-effector frame. We recall that:
 - end-effector frame origin is located at the intersection of the pan and tilt axis. When pan and tilt joints are at zero position, X-axis goes forward, Y-axis on the left and Z-axis upward.
@@ -171,7 +171,7 @@ data:
   - [0, 0, 0, 1]
 \endcode
 
-\subsection flir_ptu_ibvs_vs Start visual-servoing
+\subsection flir_ptu_ibvs_vs 3.3. Start visual-servoing
 
 An example of image-based visual servoing using FLIR PTU equipped with a FLIR camera is available in tutorial-flir-ptu-ibvs.cpp. Now enter in `tutorial/robot/flir-ptu` folder and run `tutorial-flir-ptu-ibvs` binary to get helper information:
 \code
@@ -196,9 +196,9 @@ Start visual servoing:
 $ ./tutorial-flir-ptu-ibvs --portname tcp:169.254.110.254 --constant-gain 0.1 --extrinsic eMc.yaml
 \endcode
 
-\section flir_ptu_issues Known issues
+\section flir_ptu_issues 4. Known issues
 
-\subsection flir_ptu_issues_usb Failed to open /dev/ttyUSB0: Permission denied
+\subsection flir_ptu_issues_usb 4.1. Failed to open /dev/ttyUSB0: Permission denied
 
 On Unix-like OS, if you experienced the following error when running `servoFlirPtu.cpp`:
   \code
@@ -210,7 +210,7 @@ On Unix-like OS, if you experienced the following error when running `servoFlirP
   \endcode
   2. Reboot
 
-\subsection flir_ptu_issues_fpic Relocation R_X86_64_PC32 against symbol `serposix'
+\subsection flir_ptu_issues_fpic 4.2. Relocation R_X86_64_PC32 against symbol `serposix'
 
 On Unix-like OS, if you experienced the following error during ViSP build:
   \code
@@ -233,7 +233,7 @@ On Unix-like OS, if you experienced the following error during ViSP build:
   $ make -j4
   \endcode
 
-\section flir_ptu_next Next tutorial
+\section flir_ptu_next 5. Next tutorial
 
 You are now ready to see \ref tutorial-ibvs that will give some hints on image-based visual servoing in simulation with a free flying camera.
 

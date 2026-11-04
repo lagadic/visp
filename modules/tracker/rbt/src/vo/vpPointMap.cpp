@@ -170,7 +170,7 @@ void vpPointMap::getVisiblePoints(const unsigned int h, const unsigned int w, co
 
 #ifdef VISP_HAVE_OPENMP
     localIndices.reserve(m_X.getRows() / static_cast<unsigned int>(omp_get_num_threads()));
-#pragma omp for nowait
+#pragma omp for schedule(static) nowait
 #endif
     for (int i = 0; i < static_cast<int>(m_X.getRows()); ++i) {
       unsigned int i_ = static_cast<unsigned int>(i);

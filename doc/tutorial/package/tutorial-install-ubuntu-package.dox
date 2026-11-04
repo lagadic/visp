@@ -7,7 +7,7 @@ In this tutorial you will learn how to install ViSP from prebuilt official packa
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_ubuntu_package_list ViSP official packages
+\section install_ubuntu_package_list 1. ViSP official packages
 
 Since Ubuntu 14.04 LTS, ViSP library can be installed from <a href="http://packages.ubuntu.com/search?keywords=visp&searchon=names&suite=trusty&section=all">existing packages</a> on amd64 or i386 architectures. In Ubuntu 13.10, the packages were only available for amd64 architecture.
 
@@ -29,7 +29,7 @@ To install ViSP html documentation you can run:
 $ sudo apt-get install libvisp-doc
 \endverbatim
 
-\section install_ubuntu_package_next Next tutorial
+\section install_ubuntu_package_next 2. Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
 

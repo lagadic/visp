@@ -7,11 +7,11 @@ In this tutorial you will learn how to install ViSP Homebrew package on OSX. The
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_osx_brew_package_required Install prerequisites
+\section install_osx_brew_package_required 1. Install prerequisites
 
 First, go to http://brew.sh to install Homebrew.
 
-\section install_osx_brew_visp Install ViSP with homebrew
+\section install_osx_brew_visp 2. Install ViSP with homebrew
 
 To get information on ViSP package:
 \verbatim
@@ -27,8 +27,8 @@ $ brew install visp
 \endverbatim
 
 
-\section install_osx_brew_package_tips Tips and tricks
-\subsection install_osx_brew_package_build_from_source How to install visp from source
+\section install_osx_brew_package_tips 3. Tips and tricks
+\subsection install_osx_brew_package_build_from_source 3.1. How to install visp from source
 
 To build and install ViSP from source with homebrew you may run:
 
@@ -36,13 +36,13 @@ To build and install ViSP from source with homebrew you may run:
 $ brew install visp --build-from-source
 \endverbatim
 
-\subsection install_osx_brew_package_uninstall How to uninstall visp formula
+\subsection install_osx_brew_package_uninstall 3.2. How to uninstall visp formula
 
 \verbatim
 $ brew remove visp
 \endverbatim
 
-\subsection install_osx_brew_package_not_writable /usr/local/include/visp is not writable
+\subsection install_osx_brew_package_not_writable 3.3. /usr/local/include/visp is not writable
 
 If during ViSP installation you get the following error
 
@@ -65,7 +65,7 @@ A work around is to change the owner of the corresponding folder like:
 $ sudo chown {your-user-name} /usr/local/include
 \endverbatim
 
-\section install_osx_brew_package_next Next tutorial
+\section install_osx_brew_package_next 4. Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
 

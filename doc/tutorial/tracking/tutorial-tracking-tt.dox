@@ -3,7 +3,7 @@
 \page tutorial-tracking-tt Tutorial: Template tracking
 \tableofcontents
 
-\section tracking_tt_intro Introduction
+\section tracking_tt_intro 1. Introduction
 
 With ViSP it is possible to track a template using image registration algorithms \cite Dame10c \cite Dame11c. Contrary
 to common approaches based on visual features, this method allows to be much more robust to scene variations.
@@ -16,7 +16,7 @@ Note that all the material (source code and video) described in this tutorial is
 part of ViSP source code (in `tutorial/tracking/template-tracker` folder) and could be found in
 https://github.com/lagadic/visp/tree/master/tutorial/tracking/template-tracker.
 
-\section tracking_tt Track the painting
+\section tracking_tt 2. Track the painting
 
 The following example that comes from tutorial-template-tracker.cpp allows to track a template using
 vpTemplateTrackerSSDInverseCompositional class.
@@ -99,7 +99,7 @@ display the template using red lines.
 
 \snippet tutorial-template-tracker.cpp Display
 
-\subsection warp_tt Warping classes
+\subsection warp_tt 2.1. Warping classes
 
 In the example presented above, we focused on the vpTemplateTrackerWarpHomography warping class which is the most
 generic transformation available in ViSP for the template trackers. However, if you know that the template you want
@@ -149,7 +149,7 @@ As remind, the vpTemplateTrackerWarpHomography estimates the eight parameters of
 The vpTemplateTrackerWarpHomographySL3 warp works exactly the same as the vpTemplateTrackerWarpHomography warp. The
 only difference is that here, the parameters of the homography are estimated in the SL3 reference frame.
 
-\subsection tune_tt How to tune the tracker
+\subsection tune_tt 2.2. How to tune the tracker
 
 When you want to obtain a perfect pose estimation, it is often time-consuming. However, by tuning the tracker,
 you can find a good compromise between speed and efficiency. Basically, what will make the difference is the size
@@ -205,7 +205,7 @@ By increasing this root mean square threshold value, the algorithm will reduce i
 should also speed up the tracking phase. This function should be used wisely with the
 vpTemplateTracker::setIterationMax() function.
 
-\subsubsection tuning_tt_mi Example tuning MI tracker
+\subsubsection tuning_tt_mi 2.2.1. Example tuning MI tracker
 
 In tutorial-template-tracker.cpp we use vpTemplateTrackerSSDInverseCompositional class that implements the
 "Sum of Square Differences" as similarity function. To use Mutual Information that is more robust to occlusion and
@@ -238,7 +238,7 @@ and increasing the root mean square threshold value. The following parameters sh
   tracker.setThresholdRMS(1e-6);
 \endcode
 
-\subsection points_tt How to get the points of the template
+\subsection points_tt 2.3. How to get the points of the template
 
 The previous code provided in tutorial-template-tracker.cpp can be modified to get the coordinates of the corners of
 the triangles that define the zone to track. To this end, as shown in the next lines, before the while loop we first
@@ -293,7 +293,7 @@ triangles that are not connex.
 \image html img-template-tracker.jpg
 
 
-\section tracking_tt_example More examples
+\section tracking_tt_example 3. More examples
 
 The templateTracker.cpp source code provided in the example/tracking folder allows to test all the template tracker
 classes that derive from vpTemplateTracker as well as all the warping classes that derive from vpTemplateTrackerWarp.

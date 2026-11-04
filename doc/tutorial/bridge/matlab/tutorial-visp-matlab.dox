@@ -3,7 +3,7 @@
 \page tutorial-visp-matlab Tutorial: Using ViSP and MATLAB
 \tableofcontents
 
-\section intro_visp_matlab Introduction
+\section intro_visp_matlab 1. Introduction
 
 This tutorial shows how to invoke MATLAB functions from ViSP using MATLAB Engine. The MATLAB C/C++ engine library
 contains routines that allow you to call MATLAB from your own programs, using MATLAB as a computation engine. This can
@@ -23,7 +23,7 @@ column wise sum of the vpMatrix.
 Note that all the material (source code and image) described in this tutorial is part of ViSP source code
 (in `tutorial/matlab` folder) and could be found in https://github.com/lagadic/visp/tree/master/tutorial/matlab.
 
-\section visp_matlab_cmake CMakeLists.txt file
+\section visp_matlab_cmake 2. CMakeLists.txt file
 
 In order to build a source code that mix ViSP and MATLAB you should first create a `CMakeLists.txt` file that tries to
 find ViSP and MATLAB. In the following example we consider the case of the tutorial-matlab.cpp source file.
@@ -49,7 +49,7 @@ To build this example when MATLAB is in your PATH, use:
     $ mkdir build && cd build
     $ cmake .. -DVISP_DIR=<path to ViSP build dir>
 
-\section visp_matlab_column_sum Call MATLAB function from ViSP program
+\section visp_matlab_column_sum 3. Call MATLAB function from ViSP program
 
 This example shows the use of MATLAB engine in a ViSP program.
 

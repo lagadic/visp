@@ -75,11 +75,11 @@ To correctly process your model, here is a small overview of the steps to follow
 
 To make sure your model is correct, you should start by setting the scale and orientation of your 3D model.
 
-You should first import your model in Blender. In the top left corner of the Blender window, click on
-**File > Import > (Your model type)**, then pick your object in the popup window.
+You should first import your model in Blender. In the top left corner of the Blender window, click
+on **File > Import > (Your model type)**, then pick your object in the popup window.
 
-Your model should have been imported and should be visible in the 3D viewer. You should then click on it and press
-**N** to bring up the Transform panel in the top right corner. Then you should press **Ctrl+A** to open the **Apply**
+Your model should have been imported and should be visible in the 3D viewer. You should then click on it and
+press **N** to bring up the Transform panel in the top right corner. Then you should press **Ctrl+A** to open the **Apply**
 menu and click on the **All transforms** item.
 When you do this, you will not see any change applied to the model itself,
 but this will ensure that what you see in Blender is what is observed by the tracker and that both use the same orientation and scale.
@@ -704,7 +704,7 @@ Example configuration:
 
 
 
-\subsection rbt_python_options 4.3 Python specific configuration
+\subsection rbt_python_options 4.3. Python specific configuration
 
 \warning The features defined below are only available when using the Python bindings. To install and use the bindings see \ref tutorial-install-python-bindings.
 
@@ -1159,6 +1159,60 @@ In this case, you should either try to use the **p3headlessgl** backend or use a
 - In Linux distributions, you can use `xvfb` to emulate a x11 server to render to.
 
 \warning Note that the RBT uses shaders that are compiled for OpenGL core 3.3.
+
+\subsection rbt_segfault_xquartz 6.3. Segfault on macOS when XQuartz is installed
+
+On macOS, any binary using the RBT (or more generally Panda3D rendering) may crash with a segmentation fault as soon as
+the renderer is initialized, typically when calling vpRBTracker::startTracking():
+\verbatim
+$ ./tutorial-rbt-sequence --color data/dragon/dragon.mp4 --tracker data/dragon/dragon.json
+Known pipe types:
+  CocoaGLGraphicsPipe
+(all display modules loaded.)
+zsh: segmentation fault  ./tutorial-rbt-sequence --color data/dragon/dragon.mp4 --tracker data/dragon/dragon.json
+\endverbatim
+
+Running the binary in a debugger shows that the crash occurs in Panda3D, while the OpenGL context is set up:
+\verbatim
+frame #0: libsystem_platform.dylib`_platform_strlen + 4
+frame #1: libpandagl.dylib`GLGraphicsStateGuardian::reset() + 800
+frame #2: libpandagl.dylib`CocoaGLGraphicsBuffer::open_buffer() + 612
+\endverbatim
+
+This happens when [XQuartz](https://www.xquartz.org/) is installed and ViSP libraries are linked with the XQuartz
+OpenGL library (`/opt/X11/lib/libGL.1.dylib` or `/usr/X11R6/lib/libGL.dylib`) instead of the native macOS
+`OpenGL.framework`. Panda3D resolves OpenGL functions like `glGetStringi()` at runtime among all the libraries loaded
+by the process. It may then get the XQuartz (Mesa) implementation, which has no valid OpenGL context and returns a null
+pointer.
+
+To check if you are concerned, look at the OpenGL library ViSP is linked with:
+\verbatim
+$ cd $VISP_WS/visp-build
+$ otool -L lib/libvisp_core.dylib | grep -i libGL
+	/opt/X11/lib/libGL.1.dylib (compatibility version 4.0.0, current version 4.0.0)
+$ grep OPENGL_gl_LIBRARY: CMakeCache.txt
+OPENGL_gl_LIBRARY:FILEPATH=/usr/X11R6/lib/libGL.dylib
+\endverbatim
+
+Since ViSP 3.7.1, CMake looks for `OpenGL.framework` first on macOS. If your build folder was configured with an older
+version, the XQuartz library path is still in the CMake cache. Remove the cached OpenGL entries, then rebuild ViSP:
+\verbatim
+$ cd $VISP_WS/visp-build
+$ cmake -U "OPENGL_*" .
+$ make -j$(sysctl -n hw.logicalcpu)
+\endverbatim
+
+With an older ViSP version, you can rather force the use of `OpenGL.framework` when configuring ViSP:
+\verbatim
+$ cd $VISP_WS/visp-build
+$ cmake ../visp -DOPENGL_gl_LIBRARY=$(xcrun --show-sdk-path)/System/Library/Frameworks/OpenGL.framework \
+                -DOPENGL_glu_LIBRARY=$(xcrun --show-sdk-path)/System/Library/Frameworks/OpenGL.framework \
+                -DOPENGL_INCLUDE_DIR=$(xcrun --show-sdk-path)/System/Library/Frameworks/OpenGL.framework
+$ make -j$(sysctl -n hw.logicalcpu)
+\endverbatim
+
+After rebuilding, `otool -L lib/libvisp_core.dylib | grep -i opengl` should only show
+`/System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL`.
 
 \section rbt_extension 7. Extending the RBT
 

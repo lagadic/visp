@@ -3,7 +3,7 @@
 \page tutorial-tracking-megapose Tutorial: Tracking with MegaPose
 \tableofcontents
 
-\section megapose_tracking_intro Introduction
+\section megapose_tracking_intro 1. Introduction
 
 In this tutorial, we will explore how to use MegaPose \cite Labbe2022Megapose, a deep learning method for 6D object pose estimation.
 To know more about MegaPose see <https://megapose6d.github.io/>.
@@ -46,9 +46,9 @@ To obtain have a decent tracking speed, it is recommended to have both machines 
 This tutorial will explain how to install and run MegaPose and
 then demonstrate its usage with a simple object tracking application.
 
-\section megapose_install Installation
+\section megapose_install 2. Installation
 
-\subsection megapose_cpp_install Installing the client
+\subsection megapose_cpp_install 2.1. Installing the client
 
 The MegaPose client, written in C++, is included directly in ViSP. It can be installed on any computer, even without a GPU. To be installed and compiled, it requires:
 - That ViSP be compiled with the JSON third-party library, as JSON is used to pass messages. To install the 3rd party, see \ref soft_tool_json installation procedure for your system.
@@ -69,7 +69,7 @@ The MegaPose client, written in C++, is included directly in ViSP. It can be ins
   \endcode
   As explained previously, see \ref soft_tool_json installation procedure and build again ViSP.
 
-\subsection megapose_server_install Installing the server
+\subsection megapose_server_install 2.2. Installing the server
 
 \warning The megapose server cannot directly be installed and used on Windows. A workaround is to install it in a <a href="https://learn.microsoft.com/en-us/windows/wsl/install">WSL container</a>. A WSL container works as a Linux (Ubuntu) distribution. The client still works on Windows, and WSL allows for port forwarding, making its usage seamless from the perspective of the client.
 
@@ -119,7 +119,7 @@ The `-h` argument should print some documentation on the arguments that can be p
 
 With MegaPose installed, you are now ready to run a basic, single object tracking example.
 
-\section megapose_run Single object tracking with MegaPose
+\section megapose_run 3. Single object tracking with MegaPose
 
 In this tutorial, we will track an object from a live camera feed. For MegaPose to work, we will need:
 - The 3D model of the object
@@ -129,7 +129,7 @@ In this tutorial, we will track an object from a live camera feed. For MegaPose 
 To get you started, we provide the full data to run tracking on a short video.
 To go further, you should check \ref megapose_adaptation that will explain what you need to use your own objects and camera.
 
-\subsection megapose_start_server Starting the server
+\subsection megapose_start_server 3.1. Starting the server
 
 To use MegaPose, we first need to start the inference server. As we have installed the server in \ref megapose_server_install, we can now use it from anywhere.
 First, activate your conda environment:
@@ -212,7 +212,7 @@ Note that this assumes that your current directory is the tutorial folder.
 
 Your server should now be started and waiting for incoming connections. You can now launch the tracking tutorial.
 
-\subsection megapose_run_command Running the tracking example
+\subsection megapose_run_command 3.2. Running the tracking example
 Let us now run the tracker on a video, with the default provided cube model.
 The video can be found in the data folder of the tutorial and the source code in tutorial-megapose-live-single-object-tracking.cpp located in `$VISP_WS/visp/tutorial/tracking/dnn`.
 
@@ -260,7 +260,7 @@ The model display can be toggled by pressing T. Displaying can be helpful in two
 The bar at the bottom displays the score coming from megapose.
 This score reflects whether the tracking has diverged and a reinitialization is required.
 
-\subsection megapose_code Understanding the program
+\subsection megapose_code 3.3. Understanding the program
 
 We will now go through the code to understand how MegaPose can be called.
 The full code can be found in tutorial-megapose-live-single-object-tracking.cpp
@@ -308,7 +308,7 @@ Once MegaPose has been called, we can display the results in the image. We plot:
 We have walked through the code of a single object tracking with MegaPose.
 You may wish to save the results. You can do so by serializing to JSON, as explained in \ref tutorial-json
 
-\section megapose_adaptation Adapting this tutorial for your use case
+\section megapose_adaptation 4. Adapting this tutorial for your use case
 
 This program can run with new 3D models, as MegaPose does require retraining. To adapt this script to your problem, you will require multiple things:
 - The intrinsic parameters of your camera. To calibrate your camera, see \ref tutorial-calibration-intrinsic
@@ -337,7 +337,7 @@ Finally, MegaPose is an ideal candidate for Pose-Based Visual Servoing. The vide
 \endhtmlonly
 
 
-\subsection megapose_next_steps Next steps
+\subsection megapose_next_steps 4.1. Next steps
 
 To go further, you can look at an example of visual servoing using Megapose, available at \ref servoAfma6MegaposePBVS.cpp
 

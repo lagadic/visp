@@ -3,7 +3,7 @@
 \page tutorial-tracking-mb-generic-stereo Tutorial: Markerless generic model-based tracking using a stereo camera
 \tableofcontents
 
-\section mb_generic_stereo_intro Introduction
+\section mb_generic_stereo_intro 1. Introduction
 
 Before following this tutorial, we suggest that you follow \ref tutorial-tracking-mb-generic to learn the bases of the
 tracker.
@@ -62,19 +62,19 @@ Note that all the material (source code, input video, CAD model or XML settings 
 part of ViSP source code (in `tracking/model-based/generic-stereo` folder) and could be found in
 https://github.com/lagadic/visp/tree/master/tracking/model-based/generic-stereo.
 
-\section mb_generic_stereo_started Getting started
+\section mb_generic_stereo_started 2. Getting started
 
 To start with the generic markerless model-based tracker using a stereo camera, we recommend to understand the
 tutorial-mb-generic-tracker-stereo.cpp source code that is given and explained below.
 
-\subsection mb_generic_stereo_overview Overview
+\subsection mb_generic_stereo_overview 2.1. Overview
 
 The generic model-based tracker available for multiple views tracking rely on the same tracker than in the monocular
 case. Our implementation in vpMbGenericTracker class permits to easily extend the usage of the model-based tracker
 to multiple cameras with the guarantee to preserve the same behavior compared to the tracking in the monocular
 configuration.
 
-\subsection mb_generic_stereo_implementation_detail Implementation detail
+\subsection mb_generic_stereo_implementation_detail 2.2. Implementation detail
 
 Each tracker is stored in a map, the key corresponding to the name of the camera on which the tracker will process.
 By default, the camera names are set to:
@@ -92,7 +92,7 @@ Thus, we have to know the transformation matrix between each camera and the refe
 For example, if the reference camera is "Camera1" (\f$ c_1 \f$), we need the following information:
 \f$ _{}^{c_2}\textrm{M}_{c_1}, _{}^{c_3}\textrm{M}_{c_1}, \cdots, _{}^{c_n}\textrm{M}_{c_1} \f$.
 
-\subsection mb_generic_stereo_started_input Example input/output data
+\subsection mb_generic_stereo_started_input 2.3. Example input/output data
 
 The tutorial-mb-generic-tracker-stereo.cpp example uses the following data as input:
 - two video files; `teabox_left.mpg` and `teabox_right.mpg` that are the default videos and that could be changed
@@ -124,7 +124,7 @@ to the geometric transformation between the frame attached to the object (in our
 attached to the left camera and the one attached to the right camera. The poses are returned as a
 vpHomogeneousMatrix container.
 
-\subsection mb_generic_stereo_example_code Example code
+\subsection mb_generic_stereo_example_code 2.4. Example code
 The following example comes from tutorial-mb-generic-tracker-stereo.cpp and allows to track a tea box modeled
 in cao format. In this example we consider a stereo configuration with images from a left camera and images
 from a right camera.
@@ -143,7 +143,7 @@ $ ./tutorial-mb-generic-tracker-stereo --tracker 1 2
 The source code is the following:
 \include tutorial-mb-generic-tracker-stereo.cpp
 
-\subsection mb_generic_stereo_explanation_of_the_code Explanation of the code
+\subsection mb_generic_stereo_explanation_of_the_code 2.5. Explanation of the code
 
 The previous source code shows how to use a model-based tracking on stereo images using the standard procedure to
 configure the tracker:
@@ -220,9 +220,9 @@ To display the model with the estimated pose, we use:
 
 \snippet tutorial-mb-generic-tracker-stereo.cpp Display
 
-\section mb_generic_stereo_advanced Advanced
+\section mb_generic_stereo_advanced 3. Advanced
 
-\subsection mb_generic_stereo_moving_cameras How to deal with moving cameras
+\subsection mb_generic_stereo_moving_cameras 3.1. How to deal with moving cameras
 
 The principle remains the same than with static cameras. You have to supply the camera transformation matrices
 to the tracker each time the cameras move and before calling the track method:
@@ -243,7 +243,7 @@ the object. The images were captured by cameras located in the Romeo eyes.
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/IguBxf4VRUc" frameborder="0" allowfullscreen></iframe></p>
 \endhtmlonly
 
-\section mb_generic_stereo_next Next tutorial
+\section mb_generic_stereo_next 4. Next tutorial
 You are now ready to see the next \ref tutorial-tracking-mb-generic-rgbd.
 
 */

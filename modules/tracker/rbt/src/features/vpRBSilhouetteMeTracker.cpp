@@ -30,6 +30,10 @@
 
 #include <visp3/rbt/vpRBSilhouetteMeTracker.h>
 
+#ifdef VISP_HAVE_OPENMP
+#include <omp.h>
+#endif
+
 #define VISP_DEBUG_ME_TRACKER 0
 
 BEGIN_VISP_NAMESPACE
@@ -46,13 +50,30 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
   const vpColVector oC = oMc.getRotationMatrix() * vpColVector({ 0.0, 0.0, -1.0 });
   const vpImage<unsigned char> &initImage = previousFrame.I.getSize() == frame.I.getSize() ? previousFrame.I : frame.I;
 
+  std::vector<std::vector<vpRBSilhouetteControlPoint>> pointsPerThread;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
 #endif
   {
+#ifdef VISP_HAVE_OPENMP
+#pragma omp single
+    {
+      unsigned int numThreads = static_cast<unsigned int>(omp_get_num_threads());
+      pointsPerThread.resize(numThreads);
+    }
+#else
+    {
+      pointsPerThread.resize(1);
+    }
+#endif
+#ifdef VISP_HAVE_OPENMP
+    unsigned int threadIdx = static_cast<unsigned int>(omp_get_thread_num());
+#else
+    unsigned int threadIdx = 0;
+#endif
     std::vector<vpRBSilhouetteControlPoint> localPoints;
 #ifdef VISP_HAVE_OPENMP
-#pragma omp for nowait
+#pragma omp for schedule(static)
 #endif
     for (int i = 0; i < static_cast<int>(frame.silhouettePoints.size()); ++i) {
       const vpRBSilhouettePoint &sp = frame.silhouettePoints[static_cast<unsigned int>(i)];
@@ -92,12 +113,12 @@ void vpRBSilhouetteMeTracker::extractFeatures(const vpRBFeatureTrackerInput &fra
       localPoints.push_back(std::move(p));
     }
 
-#ifdef VISP_HAVE_OPENMP
-#pragma omp critical
-#endif
-    {
-      m_controlPoints.insert(m_controlPoints.end(), localPoints.begin(), localPoints.end());
-    }
+    pointsPerThread[threadIdx] = std::move(localPoints);
+  }
+
+  // Concatenate in thread order so that control points are always stored in the same order
+  for (std::vector<vpRBSilhouetteControlPoint> &points : pointsPerThread) {
+    m_controlPoints.insert(m_controlPoints.end(), std::make_move_iterator(points.begin()), std::make_move_iterator(points.end()));
   }
 
   m_numFeatures = static_cast<unsigned int>(m_controlPoints.size());

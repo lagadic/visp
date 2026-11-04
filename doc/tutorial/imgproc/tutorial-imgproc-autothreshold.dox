@@ -3,7 +3,7 @@
 \page tutorial-imgproc-autothreshold Tutorial: Automatic thresholding
 \tableofcontents
 
-\section imgproc_autothreshold_intro Introduction
+\section imgproc_autothreshold_intro 1. Introduction
 
 This tutorial will show you how to automatically threshold, binarize an image using different methods:
 - Huang \cite Huang_imagethresholding
@@ -15,7 +15,7 @@ This tutorial will show you how to automatically threshold, binarize an image us
 
 These functions have been ported from the <a href="https://imagej.net/Auto_Threshold">Auto Threshold ImageJ plugin</a> and you can refer to the corresponding documentation for more information.
 
-\section imgproc_autothreshold_example Example code
+\section imgproc_autothreshold_example 2. Example code
 
 The following example also available in tutorial-autothreshold.cpp will demonstrate on a sample image the result of each of these methods:
 
@@ -54,7 +54,7 @@ The function vp::autoThreshold(vpImage<unsigned char> &, const vp::vpAutoThresho
   \end{matrix} \right.
 \f]
 
-\section imgproc_autothreshold_next Next tutorial
+\section imgproc_autothreshold_next 3. Next tutorial
 
 You can now read the \ref tutorial-imgproc-contour, to learn how to extract the contours from a binary image.
 

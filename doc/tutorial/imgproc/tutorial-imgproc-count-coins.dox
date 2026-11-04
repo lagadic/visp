@@ -3,7 +3,7 @@
 \page tutorial-imgproc-count-coins Practical example: count the number of coins in an image
 \tableofcontents
 
-\section imgproc_count_coins_intro Introduction
+\section imgproc_count_coins_intro 1. Introduction
 
 This tutorial will show you how to count the number of coins in an image. To do this, we will reuse some of the image processing techniques presented before and some other image processing methods:
 - automatic thresholding (\ref tutorial-imgproc-autothreshold)
@@ -22,7 +22,7 @@ The second image can be downloaded <a href="https://upload.wikimedia.org/wikiped
 
 We assume similar lighting condition and coins placement in the image to build the image processing pipeline.
 
-\section imgproc_count_coins_example Example code
+\section imgproc_count_coins_example 2. Example code
 
 The example code also available in tutorial-count-coins.cpp is:
 

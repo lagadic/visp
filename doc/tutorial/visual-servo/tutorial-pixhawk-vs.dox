@@ -3,7 +3,7 @@
 \page tutorial-pixhawk-vs Tutorial: Image-based visual-servoing on a drone equipped with a Pixhawk
 \tableofcontents
 
-\section pixhawk_intro Introduction
+\section pixhawk_intro 1. Introduction
 
 In this tutorial we show how to control indoor a DJI F450 drone equipped with a Pixhawk that communicates with an embedded
 Jetson TX2 using the USB link. MAVLink is used to communicate between the controller running on the Pixhawk and the other apps
@@ -38,9 +38,9 @@ and hereafter the corresponding images captured by the camera and processed by t
 </p>
 \endhtmlonly
 
-\section pixhawk_prereq Prerequisites
+\section pixhawk_prereq 2. Prerequisites
 
-\subsection pixhawk_prereq_hardware Hardware
+\subsection pixhawk_prereq_hardware 2.1. Hardware
 
 The following material is necessary for \ref pixhawk_part1
 - A robot equipped with a Pixhawk used to control its motors. In our case we use a DJI F450 drone
@@ -62,7 +62,7 @@ This app is implemented in sendMocapToPixhawk.cpp
 
 \note The Jetson TX2 could be replaced by a Raspberry Pi4.
 
-\subsection pixhawk_prereq_software Software
+\subsection pixhawk_prereq_software 2.2. Software
 
 The following software is necessary for \ref pixhawk_part1
 - <b>MavSDK</b> 3rd party library
@@ -176,9 +176,9 @@ $ make -j$(nproc)
 If you wish to continue this tutorial with \ref pixhawk_part2, the following material is also necessary:
 - \ref soft_camera_depth_librealsense to be able to acquire images from the D405 camera mounted on our drone
 
-\section pixhawk_part1 Part 1: Control the drone indoor
+\section pixhawk_part1 3. Part 1: Control the drone indoor
 
-\subsection pixhawk_mavproxy Connect devices using MavProxy
+\subsection pixhawk_mavproxy 3.1. Connect devices using MavProxy
 
 In our case, we use MavProxy to allow multiple apps to dial with the Pixhawk
 (see \ref pixhawk_prereq_software for more details on the next command line):
@@ -199,7 +199,7 @@ $ mavproxy.py --master=/dev/ttyACM0 --out=udpout:192.168.30.111:14550 --out=udpo
     --out=udpout:127.0.0.1:14552 --out=udpout:127.0.0.1:14553
 \endverbatim
 
-\subsection pixhawk_stream_mocap Stream MoCap to Pixhawk
+\subsection pixhawk_stream_mocap 3.2. Stream MoCap to Pixhawk
 
 The code sendMocapToPixhawk.cpp allows you to send the MoCap stream coming from a Qualisys or Vicon motion capture system
 to the Pixhawk using MavLink. This code is based on vpMocapQualisys and vpMocapVicon classes that allows to get the vehicle FLU body
@@ -227,7 +227,7 @@ If you look at the window of the MoCap system manager, you should be able to loo
 
 \image html img-dji-qualisys.png Capture of Qualisys Task Manager showing the FLU body frame attached to the DJI-F450 corresponding to the drone. The MoCap reference frame is ENU.
 
-\subsection pixhawk_qgc Start QGroundControl
+\subsection pixhawk_qgc 3.3. Start QGroundControl
 
 To check the drone behavior you can start QGroundControl on the ground station:
 
@@ -235,7 +235,7 @@ To check the drone behavior you can start QGroundControl on the ground station:
 $ ~/Downloads/QGroundControl.AppImage
 \endverbatim
 
-\subsection pixhawk_test Testing the drone
+\subsection pixhawk_test 3.4. Testing the drone
 
 Before launching the keyboard control test on the ground station or the visual servoing test on the Jetson,
 we advise you to launch simpler and safer tests beforehand on the Jetson.
@@ -256,7 +256,7 @@ $ ./testPixhawkDroneTakeoff udp://:14553
 \note The vpRobtMavsdk class is not dedicate explicitly to flying vehicles. It can also be used to control a rover. If you are interested in
 you may try the test testPixhawkRoverVelocityControl.cpp
 
-\subsection pixhawk_fly Control the drone with a keyboard
+\subsection pixhawk_fly 3.5. Control the drone with a keyboard
 
 In testPixhawkDroneKeyboard.cpp you will find the code of an example that allows to control the drone from a ground station
 using the keyboard. To use this example on the ground station, you may run:
@@ -265,8 +265,8 @@ using the keyboard. To use this example on the ground station, you may run:
 $ ./testPixhawkDroneKeyboard --co udp://192.168.30.111:14551
 \endverbatim
 
-\section pixhawk_part2 Part 2: Visual Servoing
-\subsection pixhawk_servo Image-based visual servoing
+\section pixhawk_part2 4. Part 2: Visual Servoing
+\subsection pixhawk_servo 4.1. Image-based visual servoing
 
 In order to do this part, make sure you add a camera to your drone. We added a intel Realsense D405 connected to the
 Jetson through USB.
@@ -291,7 +291,7 @@ $ ssh nvidia@jetson
 $ ./servoPixhawkDroneIBVS --tag-size 0.23 --co udp://:14553 --distance-to-tag 1.3
 \endverbatim
 
-\section pixhawk_next Next tutorial
+\section pixhawk_next 5. Next tutorial
 
 The next tutorial \ref tutorial-bebop2-vs shows how to embbed a visual-servoing scheme on a Parrot Bebop2 drone.
 

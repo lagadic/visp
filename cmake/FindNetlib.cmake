@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,39 +38,45 @@
 #
 #############################################################################
 
+
 set(NETLIB_FOUND FALSE)
 set(NETLIB_LIBRARIES "")
 set(NETLIB_VERSION "n/a")
-if(WIN32)
-  set(NETLIB_LIB_SEARCH_PATH
-    $ENV{NETLIB_HOME}
-    $ENV{NETLIB_DIR}
-    $ENV{NETLIB_HOME}/lib
-    $ENV{NETLIB_DIR}/lib
-    $ENV{LAPACK_HOME}
-    $ENV{LAPACK_DIR}
-    $ENV{LAPACK_HOME}/lib
-    $ENV{LAPACK_DIR}/lib
-  )
 
+set(NETLIB_SEARCH_HINTS
+  ${NETLIB_HOME}
+  $ENV{NETLIB_HOME}
+  ${NETLIB_DIR}
+  $ENV{NETLIB_DIR}
+  ${LAPACK_HOME}
+  $ENV{LAPACK_HOME}
+  ${LAPACK_DIR}
+  $ENV{LAPACK_DIR}
+)
+
+if(WIN32)
   find_library(NETLIB_LIBRARY_NETLIB_RELEASE
     NAMES lapack
-    PATHS ${NETLIB_LIB_SEARCH_PATH}
+    HINTS ${NETLIB_SEARCH_HINTS}
+    PATH_SUFFIXES lib
   )
 
   find_library(NETLIB_LIBRARY_BLAS_RELEASE
     NAMES blas
-    PATHS ${NETLIB_LIB_SEARCH_PATH}
+    HINTS ${NETLIB_SEARCH_HINTS}
+    PATH_SUFFIXES lib
   )
 
   find_library(NETLIB_LIBRARY_NETLIB_DEBUG
     NAMES lapackd
-    PATHS ${NETLIB_LIB_SEARCH_PATH}
+    HINTS ${NETLIB_SEARCH_HINTS}
+    PATH_SUFFIXES lib
   )
 
   find_library(NETLIB_LIBRARY_BLAS_DEBUG
     NAMES blasd
-    PATHS ${NETLIB_LIB_SEARCH_PATH}
+    HINTS ${NETLIB_SEARCH_HINTS}
+    PATH_SUFFIXES lib
   )
 
   if(NETLIB_LIBRARY_NETLIB_RELEASE AND NETLIB_LIBRARY_BLAS_RELEASE)
@@ -84,45 +90,29 @@ if(WIN32)
     list(APPEND NETLIB_LIBRARIES debug ${NETLIB_LIBRARY_BLAS_DEBUG})
     set(NETLIB_FOUND TRUE)
   endif()
-
-else(WIN32)
-
-  set(NETLIB_LIB_SEARCH_PATH
-    $ENV{NETLIB_HOME}
-    $ENV{NETLIB_DIR}
-    $ENV{NETLIB_HOME}/lib
-    $ENV{NETLIB_DIR}/lib
-    $ENV{LAPACK_HOME}
-    $ENV{LAPACK_DIR}
-    $ENV{LAPACK_HOME}/lib
-    $ENV{LAPACK_DIR}/lib
-    /usr/lib
-    /usr/lib64
-    /usr/local/lib
-    /usr/local/lib64
-  )
+else()
   find_library(NETLIB_LIBRARY_LAPACK
     NAMES lapack
-    PATHS ${NETLIB_LIB_SEARCH_PATH}
+    HINTS ${NETLIB_SEARCH_HINTS}
+    PATH_SUFFIXES lib
   )
 
   find_library(NETLIB_LIBRARY_BLAS
     NAMES blas
-    PATHS ${NETLIB_LIB_SEARCH_PATH}
+    HINTS ${NETLIB_SEARCH_HINTS}
+    PATH_SUFFIXES lib
   )
 
-  if((NETLIB_LIBRARY_LAPACK AND NETLIB_LIBRARY_BLAS))
+  if(NETLIB_LIBRARY_LAPACK AND NETLIB_LIBRARY_BLAS)
     set(NETLIB_LIBRARIES ${NETLIB_LIBRARY_LAPACK} ${NETLIB_LIBRARY_BLAS})
     set(NETLIB_FOUND TRUE)
 
     get_filename_component(NETLIB_LIB_DIR ${NETLIB_LIBRARY_LAPACK} PATH)
     vp_get_version_from_pkg("lapack" "${NETLIB_LIB_DIR}/pkgconfig" NETLIB_VERSION)
-
   endif()
-endif(WIN32)
+endif()
 
 mark_as_advanced(
-  NETLIB_LIBRARIES
   NETLIB_LIBRARY_LAPACK
   NETLIB_LIBRARY_BLAS
   NETLIB_LIBRARY_NETLIB_RELEASE

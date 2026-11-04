@@ -12,7 +12,7 @@ Note that all the material (source code) described in this tutorial is
 part of ViSP source code (in `tutorial/robot/pioneer` folder) and could be found in
 https://github.com/lagadic/visp/tree/master/tutorial/robot/pioneer.
 
-\section simu_robot_pioneer_camera Unicycle with a fixed camera
+\section simu_robot_pioneer_camera 1. Unicycle with a fixed camera
 
 In this section we consider the following unicycle:
 
@@ -234,7 +234,7 @@ At the end, we stop the infinite loop when the visual error reaches a value that
       }
 \endcode
 
-\section simu_robot_pioneer_camera_pan Unicycle with a moving camera
+\section simu_robot_pioneer_camera_pan 2. Unicycle with a moving camera
 
 In this section we consider the following unicycle:
 
@@ -267,6 +267,6 @@ The following control law is used:
   \end{array}\right]
  = -0.2 \left( {\bf L_{s} {^c}V_e {^e}J_e}\right)^{+} ({\bf s} - {\bf s}^*) \f]
 
-\section simu_robot_pioneer_next Next tutorial
+\section simu_robot_pioneer_next 3. Next tutorial
 You are now ready to see the next \ref tutorial-boost-vs.
 */

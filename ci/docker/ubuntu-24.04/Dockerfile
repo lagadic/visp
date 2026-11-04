@@ -27,7 +27,6 @@ RUN apt-get update \
       python3-dbg \
       python3-empy \
       python3-numpy \
-      python3-pip \
       python3-psutil \
       python3-venv \
       software-properties-common \

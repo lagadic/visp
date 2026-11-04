@@ -615,6 +615,6 @@ class HeaderFile():
         for spec in specs:
           name_python = spec['python_name']
           args = spec['arguments']
-          assert len(template_names) == len(args), f'Specializing {name_cpp_no_template}: Template arguments are {template_names} but found specialization {args} which has the wrong number of arguments'
+          assert len(template_names) == len(args), f"Specializing {name_cpp_no_template}: Template arguments are {template_names} but found specialization {args} which has the wrong number of arguments"
           spec_dict = OrderedDict(k for k in zip(template_names, args))
           generate_class_with_potiental_specialization(name_python, spec_dict, cls_config, header_env_base)

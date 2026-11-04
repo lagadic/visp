@@ -11,6 +11,7 @@ ViSP 3.7.1 (current version)
   - New classes
   - Deprecated
     . In vpDetectorAprilTag remove support for deprecated 25h7 family
+    . Remove deprecated vpDirectShowGrabber and vp1394CMUGrabber classes and examples
   - New features and improvements
     . The AprilTag 3rd-party integration has been completely redesigned. It now supports three flexible usage modes:
       - System Package: Use the library installed via your package manager (e.g., apt install libapriltag-dev),
@@ -26,6 +27,8 @@ ViSP 3.7.1 (current version)
         version was upgraded to Catch2 3.13.0
     . Fix warnings detected on Ubuntu with -Wshadow -Wfloat-equal -Wsign-conversion
     . In vpRobotFranka class handle Panda and FR3 joint limits that differ
+    . Ready to use docker container with Ubuntu 26.04.
+      See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-docker.html
   - Applications
     . Camera intrinsic calibration app: visp-calibrate-camera.cpp
       - Add lens distortion displacement map visualization
@@ -52,8 +55,13 @@ ViSP 3.7.1 (current version)
     . [#1984] Link issue when libfranka needs pinocchio
     . [#1992] Valgrind: uninitialised value in vpMeLine::getExtremities() when moving-edges list is empty
               (front()/back() on empty std::list)
+    . [#2000] Python bindings return inconsistent values for visp.core.Color predefined colors
     . [#2006] Fix outdated robot state retrieval in vpRobotFranka::getPosition()
-
+    . [#2031] libvisp_core.so not reproducible: is not the same every time it is built
+    . [#2039] Stack overflow when running wireframe simulator
+    . [#2050] visp-calibrate-camera.cpp doesn't build with OpenCV 4.7.0
+    . [#2054] Built-in Lapack dlamch() is not thread-safe, so SVD can fail when called from several threads
+    . [#2060] Non-deterministic results of RBT trackers with OpenMP
 ----------------------------------------------
 ViSP 3.7.0 (released December 19, 2025)
   - Contributors:

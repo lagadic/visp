@@ -3,7 +3,7 @@
 \page tutorial-imgproc-brightness Tutorial: Brightness and contrast adjustment
 \tableofcontents
 
-\section imgproc_brightness_intro Introduction
+\section imgproc_brightness_intro 1. Introduction
 
 While the ViSP library is not intended to be an image processing library or replace a raster graphics editor, some easy image processing techniques can be used to improve or adjust the brightness and the contrast of an image.
 
@@ -21,7 +21,7 @@ These functions are provided in a \a vp:: namespace and accessible using this in
 
 \snippet tutorial-brightness-adjustment.cpp Include
 
-\section imgproc_brightness_adjust Brightness and contrast adjustment
+\section imgproc_brightness_adjust 2. Brightness and contrast adjustment
 
 The brightness and the contrast of an image can be adjusted using a linear function:
 \f[I_{res}\left ( i,j \right ) = \alpha \cdot  I_{src}\left ( i,j \right ) + \beta\f]
@@ -36,7 +36,7 @@ The result image is the following:
 
 \image html img-tutorial-brighness-adjust-alpha10-beta50.png "Left: underexposed image - Right: image adjusted with alpha=10, beta=50"
 
-\section imgproc_brightness_gamma_correction Gamma correction
+\section imgproc_brightness_gamma_correction 3. Gamma correction
 
 <a href="https://en.wikipedia.org/wiki/Gamma_correction">Gamma correction</a> is a simple technique allowing to correct an image using a non-linear operation. The formula used is:
 \f[I_{res}\left ( i,j \right ) = \left ( \frac{I_{src}\left ( i,j \right )}{255} \right )^{\frac{1}{\gamma}} \cdot 255\f]
@@ -56,7 +56,7 @@ of handling the colors.
 You can test the different methods using the `--gamma-method` option of the tutorial program
 and the different way of handling the colors using the `--gamma-color-handling` option.
 
-\section imgproc_brightness_histogram_equalization Histogram equalization
+\section imgproc_brightness_histogram_equalization 4. Histogram equalization
 
 <a href="https://en.wikipedia.org/wiki/Histogram_equalization">Histogram equalization</a> is an image processing method that will adjust the contrast of an image by stretching or shrinking the intensity distribution in order to have a linear cumulative histogram distribution.
 
@@ -72,7 +72,7 @@ The result of the histogram equalized image is displayed below:
 
 \image html img-tutorial-brighness-hist-eq.png "Left: underexposed image - Right: histogram equalized image"
 
-\section imgproc_brightness_retinex Retinex
+\section imgproc_brightness_retinex 5. Retinex
 
 The Retinex algorithm implemented is ported from the <a href="http://imagej.net/Retinex">Retinex ImageJ</a> plugin:
 
@@ -84,7 +84,7 @@ The original photo after the Retinex processing:
 
 \image html img-tutorial-brighness-retinex-dynamic-3.png "Left: underexposed image - Right: result of the Retinex algorithm with default parameters and dynamic=3"
 
-\section imgproc_brightness_next Next tutorial
+\section imgproc_brightness_next 6. Next tutorial
 
 You can now read the \ref tutorial-imgproc-auto-gamma, for a quick presentation about different automatic gamma correction techniques.
 

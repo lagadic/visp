@@ -3,7 +3,7 @@
 \page tutorial-imgproc-contrast-sharpening Tutorial: Contrast and image sharpening techniques
 \tableofcontents
 
-\section imgproc_contrast_sharpening_intro Introduction
+\section imgproc_contrast_sharpening_intro 1. Introduction
 
 While the ViSP library is not intended to be an image processing library or replace a raster graphics editor, some easy image processing techniques can be used to improve the contrast and the sharpness of an image.
 
@@ -18,7 +18,7 @@ The first two methods consist of stretching the histogram of an image to make it
 The stretching will act like a direct mapping between the old and new intensity values whereas the histogram equalization will linearize the cumulative histogram distribution to try to make each intensity values the same weighting in the image.
 The CLAHE algorithm will limit the contrast enhancement using a maximum slope value to avoid to amplify too much the image noise. It will also compute the cumulative histogram locally by sliding a window around the current pixel location.
 
-\section imgproc_contrast_sharpening_example Example code
+\section imgproc_contrast_sharpening_example 2. Example code
 
 The following example also available in tutorial-contrast-sharpening.cpp will show the result of each of these methods on a low contrast image.
 
@@ -117,7 +117,7 @@ Two parameters can be modified:
 To summarize, the techniques presented to improve the contrast of an image can do a good job in some situations and not in another.
 The CLAHE algorithm and the unsharp masking can be tuned (but the default values should be good enough in most of the situation).
 
-\section imgproc_contrast_sharpening_next Next tutorial
+\section imgproc_contrast_sharpening_next 3. Next tutorial
 
 You can now read the \ref tutorial-imgproc-autothreshold, to learn how to automatically threshold / binarise a grayscale image.
 

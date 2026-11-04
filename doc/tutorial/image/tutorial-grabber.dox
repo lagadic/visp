@@ -114,8 +114,7 @@ As in the previous example, depending on the command line options we are recordi
 images. We are also waiting for a non blocking mouse event to quit the while loop.
 \snippet tutorial-grabber-1394.cpp vp1394TwoGrabber click to exit
 
-In the previous example we use vp1394TwoGrabber class that works for firewire cameras under Unix. If you are under
-Windows, you may use vp1394CMUGrabber class. A similar example is provided in tutorial-grabber-CMU1394.cpp.
+In the previous example we use vp1394TwoGrabber class that works for firewire cameras under Unix.
 
 \subsection grabber-camera-dc1394-use 3.2. How to acquire images
 
@@ -311,11 +310,6 @@ To grab a sequence of images, you may rather use:
 \code
 ./tutorial-grabber-opencv --seqname I%04d.pgm --record 0
 \endcode
-
-\section grabber-camera-cmu1394 10. Using CMU1394 SDK
-
-It is also possible to grab images using CMU1394 SDK if you want to use a firewire camera under Windows. You may find
-an example in tutorial-grabber-CMU1394.cpp.
 
 \section grabber-bebop2 11. Using Parrot Bebop 2 drone
 

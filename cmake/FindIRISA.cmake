@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,44 +37,40 @@
 #
 #############################################################################
 
+
 if(NOT UNIX)
   # message("FindIRISA.cmake: only available for Unix.")
   set(IRISA_FOUND FALSE)
 else()
+  set(IRISA_SEARCH_HINTS
+    ${IRISA_HOME}
+    $ENV{IRISA_HOME}
+  )
+  # Inria specific install locations
+  set(IRISA_SEARCH_PATHS
+    /local/soft/Cerebellum/Irisa/current
+    /home/soft/Cerebellum/Irisa/current
+    /home/soft/cerebellum/Irisa
+  )
 
   find_path(IRISA_INCLUDE_DIR irisa_Afma6.h
-    $ENV{IRISA_HOME}/src
-    /local/soft/Cerebellum/Irisa/current/src
-    /home/soft/Cerebellum/Irisa/current/src
-    /home/soft/cerebellum/Irisa/src
+    HINTS ${IRISA_SEARCH_HINTS}
+    PATHS ${IRISA_SEARCH_PATHS}
+    PATH_SUFFIXES src
   )
   #message("DBG IRISA_INCLUDE_DIR=${IRISA_INCLUDE_DIR}")
 
   find_library(IRISA_LIBRARY
     NAMES irisa
-    PATHS
-      $ENV{IRISA_HOME}/src
-      /local/soft/Cerebellum/Irisa/current/src
-      /home/soft/Cerebellum/Irisa/current/src
-      /home/soft/cerebellum/Irisa/src
+    HINTS ${IRISA_SEARCH_HINTS}
+    PATHS ${IRISA_SEARCH_PATHS}
+    PATH_SUFFIXES src
   )
-
   #message("DBG IRISA_LIBRARY=${IRISA_LIBRARY}")
 
-  ## --------------------------------
-
-  if(IRISA_LIBRARY)
-    set(IRISA_LIBRARIES ${IRISA_LIBRARY})
-  else()
-    #message(SEND_ERROR "Irisa library not found.")
-  endif()
-
-  if(NOT IRISA_INCLUDE_DIR)
-    #message(SEND_ERROR "Irisa include dir not found.")
-  endif()
-
-  if(IRISA_LIBRARIES AND IRISA_INCLUDE_DIR)
+  if(IRISA_LIBRARY AND IRISA_INCLUDE_DIR)
     set(IRISA_INCLUDE_DIRS ${IRISA_INCLUDE_DIR})
+    set(IRISA_LIBRARIES ${IRISA_LIBRARY})
     set(IRISA_FOUND TRUE)
   else()
     set(IRISA_FOUND FALSE)
@@ -82,7 +78,6 @@ else()
 
   mark_as_advanced(
     IRISA_INCLUDE_DIR
-    IRISA_LIBRARIES
     IRISA_LIBRARY
   )
 endif()

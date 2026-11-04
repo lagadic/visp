@@ -1,5 +1,30 @@
 {
   "classes": {
+    "vpHSV": {
+      "specializations": [
+        {
+          "python_name": "HSVucLimitedScale",
+          "arguments": [
+            "unsigned char",
+            "false"
+          ]
+        },
+        {
+          "python_name": "HSVucFullScale",
+          "arguments": [
+            "unsigned char",
+            "true"
+          ]
+        },
+        {
+          "python_name": "HSVDouble",
+          "arguments": [
+            "double",
+            "true"
+          ]
+        }
+      ]
+    },
     "vpImage": {
       "ignore_repr": true,
       "additional_bindings": "bindings_vpImage",
@@ -50,6 +75,24 @@
           "python_name": "ImageRGBf",
           "arguments": [
             "vpRGBf"
+          ]
+        },
+        {
+          "python_name": "ImageHSVucLS",
+          "arguments": [
+            "vpHSV<unsigned char, false>"
+          ]
+        },
+        {
+          "python_name": "ImageHSVucFS",
+          "arguments": [
+            "vpHSV<unsigned char, true>"
+          ]
+        },
+        {
+          "python_name": "ImageHSVd",
+          "arguments": [
+            "vpHSV<double, true>"
           ]
         }
       ],
@@ -121,6 +164,49 @@
           "static": false,
           "signature": "vpRGBa& operator=(vpRGBa&&)",
           "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "std::enable_if<std::is_same<U, float>::value&&std::is_same<T, unsigned char>::value, vpRGBa&>::type buildFrom(const vpHSV<T, useFullScale>&)",
+          "ignore": false,
+          "specializations": [
+            [
+              "unsigned char",
+              "true",
+              "float"
+            ],
+            [
+              "unsigned char",
+              "false",
+              "float"
+            ]
+          ],
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "std::enable_if<std::is_floating_point<T>::value, vpRGBa&>::type buildFrom(const vpHSV<T, useFullScale>&)",
+          "specializations": [
+            [
+              "double",
+              "true"
+            ]
+          ],
+          "return_policy": "reference",
+          "keep_alive": [
+            [
+              1,
+              0
+            ]
+          ],
+          "returns_ref_ok": true
         }
       ]
     },
@@ -266,6 +352,120 @@
             ],
             [
               "float"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, const std::vector<RangeType>&, vpImage<bool>&)",
+          "specializations": [
+            [
+              "unsigned char",
+              "false",
+              "int"
+            ],
+            [
+              "unsigned char",
+              "true",
+              "int"
+            ],
+            [
+              "double",
+              "true",
+              "double"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, const std::vector<RangeType>&, vpImage<unsigned char>&)",
+          "specializations": [
+            [
+              "unsigned char",
+              "false",
+              "int"
+            ],
+            [
+              "unsigned char",
+              "true",
+              "int"
+            ],
+            [
+              "double",
+              "true",
+              "double"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, const vpColVector&, vpImage<bool>&)",
+          "specializations": [
+            [
+              "unsigned char",
+              "false"
+            ],
+            [
+              "unsigned char",
+              "true"
+            ],
+            [
+              "double",
+              "true"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "int inRange(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, const vpColVector&, vpImage<unsigned char>&)",
+          "specializations": [
+            [
+              "unsigned char",
+              "false"
+            ],
+            [
+              "unsigned char",
+              "true"
+            ],
+            [
+              "double",
+              "true"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "int inMask(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, const vpImage<bool>&, vpImage<vpHSV<ArithmeticType, useFullScale>>&)",
+          "specializations": [
+            [
+              "unsigned char",
+              "false"
+            ],
+            [
+              "unsigned char",
+              "true"
+            ],
+            [
+              "double",
+              "true"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "int inMask(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, const vpImage<unsigned char>&, vpImage<vpHSV<ArithmeticType, useFullScale>>&)",
+          "specializations": [
+            [
+              "unsigned char",
+              "false"
+            ],
+            [
+              "unsigned char",
+              "true"
+            ],
+            [
+              "double",
+              "true"
             ]
           ]
         }
@@ -667,6 +867,48 @@
         {
           "static": true,
           "signature": "void demosaicRGGBToRGBaMalvar(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void convert(const vpImage<vpRGBa> &, vpImage<vpHSV<T, useFullScale>> &)",
+          "specializations": [
+            [
+              "unsigned char",
+              "false"
+            ],
+            [
+              "unsigned char",
+              "true"
+            ],
+            [
+              "double",
+              "true"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void convert(const vpImage<vpHSV<T, useFullScale>> &, vpImage<vpRGBa> &)",
+          "specializations": [
+            [
+              "unsigned char",
+              "false"
+            ],
+            [
+              "unsigned char",
+              "true"
+            ],
+            [
+              "double",
+              "true"
+            ]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "std::enable_if<!std::is_same<T, U>::value, void>::type convert(const vpImage<vpHSV<T, useFullScale1>> &, vpImage<vpHSV<U, useFullScale2>> &)",
           "ignore": true,
           "custom_implem": true
         }

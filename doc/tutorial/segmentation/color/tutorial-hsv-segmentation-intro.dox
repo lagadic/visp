@@ -2,7 +2,7 @@
   \page tutorial-hsv-segmentation-intro Tutorial: Introduction to color segmentation using HSV color scale
   \tableofcontents
 
-\section hsv_intro Introduction
+\section hsv_intro 1. Introduction
 
 The HSV scale, which stands for Hue Saturation and Value, provides a numerical readout of your color image that
 corresponds to the color names contained therein. Hue is measured in degrees from 0 to 360, while Saturation and Value
@@ -22,7 +22,7 @@ Note that all the material (source code and images) described in this tutorial i
 (in `tutorial/segmentation/color` folder) and could be found in
 https://github.com/lagadic/visp/tree/master/tutorial/segmentation/color.
 
-\section hsv_converter RGB to HSV color scale conversion
+\section hsv_converter 2. RGB to HSV color scale conversion
 
 In ViSP, color images can be read and converted to the RGB color scale. The RGB color scale is based on the color
 theory that all visible colors can be obtained from the additive primary colors red, green and blue. In ViSP,
@@ -93,7 +93,7 @@ In the previous example, we obtained for each pixel:
 - Saturation in `S` image where values are scaled from 0 to 255. Here 255 stands for 100%.
 - Value in `V` image where values are scaled from 0 to 255. Here 255 stands for 100%.
 
-\section hsv_segmentation HSV color segmentation
+\section hsv_segmentation 3. HSV color segmentation
 
 It's easy to segment a given color if we select the range of hue, saturation and value we're interested in.
 
@@ -135,7 +135,7 @@ The end of the previous snippet shows also how to display the following images.
 
 \image html ballons-segmented.jpg
 
-\section hsv_next Next tutorial
+\section hsv_next 4. Next tutorial
 
 You are now ready to see how to continue with \ref tutorial-hsv-range-tuner.
 

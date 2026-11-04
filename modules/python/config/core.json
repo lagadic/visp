@@ -1130,6 +1130,227 @@
             false,
             false
           ]
+        },
+        {
+          "static": true,
+          "signature": "void canny(const vpImage<unsigned char>&, vpImage<unsigned char>&, const unsigned int&, const float&, const float&, const unsigned int&, const float&, const float&, const float&, const bool&, const vpImageFilter::vpCannyBackendType&, const vpImageFilter::vpCannyFilteringAndGradientType&, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "float computeCannyThreshold(const cv::Mat&, const cv::Mat*, const cv::Mat*, float&, const unsigned int&, const float&, const unsigned int&, const float&, const float&, const vpImageFilter::vpCannyFilteringAndGradientType&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void computePartialDerivatives(const vpImage<ImageType>&, vpImage<FilterType>&, vpImage<FilterType>&, const bool&, const bool&, const bool&, const unsigned int&, const FilterType&, const unsigned int&, const vpImageFilter::vpCannyFilteringAndGradientType&, const vpImageFilter::vpCannyBackendType&, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "float computeCannyThreshold(const vpImage<unsigned char>&, float&, const vpImage<OutType>*, const vpImage<OutType>*, const unsigned int&, const OutType&, const unsigned int&, const float&, const float&, const vpImageFilter::vpCannyFilteringAndGradientType&, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "float computeCannyThreshold(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, float&, const vpImage<OutType>*, const vpImage<OutType>*, const unsigned int&, const OutType&, const float&, const float&, const vpImageFilter::vpCannyFilteringAndGradientType&, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "FilterType derivativeFilterX(const vpImage<ImageType>&, unsigned int, unsigned int, const FilterType*, unsigned int)",
+          "ignore": true,
+          "comment": "Low-level method"
+        },
+        {
+          "static": true,
+          "signature": "FilterType derivativeFilterY(const vpImage<ImageType>&, unsigned int, unsigned int, const FilterType*, unsigned int)",
+          "ignore": true,
+          "comment": "Low-level method"
+        },
+        {
+          "static": true,
+          "signature": "FilterType filter(const vpImage<FilterType>&, const vpArray2D<FilterType>&, unsigned int, unsigned int)",
+          "ignore": true,
+          "comment": "Low-level method"
+        },
+        {
+          "static": true,
+          "signature": "void filter(const vpImage<ImageType>&, vpImage<FilterType>&, vpImage<FilterType>&, const vpArray2D<FilterType>&, bool, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void filter(const vpImage<ImageType>&, vpImage<FilterType>&, const FilterType*, unsigned int, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "FilterType derivativeFilterX(const vpImage<ImageType>&, unsigned int, unsigned int, const FilterType*, unsigned int)",
+          "ignore": true,
+          "comment": "Low-level method"
+        },
+        {
+          "static": true,
+          "signature": "FilterType derivativeFilterY(const vpImage<ImageType>&, unsigned int, unsigned int, const FilterType*, unsigned int)",
+          "ignore": true,
+          "comment": "Low-level method"
+        },
+        {
+          "static": true,
+          "signature": "void filter(const vpImage<ImageType>&, vpImage<FilterType>&, const vpArray2D<FilterType>&, bool, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void filter(const vpImage<ImageType>&, vpImage<FilterType>&, vpImage<FilterType>&, const vpArray2D<FilterType>&, bool, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void filterX(const vpImage<ImageType>&, vpImage<OutputType>&, const FilterType*, unsigned int, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "std::enable_if<std::is_arithmetic<ImageType>::value, void>::type filterX(const vpImage<ImageType>&, OutputType&, unsigned int, unsigned int, const FilterType*, unsigned int)",
+          "ignore": true,
+          "comment": "Low-level method"
+        },
+        {
+          "static": true,
+          "signature": "std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type filterX(const vpImage<ImageType>&, OutputType&, unsigned int, unsigned int, const FilterType*, unsigned int)",
+          "ignore": true,
+          "comment": "Low-level method"
+        },
+        {
+          "static": true,
+          "signature": "void filterY(const vpImage<ImageType>&, vpImage<OutputType>&, const FilterType*, unsigned int, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "std::enable_if<std::is_arithmetic<ImageType>::value, void>::type filterY(const vpImage<ImageType>&, OutputType&, unsigned int, unsigned int, const FilterType*, unsigned int)",
+          "ignore": true,
+          "comment": "Low-level method"
+        },
+        {
+          "static": true,
+          "signature": "std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type filterY(const vpImage<ImageType>&, OutputType&, unsigned int, unsigned int, const FilterType*, unsigned int)",
+          "ignore": true,
+          "comment": "Low-level method"
+        },
+        {
+          "static": true,
+          "signature": "void gaussianBlur(const vpImage<ImageType>&, vpImage<OutputType>&, unsigned int, FilterType, bool, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "double gaussianFilter(const vpImage<T>&, unsigned int, unsigned int)",
+          "ignore": true,
+          "comment": "Low-level method"
+        },
+        {
+          "static": true,
+          "signature": "void getGaussianKernel(FilterType*, unsigned int, FilterType, bool)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void getGaussianDerivativeKernel(FilterType*, unsigned int, FilterType, bool)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void getGradX(const vpImage<unsigned char>&, vpImage<FilterType>&, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void getGradX(const vpImage<ImageType>&, vpImage<FilterType>&, const FilterType*, unsigned int, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void getGradY(const vpImage<unsigned char>&, vpImage<FilterType>&, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void getGradY(const vpImage<ImageType>&, vpImage<FilterType>&, const FilterType*, unsigned int, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "FilterType getScharrKernelX(FilterType*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "FilterType getScharrKernelY(FilterType*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "FilterType getSobelKernelX(FilterType*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "FilterType getSobelKernelY(FilterType*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void getGradXGauss2D(const vpImage<ImageType>&, vpImage<FilterType>&, const FilterType*, const FilterType*, unsigned int, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void getGradYGauss2D(const vpImage<ImageType>&, vpImage<FilterType>&, const FilterType*, const FilterType*, unsigned int, const vpImage<bool>*)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, vpImage<FilterType>&, const int&, const vpImage<bool>*, const vpImageFilter::vpCannyFilteringAndGradientType&)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, vpImage<FilterType>&, const int&, const vpImage<bool>*, const vpImageFilter::vpCannyFilteringAndGradientType&)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void gradientFilter(const vpImage<vpHSV<ArithmeticType, useFullScale>>&, vpImage<FilterType>&, vpImage<FilterType>&, const int&, const vpImage<bool>*, const vpImageFilter::vpCannyFilteringAndGradientType&)",
+          "ignore": true,
+          "custom_implem": true
         }
       ]
     },

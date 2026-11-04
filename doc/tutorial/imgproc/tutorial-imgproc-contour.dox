@@ -3,7 +3,7 @@
 \page tutorial-imgproc-contour Tutorial: Contours extraction from a binary image
 \tableofcontents
 
-\section imgproc_contour_intro Introduction
+\section imgproc_contour_intro 1. Introduction
 
 This tutorial will show you how to extract the contours from a binary image. The contour extraction algorithm is based on \cite articleSuzuki article and most of the implementation has been ported from \cite Hare:2011:OIJ:2072298.2072421 library.
 
@@ -27,7 +27,7 @@ The different contour extraction methods are:
 
 The next section will provide a concrete example for better understanding.
 
-\section imgproc_contour_example Example code
+\section imgproc_contour_example 2. Example code
 
 The following example also available in tutorial-contour.cpp will demonstrate on a sample image the result of each of these methods:
 
@@ -263,7 +263,7 @@ Contour:\n
   nb children: 0\n
 </blockquote>
 
-\section imgproc_contour_next Next tutorial
+\section imgproc_contour_next 3. Next tutorial
 
 You can now read the \ref tutorial-imgproc-connected-components, for a similar method to extract the connected-components in a grayscale image.
 

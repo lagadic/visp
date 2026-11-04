@@ -38,7 +38,6 @@
 // Comment / uncomment following lines to use the specific 3rd party compatible with your camera
 // #undef VISP_HAVE_V4L2
 // #undef VISP_HAVE_DC1394
-// #undef VISP_HAVE_CMU1394
 // #undef HAVE_OPENCV_HIGHGUI
 // #undef HAVE_OPENCV_VIDEOIO
 //! [Undef grabber]
@@ -51,7 +50,6 @@
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/gui/vpDisplayFactory.h>
 #include <visp3/robot/vpRobotPioneer.h> // Include first to avoid build issues with Status, None, isfinite
-#include <visp3/sensor/vp1394CMUGrabber.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
@@ -65,7 +63,7 @@
 #include <opencv2/videoio/videoio.hpp> // for cv::VideoCapture
 #endif
 
-#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_OPENCV) && \
+#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_OPENCV) && \
   (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
    ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
 #if defined(VISP_HAVE_DISPLAY)
@@ -181,15 +179,6 @@ int main(int argc, char **argv)
     vp1394TwoGrabber g(false);
     g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
     g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
-    // AVT Pike 032C parameters
-    cam.initPersProjWithoutDistortion(800, 795, 320, 216);
-#elif defined(VISP_HAVE_CMU1394)
-    // Create a grabber based on CMU 1394 third party lib (for firewire
-    // cameras under windows)
-    vp1394CMUGrabber g;
-    g.setVideoMode(0, 5); // 640x480 MONO8
-    g.setFramerate(4);    // 30 Hz
-    g.open(I);
     // AVT Pike 032C parameters
     cam.initPersProjWithoutDistortion(800, 795, 320, 216);
 #endif
@@ -345,7 +334,7 @@ int main(int argc, char **argv)
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
     if (display != nullptr) {
       delete display;
-  }
+    }
 #endif
     return EXIT_FAILURE;
   }

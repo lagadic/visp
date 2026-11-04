@@ -1549,7 +1549,7 @@ public:
 #ifdef VISP_HAVE_OPENMP
       }
 #endif
-      }
+    }
   }
 
   /**
@@ -2056,7 +2056,7 @@ public:
  * \tparam useFullScale See the documentation of the vpHSV class to have details on this template parameter.
  * \param[in] I The input image.
  * \param[in] GIx The resulting gradient image along the X-axis.
- * \param[in] nbThread The number of threads to use to compute the gradient.
+ * \param[in] nbThread The number of threads to use to compute the gradient. Setting -1 uses the maximum number of threads.
  * \param[in] p_mask Optional boolean mask to indicate which pixels should be considered and which should be ignored.
  * \param[in] type The type of the gradient filter.
  */
@@ -2207,7 +2207,7 @@ public:
    * \tparam useFullScale See the documentation of the vpHSV class to have details on this template parameter.
    * \param[in] I The input image.
    * \param[in] GIy The resulting gradient image along the Y-axis.
-   * \param[in] nbThread The number of threads to use to compute the gradient.
+   * \param[in] nbThread The number of threads to use to compute the gradient. Setting -1 uses the maximum number of threads.
    * \param[in] p_mask Optional boolean mask to indicate which pixels should be considered and which should be ignored.
    * \param[in] type The type of the gradient filter.
    */
@@ -2418,7 +2418,7 @@ public:
    * \param[in] I The input image.
    * \param[in] GIx The resulting gradient image along the X-axis.
    * \param[in] GIy The resulting gradient image along the Y-axis.
-   * \param[in] nbThread The number of threads to use to compute the gradient.
+   * \param[in] nbThread The number of threads to use to compute the gradient. Setting -1 use the maximum number of thread.
    * \param[in] p_mask Optional boolean mask to indicate which pixels should be considered and which should be ignored.
    * \param[in] type The type of the gradient filter.
    */

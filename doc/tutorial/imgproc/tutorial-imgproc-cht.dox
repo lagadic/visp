@@ -3,7 +3,7 @@
 \page tutorial-imgproc-cht Tutorial: Gradient-based Circle Hough Transform
 \tableofcontents
 
-\section imgproc_cht_intro Introduction
+\section imgproc_cht_intro 1. Introduction
 
 The Circle Hough Transform (*CHT*) is an image processing algorithm that permits to
 detect circles in an image. We refer the interested reader to the
@@ -29,7 +29,7 @@ parameter.
 
 \image html img-tutorial-cht-radius-votes.png
 
-\section imgproc_cht_howto How to use the tutorial
+\section imgproc_cht_howto 2. How to use the tutorial
 
 It is possible to configure the `vpCircleHoughTransform` class using a JSON file.
 To do so, you need to install [JSON for modern C++](https://visp-doc.inria.fr/doxygen/visp-daily/supported-third-parties.html#soft_tool_json)
@@ -82,7 +82,7 @@ without any additional parameters should give the same result:
 ./tutorial-circle-hough
 ```
 
-\subsection imgproc_cht_howto_video How to use a video
+\subsection imgproc_cht_howto_video 2.1. How to use a video
 
 You can use the software to run circle detection on a video saved as a
 sequence of images that are named
@@ -122,7 +122,7 @@ $ ./tutorial-circle-hough --input /path/to/video/${BASENAME}%d.png \
     --gradient-kernel 3
 ```
 
-\section imgproc_cht_explanations Detailed explanations about the tutorial
+\section imgproc_cht_explanations 3. Detailed explanations about the tutorial
 
 If you decide to use a video as input, the relevant piece of code that permits to
 perform circle detection on the successive images of the video is the following:

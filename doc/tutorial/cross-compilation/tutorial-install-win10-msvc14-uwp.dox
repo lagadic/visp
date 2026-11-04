@@ -80,11 +80,22 @@ We suppose now that ViSP source is in `%%VISP_WS%\visp`.
 
 \subsection install_msvc14_uwp_build_ws_10 4.1. Build for Windows Store 10.0
 
-\subsubsection install_msvc14_uwp_build_ws_10_x86 4.1.1. Targeting a x86 platform
+The installation folder is the same for all the targeted platforms (x86, x64 and ARM) to ensure a unique
+installation folder.
 
-With CMake configure ViSP specifying options for cross compiling for `"Windows Store"` operating system in version
-`"10"` targeting a `"x86"` platform, by opening a `cmd` Command Prompt and running:
-\verbatim
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'x86')">x86</button>
+    <button class="tab-btn" onclick="openTab(event, 'x64')">x64</button>
+    <button class="tab-btn" onclick="openTab(event, 'arm')">ARM</button>
+  </div>
+
+  <div data-tab="x86" class="tab-content" style="display:block;">
+    With CMake configure ViSP specifying options for cross compiling for <code>"Windows Store"</code> operating
+    system in version <code>"10.0"</code> targeting a <code>"x86"</code> platform, by opening a <code>cmd</code>
+    Command Prompt and running:
+    <pre class="fragment">
 C:\> cd %VISP_WS%
 C:\> mkdir visp-build-vc14-uwp-ws-10-x86
 C:\> cd visp-build-vc14-uwp-ws-10-x86
@@ -99,18 +110,17 @@ C:\> cmake.exe -G "Visual Studio 14 2015" -A "Win32" ^
                -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc14-uwp-ws-10-install ^
                ..\visp
 C:\> cmake --build . --config Release --target install
-\endverbatim
+    </pre>
+    If everything goes right you will find ViSP libraries and headers in
+    <code>%VISP_WS%/visp-build-vc14-uwp-ws-10-install</code> folder. Libraries are located in
+    <code>x86/vc14/bin</code> subfolder and headers in <code>include</code> subfolder.
+  </div>
 
-If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-ws-10-install`
-folder. Libraries are located in `x86/vc14/bin` subfolder and headers in `include` subfolder.
-
-\subsubsection install_msvc14_uwp_build_ws_10_x64 4.1.2. Targeting a x64 platform
-
-The same process could be applied except that during cmake configuration you have to use `"Visual Studio 14 2015
-Win64"` generator. Installation folder is the same to ensure a unique installation folder for all the targeted
-platforms:
-
-\verbatim
+  <div data-tab="x64" class="tab-content" style="display:none;">
+    With CMake configure ViSP specifying options for cross compiling for <code>"Windows Store"</code> operating
+    system in version <code>"10.0"</code> targeting a <code>"x64"</code> platform, by opening a <code>cmd</code>
+    Command Prompt and running:
+    <pre class="fragment">
 C:\> cd %VISP_WS%
 C:\> mkdir visp-build-vc14-uwp-ws-10-x64
 C:\> cd visp-build-vc14-uwp-ws-10-x64
@@ -125,17 +135,17 @@ C:\> cmake.exe -G "Visual Studio 14 2015" -A "x64" ^
                -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc14-uwp-ws-10-install ^
                ..\visp
 C:\> cmake --build . --config Release --target install
-\endverbatim
+    </pre>
+    If everything goes right you will find ViSP libraries and headers in
+    <code>%VISP_WS%/visp-build-vc14-uwp-ws-10-install</code> folder. Libraries are located in
+    <code>x64/vc14/bin</code> subfolder and headers in <code>include</code> subfolder.
+  </div>
 
-If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-ws-10-install`
-folder. Libraries are located in `x64/vc14/bin` subfolder and headers in `include` subfolder.
-
-\subsubsection install_msvc14_uwp_build_ws_10_arm 4.1.3. Targeting an ARM platform
-
-The same process could be applied except that during cmake configuration you have to use `"Visual Studio 14 2015 ARM"`
-generator. Installation folder is the same to ensure a unique installation folder for all the targeted platforms:
-
-\verbatim
+  <div data-tab="arm" class="tab-content" style="display:none;">
+    With CMake configure ViSP specifying options for cross compiling for <code>"Windows Store"</code> operating
+    system in version <code>"10.0"</code> targeting a <code>"ARM"</code> platform, by opening a <code>cmd</code>
+    Command Prompt and running:
+    <pre class="fragment">
 C:\> cd %VISP_WS%
 C:\> mkdir visp-build-vc14-uwp-ws-10-arm
 C:\> cd visp-build-vc14-uwp-ws-10-arm
@@ -147,21 +157,35 @@ C:\> cmake.exe -G "Visual Studio 14 2015" -A "ARM" ^
                -DBUILD_EXAMPLES=OFF ^
                -DBUILD_TESTS=OFF ^
                -DBUILD_TUTORIALS=OFF ^
-               -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc15-uwp-ws-10-install ^
+               -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc14-uwp-ws-10-install ^
                ..\visp
 C:\> cmake --build . --config Release --target install
-\endverbatim
-
-If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-ws-10-install`
-folder. Libraries are located in `ARM/vc14/bin` subfolder and headers in `include` subfolder.
+    </pre>
+    If everything goes right you will find ViSP libraries and headers in
+    <code>%VISP_WS%/visp-build-vc14-uwp-ws-10-install</code> folder. Libraries are located in
+    <code>ARM/vc14/bin</code> subfolder and headers in <code>include</code> subfolder.
+  </div>
+</div>
+\endhtmlonly
 
 \subsection install_msvc14_uwp_build_ws_8_1 4.2. Build for Windows Store 8.1
 
-\subsubsection install_msvc14_uwp_build_ws_8_1_x86 4.2.1. Targeting a x86 platform
+The installation folder is the same for all the targeted platforms (x86, x64 and ARM) to ensure a unique
+installation folder.
 
-With CMake configure ViSP specifying options for cross compiling for `"Windows Store"` operating system in version
-`"8.1"` targeting a `"x86"` platform, by opening a `cmd` Command Prompt and running:
-\verbatim
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'x86')">x86</button>
+    <button class="tab-btn" onclick="openTab(event, 'x64')">x64</button>
+    <button class="tab-btn" onclick="openTab(event, 'arm')">ARM</button>
+  </div>
+
+  <div data-tab="x86" class="tab-content" style="display:block;">
+    With CMake configure ViSP specifying options for cross compiling for <code>"Windows Store"</code> operating
+    system in version <code>"8.1"</code> targeting a <code>"x86"</code> platform, by opening a <code>cmd</code>
+    Command Prompt and running:
+    <pre class="fragment">
 C:\> cd %VISP_WS%
 C:\> mkdir visp-build-vc14-uwp-ws-8.1-x86
 C:\> cd visp-build-vc14-uwp-ws-8.1-x86
@@ -176,16 +200,17 @@ C:\> cmake.exe -G "Visual Studio 14 2015" -A "Win32" ^
                -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc14-uwp-ws-8.1-install ^
                ..\visp
 C:\> cmake --build . --config Release --target install
-\endverbatim
+    </pre>
+    If everything goes right you will find ViSP libraries and headers in
+    <code>%VISP_WS%/visp-build-vc14-uwp-ws-8.1-install</code> folder. Libraries are located in
+    <code>x86/vc14/bin</code> subfolder and headers in <code>include</code> subfolder.
+  </div>
 
-If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-ws-8.1-install`
-folder. Libraries are located in `x86/vc14/bin` subfolder and headers in `include` subfolder.
-
-\subsubsection install_msvc14_uwp_build_ws_8_1_x64 4.2.2. Targeting a x64 platform
-
-With CMake configure ViSP specifying options for cross compiling for `"Windows Store"` operating system in version
-`"8.1"` targeting a `"x64"` platform, by opening a `cmd` Command Prompt and running:
-\verbatim
+  <div data-tab="x64" class="tab-content" style="display:none;">
+    With CMake configure ViSP specifying options for cross compiling for <code>"Windows Store"</code> operating
+    system in version <code>"8.1"</code> targeting a <code>"x64"</code> platform, by opening a <code>cmd</code>
+    Command Prompt and running:
+    <pre class="fragment">
 C:\> cd %VISP_WS%
 C:\> mkdir visp-build-vc14-uwp-ws-8.1-x64
 C:\> cd visp-build-vc14-uwp-ws-8.1-x64
@@ -200,16 +225,17 @@ C:\> cmake.exe -G "Visual Studio 14 2015" -A "x64" ^
                -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc14-uwp-ws-8.1-install ^
                ..\visp
 C:\> cmake --build . --config Release --target install
-\endverbatim
+    </pre>
+    If everything goes right you will find ViSP libraries and headers in
+    <code>%VISP_WS%/visp-build-vc14-uwp-ws-8.1-install</code> folder. Libraries are located in
+    <code>x64/vc14/bin</code> subfolder and headers in <code>include</code> subfolder.
+  </div>
 
-If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-ws-8.1-install`
-folder. Libraries are located in `x64/vc14/bin` subfolder and headers in `include` subfolder.
-
-\subsubsection install_msvc14_uwp_build_ws_8_1_arm 4.2.3. Targeting an ARM platform
-
-With CMake configure ViSP specifying options for cross compiling for `"Windows Store"` operating system in version
-`"8.1"` targeting a `"ARM"` platform, by opening a `cmd` Command Prompt and running:
-\verbatim
+  <div data-tab="arm" class="tab-content" style="display:none;">
+    With CMake configure ViSP specifying options for cross compiling for <code>"Windows Store"</code> operating
+    system in version <code>"8.1"</code> targeting a <code>"ARM"</code> platform, by opening a <code>cmd</code>
+    Command Prompt and running:
+    <pre class="fragment">
 C:\> cd %VISP_WS%
 C:\> mkdir visp-build-vc14-uwp-ws-8.1-arm
 C:\> cd visp-build-vc14-uwp-ws-8.1-arm
@@ -224,18 +250,32 @@ C:\> cmake.exe -G "Visual Studio 14 2015" -A "ARM" ^
                -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc14-uwp-ws-8.1-install ^
                ..\visp
 C:\> cmake --build . --config Release --target install
-\endverbatim
-
-If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-ws-8.1-install`
-folder. Libraries are located in `ARM/vc14/bin` subfolder and headers in `include` subfolder.
+    </pre>
+    If everything goes right you will find ViSP libraries and headers in
+    <code>%VISP_WS%/visp-build-vc14-uwp-ws-8.1-install</code> folder. Libraries are located in
+    <code>ARM/vc14/bin</code> subfolder and headers in <code>include</code> subfolder.
+  </div>
+</div>
+\endhtmlonly
 
 \subsection install_msvc14_uwp_build_wp_8_1 4.3. Build for Windows Phone 8.1
 
-\subsubsection install_msvc14_uwp_build_wp_8_1_x86 4.3.1. Targeting a x86 platform
+The installation folder is the same for all the targeted platforms (x86, x64 and ARM) to ensure a unique
+installation folder.
 
-With CMake configure ViSP specifying options for cross compiling for `"Windows Phone"` operating system in version
-`"8.1"` targeting a `"x86"` platform, by opening a `cmd` Command Prompt and running:
-\verbatim
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'x86')">x86</button>
+    <button class="tab-btn" onclick="openTab(event, 'x64')">x64</button>
+    <button class="tab-btn" onclick="openTab(event, 'arm')">ARM</button>
+  </div>
+
+  <div data-tab="x86" class="tab-content" style="display:block;">
+    With CMake configure ViSP specifying options for cross compiling for <code>"Windows Phone"</code> operating
+    system in version <code>"8.1"</code> targeting a <code>"x86"</code> platform, by opening a <code>cmd</code>
+    Command Prompt and running:
+    <pre class="fragment">
 C:\> cd %VISP_WS%
 C:\> mkdir visp-build-vc14-uwp-wp-8.1-x86
 C:\> cd visp-build-vc14-uwp-wp-8.1-x86
@@ -250,16 +290,17 @@ C:\> cmake.exe -G "Visual Studio 14 2015" -A "Win32" ^
                -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc14-uwp-wp-8.1-install ^
                ..\visp
 C:\> cmake --build . --config Release --target install
-\endverbatim
+    </pre>
+    If everything goes right you will find ViSP libraries and headers in
+    <code>%VISP_WS%/visp-build-vc14-uwp-wp-8.1-install</code> folder. Libraries are located in
+    <code>x86/vc14/bin</code> subfolder and headers in <code>include</code> subfolder.
+  </div>
 
-If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-wp-8.1-install`
-folder. Libraries are located in `x86/vc14/bin` subfolder and headers in `include` subfolder.
-
-\subsubsection install_msvc14_uwp_build_wp_8_1_x64 4.3.2. Targeting a x64 platform
-
-With CMake configure ViSP specifying options for cross compiling for `"Windows Phone"` operating system in version
-`"8.1"` targeting a `"x64"` platform, by opening a `cmd` Command Prompt and running:
-\verbatim
+  <div data-tab="x64" class="tab-content" style="display:none;">
+    With CMake configure ViSP specifying options for cross compiling for <code>"Windows Phone"</code> operating
+    system in version <code>"8.1"</code> targeting a <code>"x64"</code> platform, by opening a <code>cmd</code>
+    Command Prompt and running:
+    <pre class="fragment">
 C:\> cd %VISP_WS%
 C:\> mkdir visp-build-vc14-uwp-wp-8.1-x64
 C:\> cd visp-build-vc14-uwp-wp-8.1-x64
@@ -274,16 +315,17 @@ C:\> cmake.exe -G "Visual Studio 14 2015" -A "x64" ^
                -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc14-uwp-wp-8.1-install ^
                ..\visp
 C:\> cmake --build . --config Release --target install
-\endverbatim
+    </pre>
+    If everything goes right you will find ViSP libraries and headers in
+    <code>%VISP_WS%/visp-build-vc14-uwp-wp-8.1-install</code> folder. Libraries are located in
+    <code>x64/vc14/bin</code> subfolder and headers in <code>include</code> subfolder.
+  </div>
 
-If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-wp-8.1-install`
-folder. Libraries are located in `x64/vc14/bin` subfolder and headers in `include` subfolder.
-
-\subsubsection install_msvc14_uwp_build_wp_8_1_arm 4.3.3. Targeting an ARM platform
-
-With CMake configure ViSP specifying options for cross compiling for `"Windows Phone"` operating system in version
-`"8.1"` targeting a `"ARM"` platform, by opening a `cmd` Command Prompt and running:
-\verbatim
+  <div data-tab="arm" class="tab-content" style="display:none;">
+    With CMake configure ViSP specifying options for cross compiling for <code>"Windows Phone"</code> operating
+    system in version <code>"8.1"</code> targeting a <code>"ARM"</code> platform, by opening a <code>cmd</code>
+    Command Prompt and running:
+    <pre class="fragment">
 C:\> cd %VISP_WS%
 C:\> mkdir visp-build-vc14-uwp-wp-8.1-arm
 C:\> cd visp-build-vc14-uwp-wp-8.1-arm
@@ -298,10 +340,13 @@ C:\> cmake.exe -G "Visual Studio 14 2015" -A "ARM" ^
                -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc14-uwp-wp-8.1-install ^
                ..\visp
 C:\> cmake --build . --config Release --target install
-\endverbatim
-
-If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-wp-8.1-install`
-folder. Libraries are located in `ARM/vc14/bin` subfolder and headers in `include` subfolder.
+    </pre>
+    If everything goes right you will find ViSP libraries and headers in
+    <code>%VISP_WS%/visp-build-vc14-uwp-wp-8.1-install</code> folder. Libraries are located in
+    <code>ARM/vc14/bin</code> subfolder and headers in <code>include</code> subfolder.
+  </div>
+</div>
+\endhtmlonly
 
 \section install_msvc14_uwp_tips 5. Tips and tricks
 \subsection install_msvc14_uwp_tips_msvc 5.1. How to add Universal Windows App Development Tools support

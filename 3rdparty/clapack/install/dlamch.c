@@ -12,6 +12,7 @@
 
 #include "f2c.h"
 #include "blaswrap.h"
+#include <float.h>
 
 /* Table of constant values */
 
@@ -20,40 +21,21 @@ static doublereal c_b32 = 0.;
 
 doublereal dlamch_(char *cmach)
 {
-    /* Initialized data */
-
-    static logical first = TRUE_;
-
-    /* System generated locals */
-    integer i__1;
-    doublereal ret_val;
-
-    /* Builtin functions */
-    double pow_di(doublereal *, integer *);
+    /* ViSP modification: the original f2c translation computed the machine
+       parameters once and cached them in static variables (also in DLAMC1
+       and DLAMC2). This was not thread-safe: a thread could read the cached
+       values while another thread was still computing them, leading to a null
+       safe minimum and to errors like "On entry to DLASCL, parameter number 4
+       had an illegal value". Like LAPACK >= 3.3, we now rely on the
+       constants provided by <float.h>. */
 
     /* Local variables */
-    static doublereal t;
-    integer it;
-    static doublereal rnd, eps, base;
-    integer beta;
-    static doublereal emin, prec, emax;
-    integer imin, imax;
-    logical lrnd;
-    static doublereal rmin, rmax;
-    doublereal rmach;
+    doublereal eps, sfmin, small, rmach;
     extern logical lsame_(char *, char *);
-    doublereal small;
-    static doublereal sfmin;
-    extern /* Subroutine */ int dlamc2_(integer *, integer *, logical *, 
-	    doublereal *, integer *, doublereal *, integer *, doublereal *);
-
 
 /*  -- LAPACK auxiliary routine (version 3.2) -- */
 /*     Univ. of Tennessee, Univ. of California Berkeley and NAG Ltd.. */
 /*     November 2006 */
-
-/*     .. Scalar Arguments .. */
-/*     .. */
 
 /*  Purpose */
 /*  ======= */
@@ -91,45 +73,17 @@ doublereal dlamch_(char *cmach)
 
 /* ===================================================================== */
 
-/*     .. Parameters .. */
-/*     .. */
-/*     .. Local Scalars .. */
-/*     .. */
-/*     .. External Functions .. */
-/*     .. */
-/*     .. External Subroutines .. */
-/*     .. */
-/*     .. Save statement .. */
-/*     .. */
-/*     .. Data statements .. */
-/*     .. */
-/*     .. Executable Statements .. */
+    /* Rounding occurs in addition (IEEE 754), so eps = base**(1-t) / 2 */
+    eps = DBL_EPSILON * 0.5;
 
-    if (first) {
-	dlamc2_(&beta, &it, &lrnd, &eps, &imin, &rmin, &imax, &rmax);
-	base = (doublereal) beta;
-	t = (doublereal) it;
-	if (lrnd) {
-	    rnd = 1.;
-	    i__1 = 1 - it;
-	    eps = pow_di(&base, &i__1) / 2;
-	} else {
-	    rnd = 0.;
-	    i__1 = 1 - it;
-	    eps = pow_di(&base, &i__1);
-	}
-	prec = eps * base;
-	emin = (doublereal) imin;
-	emax = (doublereal) imax;
-	sfmin = rmin;
-	small = 1. / rmax;
-	if (small >= sfmin) {
+    sfmin = DBL_MIN;
+    small = 1. / DBL_MAX;
+    if (small >= sfmin) {
 
-/*           Use SMALL plus a bit, to avoid the possibility of rounding */
-/*           causing overflow when computing  1/sfmin. */
+/*        Use SMALL plus a bit, to avoid the possibility of rounding */
+/*        causing overflow when computing  1/sfmin. */
 
-	    sfmin = small * (eps + 1.);
-	}
+	sfmin = small * (eps + 1.);
     }
 
     if (lsame_(cmach, "E")) {
@@ -137,29 +91,28 @@ doublereal dlamch_(char *cmach)
     } else if (lsame_(cmach, "S")) {
 	rmach = sfmin;
     } else if (lsame_(cmach, "B")) {
-	rmach = base;
+	rmach = (doublereal) FLT_RADIX;
     } else if (lsame_(cmach, "P")) {
-	rmach = prec;
+	rmach = eps * FLT_RADIX;
     } else if (lsame_(cmach, "N")) {
-	rmach = t;
+	rmach = (doublereal) DBL_MANT_DIG;
     } else if (lsame_(cmach, "R")) {
-	rmach = rnd;
+	rmach = 1.;
     } else if (lsame_(cmach, "M")) {
-	rmach = emin;
+	rmach = (doublereal) DBL_MIN_EXP;
     } else if (lsame_(cmach, "U")) {
-	rmach = rmin;
+	rmach = DBL_MIN;
     } else if (lsame_(cmach, "L")) {
-	rmach = emax;
+	rmach = (doublereal) DBL_MAX_EXP;
     } else if (lsame_(cmach, "O")) {
-	rmach = rmax;
+	rmach = DBL_MAX;
+    } else {
+	rmach = 0.;
     }
 
-    ret_val = rmach;
-    first = FALSE_;
-    return ret_val;
+    return rmach;
 
 /*     End of DLAMCH */
-
 } /* dlamch_ */
 
 

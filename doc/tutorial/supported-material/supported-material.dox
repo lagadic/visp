@@ -4,11 +4,11 @@ Here you will find a list of robots, haptic devices, force-torque sensors, laser
 cameras, and motion capture system that you can use for learning visual-servoing or building robotics applications on
 top of them based on ViSP.
 
-\section material_robots Supported Robots
+\section material_robots 1. Supported Robots
 
 These are the robots supported by ViSP.
 
-\subsection material_robots_ur Universal Robots
+\subsection material_robots_ur 1.1. Universal Robots
 
 All the robots from [Universal Robots](https://www.universal-robots.com) are interfaced in vpRobotUniversalRobots class
 that is a wrapper over [ur_rtde C++ interface](https://sdurobotics.gitlab.io/ur_rtde/) 3rd party.
@@ -19,7 +19,7 @@ There are 2 tutorials that explain how to use them with ViSP: \ref tutorial-univ
 and \ref tutorial-universal-robot-pbvs.
 \image html img-universal-robots.jpg Universal Robots family
 
-\subsection material_robots_franka Franka Emika Panda
+\subsection material_robots_franka 1.2. Franka Emika Panda
 
 The Franka Panda robot in its research configuration is interfaced in vpRobotFranka class, a wrapper over
 [Franka Control Interface](https://frankaemika.github.io/docs/libfranka.html) 3rd party.
@@ -31,7 +31,7 @@ and \ref tutorial-franka-pbvs. If you want to simulate this robot using ViSP and
 there is also this other tutorial: \ref tutorial-franka-sim.
 \image html img-franka.jpg Panda robot from Franka Emika
 
-\subsection material_robots_kinova Kinova Jaco
+\subsection material_robots_kinova 1.3. Kinova Jaco
 
 All the [Kinova](https://assistive.kinovarobotics.com/) assistive robotic arms are supported by ViSP using
 vpRobotKinova, an interface over Kinova Jaco SDK that allows to control Gen2 4, 6 and 7 DoF arm.
@@ -39,7 +39,7 @@ vpRobotKinova, an interface over Kinova Jaco SDK that allows to control Gen2 4, 
 See \ref soft_robots_kinova section to know how to install the corresponding optional 3rd party.
 \image html img-kinova.jpg Kinova assistive robotic arm
 
-\subsection material_robots_flir_ptu FLIR Pan-Tilt Unit
+\subsection material_robots_flir_ptu 1.4. FLIR Pan-Tilt Unit
 
 All the [FLIR](https://flir.com/) PT units are supported by ViSP using vpRobotFlirPtu,
 an interface over FLIR PTU SDK.
@@ -47,7 +47,7 @@ an interface over FLIR PTU SDK.
 See \ref soft_robots_flir_ptu section to know how to install the corresponding optional 3rd party.
 \image html img-flir-ptu-d47.png FLIR PTU-47
 
-\subsection material_robots_bebop2 Parrot Bebop2 Drone
+\subsection material_robots_bebop2 1.5. Parrot Bebop2 Drone
 
 The Parrot Bebop2 drone is supported by ViSP using vpRobotBebop2,
 an interface over Parrot [ARDroneSDK3](https://developer.parrot.com/docs/SDK3/).
@@ -55,7 +55,7 @@ an interface over Parrot [ARDroneSDK3](https://developer.parrot.com/docs/SDK3/).
 See \ref soft_robots_bebop2 section to know how to install the corresponding optional 3rd party.
 \image html img-bebop2.jpg Parrot Bebop2 drone
 
-\subsection material_robots_pioneer Pioneer P3DX
+\subsection material_robots_pioneer 1.6. Pioneer P3DX
 
 The Pioneer P3DX is supported by ViSP through vpRobotPioneer class, an interface for Pioneer mobile robots based on
 [Aria](https://github.com/reedhedges/AriaCoda) 3rd party library.
@@ -63,14 +63,14 @@ The Pioneer P3DX is supported by ViSP through vpRobotPioneer class, an interface
 See \ref soft_robots_aria section to know how to install the corresponding optional 3rd party.
 \image html img-pioneer.jpg Pioneer P3DX mobile robot
 
-\subsection material_robots_mbot_ranger  mBot Ranger Educational Kit
+\subsection material_robots_mbot_ranger 1.7. mBot Ranger Educational Kit
 
 The [mBot Ranger](https://store.makeblock.com/products/diy-coding-robot-kits-mbot-ranger) is supported by ViSP.
 
 Installation instructions are provided in \ref tutorial-mbot-vs.
 \image html img-mbot-ranger.jpg mBot Ranger Educational Kit
 
-\subsection material_robots_aion_robotics AION ROBOTICS
+\subsection material_robots_aion_robotics 1.8. AION ROBOTICS
 
 The vpRobotMavsdk class which is a wrapper over [MAVSDK](https://mavsdk.mavlink.io/main/en/index.html) 3rd party library
 allows to communicate through [MAVLink](https://mavlink.io/en/) protocol to control in position and velocity AION
@@ -80,7 +80,7 @@ See \ref soft_robots_mavsdk section to know how to install the corresponding opt
 
 \image html img-aion-robotics.jpg AION ROBOTICS rover supported by ViSP.
 
-\subsection material_robots_pixhawk Pixhawk and MavLink
+\subsection material_robots_pixhawk 1.9. Pixhawk and MavLink
 
 The [MAVLink](https://mavlink.io/en/) protocol is supported by ViSP to communicate with drones or small mobile robots
 equipped with a Pixhawk. To this end you need to install [MavSDK](https://mavsdk.mavlink.io/main/en/index.html) 3rd
@@ -89,18 +89,18 @@ party library.
 See \ref soft_robots_mavsdk section to know how to install the corresponding optional 3rd party.
 \image html img-drone-dji-pixhawk.jpg DJI F450 equipped with a Pixhawk 2 Cube connected to a Jetson TX2 through an USB link.
 
-\section material_haptic Supported Haptic Devices
+\section material_haptic 2. Supported Haptic Devices
 
 These are the haptic devices supported by ViSP.
 
-\subsection material_haptic_qbrobotics qbRobotics Soft Hand
+\subsection material_haptic_qbrobotics 2.1. qbRobotics Soft Hand
 
 If you have the Soft Hand from [qbRobotics](https://qbrobotics.com/) you can use vpQbSoftHand class to control the hand.
 
 There is no specific SDK to install to use the hand with ViSP.
 \image html img-haptic-qbsofthand.jpg Soft Hand from qbRobotics
 
-\subsection material_haptic_right_hand Right Hand Robotics Reflex Takktile2 Hand
+\subsection material_haptic_right_hand 2.2. Right Hand Robotics Reflex Takktile2 Hand
 
 If you have the Reflex Takktile2 Hand from [Right Hand Robotics](https://qbrobotics.com/) you can use
 vpReflexTakktile2 class to control the hand.
@@ -108,7 +108,7 @@ vpReflexTakktile2 class to control the hand.
 There is no specific SDK to install to use the hand with ViSP.
 \image html img-haptic-takktile2.jpg Reflex Takktile2 Hand
 
-\subsection material_haptic_virtuose Haption Virtuose 6D
+\subsection material_haptic_virtuose 2.3. Haption Virtuose 6D
 
 If you have a Virtuose 6D haptic device from [Haptions](http://www.haption.com) you can use vpVirtuose class to control
 the device.
@@ -116,11 +116,11 @@ the device.
 You need to install the SDK that comes with the device following instructions from the manual.
 \image html img-haptic-virtuose.jpg Virtuose 6D haptic device
 
-\section material_ft Supported Force/Torque Sensor
+\section material_ft 3. Supported Force/Torque Sensor
 
 These are the force/torque sensors supported by ViSP.
 
-\subsection material_ft_ati_net ATI Net F/T device
+\subsection material_ft_ati_net 3.1. ATI Net F/T device
 
 If you have an [ATI Net F/T](https://www.ati-ia.com/products/ft/ft_NetFT.aspx) sensor you can use
 vpForceTorqueAtiNetFTSensor class to get access to the measurements.
@@ -128,7 +128,7 @@ vpForceTorqueAtiNetFTSensor class to get access to the measurements.
 There is no need to install a specific SDK to use the device with ViSP.
 \image html img-ft-ati-net-ft.png ATI Net F/T device
 
-\subsection material_ft_ati_daq ATI FT device connected to a National Instrument DAQmx PCI board
+\subsection material_ft_ati_daq 3.2. ATI FT device connected to a National Instrument DAQmx PCI board
 
 If you have an [ATI F/T](https://www.ati-ia.com/products/ft/ft_ModelListing.aspx) sensor you can use
 vpForceTorqueAtiSensor class to get access to the measurements. This wrapper uses [Comedi](http://www.comedi.org) 3rd
@@ -137,7 +137,7 @@ party.
 See \ref soft_ft_comedi section to know how to install the corresponding optional 3rd party.
 \image html img-ft-gamma-sensor.jpg ATI Gamma transducer
 
-\subsection material_ft_alberobotics Alberobotics FT device
+\subsection material_ft_alberobotics 3.3. Alberobotics FT device
 
 If you have an [Alberobotics F/T](https://alberobotics.it/) sensor you can use vpForceTorqueIitSensor
 class to get access to the measurements.
@@ -146,22 +146,22 @@ You need to install the corresponding SDK that comes with the sensor to enable v
 class usage. Installation instructions are provided in the user manual.
 \image html img-ft-sensors-iit.jpg Alberobotics FT sensors family
 
-\section material_laser_scanner Supported Lidar
+\section material_laser_scanner 4. Supported Lidar
 
 These are the lidar supported by ViSP.
 
-\subsection material_laser_scanner_sick Sick LD-MRS Lidar
+\subsection material_laser_scanner_sick 4.1. Sick LD-MRS Lidar
 
 If you have a Sick LD-MRS Lidar you can get the measurements thanks to vpSickLDMRS class.
 
 There is no need to install a specific SDK to use the device with ViSP.
 \image html img-lidar-sick.jpg Sick LD-MRS family
 
-\section material_camera_depth Supported Depth Cameras
+\section material_camera_depth 5. Supported Depth Cameras
 
 These are the depth cameras supported by ViSP.
 
-\subsection material_camera_depth_realsense Intel Realsense Depth Cameras
+\subsection material_camera_depth_realsense 5.1. Intel Realsense Depth Cameras
 
 All Intel Realsense devices are supported in ViSP thanks to vpRealSense2 class, a wrapper over
 [librealsense](https://github.com/IntelRealSense/librealsense).
@@ -174,7 +174,7 @@ See \ref soft_camera_depth_librealsense section to know how to install the corre
 <b>Realsense family; D435, D405, T265 and many others</b>
 </center>
 
-\subsection material_camera_depth_structure_core Structure Core Depth Cameras
+\subsection material_camera_depth_structure_core 5.2. Structure Core Depth Cameras
 
 All [Occipital](https://structure.io/) devices are supported in ViSP thanks to vpOccipitalStructure class, a wrapper
 over [Occipital Structure SDK](https://developer.structure.io/sdk/).
@@ -182,18 +182,18 @@ over [Occipital Structure SDK](https://developer.structure.io/sdk/).
 See \ref soft_camera_depth_structure section to know how to install the corresponding optional 3rd party.
 \image html img-occipital-camera.jpg Occipital Structure depth camera
 
-\subsection material_camera_depth_kinect1 Microsoft Kinect 1 Xbox 360
+\subsection material_camera_depth_kinect1 5.3. Microsoft Kinect 1 Xbox 360
 
 If you have a Microsoft Kinect 1, you can use vpKinect class that requires `libfreenect` 3rd party.
 
 See \ref soft_camera_depth_libfreenect section to know how to install the corresponding optional 3rd party.
 \image html img-kinect1.jpg Microsoft Kinect 1 depth camera
 
-\section material_camera Supported Cameras
+\section material_camera 6. Supported Cameras
 
 These are the cameras supported by ViSP.
 
-\subsection material_camera_ids IDS UEyE Cameras
+\subsection material_camera_ids 6.1. IDS UEyE Cameras
 
 Industrial cameras from [IDS](https://en.ids-imaging.com) are also supported in ViSP thanks to vpUeyeGrabber class, a
 wrapper over uEye SDK.
@@ -201,7 +201,7 @@ wrapper over uEye SDK.
 See \ref soft_camera_ueye section to know how to install the corresponding optional 3rd party.
 \image html img-ids-camera.jpg
 
-\subsection material_camera_basler Basler Cameras
+\subsection material_camera_basler 6.2. Basler Cameras
 
 Industrial cameras from [Basler](https://en.ids-imaging.com) are also supported in ViSP thanks to vpPylonGrabber class,
 a wrapper over [Pylon SDK](https://www.baslerweb.com/en/downloads/software-downloads/).
@@ -209,7 +209,7 @@ a wrapper over [Pylon SDK](https://www.baslerweb.com/en/downloads/software-downl
 See \ref soft_camera_pylon section to know how to install the corresponding optional 3rd party.
 \image html img-basler-camera.jpg
 
-\subsection material_camera_flir FLIR Cameras
+\subsection material_camera_flir 6.3. FLIR Cameras
 
 Industrial cameras from [FLIR](https://www.flir.com) are supported in ViSP thanks to vpFlyCaptureGrabber class,
 a wrapper over [FlyCapture
@@ -218,14 +218,14 @@ SDK](https://www.flir.com/support-center/iis/machine-vision/downloads/spinnaker-
 See \ref soft_camera_flycapture section to know how to install the corresponding optional 3rd party.
 \image html img-flir-camera.jpg
 
-\subsection material_camera_firewire Generic Firewire Cameras
+\subsection material_camera_firewire 6.4. Generic Firewire Cameras
 
 Generic firewire 1394 cameras are supported in ViSP using vp1394TwoGrabber class after installing libdc1394 3rd party.
 
 See \ref soft_camera_libdc1394 section to know how to install the corresponding optional 3rd party.
 <br>
 
-\subsection material_camera_v4l2 Generic USB Cameras
+\subsection material_camera_v4l2 6.5. Generic USB Cameras
 
 Cameras compatible with Video 4 Linux 2 (webcam, laptop embedded camera) are supported in ViSP using vpV4l2Grabber
 class after installing libv4l 3rd party.
@@ -233,11 +233,11 @@ class after installing libv4l 3rd party.
 See \ref soft_camera_v4l section to know how to install the corresponding optional 3rd party.
 <br>
 
-\section material_mocap Supported Motion Capture System
+\section material_mocap 7. Supported Motion Capture System
 
 These are the motion capture systems supported by ViSP.
 
-\subsection material_mocap_qualisys Qualisys Motion Capture System
+\subsection material_mocap_qualisys 7.1. Qualisys Motion Capture System
 
 If you have the [Qualisys](https://www.qualisys.com) Motion Capture System you can stream data using vpMocapQualisys
 class, a wrapper over [qualisys_cpp_sdk](https://github.com/qualisys/qualisys_cpp_sdk).
@@ -245,7 +245,7 @@ class, a wrapper over [qualisys_cpp_sdk](https://github.com/qualisys/qualisys_cp
 See \ref soft_mocap_qualisys section to know how to install the corresponding optional 3rd party.
 \image html img-qualisys.png
 
-\subsection material_mocap_vicon Vicon Motion Capture System
+\subsection material_mocap_vicon 7.2. Vicon Motion Capture System
 
 If you have rather the [Vicon](https://www.vicon.com) Motion Capture System you can stream data using vpMocapVicon
 class, a wrapper over [Vicon Datastream SDK](https://www.vicon.com/software/datastream-sdk/).

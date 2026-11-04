@@ -112,9 +112,6 @@ endif()
 if(POLICY CMP0075)
   cmake_policy(SET CMP0075 NEW) # For check_include_file and cmake 3.12.0
 endif()
-if(POLICY CMP0146)
-  cmake_policy(SET CMP0146 OLD) # The ``FindCUDA`` module deprecated since CMake 3.10
-endif()
 
 if(APPLE)
   # Fix following errors for libpng and libjpeg detection:
@@ -570,7 +567,18 @@ VP_CHECK_PACKAGE(IRISA)
 # check for linux/parport.h
 VP_CHECK_PACKAGE(PARPORT)
 # OpenGL
-VP_CHECK_PACKAGE(OpenGL)
+if(APPLE)
+  # Since CMAKE_FIND_FRAMEWORK is set to LAST, XQuartz libGL (/opt/X11 or /usr/X11R6) would be preferred over the
+  # native OpenGL.framework. Linking with XQuartz libGL makes Panda3D crash at runtime when it resolves GL functions
+  # like glGetStringi(). Here we ensure that OpenGL.framework is found first.
+  set(CMAKE_FIND_FRAMEWORK_SAVE ${CMAKE_FIND_FRAMEWORK})
+  set(CMAKE_FIND_FRAMEWORK FIRST)
+  VP_CHECK_PACKAGE(OpenGL)
+  set(CMAKE_FIND_FRAMEWORK ${CMAKE_FIND_FRAMEWORK_SAVE})
+  unset(CMAKE_FIND_FRAMEWORK_SAVE)
+else()
+  VP_CHECK_PACKAGE(OpenGL)
+endif()
 # for pioneer
 VP_CHECK_PACKAGE(RT)
 VP_CHECK_PACKAGE(DL)
@@ -624,16 +632,20 @@ VP_OPTION(USE_FTIITSDK    FTIITSDK    ""    "Include IIT force-torque SDK suppor
 VP_OPTION(USE_BICLOPS     BICLOPS     ""    "Include biclops support"          "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_PTU46       PTU46       ""    "Include ptu-46 support"           "" ON IF UNIX AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_FLIRPTUSDK  FlirPtuSDK  ""    "Include Flir PTU SDK support"     "" ON IF NOT WINRT AND NOT IOS)
-VP_OPTION(USE_CMU1394     CMU1394     ""    "Include cmu1494 support"          "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_QUALISYS    Qualisys    ""    "Include Qualisys SDK support"     "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_VICON       Vicon       ""    "Include Vicon SDK support"        "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_GDI         GDI         ""    "Include gdi support"              "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_DIRECT3D    DIRECT3D    ""    "Include d3d support"             "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
-#VP_OPTION(USE_DIRECTSHOW  DIRECTSHOW  ""    "Include dshow support"            "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
 
 VP_OPTION(USE_OPENMP      OpenMP      ""    "Include openmp support"           "" ON)
 VP_OPTION(USE_EIGEN3      Eigen3      QUIET "Include eigen3 support"           "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_COIN3D      Coin3D      ""    "Include coin3d support"           "" ON IF OPENGL_FOUND AND NOT WINRT AND NOT IOS)
+# When Panda3D is built with makepanda, there is no Panda3DConfig.cmake file. In that case find_package(Panda3D) in
+# config mode resets Panda3D_DIR to Panda3D_DIR-NOTFOUND. Keep the value set by the user as a hint for
+# FindMyPanda3D.cmake
+if(Panda3D_DIR)
+  set(Panda3D_DIR_HINT "${Panda3D_DIR}")
+endif()
 VP_OPTION(USE_PANDA3D     "Panda3D;MyPanda3D;COMPONENTS;Core;Contrib;Direct;Egg;Framework;TinyDisplay" QUIET "Include Panda3D support"          "" ON IF NOT IOS)
 VP_OPTION(USE_YARP        YARP        QUIET "Include yarp support"             "YARP_DIR" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_OGRE        OGRE        QUIET "Include Ogre3D support"           "OGRE_DIR" ON IF NOT WINRT AND NOT IOS)
@@ -1263,8 +1275,6 @@ VP_SET(VISP_HAVE_COIN3D      TRUE IF (BUILD_MODULE_visp_robot AND USE_COIN3D))
 
 VP_SET(VISP_HAVE_V4L2        TRUE IF (BUILD_MODULE_visp_sensor AND USE_V4L2))
 VP_SET(VISP_HAVE_DC1394      TRUE IF (BUILD_MODULE_visp_sensor AND USE_DC1394))
-VP_SET(VISP_HAVE_CMU1394     TRUE IF (BUILD_MODULE_visp_sensor AND USE_CMU1394))
-VP_SET(VISP_HAVE_DIRECTSHOW  TRUE IF (BUILD_MODULE_visp_sensor AND USE_DIRECTSHOW))
 VP_SET(VISP_HAVE_LIBFREENECT TRUE IF (BUILD_MODULE_visp_sensor AND USE_LIBFREENECT))
 VP_SET(VISP_HAVE_LIBUSB_1    TRUE IF (BUILD_MODULE_visp_sensor AND USE_LIBUSB_1))
 VP_SET(VISP_HAVE_REALSENSE2  TRUE IF (BUILD_MODULE_visp_sensor AND USE_REALSENSE2))
@@ -1929,9 +1939,7 @@ status("    Use Direct3D:"           USE_DIRECT3D     THEN "yes" ELSE "no")
 status("")
 status("  Cameras: ")
 status("    Use DC1394-2.x:"         USE_DC1394       THEN "yes (ver ${DC1394_VERSION})" ELSE "no")
-status("    Use CMU 1394:"           USE_CMU1394      THEN "yes" ELSE "no")
 status("    Use V4L2:"               USE_V4L2         THEN "yes (ver ${V4L2_VERSION})" ELSE "no")
-status("    Use directshow:"         USE_DIRECTSHOW   THEN "yes" ELSE "no")
 status("    Use OpenCV:"             USE_OPENCV       THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
 status("    Use FLIR Flycapture:"    USE_FLYCAPTURE   THEN "yes" ELSE "no")
 status("    Use Basler Pylon:"       USE_PYLON        THEN "yes (ver ${PYLON_VERSION})" ELSE "no")
@@ -2047,7 +2055,7 @@ endif()
 if(USE_PANDA3D)
   if(Panda3D_DIR)
     status("    Panda3D dir:" "${Panda3D_DIR}")
-  elseif($ENV{Panda3D_DIR})
+  elseif(DEFINED ENV{Panda3D_DIR})
     status("    Panda3D dir:" "$ENV{Panda3D_DIR}")
   else()
     file(REAL_PATH "${Panda3D_INCLUDE_DIRS}/../.." Panda3D_DIR)

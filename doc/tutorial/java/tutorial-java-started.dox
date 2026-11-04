@@ -164,7 +164,7 @@ Property settings:
 Ensure that the `.dll` and `.lib` of visp (`visp_core.dll`, `visp_java${VERSION_NUMBER}.dll`)
 and so on are located in one of these folders.
 
-\subsection java_started_issue_includes Issues with the includes
+\subsection java_started_issue_includes 5.5. Issues with the includes
 
 If Oracle complains about the `import` statements, add in the `module-info.java` the following lines:
 

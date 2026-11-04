@@ -4,7 +4,7 @@
 
 \tableofcontents
 
-\section imgproc_auto_gamma_intro Introduction
+\section imgproc_auto_gamma_intro 1. Introduction
 
 The ViSP library have implementations of different automatic gamma correction methods:
 - VISP_NAMESPACE_NAME::GAMMA_LOG_BASED \cite Scott2009TowardsRH
@@ -18,7 +18,7 @@ different gamma correction methods:
 
 \include tutorial-compare-auto-gamma.cpp
 
-\section imgproc_auto_gamma_cmd_line Program arguments
+\section imgproc_auto_gamma_cmd_line 2. Program arguments
 
 The main command line arguments can be viewed using the help (`-h`) option, for instance:
 - `--input Sample_low_brightness.png` to process a single image or `--input Img_%03d.png` for a sequence of images
@@ -43,14 +43,14 @@ Different metrics are displayed:
 The main idea is the better illuminated the image is, the greater is the entropy (the more informative the image is)
 and Canny (the more edges can be detected) values are.
 
-\section imgproc_auto_gamma_datasets Low-light image datasets
+\section imgproc_auto_gamma_datasets 3. Low-light image datasets
 
 Some low-ligh datasets are available online, for instance:
 - [Exclusively Dark (ExDark) Image Dataset](https://github.com/cs-chan/Exclusively-Dark-Image-Dataset/tree/master/Dataset)
 - [Awesome Low Light Image Enhancement](https://github.com/zhihongz/awesome-low-light-image-enhancement)
 - [Deep Retinex Decomposition for Low-Light Enhancement](https://daooshee.github.io/BMVC2018website/)
 
-\section imgproc_auto_gamma_next Next tutorial
+\section imgproc_auto_gamma_next 4. Next tutorial
 
 You can now read the \ref tutorial-imgproc-contrast-sharpening, for additional contrast and sharpness improvement techniques.
 

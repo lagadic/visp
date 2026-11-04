@@ -4,7 +4,7 @@
 
 \tableofcontents
 
-\section tutorial-read-write-NPZ-format-intro Introduction
+\section tutorial-read-write-NPZ-format-intro 1.Introduction
 
 \note
 Please refer to the <a href="tutorial-npz.html">C++ tutorial</a> for an overview of the NPZ format and a quick usage
@@ -35,9 +35,9 @@ You can refer to this Wikipedia page for an exhaustive comparison of
 <a href="https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html">NPY format</a>.
 
 
-\section tutorial-read-write-NPZ-format-examples Examples
+\section tutorial-read-write-NPZ-format-examples 2. Examples
 
-\subsection tutorial-read-write-NPZ-format-examples-quick Quick overview in Python
+\subsection tutorial-read-write-NPZ-format-examples-quick 2.1. Quick overview in Python
 
 The following code snippet illustrates how to save 1-D vector, multi-dimensional array and append data to file.
 
@@ -80,7 +80,7 @@ if __name__ == '__main__':
 \endcode
 
 
-\subsection tutorial-read-write-NPZ-format-examples-realsense Demo: read and display data from RealSense sensors
+\subsection tutorial-read-write-NPZ-format-examples-realsense 2.2.Demo: read and display data from RealSense sensors
 
 In this demo, we will first use visp-save-rs-dataset.cpp to save data on disk.
   - save "[-s]" color "[-c]" infrared "[-i]" depth "[-d]" and pointcloud "[-p]" data on disk:

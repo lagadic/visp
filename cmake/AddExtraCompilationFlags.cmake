@@ -131,6 +131,21 @@ if((CMAKE_CXX_COMPILER_ID MATCHES "GNU") AND (CMAKE_CXX_COMPILER_VERSION VERSION
   # See here: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=77728
   # and here: https://stackoverflow.com/questions/48149323/what-does-the-gcc-warning-project-parameter-passing-for-x-changed-in-gcc-7-1-m
   add_extra_compiler_options("-Wno-psabi")
+elseif((CMAKE_CXX_COMPILER_ID MATCHES "GNU") AND (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 6.0) AND (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 15.3) AND AARCH64)
+  # Here to disable warnings due to gcc bug introduced in gcc 7 on aarch64 (could be reproduced with
+  # ci/docker/ubuntu-26.04 on macOS M1 host).
+  # In file included from /usr/include/c++/15/bits/stl_algobase.h:64,
+  #                  from /usr/include/c++/15/bits/specfun.h:43,
+  #                  from /usr/include/c++/15/cmath:3913,
+  #                  from /home/vispci/visp-ws/visp/modules/core/src/math/misc/vpMath.cpp:40:
+  #  /usr/include/c++/15/bits/stl_pair.h: In instantiation of 'constexpr std::pair<typename std::__strip_reference_wrapper<typename std::decay<_Tp>::type>::__type, typename std::__strip_reference_wrapper<typename std::decay<_Tp2>::type>::__type> std::make_pair(_T1&&, _T2&&) [with _T1 = double; _T2 = double; typename __strip_reference_wrapper<typename decay<_Tp>::type>::__type = double; typename decay<_Tp>::type = double; typename __strip_reference_wrapper<typename decay<_Tp2>::type>::__type = double; typename decay<_Tp2>::type = double]':
+  #  /home/vispci/visp-ws/visp/modules/core/src/math/misc/vpMath.cpp:648:42:   required from here
+  #    648 |       lonlat_vec.push_back(std::make_pair(deg(lon), deg(lat)));
+  #        |                            ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+  #  /usr/include/c++/15/bits/stl_pair.h:1164:5: note: parameter passing for argument of type 'std::pair<double, double>' when C++17 is enabled changed to match C++14 in GCC 10.1
+  #  1164 |     make_pair(_T1&& __x, _T2&& __y)
+  #        |     ^~~~~~~~~
+  add_extra_compiler_options("-Wno-psabi")
 endif()
 
 if(USE_OPENMP)

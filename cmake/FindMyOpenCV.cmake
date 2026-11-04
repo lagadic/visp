@@ -54,11 +54,11 @@ macro(vp_get_opencv_version_from_hpp FILENAME DEFINE VAR)
       list(GET __list 0 ${VAR})
     else()
       message("Warning: OpenCV macro ${DEFINE} not found in ${FILENAME}. The following var ${VAR} is set to 0. This may produce build issues.")
-      set(${__var} 0)
+      set(${VAR} 0)
     endif()
   else()
     message("Warning: Cannot retrieve OpenCV version from non existing file ${FILENAME}. This may produce build issues.")
-    set(${__var} 0)
+    set(${VAR} 0)
   endif()
 endmacro()
 
@@ -71,7 +71,7 @@ macro(find_package_naoqi module)
 
   _find_package_naoqi_internal(${module})
 
-  # remove allready treated deps
+  # remove already treated deps
   foreach(__d ${${module}_DEPS_PROCESSED})
     list(FIND ${module}_DEPS ${__d} __index)
     if(NOT __index LESS 0)
@@ -149,16 +149,17 @@ macro(_find_package_naoqi_internal module)
         list(APPEND ${module}_LIBRARIES ${__l})
       endif()
     endforeach()
-    vp_list_unique(${lower_submodule}_LIBRARIES)
+    vp_list_unique(${module}_LIBRARIES)
   endif()
 endmacro()
 
 if(APPLE_FRAMEWORK)
   find_library(OpenCV_FRAMEWORK
-               NAMES opencv2
-               PATHS ${CMAKE_FRAMEWORK_PATH}
-               NO_DEFAULT_PATH
-               NO_CMAKE_FIND_ROOT_PATH)
+    NAMES opencv2
+    PATHS ${CMAKE_FRAMEWORK_PATH}
+    NO_DEFAULT_PATH
+    NO_CMAKE_FIND_ROOT_PATH
+  )
 
   if(OpenCV_FRAMEWORK)
     set(OpenCV_FOUND TRUE)

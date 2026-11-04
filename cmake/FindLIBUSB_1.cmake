@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Try to find libusb-1.0 library. Headers include dir is not searched.
+# Try to find libusb-1.0 library.
 #
 # LIBUSB_1_FOUND
 # LIBUSB_1_LIBRARIES
@@ -38,34 +38,34 @@
 #
 #############################################################################
 
+
+# Layouts handled, relative to each standard prefix and to LIBUSB_1_HOME or LIBUSB_1_DIR:
+#   <prefix>/include/libusb-1.0 (e.g. /usr/include/libusb-1.0), <prefix>/lib
+#   <prefix>/build/include/libusb-1.0, <prefix>/build/lib
+set(LIBUSB_1_SEARCH_HINTS
+  ${LIBUSB_1_HOME}
+  $ENV{LIBUSB_1_HOME}
+  ${LIBUSB_1_DIR}
+  $ENV{LIBUSB_1_DIR}
+)
+set(LIBUSB_1_SEARCH_PATHS "")
+set(LIBUSB_1_LIB_NAMES usb-1.0)
 if(WIN32)
-  find_library(LIBUSB_1_LIBRARY libusb
-    $ENV{LIBUSB_1_HOME}
-    $ENV{LIBUSB_1_HOME}/lib
-    $ENV{LIBUSB_1_DIR}
-    $ENV{LIBUSB_1_DIR}/lib
-    "c:/libusb/lib"
-    )
-else()
-  find_library(LIBUSB_1_LIBRARY usb-1.0
-    $ENV{LIBUSB_1_HOME}/lib
-    $ENV{LIBUSB_1_HOME}/build/lib
-    $ENV{LIBUSB_1_DIR}/lib
-    $ENV{LIBUSB_1_DIR}/build/lib
-    /lib/
-    /lib64/
-    /usr/lib
-    /usr/local/lib
-    )
-  find_path(LIBUSB_1_INCLUDE_DIR libusb.h
-    $ENV{LIBUSB_1_HOME}/include/libusb-1.0
-    $ENV{LIBUSB_1_HOME}/build/include/libusb-1.0
-    $ENV{LIBUSB_1_DIR}/include/libusb-1.0
-    $ENV{LIBUSB_1_DIR}/build/include/libusb-1.0
-    /usr/include/libusb-1.0
-    /usr/local/include/libusb-1.0
-    )
+  list(APPEND LIBUSB_1_SEARCH_PATHS "C:/libusb")
+  list(APPEND LIBUSB_1_LIB_NAMES libusb-1.0 libusb)
 endif()
+
+find_library(LIBUSB_1_LIBRARY
+  NAMES ${LIBUSB_1_LIB_NAMES}
+  HINTS ${LIBUSB_1_SEARCH_HINTS}
+  PATHS ${LIBUSB_1_SEARCH_PATHS}
+  PATH_SUFFIXES lib build/lib
+)
+find_path(LIBUSB_1_INCLUDE_DIR libusb.h
+  HINTS ${LIBUSB_1_SEARCH_HINTS}
+  PATHS ${LIBUSB_1_SEARCH_PATHS}
+  PATH_SUFFIXES libusb-1.0 include/libusb-1.0 build/include/libusb-1.0
+)
 
 ## --------------------------------
 
@@ -84,8 +84,6 @@ else()
 endif()
 
 mark_as_advanced(
-  LIBUSB_1_INCLUDE_DIRS
   LIBUSB_1_INCLUDE_DIR
-  LIBUSB_1_LIBRARIES
   LIBUSB_1_LIBRARY
-  )
+)

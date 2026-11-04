@@ -3,7 +3,7 @@
 \page tutorial-detection-face Tutorial: Face detection
 \tableofcontents
 
-\section intro_face Introduction
+\section intro_face 1. Introduction
 
 This tutorial shows how to detect one or more faces with ViSP. Face detection is performed using OpenCV Haar cascade
 capabilities that are used in vpDetectorFace class. At least OpenCV 2.2.0 or a more recent version is requested.
@@ -14,7 +14,7 @@ connected to your computer.
 Note that all the material (source code and image) described in this tutorial is part of ViSP source code
 (in `tutorial/detection/face` folder) and could be found in https://github.com/lagadic/visp/tree/master/tutorial/detection/face.
 
-\section face_detection_video Face detection in a video
+\section face_detection_video 2. Face detection in a video
 
 The following example also available in tutorial-face-detector.cpp allows to detect faces in an mpeg video located near
 the source code. The Haar cascade classifier file requested by OpenCV is also provided in the same folder as the source
@@ -84,7 +84,7 @@ vpDetectorFace::getBBox() and its identifier message using vpDetectorFace::getMe
 vpDetectorFace::getPolygon(0), vpDetectorFace::getBBox(0) and vpDetectorFace::getMessage(0) return always the
 characteristics of the largest face.
 
-\section face_detection_live Face detection from a camera
+\section face_detection_live 3. Face detection from a camera
 
 This other example also available in tutorial-face-detector-live.cpp shows how to detect one or more faces in
 images acquired by a camera connected to your computer.
@@ -118,7 +118,7 @@ Then in the while loop, at each iteration we acquire a new image
 
 This new image is then given as input to the face detector.
 
-\section face_detection_next Next tutorial
+\section face_detection_next 4. Next tutorial
 
 You are now ready to see the \ref tutorial-detection-object, that illustrates the case of object detection.
 

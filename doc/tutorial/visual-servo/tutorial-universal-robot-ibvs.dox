@@ -8,8 +8,8 @@ This class is a wrapper over [ur_rtde](https://sdurobotics.gitlab.io/ur_rtde/) 3
 
 This tutorial explains also how to implement an image-based visual-servoing with an UR robot equipped with an Intel Realsense camera.
 
-\section ur_prereq Prerequisites
-\subsection ur_prereq_ur_rtde Install ur_rtde 3rd party
+\section ur_prereq 1. Prerequisites
+\subsection ur_prereq_ur_rtde 1.1. Install ur_rtde 3rd party
 
 To use vpRobotUniversalRobots class you need first to install [ur_rtde](https://gitlab.com/sdurobotics/ur_rtde.git) on your remote host that will be used to control the robot.
 - You can either install `ur_rtde` and its dependencies from existing Ubuntu package
@@ -31,7 +31,7 @@ $ make -j4
 $ sudo make install
 \endverbatim
 
-\subsection ur_prereq_visp Build ViSP with ur_rtde support
+\subsection ur_prereq_visp 1.2. Build ViSP with ur_rtde support
 
 Once `ur_rtde` is installed, you need to rebuild ViSP to enable `ur_rtde` support.
 \verbatim
@@ -56,7 +56,7 @@ $ cmake ../visp
 $ cmake ../visp -Dur_rtde_DIR=$VISP_WS/3rdparty/ur_rtde/build/ur_rtde
 \endverbatim
 
-\subsection ur_setup_robot Setting up UR robot
+\subsection ur_setup_robot 1.3. Setting up UR robot
 
 For using `ur_rtde` you need to prepare the robot.
 
@@ -71,14 +71,14 @@ On our UR5, using the PolyScope Robot User Interface
 - and entering "Robot Setup > Network" menu we configured the network with static address 192.168.0.100
 \image html img-ur-setup-network.jpg UR5 network settings
 
-\subsection ur_setup_remote Setting up remote host
+\subsection ur_setup_remote 1.4. Setting up remote host
 
 - Connect an Ethernet cable between your UR robot and your remote host
 - Enter network settings interface and create a new wired profile named for example "Universal Robot" and set a static IP like 192.168.0.77
 
 \image html img-ur-remote-network-setup.png Remote host network settings
 
-\subsection ur_setup_test Testing connexion
+\subsection ur_setup_test 1.5. Testing connexion
 
 To test communication between UR robot and your remote host, you can use testUniversalRobotsGetData.cpp
 
@@ -118,7 +118,7 @@ Joint position [deg]: -0.05700840128  -89.63515793  91.56270198  -88.23354847  -
 ...
 \endverbatim
 
-\section ur_ibvs Image-based visual servoing
+\section ur_ibvs 2. Image-based visual servoing
 
 Here we consider that you have an UR robot equipped with a Reasense camera. Our model is a Realsense D435 camera, but the tutorial should work with any other Realsense device.
 
@@ -171,7 +171,7 @@ And finally you can activate the adaptive gain and task sequencing:
 $ ./servoUniversalRobotsIBVS --eMc ../../apps/calibration/intrinsic/ur_eMc.yaml --plot --adpative-gain --task-sequencing
 \endverbatim
 
-\section ur_ibvs_next Next tutorial
+\section ur_ibvs_next 3. Next tutorial
 
 To learn more about adaptive gain and task sequencing see \ref tutorial-boost-vs.
 

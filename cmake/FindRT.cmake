@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,33 +36,29 @@
 #
 #############################################################################
 
-IF(NOT UNIX)
-  # MESSAGE("FindRT.cmake: only available for Unix.")
-  SET(RT_FOUND FALSE)
-ELSE(NOT UNIX)
 
-  FIND_LIBRARY(RT_LIBRARY
+if(NOT UNIX)
+  # message("FindRT.cmake: only available for Unix.")
+  set(RT_FOUND FALSE)
+else()
+  set(RT_SEARCH_HINTS
+    ${RT_HOME}
+    $ENV{RT_HOME}
+  )
+
+  find_library(RT_LIBRARY
     NAMES rt
-    PATHS
-    $ENV{RT_HOME}/lib
-    /usr/lib
-    /usr/local/lib
-    )
+    HINTS ${RT_SEARCH_HINTS}
+    PATH_SUFFIXES lib
+  )
+  #message("DBG RT_LIBRARY=${RT_LIBRARY}")
 
-  #MESSAGE("DBG RT_LIBRARY=${RT_LIBRARY}")
+  if(RT_LIBRARY)
+    set(RT_LIBRARIES ${RT_LIBRARY})
+    set(RT_FOUND TRUE)
+  else()
+    set(RT_FOUND FALSE)
+  endif()
 
-  ## --------------------------------
-
-  IF(RT_LIBRARY)
-    SET(RT_LIBRARIES ${RT_LIBRARY})
-    SET(RT_FOUND TRUE)
-  ELSE(RT_LIBRARY)
-    SET(RT_FOUND FALSE)
-    #MESSAGE(SEND_ERROR "rt library not found.")
-  ENDIF(RT_LIBRARY)
-
-  MARK_AS_ADVANCED(
-    RT_LIBRARIES
-    RT_LIBRARY
-    )
-ENDIF(NOT UNIX)
+  mark_as_advanced(RT_LIBRARY)
+endif()
