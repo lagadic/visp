@@ -39,11 +39,46 @@
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpRobotFranka.h>
 
+#include <locale>
+#include <regex>
+#include <sstream>
+
 #include "vpForceTorqueGenerator_impl.h"
 #include "vpJointPosTrajGenerator_impl.h"
 #include "vpJointVelTrajGenerator_impl.h"
 
 BEGIN_VISP_NAMESPACE
+
+#if !defined(DOXYGEN_SHOULD_SKIP_THIS) && (VISP_HAVE_FRANKA_VERSION >= 0x000F00)
+namespace
+{
+/*!
+ * Get the value of attribute `name` in the XML start tag `tag`.
+ */
+bool getXmlAttribute(const std::string &tag, const std::string &name, std::string &value)
+{
+  const std::regex re("\\b" + name + "\\s*=\\s*\"([^\"]*)\"");
+  std::smatch m;
+  if (std::regex_search(tag, m, re)) {
+    value = m[1];
+    return true;
+  }
+  return false;
+}
+
+/*!
+ * Convert a string into a double independently of the current locale (URDF uses '.' as decimal separator).
+ */
+bool toDouble(const std::string &str, double &value)
+{
+  std::istringstream iss(str);
+  iss.imbue(std::locale::classic());
+  iss >> value;
+  return !iss.fail();
+}
+} // namespace
+#endif // !DOXYGEN_SHOULD_SKIP_THIS && libfranka >= 0.15
+
 /*!
 
   Default constructor.
@@ -53,7 +88,8 @@ vpRobotFranka::vpRobotFranka()
   : vpRobot(), m_handler(nullptr), m_gripper(nullptr), m_model(nullptr), m_positioningVelocity(20.), m_velControlThread(),
   m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
   m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
-  m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
+  m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(),
+  m_franka_model(vpFrankaModel::kPanda), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
   m_franka_address()
 {
   init();
@@ -69,7 +105,8 @@ vpRobotFranka::vpRobotFranka(const std::string &franka_address, franka::Realtime
   : vpRobot(), m_handler(nullptr), m_gripper(nullptr), m_model(nullptr), m_positioningVelocity(20.), m_velControlThread(),
   m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
   m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
-  m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
+  m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(),
+  m_franka_model(vpFrankaModel::kPanda), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
   m_franka_address()
 {
   init();
@@ -86,7 +123,8 @@ vpRobotFranka::vpRobotFranka(const std::string &franka_address, vpRealtimeConfig
   : vpRobot(), m_handler(nullptr), m_gripper(nullptr), m_model(nullptr), m_positioningVelocity(20.), m_velControlThread(),
   m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
   m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
-  m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
+  m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(),
+  m_franka_model(vpFrankaModel::kPanda), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
   m_franka_address()
 {
   init();
@@ -95,15 +133,111 @@ vpRobotFranka::vpRobotFranka(const std::string &franka_address, vpRealtimeConfig
 
 /*!
  * Initialize internal vars, such as min, max joint positions, max velocity and acceleration.
+ * Until connect() detects the robot model, the Panda limits are used.
  */
 void vpRobotFranka::init()
 {
   nDof = 7;
 
-  m_q_min = std::array<double, 7>{-2.8973, -1.7628, -2.8973, -3.0718, -2.8973, -0.0175, -2.8973};
-  m_q_max = std::array<double, 7>{2.8973, 1.7628, 2.8973, -0.0698, 2.8973, 3.7525, 2.8973};
-  m_dq_max = std::array<double, 7>{2.1750, 2.1750, 2.1750, 2.1750, 2.6100, 2.6100, 2.6100};
-  m_ddq_max = std::array<double, 7>{15.0, 7.5, 10.0, 12.5, 15.0, 20.0, 20.0};
+  m_franka_model = vpFrankaModel::kPanda;
+  setJointLimits(m_franka_model);
+}
+
+/*!
+ * Set the joint position, velocity and acceleration limits of the given robot model, as specified by
+ * Franka Robotics.
+ * \param[in] model : Robot model.
+ */
+void vpRobotFranka::setJointLimits(const vpFrankaModel &model)
+{
+  switch (model) {
+  case vpFrankaModel::kPanda:
+    m_q_min = std::array<double, 7>{-2.8973, -1.7628, -2.8973, -3.0718, -2.8973, -0.0175, -2.8973};
+    m_q_max = std::array<double, 7>{2.8973, 1.7628, 2.8973, -0.0698, 2.8973, 3.7525, 2.8973};
+    m_dq_max = std::array<double, 7>{2.1750, 2.1750, 2.1750, 2.1750, 2.6100, 2.6100, 2.6100};
+    m_ddq_max = std::array<double, 7>{15.0, 7.5, 10.0, 12.5, 15.0, 20.0, 20.0};
+    break;
+  case vpFrankaModel::kFR3:
+    m_q_min = std::array<double, 7>{-2.7437, -1.7837, -2.9007, -3.0421, -2.8065, 0.5445, -3.0159};
+    m_q_max = std::array<double, 7>{2.7437, 1.7837, 2.9007, -0.1518, 2.8065, 4.5169, 3.0159};
+    m_dq_max = std::array<double, 7>{2.62, 2.62, 2.62, 2.62, 5.26, 4.18, 5.26};
+    m_ddq_max = std::array<double, 7>{10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0};
+    break;
+  }
+}
+
+/*!
+ * Set the joint position and velocity limits from the URDF model provided by the robot itself.
+ * Only available with libfranka >= 0.15 (FR3). Joint names are either `joint<i>` or `<prefix>_joint<i>`.
+ * \return true when the limits of the 7 joints were found, false otherwise (limits are then unchanged).
+ */
+bool vpRobotFranka::setJointLimitsFromRobotModel()
+{
+#if (VISP_HAVE_FRANKA_VERSION >= 0x000F00)
+  if (!m_handler) {
+    return false;
+  }
+  std::string urdf;
+  try {
+    urdf = m_handler->getRobotModel();
+  }
+  catch (const franka::Exception &) {
+    return false;
+  }
+
+  std::array<double, 7> q_min = m_q_min, q_max = m_q_max, dq_max = m_dq_max;
+  std::array<bool, 7> found { {false, false, false, false, false, false, false} };
+  const std::regex re_arm_joint("(?:^|_)joint([1-7])$");
+
+  size_t pos = 0;
+  while ((pos = urdf.find("<joint", pos)) != std::string::npos) {
+    size_t tag_end = urdf.find('>', pos);
+    if (tag_end == std::string::npos) {
+      break;
+    }
+    const std::string tag = urdf.substr(pos, tag_end - pos + 1);
+    pos = tag_end;
+    std::string name, type;
+    if (!getXmlAttribute(tag, "name", name) || !getXmlAttribute(tag, "type", type) || type != "revolute") {
+      continue; // also skips <joint name="..."/> references inside <transmission>
+    }
+    std::smatch m;
+    if (!std::regex_search(name, m, re_arm_joint)) {
+      continue;
+    }
+    size_t body_end = urdf.find("</joint>", tag_end);
+    size_t limit_pos = urdf.find("<limit", tag_end);
+    if (body_end == std::string::npos || limit_pos == std::string::npos || limit_pos > body_end) {
+      continue;
+    }
+    const std::string limit_tag = urdf.substr(limit_pos, urdf.find('>', limit_pos) - limit_pos + 1);
+    std::string lower, upper, velocity;
+    double lower_value = 0., upper_value = 0., velocity_value = 0.;
+    if (!getXmlAttribute(limit_tag, "lower", lower) || !getXmlAttribute(limit_tag, "upper", upper) ||
+        !toDouble(lower, lower_value) || !toDouble(upper, upper_value)) {
+      continue;
+    }
+    const size_t i = static_cast<size_t>(std::stoi(m[1].str()) - 1);
+    q_min[i] = lower_value;
+    q_max[i] = upper_value;
+    if (getXmlAttribute(limit_tag, "velocity", velocity) && toDouble(velocity, velocity_value)) {
+      dq_max[i] = velocity_value;
+    }
+    found[i] = true;
+  }
+
+  for (size_t i = 0; i < found.size(); ++i) {
+    if (!found[i]) {
+      return false;
+    }
+  }
+  m_q_min = q_min;
+  m_q_max = q_max;
+  m_dq_max = dq_max;
+  return true;
+#else
+  return false;
+#endif
 }
 
 /*!
@@ -144,6 +278,20 @@ void vpRobotFranka::connect(const std::string &franka_address, franka::RealtimeC
 
   m_franka_address = franka_address;
   m_handler = new franka::Robot(franka_address, realtime_config);
+
+  // The libfranka version determines the robot model: a Panda runs robot server version <= 5, which only
+  // accepts libfranka <= 0.9, while an FR3 runs robot server version >= 6, which requires libfranka >= 0.10.
+  // A connection with another combination is refused above with franka::IncompatibleVersionException.
+#if (VISP_HAVE_FRANKA_VERSION >= 0x000A00)
+  m_franka_model = vpFrankaModel::kFR3;
+#else
+  m_franka_model = vpFrankaModel::kPanda;
+#endif
+  setJointLimits(m_franka_model);
+  if (m_franka_model == vpFrankaModel::kFR3) {
+    // Use the limits of the URDF provided by the robot when available (libfranka >= 0.15)
+    setJointLimitsFromRobotModel();
+  }
 
   std::array<double, 7> lower_torque_thresholds_nominal { {25.0, 25.0, 22.0, 20.0, 19.0, 17.0, 14.} };
   std::array<double, 7> upper_torque_thresholds_nominal { {35.0, 35.0, 32.0, 30.0, 29.0, 27.0, 24.0} };
@@ -990,6 +1138,11 @@ franka::RobotState vpRobotFranka::getRobotInternalState()
 
 /*!
   Gets minimal joint values.
+
+  The limits depend on the robot model detected by connect() (see getFrankaModel()). On an FR3 with
+  libfranka >= 0.15 they are read from the URDF provided by the robot, otherwise they are the values specified
+  by Franka Robotics for the robot model. Before connecting, the Panda limits are returned.
+
   \return A 7-dimension vector that contains the minimal joint values for the 7 dof.
   All the values are expressed in radians.
  */
@@ -1004,6 +1157,9 @@ vpColVector vpRobotFranka::getJointMin() const
 }
 /*!
   Gets maximum joint values.
+
+  See getJointMin() for the origin of the limits.
+
   \return A 7-dimension vector that contains the maximum joint values for the 7 dof.
   All the values are expressed in radians.
  */
@@ -1015,6 +1171,38 @@ vpColVector vpRobotFranka::getJointMax() const
   }
 
   return q_max;
+}
+
+/*!
+  Gets maximum joint velocities of the robot model detected by connect().
+
+  See getJointMin() for the origin of the limits.
+
+  \return A 7-dimension vector that contains the maximum joint velocities for the 7 dof in rad/s.
+ */
+vpColVector vpRobotFranka::getJointVelocityMax() const
+{
+  vpColVector dq_max(m_dq_max.size());
+  for (unsigned int i = 0; i < m_dq_max.size(); ++i) {
+    dq_max[i] = m_dq_max[i];
+  }
+
+  return dq_max;
+}
+
+/*!
+  Gets maximum joint accelerations of the robot model detected by connect(), as specified by Franka Robotics.
+
+  \return A 7-dimension vector that contains the maximum joint accelerations for the 7 dof in rad/s^2.
+ */
+vpColVector vpRobotFranka::getJointAccelerationMax() const
+{
+  vpColVector ddq_max(m_ddq_max.size());
+  for (unsigned int i = 0; i < m_ddq_max.size(); ++i) {
+    ddq_max[i] = m_ddq_max[i];
+  }
+
+  return ddq_max;
 }
 
 /*!
