@@ -1114,42 +1114,42 @@ void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
   /*!
     Get Scharr kernel for X-direction.
     \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-    \param filter : Pointer to a double array already allocated.
-    \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
+    \param filter : Array that will be resized if needed.
+    \param size : Filter size, which must be odd. The filter will be an array of size rows and size columns. For the moment, only 3 x 3 filter is handled.
     \return Scaling factor to normalize the Scharr kernel.
   */
 template <typename FilterType>
-FilterType getScharrKernelX(FilterType *filter, unsigned int size);
+FilterType getScharrKernelX(vpArray2D<FilterType> &filter, unsigned int size);
 
 /*!
   Get Scharr kernel for Y-direction.
   \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-  \param filter : Pointer to a double array already allocated.
-  \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
+  \param filter : Array that will be resized if needed.
+  \param size : Filter size, which must be odd. The filter will be an array of size rows and size columns. For the moment, only 3 x 3 filter is handled.
   \return Scaling factor to normalize the Scharr kernel.
 */
 template <typename FilterType>
-FilterType getScharrKernelY(FilterType *filter, unsigned int size);
+FilterType getScharrKernelY(vpArray2D<FilterType> &filter, unsigned int size);
 
 /*!
 * Get Sobel kernel for X-direction.
 * \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
-* \param filter : Pointer to a double array already allocated.
-* \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
+* \param filter : Array that will be resized if needed.
+* \param size : Filter size, which must be odd. The filter will be an array of size rows and size columns. Max size is 41.
 * \return Scaling factor to normalize the Sobel kernel.
 */
 template <typename FilterType>
-FilterType getSobelKernelX(FilterType *filter, unsigned int size);
+FilterType getSobelKernelX(vpArray2D<FilterType> &filter, unsigned int size);
 
 /*!
 * Get Sobel kernel for Y-direction.
 * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-* \param filter : Pointer to a double array already allocated.
-* \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
+* \param filter : Array that will be resized if needed.
+* \param size : Filter size, which must be odd. The filter will be an array of size rows and size columns. Max size is 41.
 * \return Scaling factor to normalize the Sobel kernel.
 */
 template <typename FilterType>
-FilterType getSobelKernelY(FilterType *filter, unsigned int size);
+FilterType getSobelKernelY(vpArray2D<FilterType> &filter, unsigned int size);
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
 VISP_EXPORT float median(const cv::Mat &cv_I);
@@ -1178,4 +1178,5 @@ void gradientFilter(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIma
 END_VISP_NAMESPACE
 
 #include <visp3/core/detail/vpImageFilter_impl.h>
+#include <visp3/core/detail/vpImageFilter_deprecated.h>
 #endif

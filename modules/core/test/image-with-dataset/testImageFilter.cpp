@@ -452,7 +452,7 @@ int main(int argc, const char *argv[])
 
       // Test Sobel
       vpMatrix kernel_sobel_x_flip(5, 5);
-      vpImageFilter::getSobelKernelX(kernel_sobel_x_flip.data, 2);
+      vpImageFilter::getSobelKernelX(kernel_sobel_x_flip, 5);
       vpMatrix kernel_sobel_x(5, 5);
       for (unsigned int i = 0; i < kernel_sobel_x.getRows(); i++) {
         for (unsigned int j = 0; j < kernel_sobel_x.getCols(); j++) {

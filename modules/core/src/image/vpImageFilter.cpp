@@ -483,6 +483,7 @@ void getGaussYPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> 
 /**
  * \cond DO_NOT_DOCUMENT
  */
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 template
 double getSobelKernelX<double>(double *filter, unsigned int size);
 
@@ -494,6 +495,7 @@ double getSobelKernelY<double>(double *filter, unsigned int size);
 
 template
 float getSobelKernelY<float>(float *filter, unsigned int size);
+#endif
 /**
  * \endcond
  */

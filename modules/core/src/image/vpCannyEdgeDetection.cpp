@@ -204,13 +204,13 @@ vpCannyEdgeDetection::initGradientFilters()
   float scaleY = 1.f;
 
   if (m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
-    scaleX = vpImageFilter::getSobelKernelX(m_gradientFilterX.data, (m_gradientFilterKernelSize - 1) / val_2);
-    scaleY = vpImageFilter::getSobelKernelY(m_gradientFilterY.data, (m_gradientFilterKernelSize - 1) / val_2);
+    scaleX = vpImageFilter::getSobelKernelX(m_gradientFilterX, m_gradientFilterKernelSize);
+    scaleY = vpImageFilter::getSobelKernelY(m_gradientFilterY, m_gradientFilterKernelSize);
   }
   else if (m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
     // Compute the Scharr filters
-    scaleX = vpImageFilter::getScharrKernelX(m_gradientFilterX.data, (m_gradientFilterKernelSize - 1) / val_2);
-    scaleY = vpImageFilter::getScharrKernelY(m_gradientFilterY.data, (m_gradientFilterKernelSize - 1) / val_2);
+    scaleX = vpImageFilter::getScharrKernelX(m_gradientFilterX, m_gradientFilterKernelSize);
+    scaleY = vpImageFilter::getScharrKernelY(m_gradientFilterY, m_gradientFilterKernelSize);
   }
   else {
     std::string errMsg = "[vpCannyEdgeDetection::initGradientFilters] Error: gradient filtering method \"";

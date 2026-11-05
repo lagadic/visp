@@ -1054,22 +1054,21 @@ inline void computePartialDerivatives(const vpImage<ImageType> &I,
         // between 0 and 255 for an vpImage<uchar>
       FilterType scaleX = 1.0;
       FilterType scaleY = 1.0;
-      const unsigned int val2 = 2U;
 
       if (filteringType == CANNY_GBLUR_SOBEL_FILTERING) {
         if (computeDx) {
-          scaleX = static_cast<FilterType>(getSobelKernelX(gradientFilterX.data, (apertureGradient - 1) / val2));
+          scaleX = static_cast<FilterType>(getSobelKernelX(gradientFilterX, apertureGradient));
         }
         if (computeDy) {
-          scaleY = static_cast<FilterType>(getSobelKernelY(gradientFilterY.data, (apertureGradient - 1) / val2));
+          scaleY = static_cast<FilterType>(getSobelKernelY(gradientFilterY, apertureGradient));
         }
       }
       else if (filteringType == CANNY_GBLUR_SCHARR_FILTERING) {
         if (computeDx) {
-          scaleX = static_cast<FilterType>(getScharrKernelX(gradientFilterX.data, (apertureGradient - 1) / val2));
+          scaleX = static_cast<FilterType>(getScharrKernelX(gradientFilterX, apertureGradient));
         }
         if (computeDy) {
-          scaleY = static_cast<FilterType>(getScharrKernelY(gradientFilterY.data, (apertureGradient - 1) / val2));
+          scaleY = static_cast<FilterType>(getScharrKernelY(gradientFilterY, apertureGradient));
         }
       }
 
@@ -2055,39 +2054,39 @@ void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpIm
 #endif
 
 template <typename FilterType>
-inline FilterType getScharrKernelX(FilterType *filter, unsigned int size)
+inline FilterType getScharrKernelX(vpArray2D<FilterType> &filter, unsigned int size)
 {
-  const unsigned int actualKernelSize = (size * 2) + 1;
-  if (size != 1) {
-    // Size = 1 => kernel_size = 2*1 + 1 = 3
+  if (size != 3) {
     std::stringstream errMsg;
-    errMsg << "Cannot get Scharr kernel of size " << actualKernelSize << " != 3";
+    errMsg << "Cannot get Scharr kernel of size " << size << " != 3";
     throw vpException(vpException::dimensionError, errMsg.str());
   }
 
-  vpArray2D<FilterType> ScharrY(actualKernelSize, actualKernelSize);
-  FilterType norm = getScharrKernelY<FilterType>(ScharrY.data, size);
-  memcpy(filter, ScharrY.t().data, ScharrY.getRows() * ScharrY.getCols() * sizeof(FilterType));
+  filter.resize(size, size);
+
+  vpArray2D<FilterType> ScharrY(size, size);
+  FilterType norm = getScharrKernelY<FilterType>(ScharrY, size);
+  memcpy(filter.data, ScharrY.t().data, ScharrY.getRows() * ScharrY.getCols() * sizeof(FilterType));
   return norm;
 }
 
 template <typename FilterType>
-inline FilterType getScharrKernelY(FilterType *filter, unsigned int size)
+inline FilterType getScharrKernelY(vpArray2D<FilterType> &filter, unsigned int size)
 {
   // Scharr kernel pre-computed for the usual size
   static const FilterType ScharrY3x3[9] = { -3.0, -10.0, -3.0, 0.0, 0.0, 0.0, 3.0, 10.0, 3.0 };
 
-  if (size != 1) {
-    // Size = 1 => kernel_size = 2*1 + 1 = 3
+  if (size != 3) {
     std::stringstream errMsg;
-    errMsg << "Cannot get Scharr kernel of size " << ((size * 2) + 1) << " != 3";
+    errMsg << "Cannot get Scharr kernel of size " << size << " != 3";
     throw vpException(vpException::dimensionError, errMsg.str());
   }
 
-  const unsigned int kernel_size = (size * 2) + 1;
+  filter.resize(size, size);
+
   const unsigned int kernel3 = 3;
-  if (kernel_size == kernel3) {
-    memcpy(filter, ScharrY3x3, kernel_size * kernel_size * sizeof(FilterType));
+  if (size == kernel3) {
+    memcpy(filter.data, ScharrY3x3, size * size * sizeof(FilterType));
     return static_cast<FilterType>(1.0 / 32.0);
   }
 
@@ -2095,25 +2094,26 @@ inline FilterType getScharrKernelY(FilterType *filter, unsigned int size)
 }
 
 template <typename FilterType>
-inline FilterType getSobelKernelX(FilterType *filter, unsigned int size)
+inline FilterType getSobelKernelX(vpArray2D<FilterType> &filter, unsigned int size)
 {
-  const unsigned int maxSize = 20;
+  const unsigned int maxSize = 41;
   if (size == 0) {
     throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size 0!");
   }
   if (size > maxSize) {
-    throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size > 20!");
+    throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size > %d!", maxSize);
   }
 
-  const unsigned int kernel_size = (size * 2) + 1;
-  vpArray2D<FilterType> SobelY(kernel_size, kernel_size);
-  FilterType norm = getSobelKernelY<FilterType>(SobelY.data, size);
-  memcpy(filter, SobelY.t().data, SobelY.getRows() * SobelY.getCols() * sizeof(FilterType));
+  filter.resize(size, size);
+
+  vpArray2D<FilterType> SobelY(size, size);
+  FilterType norm = getSobelKernelY<FilterType>(SobelY, size);
+  memcpy(filter.data, SobelY.t().data, SobelY.getRows() * SobelY.getCols() * sizeof(FilterType));
   return norm;
 }
 
 template <typename FilterType>
-inline FilterType getSobelKernelY(FilterType *filter, unsigned int size)
+inline FilterType getSobelKernelY(vpArray2D<FilterType> &filter, unsigned int size)
 {
   // Sobel kernel pre-computed for the usual size
   static const FilterType SobelY3x3[9] = { -1.0, -2.0, -1.0, 0.0, 0.0, 0.0, 1.0, 2.0, 1.0 };
@@ -2136,29 +2136,30 @@ inline FilterType getSobelKernelY(FilterType *filter, unsigned int size)
   smoothingKernel[index_2][index_1] = 2.0;
   smoothingKernel[index_2][index_2] = 1.0;
 
-  const unsigned int maxSize = 20;
+  const unsigned int maxSize = 41;
   if (size == 0) {
     throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size 0!");
   }
   if (size > maxSize) {
-    throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size > 20!");
+    throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size > %d!", maxSize);
   }
 
-  const unsigned int kernel_size = (size * 2) + 1;
+  filter.resize(size, size);
+
   FilterType scale = static_cast<FilterType>(1. / 8.); // Scale to normalize Sobel3x3
   const unsigned int kernel3 = 3, kernel5 = 5, kernel7 = 7;
-  if (kernel_size == kernel3) {
-    memcpy(filter, SobelY3x3, kernel_size * kernel_size * sizeof(FilterType));
+  if (size == kernel3) {
+    memcpy(filter.data, SobelY3x3, size * size * sizeof(FilterType));
     return scale;
   }
   scale *= static_cast<FilterType>(1. / 16.); // Sobel5x5 is the convolution of smoothingKernel, which needs 1/16 scale factor, with Sobel3x3
-  if (kernel_size == kernel5) {
-    memcpy(filter, SobelY5x5, kernel_size * kernel_size * sizeof(FilterType));
+  if (size == kernel5) {
+    memcpy(filter.data, SobelY5x5, size * size * sizeof(FilterType));
     return scale;
   }
   scale *= static_cast<FilterType>(1. / 16.); // Sobel7x7 is the convolution of smoothingKernel, which needs 1/16 scale factor, with Sobel5x5
-  if (kernel_size == kernel7) {
-    memcpy(filter, SobelY7x7, kernel_size * kernel_size * sizeof(FilterType));
+  if (size == kernel7) {
+    memcpy(filter.data, SobelY7x7, size * size * sizeof(FilterType));
     return scale;
   }
 
@@ -2170,7 +2171,7 @@ inline FilterType getSobelKernelY(FilterType *filter, unsigned int size)
     scale *= static_cast<FilterType>(1. / 16.);
   }
 
-  memcpy(filter, sobelY.data, sobelY.getRows() * sobelY.getCols() * sizeof(FilterType));
+  memcpy(filter.data, sobelY.data, sobelY.getRows() * sobelY.getCols() * sizeof(FilterType));
 
   return scale;
 }
