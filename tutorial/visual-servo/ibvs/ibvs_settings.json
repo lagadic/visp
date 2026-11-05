@@ -1,18 +1,45 @@
+// Settings of the simulated image-based visual servoing (IBVS) on 4 points used by tutorial-ibvs-4pts-json:
+//   ./tutorial-ibvs-4pts-json --settings ibvs_settings.json --output results.json
+// Any missing key keeps its default value.
 {
-    "lambda": 0.2,
-    "samplingTime": 0.04,
-    "errorThreshold": 0.0001,
-    "interactionMatrix": "current",
-    "cdMo": {
-        "cols": 1,
-        "rows": 6,
-        "type": "vpPoseVector",
-        "data": [0.0, 0.0, 0.75, 0.0, 0.0, 0.0]
-    },
-    "cMo": {
-        "cols": 1,
-        "rows": 6,
-        "type": "vpPoseVector",
-        "data": [0.3, 0.3, 1.2, 0.349066, 0.349066, 1.5708]
-    }
+  // Gain of the control law. Must be > 0.
+  "lambda": 0.2,
+  // Sampling time (in seconds) of the simulated robot. Must be > 0.
+  "samplingTime": 0.04,
+  // The servoing stops once the squared norm of the visual error is below this threshold. Must be > 0.
+  "errorThreshold": 0.0001,
+  // Interaction matrix used in the control law: "current" (computed from the current features at each iteration),
+  // "desired" (computed once from the desired features) or "mean" (mean of the current and desired ones).
+  "interactionMatrix": "current",
+  // Desired pose of the camera with respect to the object frame, given as a vpPoseVector
+  // [tx, ty, tz, tux, tuy, tuz]: translation in meters followed by a theta-u rotation in radians.
+  // Here the camera is 0.75 m in front of the target, without rotation.
+  "cdMo": {
+    "cols": 1,
+    "rows": 6,
+    "type": "vpPoseVector",
+    "data": [
+      0.0,
+      0.0,
+      0.75,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  // Initial pose of the camera with respect to the object frame, with the same vpPoseVector convention.
+  // Here: translation (0.3, 0.3, 1.2) m, theta-u rotation (20, 20, 90) degrees.
+  "cMo": {
+    "cols": 1,
+    "rows": 6,
+    "type": "vpPoseVector",
+    "data": [
+      0.3,
+      0.3,
+      1.2,
+      0.349066,
+      0.349066,
+      1.5708
+    ]
+  }
 }

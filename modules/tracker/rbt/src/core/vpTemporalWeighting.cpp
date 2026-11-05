@@ -64,7 +64,8 @@ std::shared_ptr<vpTemporalWeighting> vpTemporalWeighting::parseTemporalWeighting
 }
 std::shared_ptr<vpTemporalWeighting> vpTemporalWeighting::parseTemporalWeightingRawJson(const std::string &s)
 {
-  nlohmann::json j = nlohmann::json::parse(s);
+  // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+  nlohmann::json j = nlohmann::json::parse(s, nullptr, true, true);
   return parseTemporalWeighting(j);
 }
 

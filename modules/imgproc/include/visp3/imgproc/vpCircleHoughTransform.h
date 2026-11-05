@@ -462,7 +462,8 @@ public:
       }
       json j;
       try {
-        j = json::parse(file);
+        // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+        j = json::parse(file, nullptr, true, true);
       }
       catch (json::parse_error &e) {
         std::stringstream msg;
@@ -585,29 +586,29 @@ public:
       std::pair<float, float> radiusLimits = { params.m_minRadius, params.m_maxRadius };
 
       j = nlohmann::json {
-          {"filteringAndGradientType", vpImageFilter::vpCannyFiltAndGradTypeToStr(params.m_filteringAndGradientType)},
-          {"gaussianKernelSize", params.m_gaussianKernelSize},
-          {"gaussianStdev", params.m_gaussianStdev},
-          {"gradientFilterKernelSize", params.m_gradientFilterKernelSize},
-          {"cannyBackendType", vpImageFilter::vpCannyBackendTypeToString(params.m_cannyBackendType)},
-          {"lowerCannyThresh", params.m_lowerCannyThresh},
-          {"lowerThresholdRatio", params.m_lowerCannyThreshRatio},
-          {"upperCannyThresh", params.m_upperCannyThresh},
-          {"upperThresholdRatio", params.m_upperCannyThreshRatio},
-          {"edgeMapFilteringNbIter", params.m_edgeMapFilteringNbIter},
-          {"centerXlimits", params.m_centerXlimits},
-          {"centerYlimits", params.m_centerYlimits},
-          {"radiusLimits", radiusLimits},
-          {"dilatationKernelSize", params.m_dilatationKernelSize},
-          {"averagingWindowSize", params.m_averagingWindowSize},
-          {"centerThresh", params.m_centerMinThresh},
-          {"expectedNbCenters", params.m_expectedNbCenters},
-          {"circleProbabilityThreshold", params.m_circleProbaThresh},
-          {"circleVisibilityRatioThreshold", params.m_circleVisibilityRatioThresh},
-          {"circlePerfectnessThreshold", params.m_circlePerfectness},
-          {"recordVotingPoints", params.m_recordVotingPoints},
-          {"centerMinDistance", params.m_centerMinDist},
-          {"mergingRadiusDiffThresh", params.m_mergingRadiusDiffThresh} };
+          { "filteringAndGradientType", vpImageFilter::vpCannyFiltAndGradTypeToStr(params.m_filteringAndGradientType) },
+          { "gaussianKernelSize", params.m_gaussianKernelSize },
+          { "gaussianStdev", params.m_gaussianStdev },
+          { "gradientFilterKernelSize", params.m_gradientFilterKernelSize },
+          { "cannyBackendType", vpImageFilter::vpCannyBackendTypeToString(params.m_cannyBackendType) },
+          { "lowerCannyThresh", params.m_lowerCannyThresh },
+          { "lowerThresholdRatio", params.m_lowerCannyThreshRatio },
+          { "upperCannyThresh", params.m_upperCannyThresh },
+          { "upperThresholdRatio", params.m_upperCannyThreshRatio },
+          { "edgeMapFilteringNbIter", params.m_edgeMapFilteringNbIter },
+          { "centerXlimits", params.m_centerXlimits },
+          { "centerYlimits", params.m_centerYlimits },
+          { "radiusLimits", radiusLimits },
+          { "dilatationKernelSize", params.m_dilatationKernelSize },
+          { "averagingWindowSize", params.m_averagingWindowSize },
+          { "centerThresh", params.m_centerMinThresh },
+          { "expectedNbCenters", params.m_expectedNbCenters },
+          { "circleProbabilityThreshold", params.m_circleProbaThresh },
+          { "circleVisibilityRatioThreshold", params.m_circleVisibilityRatioThresh },
+          { "circlePerfectnessThreshold", params.m_circlePerfectness },
+          { "recordVotingPoints", params.m_recordVotingPoints },
+          { "centerMinDistance", params.m_centerMinDist },
+          { "mergingRadiusDiffThresh", params.m_mergingRadiusDiffThresh } };
     }
 #endif
 

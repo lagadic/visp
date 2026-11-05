@@ -166,7 +166,8 @@ BEGIN_VISP_NAMESPACE
  *   }
  *   {
  *     std::ifstream file(filename);
- *     const nlohmann::json j = nlohmann::json::parse(file);
+ *     // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+ *     const nlohmann::json j = nlohmann::json::parse(file, nullptr, true, true);
  *     vpColVector v;
  *     v = j.get<vpColVector>();
  *     file.close();

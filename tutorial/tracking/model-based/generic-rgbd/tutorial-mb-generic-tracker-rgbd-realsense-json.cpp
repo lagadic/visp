@@ -114,7 +114,8 @@ int main(int argc, char *argv[])
   //! [Loading]
   if (model.empty() && init_file.empty()) {
     std::ifstream config(config_file);
-    const json j = json::parse(config);
+    // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+    const json j = json::parse(config, nullptr, true, true);
     config.close();
     if (j.contains("model")) {
       model = j["model"];
@@ -364,7 +365,7 @@ int main(int argc, char *argv[])
 #if defined(VISP_HAVE_DISPLAY) && (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
   if (display != nullptr) {
     delete display;
-  }
+}
 #endif
   return EXIT_SUCCESS;
 }

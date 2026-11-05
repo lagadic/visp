@@ -101,7 +101,8 @@ public:
     if (!f.good()) {
       throw vpException(vpException::ioError, "Could not open ground truth file %s", groundTruthPath.c_str());
     }
-    nlohmann::json j = nlohmann::json::parse(f);
+    // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+    nlohmann::json j = nlohmann::json::parse(f, nullptr, true, true);
     m_cMg = j.at("grid");
     // std::cout << "Loaded ground truth data from apriltag grid: " << std::endl;
     // for (const vpHomogeneousMatrix &cMg: m_cMg) {
@@ -121,7 +122,8 @@ public:
     if (!cf.good()) {
       throw vpException(vpException::ioError, "Problem opening %s", camFile.c_str());
     }
-    const nlohmann::json j = nlohmann::json::parse(cf);
+    // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+    const nlohmann::json j = nlohmann::json::parse(cf, nullptr, true, true);
     m_cam.initPersProjWithoutDistortion(j.at("px"), j.at("py"), j.at("u0"), j.at("v0"));
     m_h = j.at("h"), m_w = j.at("w");
     m_depthScale = j.at("depthScale");
@@ -193,7 +195,8 @@ public:
       if (vpIoTools::checkFilename(objectInitFile)) {
         std::ifstream f(objectInitFile);
         if (f.good()) {
-          vpHomogeneousMatrix cMo = nlohmann::json::parse(f);
+          // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+          vpHomogeneousMatrix cMo = nlohmann::json::parse(f, nullptr, true, true);
           result[objectName] = cMo;
         }
         else {
@@ -233,7 +236,7 @@ private:
 
 struct RunData
 {
-  RunData(const std::string &config, double errorT, double errorR) : configName(config), thresholdErrorT(errorT), thresholdErrorR(errorR) { }
+  RunData(const std::string &config, double errorT, double errorR) : configName(config), thresholdErrorT(errorT), thresholdErrorR(errorR) {}
   const std::string configName;
   const double thresholdErrorT;
   const double thresholdErrorR;
