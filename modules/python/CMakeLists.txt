@@ -133,6 +133,10 @@ endif()
 # Step 6: Test bindings
 add_subdirectory(test)
 
+# Step 7: Install bindings
+if(INSTALL_PYTHON_BINDINGS)
+  add_custom_target(visp_python_bindings_all ALL DEPENDS visp_python_bindings)
+endif()
 
 # Export Variables to parent cmake
 set(VISP_PYTHON_BOUND_MODULES "")
