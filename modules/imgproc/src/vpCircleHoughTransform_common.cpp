@@ -165,17 +165,16 @@ vpCircleHoughTransform::initGradientFilters()
 
   float scaleX = 1.f;
   float scaleY = 1.f;
-  unsigned int filterHalfSize = (static_cast<unsigned int>(m_algoParams.m_gradientFilterKernelSize) - 1) / 2;
 
   if (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
     // Compute the Sobel filters
-    scaleX = vpImageFilter::getSobelKernelX(m_gradientFilterX.data, filterHalfSize);
-    scaleY = vpImageFilter::getSobelKernelY(m_gradientFilterY.data, filterHalfSize);
+    scaleX = vpImageFilter::getSobelKernelX(m_gradientFilterX, m_algoParams.m_gradientFilterKernelSize);
+    scaleY = vpImageFilter::getSobelKernelY(m_gradientFilterY, m_algoParams.m_gradientFilterKernelSize);
   }
   else if (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
     // Compute the Scharr filters
-    scaleX = vpImageFilter::getScharrKernelX(m_gradientFilterX.data, filterHalfSize);
-    scaleY = vpImageFilter::getScharrKernelY(m_gradientFilterY.data, filterHalfSize);
+    scaleX = vpImageFilter::getScharrKernelX(m_gradientFilterX, m_algoParams.m_gradientFilterKernelSize);
+    scaleY = vpImageFilter::getScharrKernelY(m_gradientFilterY, m_algoParams.m_gradientFilterKernelSize);
   }
   else {
     std::string errMsg = "[vpCircleHoughTransform::initGradientFilters] Error: gradient filtering method \"";
