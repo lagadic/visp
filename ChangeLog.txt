@@ -26,8 +26,10 @@ ViSP 3.7.1 (current version)
       - Embedded Build: Fall back to the built-in version available directly in the 3rdparty/catch2 folder. This
         version was upgraded to Catch2 3.13.0
     . Fix warnings detected on Ubuntu with -Wshadow -Wfloat-equal -Wsign-conversion
+    . In vpRobotFranka class handle Panda and FR3 joint limits that differ
     . Ready to use docker container with Ubuntu 26.04.
       See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-docker.html
+    . Comments are now supported in json config files
   - Applications
     . Camera intrinsic calibration app: visp-calibrate-camera.cpp
       - Add lens distortion displacement map visualization
@@ -56,11 +58,18 @@ ViSP 3.7.1 (current version)
               (front()/back() on empty std::list)
     . [#2000] Python bindings return inconsistent values for visp.core.Color predefined colors
     . [#2006] Fix outdated robot state retrieval in vpRobotFranka::getPosition()
+    . [#2021] Missing ImageFilter Methods and Documentation in ViSP Python Bindings
     . [#2031] libvisp_core.so not reproducible: is not the same every time it is built
     . [#2039] Stack overflow when running wireframe simulator
+    . [#2047] Missing support for comments in JSON configuration files
     . [#2050] visp-calibrate-camera.cpp doesn't build with OpenCV 4.7.0
     . [#2054] Built-in Lapack dlamch() is not thread-safe, so SVD can fail when called from several threads
     . [#2060] Non-deterministic results of RBT trackers with OpenMP
+    . [#2063] FindTensorRT triggers a CMake 4.4 FindCUDAToolkit bug when cudart is missing (e.g. conda cuda-nvcc-tools)
+    . [#2064] Segfault on macOS in Panda3D renderer when XQuartz is installed
+    . [#2066] Panda3D not detected when built with makepanda.py and Panda3D_DIR cmake var is set
+    . [#2068] Link error "undefined typeinfo" when Panda3D is built with cmake without RTTI
+
 ----------------------------------------------
 ViSP 3.7.0 (released December 19, 2025)
   - Contributors:
