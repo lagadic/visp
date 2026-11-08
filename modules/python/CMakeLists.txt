@@ -139,13 +139,32 @@ set(VISP_PYTHON_INSTALL_DIR "${VISP_PYTHON_INSTALL_DIR}" PARENT_SCOPE)
 add_subdirectory(bindings)
 
 # Step 4: Copy stubs dir and install stubs for autocompletion
-if(GENERATE_PYTHON_STUBS)
+set(_visp_python_generate_stubs ${GENERATE_PYTHON_STUBS})
+if(_visp_python_generate_stubs AND INSTALL_PYTHON_BINDINGS)
+  # Without pip, mypy (stubgen) has to be provided by the environment
+  execute_process(
+    COMMAND ${PYTHON3_EXECUTABLE} -c "import mypy.stubgen"
+    RESULT_VARIABLE _visp_python_mypy_result
+    OUTPUT_QUIET ERROR_QUIET
+  )
+  if(NOT _visp_python_mypy_result EQUAL 0)
+    message(WARNING "mypy is not available for ${PYTHON3_EXECUTABLE}: Python stubs will not be generated nor installed. "
+                    "Install mypy or set GENERATE_PYTHON_STUBS=OFF.")
+    set(_visp_python_generate_stubs OFF)
+  endif()
+endif()
+
+if(_visp_python_generate_stubs)
   add_subdirectory(stubs)
   # Global target: compile and install the Python bindings
   add_custom_target(
     visp_python_bindings
     DEPENDS visp_python_bindings_stubs
   )
+elseif(INSTALL_PYTHON_BINDINGS)
+  # Global target: compile the Python bindings, installed by the CMake install target
+  add_custom_target(visp_python_bindings)
+  add_dependencies(visp_python_bindings _visp)
 else()
   add_custom_target(
     visp_python_bindings
