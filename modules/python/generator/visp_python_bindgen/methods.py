@@ -34,6 +34,7 @@
 #############################################################################
 
 import logging
+import re
 from typing import Any, Callable, List, Optional, Tuple, Dict
 from enum import Enum
 from dataclasses import dataclass
@@ -232,12 +233,22 @@ def get_py_args(parameters: List[types.Parameter], specs, env_mapping) -> List[s
     return f'py::arg("{name}")'
   py_args = []
   arg_index = 0
-  for parameter in parameters:
+  with_default = [parameter.default is not None and parameter_can_have_default_value(parameter, specs, env_mapping)
+                  for parameter in parameters]
+  # In Python, a parameter without a default value cannot follow a parameter with a default value.
+  # If a parameter cannot have a default value on the Python side (e.g. mutable type),
+  # the default values of the preceding parameters cannot be used positionally: drop them
+  # so that the signature (and the generated stubs) remain valid
+  for i in range(len(with_default) - 1, 0, -1):
+    if not with_default[i]:
+      with_default[:i] = [False] * i
+      break
+  for parameter, has_default in zip(parameters, with_default):
     parameter_name = parameter.name
     if parameter_name is None:
       parameter_name = f'arg{arg_index}'
 
-    if parameter.default is None or not parameter_can_have_default_value(parameter, specs, env_mapping):
+    if not has_default:
       py_args.append(make_arg(parameter_name))
     else:
       t = parameter.type
@@ -262,8 +273,14 @@ def get_py_args(parameters: List[types.Parameter], specs, env_mapping) -> List[s
           default_value = f'static_cast<{full_typename}>(nullptr)'
           default_value_rep = 'None'
         else:
-          default_value_rep = default_value.strip('"') # To handle default char* and raw std::string args
-          default_value_rep = default_value_rep.replace('"', '\"') # Escape inner quotes in std::string args like std::string("hello"). This would break parsing at compile time
+          default_value_rep = default_value
+          if len(default_value) >= 2 and default_value.startswith('"') and default_value.endswith('"'):
+            # String literal (default char* and raw std::string args): represent it as a Python string.
+            # An empty representation (e.g. for "") would make pybind11 hide the default value in the signature,
+            # which leads to invalid stubs (parameter without a default following a parameter with a default)
+            default_value_rep = "'" + default_value[1:-1] + "'"
+          # Escape inner quotes, e.g. in std::string("hello"), so that the representation is a valid C++ string literal
+          default_value_rep = re.sub(r'(?<!\\)"', r'\\"', default_value_rep)
           default_value = env_mapping.get(default_value) or default_value
 
       py_args.append(f'py::arg_v("{parameter_name}", {default_value}, "{default_value_rep}")')

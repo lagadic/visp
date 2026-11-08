@@ -1282,7 +1282,7 @@ void define_gradientFilterHSV(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter
     py::arg("output"),
     py::arg("nbThread"),
     py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt),
-    py::arg("filterType")
+    py::arg("filterType") = vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING
   );
 
   pyClass.def_static(
@@ -1314,11 +1314,11 @@ void define_gradientFilterHSV(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter
     py::arg("output"),
     py::arg("nbThread"),
     py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt),
-    py::arg("filterType")
+    py::arg("filterType") = vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING
   );
 
   pyClass.def_static(
-    "gradientFilterY",
+    "gradientFilter",
     [](const vpImage<vpHSV<ArithmeticType, useFullScale>> &input,
        vpImage<FilterType> &GIx,
        vpImage<FilterType> &GIy,
@@ -1347,9 +1347,9 @@ void define_gradientFilterHSV(py::class_<VISP_NAMESPACE_ADDRESSING vpImageFilter
     py::arg("input"),
     py::arg("GIx"),
     py::arg("GIy"),
-    py::arg("nbThread"),
+    py::arg("nbThread") = -1,
     py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt),
-    py::arg("filterType")
+    py::arg("filterType") = vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING
   );
 }
 
