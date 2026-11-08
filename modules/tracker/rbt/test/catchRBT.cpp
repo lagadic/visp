@@ -202,27 +202,27 @@ SCENARIO("Instantiating a silhouette me tracker", "[rbt]")
     WHEN("defining JSON parameters")
     {
       nlohmann::json j = {
-        {"type", "silhouetteMe"},
+        { "type", "silhouetteMe" },
         { "numCandidates", 1 },
         { "weight", 0.5 },
         { "convergencePixelThreshold", 0.5 },
-        { "convergenceRatio", 0.99},
-        { "useMask", true},
-        { "minMaskConfidence", 0.5},
+        { "convergenceRatio", 0.99 },
+        { "useMask", true },
+        { "minMaskConfidence", 0.5 },
         { "movingEdge", {
-          {"maskSign", 0},
-          {"maskSize" , 5},
-          {"minSampleStep" , 4.0},
-          {"mu" , {0.5, 0.5}},
-          {"nMask" , 90},
-          {"ntotalSample" , 0},
-          {"pointsToTrack" , 200},
-          {"range" , 5},
-          {"sampleStep" , 4.0},
-          {"strip" , 2},
-          {"thresholdType" , "normalized"},
-          {"threshold" , 20.0}
-        }}
+          { "maskSign", 0 },
+          { "maskSize" , 5 },
+          { "minSampleStep" , 4.0 },
+          { "mu" , { 0.5, 0.5 } },
+          { "nMask" , 90 },
+          { "ntotalSample" , 0 },
+          { "pointsToTrack" , 200 },
+          { "range" , 5 },
+          { "sampleStep" , 4.0 },
+          { "strip" , 2 },
+          { "thresholdType" , "normalized" },
+          { "threshold" , 20.0 }
+        } }
       };
       THEN("Loading correct settings works")
       {
@@ -292,15 +292,15 @@ SCENARIO("Instantiating a silhouette CCD tracker", "[rbt]")
     WHEN("Defining associated json")
     {
       nlohmann::json j = {
-        {"type", "silhouetteCCD"},
-        {"weight", 0.01},
-        {"temporalSmoothing", 0.1},
-        {"convergenceThreshold", 0.1},
-        {"ccd", {
-          {"h", 64},
-          {"delta_h", 16},
-          {"gamma", { 0.1, 0.2, 0.3, 0.4 } }
-        }}
+        { "type", "silhouetteCCD" },
+        { "weight", 0.01 },
+        { "temporalSmoothing", 0.1 },
+        { "convergenceThreshold", 0.1 },
+        { "ccd", {
+          { "h", 64 },
+          { "delta_h", 16 },
+          { "gamma", { 0.1, 0.2, 0.3, 0.4 } }
+        } }
       };
       THEN("Loading correct json works")
       {
@@ -360,13 +360,13 @@ SCENARIO("Instantiating KLT tracker")
   WHEN("Defining associated json")
   {
     nlohmann::json j = {
-      {"type", "klt"},
-      {"weight", 0.01},
-      {"minimumNumPoints", 25},
-      {"newPointsMinPixelDistance", 5},
-      {"maxReprojectionErrorPixels", 0.01},
-      {"useMask", true},
-      {"minMaskConfidence", 0.1},
+      { "type", "klt" },
+      { "weight", 0.01 },
+      { "minimumNumPoints", 25 },
+      { "newPointsMinPixelDistance", 5 },
+      { "maxReprojectionErrorPixels", 0.01 },
+      { "useMask", true },
+      { "minMaskConfidence", 0.1 },
       { "windowSize", 7 },
       { "quality", 0.01 },
       { "maxFeatures", 500 }
@@ -429,11 +429,11 @@ SCENARIO("Instantiating depth tracker", "[rbt]")
   WHEN("Defining associated json")
   {
     nlohmann::json j = {
-      {"type", "klt"},
-      {"weight", 0.01},
-      {"step", 16},
-      {"useMask", true},
-      {"minMaskConfidence", 0.1}
+      { "type", "klt" },
+      { "weight", 0.01 },
+      { "step", 16 },
+      { "useMask", true },
+      { "minMaskConfidence", 0.1 }
     };
     THEN("Loading correct json works")
     {
@@ -622,7 +622,8 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
       REQUIRE((tracker.getOptimizationGain() == Catch::Approx(1.0) && tracker.getMaxOptimizationIters() == 10));
       REQUIRE((tracker.getOptimizationInitialMu() == Catch::Approx(0.5) && tracker.getOptimizationMuIterFactor() == Catch::Approx(0.1)));
       };
-    nlohmann::json j = nlohmann::json::parse(jsonLiteral);
+      // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+    nlohmann::json j = nlohmann::json::parse(jsonLiteral, nullptr, true, true);
     THEN("Loading configuration with trackers")
     {
       tracker.loadConfiguration(j);

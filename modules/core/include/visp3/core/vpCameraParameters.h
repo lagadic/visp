@@ -283,7 +283,8 @@ BEGIN_VISP_NAMESPACE
     {
       // Load camera parameters from a JSON file
       std::ifstream file(filename);
-      const nlohmann::json j = nlohmann::json::parse(file);
+      // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+      const nlohmann::json j = nlohmann::json::parse(file, nullptr, true, true);
       vpCameraParameters cam;
       cam = j;
       file.close();
@@ -461,9 +462,9 @@ private:
 #endif
 
 NLOHMANN_JSON_SERIALIZE_ENUM(vpCameraParameters::vpCameraParametersProjType, {
-    {vpCameraParameters::perspectiveProjWithoutDistortion, "perspectiveWithoutDistortion"},
-    {vpCameraParameters::perspectiveProjWithDistortion, "perspectiveWithDistortion"},
-    {vpCameraParameters::ProjWithKannalaBrandtDistortion, "kannalaBrandtDistortion"}
+    { vpCameraParameters::perspectiveProjWithoutDistortion, "perspectiveWithoutDistortion" },
+    { vpCameraParameters::perspectiveProjWithDistortion, "perspectiveWithDistortion" },
+    { vpCameraParameters::ProjWithKannalaBrandtDistortion, "kannalaBrandtDistortion" }
   });
 
 #if defined(__clang__)

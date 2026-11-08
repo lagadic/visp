@@ -96,7 +96,8 @@ BEGIN_VISP_NAMESPACE
  *   }
  *   {
  *     std::ifstream file(filename);
- *     const nlohmann::json j = nlohmann::json::parse(file);
+ *     // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+ *     const nlohmann::json j = nlohmann::json::parse(file, nullptr, true, true);
  *     vpMe me;
  *     me = j;
  *     file.close();
@@ -626,8 +627,8 @@ private:
 #endif
 
 NLOHMANN_JSON_SERIALIZE_ENUM(vpMe::vpLikelihoodThresholdType, {
-  {vpMe::vpLikelihoodThresholdType::OLD_THRESHOLD, "old"},
-  {vpMe::vpLikelihoodThresholdType::NORMALIZED_THRESHOLD, "normalized"}
+  { vpMe::vpLikelihoodThresholdType::OLD_THRESHOLD, "old" },
+  { vpMe::vpLikelihoodThresholdType::NORMALIZED_THRESHOLD, "normalized" }
 });
 
 #if defined(__clang__)
@@ -637,21 +638,21 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpMe::vpLikelihoodThresholdType, {
 inline void to_json(nlohmann::json &j, const vpMe &me)
 {
   j = {
-    {"thresholdType", me.getLikelihoodThresholdType()},
-    {"threshold", me.getThreshold()},
-    {"thresholdMarginRatio", me.getThresholdMarginRatio()},
-    {"minThreshold", me.getMinThreshold()},
-    {"mu", {me.getMu1(), me.getMu2()}},
-    {"minSampleStep", me.getMinSampleStep()},
-    {"sampleStep", me.getSampleStep()},
-    {"initRange", me.getInitRange()},
-    {"range", me.getRange()},
-    {"ntotalSample", me.getNbTotalSample()},
-    {"pointsToTrack", me.getPointsToTrack()},
-    {"maskSize", me.getMaskSize()},
-    {"nMask", me.getMaskNumber()},
-    {"maskSign", me.getMaskSign()},
-    {"strip", me.getStrip()}
+    { "thresholdType", me.getLikelihoodThresholdType() },
+    { "threshold", me.getThreshold() },
+    { "thresholdMarginRatio", me.getThresholdMarginRatio() },
+    { "minThreshold", me.getMinThreshold() },
+    { "mu", { me.getMu1(), me.getMu2() } },
+    { "minSampleStep", me.getMinSampleStep() },
+    { "sampleStep", me.getSampleStep() },
+    { "initRange", me.getInitRange() },
+    { "range", me.getRange() },
+    { "ntotalSample", me.getNbTotalSample() },
+    { "pointsToTrack", me.getPointsToTrack() },
+    { "maskSize", me.getMaskSize() },
+    { "nMask", me.getMaskNumber() },
+    { "maskSign", me.getMaskSign() },
+    { "strip", me.getStrip() }
   };
 }
 

@@ -52,7 +52,7 @@
 template<typename T>
 nlohmann::json convertCommandLineArgument(const std::string &arg)
 {
-  nlohmann::json j = nlohmann::json::parse(arg);
+  nlohmann::json j = nlohmann::json::parse(arg, nullptr, true, true);
   return j;
 }
 
@@ -189,7 +189,7 @@ public:
   vpJsonArgumentParser &addArgument(const std::string &name, T &parameter, const bool required = true, const std::string &help = "No description")
   {
     m_argumentType[name] = WITH_FIELD;
-    const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json * {
+    const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json *{
       size_t pos = 0;
       nlohmann::json *f = &j;
       std::string token;
@@ -200,7 +200,7 @@ public:
 
         name_copy.erase(0, pos + m_nestSeparator.length());
         if (create && !f->contains(token)) {
-          (*f)[token] = {};
+          (*f)[token] = { };
         }
         else if (!f->contains(token)) {
           return nullptr;
@@ -208,7 +208,7 @@ public:
         f = &(f->at(token));
       }
       if (create && !f->contains(name_copy)) {
-        (*f)[name_copy] = {};
+        (*f)[name_copy] = { };
       }
       else if (!f->contains(name_copy)) {
         return nullptr;

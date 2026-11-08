@@ -108,7 +108,7 @@ vpJsonArgumentParser &vpJsonArgumentParser::addFlag(const std::string &name, boo
 
       name_copy.erase(0, pos + m_nestSeparator.length());
       if (create && !f->contains(token)) {
-        (*f)[token] = {};
+        (*f)[token] = { };
       }
       else if (!f->contains(token)) {
         return nullptr;
@@ -116,7 +116,7 @@ vpJsonArgumentParser &vpJsonArgumentParser::addFlag(const std::string &name, boo
       f = &(f->at(token));
     }
     if (create && !f->contains(name_copy)) {
-      (*f)[name_copy] = {};
+      (*f)[name_copy] = { };
     }
     else if (!f->contains(name_copy)) {
       return nullptr;
@@ -172,7 +172,7 @@ bool vpJsonArgumentParser::parse(int argc, const char *argv[])
       ss << "Could not open JSON file " << jsonFileName << "! Make sure it exists and is readable" << std::endl;
       throw vpException(vpException::ioError, ss.str());
     }
-    j = json::parse(jsonFile);
+    j = json::parse(jsonFile, nullptr, true, true);
     jsonFile.close();
   }
   // Parse command line arguments

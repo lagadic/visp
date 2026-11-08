@@ -1,5 +1,12 @@
+// Configuration of vpDetectorDNNOpenCV used by tutorial-dnn-object-detection-live to detect objects with a Faster-RCNN network (TensorFlow):
+//   ./tutorial-dnn-object-detection-live --input-json ./default_faster-rcnn.json
+// See "Tutorial: Deep learning object detection" to download the network files.
+// The paths to the model and configuration files must be changed to where you downloaded them.
 {
+    // Settings of the network (see vpDetectorDNNOpenCV::NetConfig). Any missing setting keeps its default value.
     "networkSettings": {
+        // Labels of the detection classes, in the order of the class indices returned by the network.
+        // Here, the 80 classes of the COCO dataset.
         "classNames": [
             "person",
             "bicycle",
@@ -82,23 +89,36 @@
             "hair drier",
             "toothbrush"
         ],
+        // Detections with a confidence below this threshold are ignored. Must be > 0.
         "confidenceThreshold": 0.3499999940395355,
+        // Path to the network configuration file. To be changed to the location of the file on your computer.
         "configurationFile": "/home/rlagneau/react_ws/dnns/Faster-RCNN/cfg/config.pbtxt",
+        // Size ratio r of the filter removing, for each class, the detections whose bounding box area is not in
+        // [mean_area * r ; mean_area / r]. A value <= 0 disables this filter.
         "filterSizeRatio": -0.25,
+        // Framework the model comes from. If empty, it is deduced from the extension of the model file.
         "framework": "",
+        // Mean value subtracted to each color channel of the image to normalize it.
         "mean": [
             0.0,
             0.0,
             0.0
         ],
+        // Path to the network weights. To be changed to the location of the file on your computer.
         "modelFile": "/home/rlagneau/react_ws/dnns/Faster-RCNN/weights/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb",
+        // Non-maximum suppression threshold. Must be > 0.
         "nmsThreshold": 0.5,
+        // Method used to parse the network output: "yolov3", "yolov4", "yolov5", "yolov7", "yolov8", "yolov11",
+        // "yolov12", "faster-rcnn", "ssd-mobilenet", "resnet-10" or "user-specified".
         "parsingType": "faster-rcnn",
+        // Size [width, height] in pixels of the image given as input to the network.
         "resolution": [
             300,
             300
         ],
+        // Factor applied to the pixel intensities. 1/255 rescales them in [0, 1].
         "scale": 1.0,
+        // Whether to swap the red and blue channels, e.g. when the model has been trained on BGR images.
         "swapRB": false
     }
 }

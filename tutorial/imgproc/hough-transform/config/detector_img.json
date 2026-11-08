@@ -1,32 +1,62 @@
+// Configuration of vpCircleHoughTransform used by tutorial-circle-hough on actual images, tuned for the
+// image coins2.jpg provided with the tutorial (it is also used for the video example):
+//   ./tutorial-circle-hough --input coins2.jpg --config config/detector_img.json
+// Any missing key keeps its default value.
 {
+  // Size of the averaging window around a vote maximum, used to refine the center as a barycenter. Must be odd.
   "averagingWindowSize": 5,
+  // Backend used to compute the Canny edge map: "opencv-backend" or "visp-backend".
   "cannyBackendType": "opencv-backend",
+  // Filter and gradient operators applied before edge detection: "gaussianblur+sobel-filtering" (Gaussian blur
+  // followed by Sobel operator) or "gaussianblur+scharr-filtering" (Gaussian blur followed by Scharr operator).
   "filteringAndGradientType": "gaussianblur+scharr-filtering",
+  // Lower Canny threshold. A negative value means it is computed automatically.
   "lowerCannyThresh": -1.0,
+  // When Canny thresholds are computed automatically: lower threshold = lowerThresholdRatio * upper threshold.
   "lowerThresholdRatio": 0.6,
+  // Upper Canny threshold. A negative value means it is computed automatically.
   "upperCannyThresh": -1.0,
+  // When Canny thresholds are computed automatically: ratio of pixels whose gradient is below the upper threshold.
   "upperThresholdRatio": 0.9,
+  // Two circle candidates whose centers are closer than this distance (in pixels) are considered for merging.
+  // Kept small since the coins can be close to each other.
   "centerMinDistance": 5.0,
+  // Minimum number of votes a point must exceed to be a center candidate.
   "centerThresh": 70.0,
+  // Maximum number of centers to keep. A negative value keeps all of them (the number of coins is unknown).
   "expectedNbCenters": -1,
+  // Range [min, max] of the horizontal position (in pixels) of the centers to detect. Large enough to cover images up to 1920 pixels wide.
   "centerXlimits": [
     0,
     1920
   ],
+  // Range [min, max] of the vertical position (in pixels) of the centers to detect. Large enough to cover images up to 1080 pixels high.
   "centerYlimits": [
     0,
     1080
   ],
+  // Minimum colinearity between the gradient of an edge point and the radius it forms with a center
+  // candidate for this point to vote. Equivalent angle: acos(circlePerfectnessThreshold). Must be in ]0; 1].
+  // Lower than for synthetic images to tolerate real, noisy edges.
   "circlePerfectnessThreshold": 0.65,
+  // Kernel size of the dilatation used to find the local maxima of the center votes.
   "dilatationKernelSize": 5,
-  "edgeMapFilteringNbIter" : 3,
+  // Number of 8-neighbor connectivity filtering iterations applied to the edge map, to remove isolated
+  // edge points caused by the texture of the coins and of the background.
+  "edgeMapFilteringNbIter": 3,
+  // Size of the Gaussian kernel used to smooth the input image. Must be odd.
   "gaussianKernelSize": 5,
+  // Standard deviation of the Gaussian kernel. Must be > 0.
   "gaussianStdev": 1.0,
+  // Maximum radius difference (in pixels) between two circle candidates to consider merging them.
   "mergingRadiusDiffThresh": 5.0,
+  // Range [min, max] of the radius (in pixels) of the circles to detect, matching the size of the coins.
   "radiusLimits": [
     34,
     75
   ],
+  // Minimum probability for a circle candidate to be kept.
   "circleProbabilityThreshold": 0.725,
+  // Size of the Sobel or Scharr kernel used to compute the gradients. Must be odd.
   "gradientFilterKernelSize": 3
 }

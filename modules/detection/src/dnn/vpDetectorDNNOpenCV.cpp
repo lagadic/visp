@@ -210,7 +210,7 @@ void vpDetectorDNNOpenCV::initFromJSON(const std::string &jsonPath)
   }
   json j;
   try {
-    j = json::parse(file);
+    j = json::parse(file, nullptr, true, true);
   }
   catch (json::parse_error &e) {
     std::stringstream msg;
