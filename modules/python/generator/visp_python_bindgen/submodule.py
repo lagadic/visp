@@ -62,7 +62,8 @@ class Submodule():
 
   def _get_headers(self) -> List[HeaderFile]:
     headers = []
-    for include_file in self.include_path.iterdir():
+    # Sort the headers: iterdir() order depends on the file system, which would make the generated sources non reproducible
+    for include_file in sorted(self.include_path.iterdir()):
       if not include_file.name.endswith('.h') and not include_file.name.endswith('.hpp'):
         continue
       if self.header_should_be_ignored(include_file.name):
@@ -150,8 +151,10 @@ class Submodule():
     declarations = module_bindings.get_declarations()
     user_defined_headers = '\n'.join(self.get_user_defined_headers())
 
-    includes_set = set(includes)
-    includes_strs = [f'#include {include}' for include in includes_set]
+    # Remove duplicates while keeping the order: iterating over a set depends on string hash randomization,
+    # which would make the generated sources non reproducible
+    unique_includes = list(dict.fromkeys(includes))
+    includes_strs = [f'#include {include}' for include in unique_includes]
     includes_str = '\n'.join(includes_strs)
     additional_required_headers = '\n'.join(self.get_required_headers())
 

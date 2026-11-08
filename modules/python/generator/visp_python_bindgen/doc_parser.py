@@ -295,7 +295,43 @@ if not import_failed:
         res += '\n' + indent_str + '* ' + item_content + '\n' + indent_str
       return level_string  + res + '\n'
 
-    return f'<unparsed {container.name} {container.value}>'
+    if container.name == 'orderedlist':
+      items: List[doxmlparser.docListItemType] = container.value.listitem
+      res = '\n'
+      process_fn = lambda item: process_paragraph(item, level + 1)
+      for item in items:
+        item_content = '\n'.join(map(process_fn, item.para))
+        item_content = re.sub('\n\n\n+', '\n\n', item_content)
+        res += '\n' + indent_str + '#. ' + item_content + '\n' + indent_str
+      return level_string  + res + '\n'
+
+    if container.name == 'xrefsect': # \deprecated, \todo, \bug, \test...
+      xref: doxmlparser.docXRefSectType = container.value
+      title = ' '.join(xref.xreftitle).strip() if xref.xreftitle else ''
+      paras = xref.xrefdescription.para if xref.xrefdescription is not None else []
+      item_content = '\n'.join(map(lambda p: process_paragraph(p, level + 1), paras))
+      item_content = re.sub('\n\n\n+', '\n\n', item_content)
+      directive = 'warning' if title.lower() == 'deprecated' else 'note'
+      prefix = f'{title}: ' if len(title) > 0 else ''
+      return level_string + '\n\n' + indent_str + f'.. {directive}:: ' + prefix + item_content + '\n' + indent_str + '\n'
+
+    if container.name == 'image':
+      # Images cannot be displayed in docstrings: only keep the caption, if any
+      caption = ''
+      for c in container.value.content_:
+        caption = process_mixed_container(c, level, caption, escape_rst=escape_rst)
+      caption = caption.strip()
+      if len(caption) == 0:
+        return level_string
+      return level_string + (' ' if requires_space else '') + caption
+
+    if container.name in ['htmlonly', 'latexonly', 'rtfonly', 'manonly', 'xmlonly', 'docbookonly']:
+      # Output format specific content, not relevant for Python docstrings
+      return level_string
+
+    # Do not print the parsed object itself: its representation contains a memory address,
+    # which would make the generated sources and stubs non reproducible
+    return level_string + (' ' if requires_space else '') + f'<unparsed {container.name}>'
 
 
   def process_paragraph(para: docParaType, level: int) -> str:
