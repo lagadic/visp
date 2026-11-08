@@ -39,7 +39,11 @@ The general principle to build the Python bindings is the following:
 - Get the latest source code and configure ViSP
 - When configuring ViSP, make sure that `BUILD_PYTHON_BINDINGS` is `ON`
 - To build the bindings, build the target `visp_python_bindings`
-- To build the documentation build the target `visp_python_bindings_docs`
+- To build the documentation build the target `visp_python_bindings_doc`
+
+By default, the bindings are installed with `pip` in the Python environment used to configure ViSP. If you rather want
+to install them with the CMake `install` target, for example to package ViSP, follow instructions given in
+\ref py_bindings_build_cmake_install section.
 
 To install the bindings, the prefered way is to install a virtual environment. You can either use *conda* (recommended)
 following instructions given in \ref py_bindings_build_conda or *virtualenv* following instructions given in
@@ -449,7 +453,95 @@ $ source ~/.zshrc
       (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release \
                                                             --target visp_python_bindings_test
 
-\subsection py_bindings_build_venv 2.2. Build Python bindings using Python virtualenv
+\subsection py_bindings_build_cmake_install 2.2. Install Python bindings with CMake (packaging)
+
+In the previous section, the Python bindings are installed with `pip` in the Python environment. This is convenient
+for development, since the bindings can be used without installing ViSP C++ libraries. However, the installed
+`_visp` module then keeps a reference to the build directory (runtime search path) and `pip` modifies the Python
+environment during the build. This is not suitable to package ViSP (Nix, conda-forge, Linux distributions...).
+
+Setting `INSTALL_PYTHON_BINDINGS=ON` allows to build the bindings with the `all` target and to install them with the
+CMake `install` target, without calling `pip`. The example below uses the conda environment of
+\ref py_bindings_build_conda, but this mode also works with a virtualenv (\ref py_bindings_build_venv) or with the
+system Python (\ref py_bindings_build_system):
+
+- The bindings are installed in `CMAKE_INSTALL_PREFIX/VISP_PYTHON_INSTALL_DIR`. By default `VISP_PYTHON_INSTALL_DIR`
+  is the `site-packages` folder of the Python interpreter, relative to its prefix (e.g.
+  `lib/python3.12/site-packages`). It can be overridden when configuring ViSP.
+- The runtime search path of the installed module is relative to its location (`@loader_path` on macOS, `$ORIGIN`
+  on Linux) and points to `CMAKE_INSTALL_PREFIX/lib`. The installation is relocatable and has no reference to the
+  build directory.
+- The Python stubs are generated from the build tree and installed next to the bindings.
+
+Since `pip` is not called, the dependencies of the bindings generator and of the stubs generator have to be installed
+in the Python environment before building:
+
+\code{.sh}
+(visp-conda-ws) $ pip install tqdm pcpp "cxxheaderparser==1.5.*" lxml "doxmlparser==1.14.*" mypy
+\endcode
+
+\note If `mypy` is not found, a warning is displayed when configuring ViSP and the stubs are neither generated nor
+installed. To disable the stubs, set `GENERATE_PYTHON_STUBS=OFF`.
+
+Then configure ViSP with `INSTALL_PYTHON_BINDINGS=ON`, build and install. Here we install ViSP in the conda
+environment, so that the bindings are installed in its `site-packages` folder:
+
+\code{.sh}
+(visp-conda-ws) $ cd $VISP_WS/visp-build-bindings
+(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                                -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                                -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                                -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                                -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                                -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                                -DPython3_FIND_STRATEGY=LOCATION \
+                                -DPython3_FIND_REGISTRY=NEVER \
+                                -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python \
+                                -DINSTALL_PYTHON_BINDINGS=ON
+(visp-conda-ws) $ make -j$(nproc)
+(visp-conda-ws) $ make install
+\endcode
+
+In `ViSP-third-party.txt` file you should see something like:
+
+    $ cat ViSP-third-party.txt
+    ...
+      Python3 bindings:              yes
+        ...
+        Install with CMake:          yes (/home/user/miniforge3/envs/visp-conda-ws/lib/python3.12/site-packages)
+
+To check that the installed module has no reference to the build directory, get the folder where the bindings are
+installed:
+
+\code{.sh}
+(visp-conda-ws) $ VISP_PY_DIR=$(python -c "import sysconfig; print(sysconfig.get_path('platlib'))")/visp
+\endcode
+
+and run on macOS:
+
+\code{.sh}
+(visp-conda-ws) $ otool -l $VISP_PY_DIR/_visp.cpython-*-darwin.so | grep -A2 LC_RPATH
+\endcode
+
+or on Linux:
+
+\code{.sh}
+(visp-conda-ws) $ readelf -d $VISP_PY_DIR/_visp.cpython-*-linux-gnu.so | grep -i -E "rpath|runpath"
+\endcode
+
+Compared to the installation with `pip`, keep in mind that:
+
+- ViSP C++ libraries have to be installed in the same prefix, since the module looks for them in
+  `CMAKE_INSTALL_PREFIX/lib`. This is why the whole project has to be installed, not only the bindings.
+- `CMAKE_INSTALL_PREFIX` should be the prefix of the Python environment. Otherwise the bindings are installed in a
+  folder that is not in the Python search path, and `PYTHONPATH` has to be set accordingly.
+- No package metadata is installed: `pip list` and `pip uninstall` do not know about the bindings, and the Python
+  applications provided with the bindings (e.g. `visp-python-apriltag-detection`) are not installed as commands.
+  To uninstall the bindings, use `make uninstall`.
+- When ViSP is configured with a Python interpreter that is neither in a virtual environment nor in a conda
+  environment (e.g. when packaging), `ALLOW_SYSTEM_PYTHON=ON` is required, see \ref py_bindings_build_system.
+
+\subsection py_bindings_build_venv 2.3. Build Python bindings using Python virtualenv
 
 In this section, we explain how to build the bindings with virtualenv
 
@@ -619,7 +711,7 @@ Now configure ViSP with cmake
   </div>
   <div data-tab="linux" class="tab-content" style="display:block;">
     <pre class="fragment">
-$ cmake ../visp
+(venv) $ cmake ../visp
     </pre>
     If pybind11 is not found, you can try and add the following option to cmake:
     <pre class="fragment">
@@ -629,7 +721,7 @@ $ cmake ../visp -Dpybind11_DIR=$VISP_WS/venv/share/cmake/pybind11
   <div data-tab="windows" class="tab-content" style="display:none;">
     The ViSP module DLLs (the C++ part of the project), should be installed in your virtualenv.
     <pre class="fragment">
-C:\> cmake -G "Visual Studio 17 2022" -A "x64" ../visp -DCMAKE_PREFIX_PATH=%VIRTUAL_ENV% ^
+(venv) C:\> cmake -G "Visual Studio 17 2022" -A "x64" ../visp -DCMAKE_PREFIX_PATH=%VIRTUAL_ENV% ^
                                                         -DCMAKE_INSTALL_PREFIX=%VIRTUAL_ENV%\Library ^
                                                         -DVISP_LIB_INSTALL_PATH="lib" ^
                                                         -DVISP_BIN_INSTALL_PATH="bin" ^
@@ -638,11 +730,11 @@ C:\> cmake -G "Visual Studio 17 2022" -A "x64" ../visp -DCMAKE_PREFIX_PATH=%VIRT
   </div>
   <div data-tab="macos" class="tab-content" style="display:none;">
     <pre class="fragment">
-% cmake ../visp
+(venv) % cmake ../visp
     </pre>
     If pybind11 is not found, you can try and add the following option to cmake:
     <pre class="fragment">
-% cmake ../visp -Dpybind11_DIR=$VISP_WS/venv/share/cmake/pybind11
+(venv) % cmake ../visp -Dpybind11_DIR=$VISP_WS/venv/share/cmake/pybind11
     </pre>
   </div>
 </div>
@@ -748,7 +840,7 @@ The ViSP source code also contains examples
       (venv) % python ibvs-four-points.py
       (venv) % python pbvs-four-points.py
 
-\subsection py_bindings_build_system 2.3. Build Python bindings using Python from system
+\subsection py_bindings_build_system 2.4. Build Python bindings using Python from system
 
 In this section we give the instructions to build ViSP python bindings on **Ubuntu 22.04** without creating a virtual
 environment.
@@ -1696,6 +1788,36 @@ to run and is killed by the stub generator.
 \code{.sh}
 (visp-conda-ws) $ cmake --build . --config Release --target visp_python_bindings --parallel 8
 \endcode
+
+\subsubsection py_bindings_known_errors_stubs_import 6.5.2. RuntimeError: No stubs were generated for visp._visp
+
+When generating the Python stubs, you may encounter this error:
+\code{.sh}
+[100%] Generating Python stubs...
+visp._visp: Failed to import, skipping
+visp.python: Failed to import, skipping
+Running stubs generator
+Traceback (most recent call last):
+  ...
+RuntimeError: No stubs were generated for visp._visp in .../modules/python/stubs/gen/visp/_visp: the module could not be imported (see the stubgen output above). Check that "import visp" works with the same interpreter and PYTHONPATH.
+\endcode
+
+It means that the stubs generator (`stubgen` from `mypy`) could not import the bindings. To get the reason, try
+to import the bindings from the build tree with the same Python interpreter:
+
+\code{.sh}
+(visp-conda-ws) $ cd /tmp
+(visp-conda-ws) $ PYTHONPATH=$VISP_WS/visp-build-bindings/modules/python/bindings python -c "import visp"
+\endcode
+
+A frequent cause is a third-party library that is found twice, for example in the conda environment and in another
+location like Homebrew on macOS. If two OpenMP runtimes are loaded, the import fails with:
+
+    OMP: Error #15: Initializing libomp.dylib, but found libomp.dylib already initialized.
+
+In that case, make sure that all the third-party libraries are found in the same location, for example by
+configuring ViSP with `-DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY
+-DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY` in a fresh build directory.
 
 \subsection py_bindings_known_errors_import 6.6. When importing ViSP In Python
 
