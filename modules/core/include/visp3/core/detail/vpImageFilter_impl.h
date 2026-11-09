@@ -1880,12 +1880,13 @@ void getGradX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const Filte
 }
 
 template <typename ImageType, typename FilterType>
-void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *gaussianKernel,
-                            const FilterType *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask)
+void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const vpArray2D<FilterType> &gaussianKernel,
+                            const vpArray2D<FilterType> &gaussianDerivativeKernel, const vpImage<bool> *p_mask)
 {
   vpImage<FilterType> GIy;
-  filterY<ImageType, FilterType>(I, GIy, gaussianKernel, size, p_mask);
-  getGradX<FilterType, FilterType>(GIy, dIx, gaussianDerivativeKernel, size, p_mask);
+  const unsigned int size = (gaussianKernel.getCols() * 2) - 1;
+  filterY<ImageType, FilterType>(I, GIy, gaussianKernel.data, size, p_mask);
+  getGradX<FilterType, FilterType>(GIy, dIx, gaussianDerivativeKernel.data, size, p_mask);
 }
 
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
@@ -2008,12 +2009,13 @@ void getGradY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const Filte
 }
 
 template <typename ImageType, typename FilterType>
-void getGradYGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *gaussianKernel,
-                            const FilterType *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask)
+void getGradYGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const vpArray2D<FilterType> &gaussianKernel,
+                            const vpArray2D<FilterType> &gaussianDerivativeKernel, const vpImage<bool> *p_mask)
 {
   vpImage<FilterType> GIx;
-  filterX<ImageType, FilterType>(I, GIx, gaussianKernel, size, p_mask);
-  getGradY<FilterType, FilterType>(GIx, dIy, gaussianDerivativeKernel, size, p_mask);
+  const unsigned int size = (gaussianKernel.getCols() * 2) - 1;
+  filterX<ImageType, FilterType>(I, GIx, gaussianKernel.data, size, p_mask);
+  getGradY<FilterType, FilterType>(GIx, dIy, gaussianDerivativeKernel.data, size, p_mask);
 }
 
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher

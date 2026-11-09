@@ -133,6 +133,46 @@ VP_DEPRECATED void getGaussianDerivativeKernel(FilterType *filter, unsigned int 
 }
 
 /*!
+* Compute the gradient along X after applying a gaussian filter along Y.
+* \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+* \param I : Input image
+* \param dIx : Gradient along X.
+* \param gaussianKernel : Gaussian kernel which values should be computed using vpImageFilter::getGaussianKernel().
+* \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
+* vpImageFilter::getGaussianDerivativeKernel().
+* \param size : Size of the Gaussian and Gaussian derivative kernels.
+* \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
+*/
+template <typename ImageType, typename FilterType>
+VP_DEPRECATED void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *gaussianKernel,
+                            const FilterType *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask = nullptr)
+{
+  vpImage<FilterType> GIy;
+  vpImageFilter::filterY<ImageType, FilterType>(I, GIy, gaussianKernel, size, p_mask);
+  vpImageFilter::getGradX<FilterType, FilterType>(GIy, dIx, gaussianDerivativeKernel, size, p_mask);
+}
+
+/*!
+* Compute the gradient along Y after applying a gaussian filter along X.
+* \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+* \param I : Input image
+* \param dIy : Gradient along Y.
+* \param gaussianKernel : Gaussian kernel which values should be computed  using vpImageFilter::getGaussianKernel().
+* \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
+* vpImageFilter::getGaussianDerivativeKernel().
+* \param size : Size of the Gaussian and Gaussian derivative kernels.
+* \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
+*/
+template <typename ImageType, typename FilterType>
+VP_DEPRECATED void getGradYGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *gaussianKernel,
+                            const FilterType *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask = nullptr)
+{
+  vpImage<FilterType> GIx;
+  vpImageFilter::filterX<ImageType, FilterType>(I, GIx, gaussianKernel, size, p_mask);
+  vpImageFilter::getGradY<FilterType, FilterType>(GIx, dIy, gaussianDerivativeKernel, size, p_mask);
+}
+
+/*!
   Get Scharr kernel for Y-direction.
   \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
   \param filter : Pointer to a double array already allocated.

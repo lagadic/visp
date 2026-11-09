@@ -112,8 +112,8 @@ void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
   computeMI(MI);
   computeHessien(HdesireInverse);
 
-  vpImageFilter::getGradXGauss2D(I, dIx, fgG.data, fgdG.data, taillef);
-  vpImageFilter::getGradYGauss2D(I, dIy, fgG.data, fgdG.data, taillef);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
   if (ApproxHessian != HESSIAN_NONSECOND && ApproxHessian != HESSIAN_0 && ApproxHessian != HESSIAN_NEW &&
       ApproxHessian != HESSIAN_YOUCEF) {
     vpImageFilter::getGradX(dIx, d2Ix, fgdG.data, taillef);
@@ -226,8 +226,8 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
 
   if (blur)
     vpImageFilter::filter(I, BI, fgG, taillef);
-  vpImageFilter::getGradXGauss2D(I, dIx, fgG.data, fgdG.data, taillef);
-  vpImageFilter::getGradYGauss2D(I, dIy, fgG.data, fgdG.data, taillef);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 
   int point;
 

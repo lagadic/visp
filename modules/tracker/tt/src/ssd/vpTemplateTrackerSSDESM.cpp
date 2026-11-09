@@ -92,8 +92,8 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
 {
   if (blur)
     vpImageFilter::filter(I, BI, fgG, taillef);
-  vpImageFilter::getGradXGauss2D(I, dIx, fgG.data, fgdG.data, taillef);
-  vpImageFilter::getGradYGauss2D(I, dIy, fgG.data, fgdG.data, taillef);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 
   double IW, dIWx, dIWy;
   double Tij;

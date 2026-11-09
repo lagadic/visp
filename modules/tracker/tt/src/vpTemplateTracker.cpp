@@ -97,8 +97,8 @@ void vpTemplateTracker::initTracking(const vpImage<unsigned char> &I, vpTemplate
   vpTemplateTrackerPoint pt;
   vpImage<double> GaussI;
   vpImageFilter::filter(I, GaussI, fgG, taillef);
-  vpImageFilter::getGradXGauss2D(I, dIx, fgG.data, fgdG.data, taillef);
-  vpImageFilter::getGradYGauss2D(I, dIy, fgG.data, fgdG.data, taillef);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 
   unsigned int cpt_point = 0;
   templateSelectSize = 0;

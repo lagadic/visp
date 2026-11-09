@@ -90,8 +90,8 @@ void vpTemplateTrackerMIInverseCompositional::initCompInverse(const vpImage<unsi
 {
   ptTemplateSupp = new vpTemplateTrackerPointSuppMIInv[templateSize];
 
-  vpImageFilter::getGradXGauss2D(I, dIx, fgG.data, fgdG.data, taillef);
-  vpImageFilter::getGradYGauss2D(I, dIy, fgG.data, fgdG.data, taillef);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 
   if (ApproxHessian != HESSIAN_NONSECOND && ApproxHessian != HESSIAN_0 && ApproxHessian != HESSIAN_NEW &&
       ApproxHessian != HESSIAN_YOUCEF) {

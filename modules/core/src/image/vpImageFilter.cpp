@@ -354,6 +354,38 @@ void getGaussianDerivativeKernel<float>(float *filter, unsigned int size, float 
 
 template
 void getGaussianDerivativeKernel<double>(double *filter, unsigned int size, double sigma, bool normalize);
+
+template
+void getGradXGauss2D<unsigned char, float>(const vpImage<unsigned char> &I, vpImage<float> &dIx, const float *gaussianKernel,
+                                                          const float *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask);
+
+template
+void getGradXGauss2D<unsigned char, double>(const vpImage<unsigned char> &I, vpImage<double> &dIx, const double *gaussianKernel,
+                                                           const double *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask);
+
+template
+void getGradXGauss2D<float, float>(const vpImage<float> &I, vpImage<float> &dIx, const float *gaussianKernel,
+                                                  const float *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask);
+
+template
+void getGradXGauss2D<double, double>(const vpImage<double> &I, vpImage<double> &dIx, const double *gaussianKernel,
+                                                    const double *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask);
+
+template
+void getGradYGauss2D<unsigned char, float>(const vpImage<unsigned char> &I, vpImage<float> &dIy, const float *gaussianKernel,
+                                                          const float *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask);
+
+template
+void getGradYGauss2D<unsigned char, double>(const vpImage<unsigned char> &I, vpImage<double> &dIy, const double *gaussianKernel,
+                                                           const double *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask);
+
+template
+void getGradYGauss2D<float, float>(const vpImage<float> &I, vpImage<float> &dIy, const float *gaussianKernel,
+                                                  const float *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask);
+
+template
+void getGradYGauss2D<double, double>(const vpImage<double> &I, vpImage<double> &dIy, const double *gaussianKernel,
+                                                    const double *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask);
 #endif
 
 template
@@ -392,37 +424,6 @@ void getGradY<float, float>(const vpImage<float> &I, vpImage<float> &dIy, const 
 template
 void getGradY<double, double>(const vpImage<double> &I, vpImage<double> &dIy, const double *filter, unsigned int size, const vpImage<bool> *p_mask);
 
-template
-void getGradXGauss2D<unsigned char, float>(const vpImage<unsigned char> &I, vpImage<float> &dIx, const float *gaussianKernel,
-                                                          const float *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask);
-
-template
-void getGradXGauss2D<unsigned char, double>(const vpImage<unsigned char> &I, vpImage<double> &dIx, const double *gaussianKernel,
-                                                           const double *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask);
-
-template
-void getGradXGauss2D<float, float>(const vpImage<float> &I, vpImage<float> &dIx, const float *gaussianKernel,
-                                                  const float *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask);
-
-template
-void getGradXGauss2D<double, double>(const vpImage<double> &I, vpImage<double> &dIx, const double *gaussianKernel,
-                                                    const double *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask);
-
-template
-void getGradYGauss2D<unsigned char, float>(const vpImage<unsigned char> &I, vpImage<float> &dIy, const float *gaussianKernel,
-                                                          const float *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask);
-
-template
-void getGradYGauss2D<unsigned char, double>(const vpImage<unsigned char> &I, vpImage<double> &dIy, const double *gaussianKernel,
-                                                           const double *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask);
-
-template
-void getGradYGauss2D<float, float>(const vpImage<float> &I, vpImage<float> &dIy, const float *gaussianKernel,
-                                                  const float *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask);
-
-template
-void getGradYGauss2D<double, double>(const vpImage<double> &I, vpImage<double> &dIy, const double *gaussianKernel,
-                                                    const double *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask);
 /**
  * \endcond
  */

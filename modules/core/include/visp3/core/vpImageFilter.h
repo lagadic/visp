@@ -1048,12 +1048,11 @@ void getGradX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const Filte
 * \param gaussianKernel : Gaussian kernel which values should be computed using getGaussianKernel().
 * \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
 * getGaussianDerivativeKernel().
-* \param size : Size of the Gaussian and Gaussian derivative kernels.
 * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
 */
 template <typename ImageType, typename FilterType>
-void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *gaussianKernel,
-                            const FilterType *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask = nullptr);
+void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const vpArray2D<FilterType> &gaussianKernel,
+                            const vpArray2D<FilterType> &gaussianDerivativeKernel, const vpImage<bool> *p_mask = nullptr);
 
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
 /**
@@ -1087,12 +1086,11 @@ void getGradY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const Filte
 * \param gaussianKernel : Gaussian kernel which values should be computed  using getGaussianKernel().
 * \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
 * getGaussianDerivativeKernel().
-* \param size : Size of the Gaussian and Gaussian derivative kernels.
 * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
 */
 template <typename ImageType, typename FilterType>
-void getGradYGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *gaussianKernel,
-                            const FilterType *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask = nullptr);
+void getGradYGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const vpArray2D<FilterType> &gaussianKernel,
+                            const vpArray2D<FilterType> &gaussianDerivativeKernel, const vpImage<bool> *p_mask = nullptr);
 
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   /**
