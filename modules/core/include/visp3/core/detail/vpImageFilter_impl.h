@@ -395,7 +395,9 @@ typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type gradi
   }
 
   if (static_cast<int>(nbRows) < (4 * nbThread)) {
+    // Not enough rows to split the image between the threads
     gradientFilterXMonothread(I, GI, filter, p_mask);
+    return;
   }
 
   int iam, nt, irows, rstart, istart, istop;
@@ -498,7 +500,9 @@ typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type gradi
   }
 
   if (static_cast<int>(nbRows) < (4 * nbThread)) {
-    gradientFilterXMonothread(I, GI, filter, p_mask);
+    // Not enough rows to split the image between the threads
+    gradientFilterYMonothread(I, GI, filter, p_mask);
+    return;
   }
 
   int iam, nt, irows, rstart, istart, istop;
