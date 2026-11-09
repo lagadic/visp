@@ -1693,13 +1693,12 @@ gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int 
     throw vpException(vpException::dimensionError, oss.str());
   }
 
-  FilterType *fg = new FilterType[(size + 1) / 2];
+  vpArray2D<FilterType>fg(1, (size + 1) / 2);
   getGaussianKernel<FilterType>(fg, size, sigma, normalize);
   vpImage<OutputType> GIx;
-  filterX<ImageType, OutputType>(I, GIx, fg, size, p_mask);
-  filterY<OutputType, OutputType>(GIx, GI, fg, size, p_mask);
+  filterX<ImageType, OutputType>(I, GIx, fg.data, size, p_mask);
+  filterY<OutputType, OutputType>(GIx, GI, fg.data, size, p_mask);
   GIx.destroy();
-  delete[] fg;
 }
 #else
 template <typename ImageType, typename OutputType>
@@ -1722,23 +1721,24 @@ gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int 
     throw vpException(vpException::dimensionError, oss.str());
   }
 
-  FilterType *fg = new FilterType[(size + 1) / 2];
+  vpArray2D<FilterType>fg(1, (size + 1) / 2);
   getGaussianKernel<FilterType>(fg, size, sigma, normalize);
   vpImage<OutputType> GIx;
-  filterX<ImageType, OutputType>(I, GIx, fg, size, p_mask);
-  filterY<OutputType, OutputType>(GIx, GI, fg, size, p_mask);
+  filterX<ImageType, OutputType>(I, GIx, fg.data, size, p_mask);
+  filterY<OutputType, OutputType>(GIx, GI, fg.data, size, p_mask);
   GIx.destroy();
-  delete[] fg;
 }
 #endif
 
 template<typename FilterType>
-void getGaussianKernel(FilterType *filter, unsigned int size, FilterType sigma, bool normalize)
+void getGaussianKernel(vpArray2D<FilterType> &filter, unsigned int size, FilterType sigma, bool normalize)
 {
   const unsigned int mod2 = 2;
   if ((size % mod2) != 1) {
     throw(vpImageException(vpImageException::incorrectInitializationError, "Bad Gaussian filter size"));
   }
+
+  filter.resize(1, (size+1)/2);
 
   if (sigma <= 0) {
     sigma = static_cast<FilterType>((size - 1) / 6.0);
@@ -1751,28 +1751,30 @@ void getGaussianKernel(FilterType *filter, unsigned int size, FilterType sigma, 
   FilterType v_2_sigma2 = static_cast<FilterType>(2. * static_cast<double>(sigma2));
 
   for (unsigned int i = 0; i <= middle; ++i) {
-    filter[i] = coef1 * static_cast<FilterType>(exp(static_cast<double>(-(double)(i * i) / v_2_sigma2)));
+    filter.data[i] = coef1 * static_cast<FilterType>(exp(static_cast<double>(-(double)(i * i) / v_2_sigma2)));
   }
 
   if (normalize) {
     // renormalization
-    FilterType sum = filter[0];
+    FilterType sum = filter.data[0];
     for (unsigned int i = 1; i <= middle; ++i) {
-      sum += static_cast<FilterType>(2) * filter[i];
+      sum += static_cast<FilterType>(2) * filter.data[i];
     }
     for (unsigned int i = 0; i <= middle; ++i) {
-      filter[i] = filter[i] / sum;
+      filter.data[i] = filter.data[i] / sum;
     }
   }
 }
 
 template <typename FilterType>
-void getGaussianDerivativeKernel(FilterType *filter, unsigned int size, FilterType sigma, bool normalize)
+void getGaussianDerivativeKernel(vpArray2D<FilterType> &filter, unsigned int size, FilterType sigma, bool normalize)
 {
   const unsigned int mod2 = 2;
   if ((size % mod2) != 1) {
     throw(vpImageException(vpImageException::incorrectInitializationError, "Bad Gaussian filter size"));
   }
+
+  filter.resize(1, (size+1)/2);
 
   if (sigma <= 0) {
     sigma = static_cast<FilterType>((size - 1) / 6.0);
@@ -1786,11 +1788,11 @@ void getGaussianDerivativeKernel(FilterType *filter, unsigned int size, FilterTy
   FilterType v_2_coef_1 = static_cast<FilterType>(2.) * coef_1;
   FilterType v_2_sigma2 = static_cast<FilterType>(2.) * sigma2;
 
-  filter[0] = 0.;
+  filter.data[0] = 0.;
   for (unsigned int i = 1; i <= middle; ++i) {
     FilterType i_plus_1 = static_cast<FilterType>(i + 1);
     FilterType i_minus_1 = static_cast<FilterType>(i - 1);
-    filter[i] = -coef_1_over_2 * (static_cast<FilterType>(exp(-(double)(i_plus_1 * i_plus_1) / v_2_sigma2)) -
+    filter.data[i] = -coef_1_over_2 * (static_cast<FilterType>(exp(-(double)(i_plus_1 * i_plus_1) / v_2_sigma2)) -
                                   static_cast<FilterType>(exp(-(double)(i_minus_1 * i_minus_1) / v_2_sigma2)));
   }
 
@@ -1803,7 +1805,7 @@ void getGaussianDerivativeKernel(FilterType *filter, unsigned int size, FilterTy
     sum += coef_1;
 
     for (unsigned int i = 1; i <= middle; ++i) {
-      filter[i] = filter[i] / sum;
+      filter.data[i] = filter.data[i] / sum;
     }
   }
 }

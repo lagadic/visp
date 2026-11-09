@@ -135,7 +135,7 @@ vpCircleHoughTransform::initGaussianFilters()
 {
   const int filterHalfSize = (m_algoParams.m_gaussianKernelSize + 1) / 2;
   m_fg.resize(1, static_cast<unsigned int>(filterHalfSize));
-  vpImageFilter::getGaussianKernel(m_fg.data, static_cast<unsigned int>(m_algoParams.m_gaussianKernelSize), m_algoParams.m_gaussianStdev, true);
+  vpImageFilter::getGaussianKernel(m_fg, static_cast<unsigned int>(m_algoParams.m_gaussianKernelSize), m_algoParams.m_gaussianStdev, true);
   m_cannyVisp.setGaussianFilterParameters(m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev);
 }
 

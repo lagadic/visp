@@ -39,7 +39,7 @@
 BEGIN_VISP_NAMESPACE
 vpTemplateTrackerMIForwardCompositional::vpTemplateTrackerMIForwardCompositional(vpTemplateTrackerWarp *_warp)
   : vpTemplateTrackerMI(_warp), CompoInitialised(false)
-{ }
+{}
 
 void vpTemplateTrackerMIForwardCompositional::initCompo()
 {
@@ -75,8 +75,8 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(const vpImage<u
 
   if (blur)
     vpImageFilter::filter(I, BI, fgG, taillef);
-  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
-  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG.data, fgdG.data, taillef);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG.data, fgdG.data, taillef);
 
   int Nbpoint = 0;
 
@@ -148,8 +148,8 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
   if (blur) {
     vpImageFilter::filter(I, BI, fgG, taillef);
   }
-  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
-  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG.data, fgdG.data, taillef);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG.data, fgdG.data, taillef);
 
   lambda = lambdaDep;
   double MI = 0, MIprec = -1000;

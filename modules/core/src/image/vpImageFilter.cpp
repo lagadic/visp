@@ -333,19 +333,19 @@ void gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int si
     throw vpException(vpException::dimensionError, oss.str());
   }
 
-  double *fg = new double[(size + 1) / 2];
+  vpArray2D<double> fg(1, (size + 1) / 2);
   getGaussianKernel(fg, size, sigma, normalize);
   vpImage<vpRGBa> GIx;
   filterX(I, GIx, fg, size, p_mask);
   filterY(GIx, GI, fg, size, p_mask);
   GIx.destroy();
-  delete[] fg;
 }
 #endif
 
 /**
  * \cond DO_NOT_DOCUMENT
  */
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 template
 void getGaussianKernel<float>(float *filter, unsigned int size, float sigma, bool normalize);
 
@@ -354,6 +354,7 @@ void getGaussianDerivativeKernel<float>(float *filter, unsigned int size, float 
 
 template
 void getGaussianDerivativeKernel<double>(double *filter, unsigned int size, double sigma, bool normalize);
+#endif
 
 template
 void getGradX<float>(const vpImage<unsigned char> &I, vpImage<float> &dIx, const vpImage<bool> *p_mask);

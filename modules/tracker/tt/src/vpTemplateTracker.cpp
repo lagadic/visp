@@ -42,7 +42,7 @@ vpTemplateTracker::vpTemplateTracker(vpTemplateTrackerWarp *_warp)
   ptTemplateSuppPyr(nullptr), ptTemplateCompo(nullptr), ptTemplateCompoPyr(nullptr), zoneTracked(nullptr), zoneTrackedPyr(nullptr),
   pyr_IDes(nullptr), H(), Hdesire(), HdesirePyr(), HLM(), HLMdesire(), HLMdesirePyr(), HLMdesireInverse(),
   HLMdesireInversePyr(), G(), gain(1.), thresholdGradient(40), costFunctionVerification(false), blur(true),
-  useBrent(false), nbIterBrent(3), taillef(7), fgG(nullptr), fgdG(nullptr), ratioPixelIn(0), mod_i(1), mod_j(1), nbParam(0),
+  useBrent(false), nbIterBrent(3), taillef(7), fgG(1, (taillef + 1) / 2), fgdG(1, (taillef + 1) / 2), ratioPixelIn(0), mod_i(1), mod_j(1), nbParam(0),
   lambdaDep(0.001), iterationMax(30), iterationGlobale(0), diverge(false), nbIteration(0), useCompositionnal(true),
   useInverse(false), Warp(_warp), p(0), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(), zoneRef_()
 {
@@ -50,24 +50,18 @@ vpTemplateTracker::vpTemplateTracker(vpTemplateTrackerWarp *_warp)
   p.resize(nbParam);
   dp.resize(nbParam);
 
-  fgG = new double[(taillef + 1) / 2];
   vpImageFilter::getGaussianKernel(fgG, taillef);
 
-  fgdG = new double[(taillef + 1) / 2];
   vpImageFilter::getGaussianDerivativeKernel(fgdG, taillef);
 }
 
 void vpTemplateTracker::setGaussianFilterSize(unsigned int new_taill)
 {
   taillef = new_taill;
-  if (fgG)
-    delete[] fgG;
-  fgG = new double[taillef];
+  fgG.resize(1, (taillef + 1) / 2);
   vpImageFilter::getGaussianKernel(fgG, taillef);
 
-  if (fgdG)
-    delete[] fgdG;
-  fgdG = new double[taillef];
+  fgdG.resize(1, (taillef + 1) / 2);
   vpImageFilter::getGaussianDerivativeKernel(fgdG, taillef);
 }
 
@@ -103,8 +97,8 @@ void vpTemplateTracker::initTracking(const vpImage<unsigned char> &I, vpTemplate
   vpTemplateTrackerPoint pt;
   vpImage<double> GaussI;
   vpImageFilter::filter(I, GaussI, fgG, taillef);
-  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
-  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG.data, fgdG.data, taillef);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG.data, fgdG.data, taillef);
 
   unsigned int cpt_point = 0;
   templateSelectSize = 0;
@@ -138,9 +132,6 @@ void vpTemplateTracker::initTracking(const vpImage<unsigned char> &I, vpTemplate
 
 vpTemplateTracker::~vpTemplateTracker()
 {
-  delete[] fgG;
-  delete[] fgdG;
-
   resetTracker();
 }
 

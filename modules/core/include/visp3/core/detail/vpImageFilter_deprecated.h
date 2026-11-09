@@ -88,7 +88,51 @@ BEGIN_VISP_NAMESPACE
 */
 namespace vpImageFilter
 {
-  /*!
+/*!
+* Return the coefficients \f$G_i\f$ of a Gaussian filter.
+* \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+* \param[out] filter : Pointer to the half size filter kernel that should refer to a
+* (size+1)/2 array. The first value refers to the central coefficient, the
+* next one to the right coefficients. Left coefficients could be deduced by
+* symmetry.
+* \param[in] size : Filter size. This value should be odd and positive.
+* \param[in] sigma : Gaussian standard deviation \f$ \sigma \f$. If it is equal to zero or negative, it is
+* computed from filter size as sigma = (size-1)/6.
+* \param[in] normalize : Flag indicating whether to normalize the filter coefficients or not. In that case
+* \f$\Sigma G_i = 1 \f$.
+*
+* The function computes the \e (size+1)/2 values of the Gaussian filter coefficients \f$ G_i \f$ as:
+* \f[ G_i = \frac{1}{\sigma  \sqrt{2 \pi}} \exp{(-i^2 / (2. * \sigma^2))}\f]
+*/
+template<typename FilterType>
+VP_DEPRECATED void getGaussianKernel(FilterType *filter, unsigned int size, FilterType sigma = 0., bool normalize = true)
+{
+  vpArray2D<FilterType> filter_as_array = vpArray2D<FilterType>::view(filter, 1, (size+1)/2);
+  getGaussianKernel(filter_as_array, size, sigma, normalize);
+}
+
+/*!
+* Return the coefficients of a Gaussian derivative filter that may be used to
+* compute spatial image derivatives after applying a Gaussian blur.
+*
+* \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+* \param filter : Pointer to the filter kernel that should refer to a
+* (size+1)/2 array. The first value refers to the central coefficient, the
+* next one to the right coefficients. Left coefficients could be deduced by
+* symmetry.
+* \param size : Filter size. This value should be odd.
+* \param sigma : Gaussian standard deviation. If it is equal to zero or negative, it is
+* computed from filter size as sigma = (size-1)/6.
+* \param normalize : Flag indicating whether to normalize the filter coefficients or not.
+*/
+template <typename FilterType>
+VP_DEPRECATED void getGaussianDerivativeKernel(FilterType *filter, unsigned int size, FilterType sigma = 0., bool normalize = true)
+{
+  vpArray2D<FilterType> filter_as_array = vpArray2D<FilterType>::view(filter, 1, (size+1)/2);
+  getGaussianDerivativeKernel(filter_as_array, size, sigma, normalize);
+}
+
+/*!
   Get Scharr kernel for Y-direction.
   \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
   \param filter : Pointer to a double array already allocated.

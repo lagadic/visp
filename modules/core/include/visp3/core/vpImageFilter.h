@@ -1000,8 +1000,8 @@ VISP_EXPORT void getGaussYPyramidal(const vpImage<unsigned char> &I, vpImage<uns
 /*!
 * Return the coefficients \f$G_i\f$ of a Gaussian filter.
 * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-* \param[out] filter : Pointer to the half size filter kernel that should refer to a
-* (size+1)/2 array. The first value refers to the central coefficient, the
+* \param[out] filter : vpArray2D that will be resize to match half size filter kernel, i.e. it will be a
+* (1, (size+1)/2) array. The first value refers to the central coefficient, the
 * next one to the right coefficients. Left coefficients could be deduced by
 * symmetry.
 * \param[in] size : Filter size. This value should be odd and positive.
@@ -1014,15 +1014,15 @@ VISP_EXPORT void getGaussYPyramidal(const vpImage<unsigned char> &I, vpImage<uns
 * \f[ G_i = \frac{1}{\sigma  \sqrt{2 \pi}} \exp{(-i^2 / (2. * \sigma^2))}\f]
 */
 template<typename FilterType>
-void getGaussianKernel(FilterType *filter, unsigned int size, FilterType sigma = 0., bool normalize = true);
+void getGaussianKernel(vpArray2D<FilterType> &filter, unsigned int size, FilterType sigma = 0., bool normalize = true);
 
 /*!
 * Return the coefficients of a Gaussian derivative filter that may be used to
 * compute spatial image derivatives after applying a Gaussian blur.
 *
 * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-* \param filter : Pointer to the filter kernel that should refer to a
-* (size+1)/2 array. The first value refers to the central coefficient, the
+* \param filter :vpArray2D that will be resize to match half size filter kernel, i.e. it will be a
+* (1, (size+1)/2) array. The first value refers to the central coefficient, the
 * next one to the right coefficients. Left coefficients could be deduced by
 * symmetry.
 * \param size : Filter size. This value should be odd.
@@ -1031,7 +1031,7 @@ void getGaussianKernel(FilterType *filter, unsigned int size, FilterType sigma =
 * \param normalize : Flag indicating whether to normalize the filter coefficients or not.
 */
 template <typename FilterType>
-void getGaussianDerivativeKernel(FilterType *filter, unsigned int size, FilterType sigma = 0., bool normalize = true);
+void getGaussianDerivativeKernel(vpArray2D<FilterType> &filter, unsigned int size, FilterType sigma = 0., bool normalize = true);
 
 // Gradient along X
 template<typename FilterType>

@@ -175,7 +175,7 @@ vpCannyEdgeDetection::initGaussianFilters()
     throw(vpException(vpException::badValue, "The Gaussian kernel size should be odd"));
   }
   m_fg.resize(1, static_cast<unsigned int>((m_gaussianKernelSize + 1) / val_2));
-  vpImageFilter::getGaussianKernel(m_fg.data, static_cast<unsigned int>(m_gaussianKernelSize), m_gaussianStdev, true);
+  vpImageFilter::getGaussianKernel(m_fg, static_cast<unsigned int>(m_gaussianKernelSize), m_gaussianStdev, true);
 }
 
 void
