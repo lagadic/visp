@@ -74,7 +74,7 @@
 
 BEGIN_VISP_NAMESPACE
 /*!
- * \class vpImageFilter
+ * \namespace vpImageFilter
  *
  * \ingroup group_core_image
  *

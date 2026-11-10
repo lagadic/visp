@@ -75,18 +75,18 @@
 
 BEGIN_VISP_NAMESPACE
 /*!
- * \class vpImageFilter
+ * \namespace vpImageFilter
  *
  * \ingroup group_core_image
  *
  * \brief  Various image filter, convolution, etc...
  *
  * <b>Tutorials</b><br>
-  <span style="margin-left:2em"> If you are interested in applying various filters on an image, you may have a look at:</span><br>
-
-  - \ref tutorial-image-filtering
-*/
-namespace vpImageFilter
+ * <span style="margin-left:2em"> If you are interested in applying various filters on an image, you may have a look at:</span><br>
+ *
+ * - \ref tutorial-image-filtering
+ */
+  namespace vpImageFilter
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace detail
