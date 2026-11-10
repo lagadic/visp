@@ -865,6 +865,32 @@ VP_DEPRECATED void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy
 #endif
 
 /*!
+ * Apply a separable filter.
+ * \tparam ImageType : The type of pixels of the input image.
+ * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+ * \param I : The original image.
+ * \param GI : The filtered image.
+ * \param filter : The separable filter.
+ * \param size : The size of the filter.
+ * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
+ * \deprecated Use rather filter(const vpImage<ImageType> &, vpImage<OutputType> &, const vpArray2D<FilterType> &, const vpImage<bool> *).
+ */
+template <typename ImageType, typename FilterType>
+VP_DEPRECATED void filter(const vpImage<ImageType> &I, vpImage<FilterType> &GI, const FilterType *filter, unsigned int size,
+                          const vpImage<bool> *p_mask = nullptr)
+{
+  vpImage<FilterType> GIx;
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+  filterX<ImageType, FilterType, FilterType>(I, GIx, filter, size, p_mask);
+  filterY<FilterType, FilterType, FilterType>(GIx, GI, filter, size, p_mask);
+#else
+  filterX<ImageType, FilterType>(I, GIx, filter, size, p_mask);
+  filterY<FilterType, FilterType>(GIx, GI, filter, size, p_mask);
+#endif
+  GIx.destroy();
+}
+
+/*!
 * Return the coefficients \f$G_i\f$ of a Gaussian filter.
 * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
 * \param[out] filter : Pointer to the half size filter kernel that should refer to a
