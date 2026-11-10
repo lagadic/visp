@@ -58,10 +58,15 @@ except ImportError:
 
 
 # Fake module names
-for k in cpp_extension_dict:
+# This also registers the C++ namespaces that are exposed as Python submodules (e.g. visp.core.ImageFilter)
+def _register_submodules(module_name, module_dict):
   from types import ModuleType
-  if isinstance(_visp.__dict__[k], ModuleType):
-    sys.modules[f'{__name__}.{k}'] = _visp.__dict__[k]
+  for k, v in list(module_dict.items()):
+    if isinstance(v, ModuleType) and v.__name__.startswith('visp._visp.') and f'{module_name}.{k}' not in sys.modules:
+      sys.modules[f'{module_name}.{k}'] = v
+      _register_submodules(f'{module_name}.{k}', v.__dict__)
+
+_register_submodules(__name__, cpp_extension_dict)
 
 
 import visp.python

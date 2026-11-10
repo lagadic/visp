@@ -57,6 +57,7 @@ class DocumentationObjectKind(Enum):
   Class = 'class'
   Struct = 'struct'
   Method = 'method'
+  Namespace = 'namespace'
 
 class DocumentationData(object):
 
@@ -71,6 +72,8 @@ class DocumentationData(object):
     p = None
     if kind == DocumentationObjectKind.Class:
       p = xml_root / f'class{name}.xml'
+    elif kind == DocumentationObjectKind.Namespace:
+      p = xml_root / f'namespace{name.replace("::", "_1_1")}.xml'
     else:
       assert False, 'Seeking documentation for type other than class not handled for now'
 
@@ -325,7 +328,9 @@ if not import_failed:
           methods_res = {}
           for compounddef in self.xml_doc.get_compounddef():
             compounddef: compounddefType = compounddef
-            if compounddef.kind == DoxCompoundKind.CLASS:
+            # Functions of a namespace are handled as static methods of a class
+            is_namespace = compounddef.kind == DoxCompoundKind.NAMESPACE
+            if compounddef.kind == DoxCompoundKind.CLASS or is_namespace:
               cls_name = compounddef.get_compoundname()
               compounddefs_res[cls_name] = compounddef
               section_defs: List[doxmlparser.sectiondefType] = compounddef.sectiondef
@@ -336,6 +341,8 @@ if not import_failed:
                 for method_def in method_defs:
                   is_const = False if method_def.const == 'no' else True
                   is_static = False if method_def.static == 'no' else True
+                  if is_namespace: # Match how free functions are looked up, see methods.define_method
+                    is_const, is_static = True, True
 
                   removed_macros_return = [
                     'VP_DEPRECATED', 'VISP_EXPORT', 'VP_NORETURN', 'BEGIN_VISP_NAMESPACE', 'END_VISP_NAMESPACE', 'VP_NODISCARD'
@@ -348,7 +355,7 @@ if not import_failed:
                   for param in method_def.get_param():
                     t = ''.join(process_mixed_container(c, 0, escape_rst=False) for c in param.type_.content_)
                     param_types.append(t)
-                  if method_def.name == cls_name or ret_type != '':
+                  if (method_def.name == cls_name and not is_namespace) or ret_type != '':
                     signature_str = f'{ret_type} {cls_name}::{method_def.name}({",".join(param_types)}) {{}}'
                     method = parse_string(signature_str).namespace.method_impls[0]
                     method.static = is_static
