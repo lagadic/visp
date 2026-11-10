@@ -12,6 +12,8 @@ ViSP 3.7.1 (current version)
   - Deprecated
     . In vpDetectorAprilTag remove support for deprecated 25h7 family
     . Remove deprecated vpDirectShowGrabber and vp1394CMUGrabber classes and examples
+    . vpImageFilter::filter(), filterX() and filterY() taking a raw pointer kernel and its size are deprecated.
+      Use rather the versions taking a vpArray2D kernel
   - New features and improvements
     . The AprilTag 3rd-party integration has been completely redesigned. It now supports three flexible usage modes:
       - System Package: Use the library installed via your package manager (e.g., apt install libapriltag-dev),
@@ -28,6 +30,10 @@ ViSP 3.7.1 (current version)
     . Fix warnings detected on Ubuntu with -Wshadow -Wfloat-equal -Wsign-conversion
     . Ready to use docker container with Ubuntu 26.04.
       See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-docker.html
+    . New vpImageFilter::separableFilter() that applies a symmetric separable filter defined by a vpArray2D
+      half-size kernel. It replaces the deprecated vpImageFilter::filter() taking a raw pointer kernel. The
+      different name avoids any overload ambiguity with the 2D vpImageFilter::filter() and its bool convolve
+      parameter
   - Applications
     . Camera intrinsic calibration app: visp-calibrate-camera.cpp
       - Add lens distortion displacement map visualization
