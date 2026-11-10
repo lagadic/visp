@@ -868,7 +868,7 @@ void filter(const vpImage<ImageType> &I, vpImage<ImageType> &Iu, vpImage<ImageTy
 #endif
 #endif
 
-VISP_EXPORT void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH, const vpColVector &kernelV);
+VISP_EXPORT void separableFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH, const vpColVector &kernelV);
 
 /*!
  * Apply a symmetric separable filter, first along the horizontal direction and then along the vertical one.

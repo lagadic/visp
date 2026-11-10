@@ -688,6 +688,23 @@ VP_DEPRECATED inline FilterType filterYBottomBorder(const vpImage<ImageType> &I,
  */
 //@{
 
+/*!
+ * \deprecated You should rather use separableFilter() that does the same.
+ *
+ * Apply a filter to an image using two separable kernels.
+ *
+ * \param[in] I : Image to filter
+ * \param[out] If : Filtered image.
+ * \param[in] kernelH : Separable kernel (performed first).
+ * \param[in] kernelV : Separable kernel (performed last).
+ * \note Only pixels in the input image fully covered by the kernel are considered.
+ */
+VP_DEPRECATED inline void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH,
+                                    const vpColVector &kernelV)
+{
+  separableFilter(I, If, kernelH, kernelV);
+}
+
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
 /**
    * \brief Filter along the horizontal direction.

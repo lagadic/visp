@@ -39,7 +39,7 @@ import types
 import numpy as np
 import pytest
 
-from visp.core import ImageGray, ImageFloat, ImageDouble, ImageBool, ArrayDouble2D, ArrayFloat2D
+from visp.core import ImageGray, ImageFloat, ImageDouble, ImageBool, ArrayDouble2D, ArrayFloat2D, ColVector
 from visp.core import ImageFilter
 
 
@@ -114,6 +114,21 @@ def test_separable_filter_matches_gaussian_blur():
   Iblur = ImageDouble()
   ImageFilter.gaussianBlur(I, Iblur, size)
   np.testing.assert_allclose(Isep.numpy(), Iblur.numpy(), atol=1e-6)
+
+def test_separable_filter_two_kernels():
+  # Deprecated sepFilter() is not exposed, separableFilter() with two kernels replaces it
+  assert not hasattr(ImageFilter, 'sepFilter')
+  I = make_gray_image()
+  kernelH = ColVector([1., 0., -1.])
+  kernelV = ColVector([1., 2., 1.])
+  If = ImageDouble()
+  ImageFilter.separableFilter(I, If, kernelH, kernelV)
+  assert If.getRows() == I.getRows() and If.getCols() == I.getCols()
+  # Equivalent to the 2D Sobel-like filter kernelV * kernelH^T, applied as a convolution
+  sobel = ArrayDouble2D(np.outer(kernelV.numpy(), kernelH.numpy()))
+  If2d = ImageDouble()
+  ImageFilter.filter(I, If2d, sobel, convolve=True)
+  np.testing.assert_allclose(If.numpy()[1:-1, 1:-1], If2d.numpy()[1:-1, 1:-1], atol=1e-6)
 
 def test_filter_x_y():
   I = make_gray_image()

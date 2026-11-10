@@ -514,9 +514,9 @@ int main(int argc, const char *argv[])
       kernel_sep_y[4] = 1.0;
 
       t = vpTime::measureTimeMs();
-      vpImageFilter::sepFilter(I, I_sep_filtered, kernel_sep_x, kernel_sep_y);
+      vpImageFilter::separableFilter(I, I_sep_filtered, kernel_sep_x, kernel_sep_y);
       t = vpTime::measureTimeMs() - t;
-      std::cout << "\nTime to do sepFilter: " << t << " ms" << std::endl;
+      std::cout << "\nTime to do separableFilter: " << t << " ms" << std::endl;
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       test = check_results(matImg_sobel_x, Iu, I_sep_filtered.getRows() / 2, kernel_sobel_x.getCols() / 2);

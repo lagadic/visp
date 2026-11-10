@@ -127,8 +127,8 @@ void separableFilter<double, double, double>(const vpImage<double> &I, vpImage<d
   \param[in] kernelV : Separable kernel (performed last).
   \note Only pixels in the input image fully covered by the kernel are considered.
 */
-void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH,
-                              const vpColVector &kernelV)
+void separableFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH,
+                     const vpColVector &kernelV)
 {
   const unsigned int size = kernelH.size(), sizeV = kernelV.size();
   const unsigned int widthI = I.getWidth(), heightI = I.getHeight();
