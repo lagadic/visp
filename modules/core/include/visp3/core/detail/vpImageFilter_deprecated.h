@@ -631,6 +631,11 @@ VP_DEPRECATED inline FilterType filterYBottomBorder(const vpImage<ImageType> &I,
 }
 #endif
 
+/*!
+ * @name Deprecated functions
+ */
+//@{
+
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
 /**
    * \brief Filter along the horizontal direction.
@@ -1058,6 +1063,7 @@ VP_DEPRECATED FilterType getSobelKernelX(FilterType *filter, unsigned int size)
   memcpy(filter, SobelY.t().data, SobelY.getRows() * SobelY.getCols() * sizeof(FilterType));
   return norm;
 }
+//@}
 }
 END_VISP_NAMESPACE
 #endif
