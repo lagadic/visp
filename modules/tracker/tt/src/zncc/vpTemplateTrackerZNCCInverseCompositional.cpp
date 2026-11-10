@@ -70,7 +70,7 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
   initCompInverse(I);
 
   if (blur)
-    vpImageFilter::filter(I, BI, fgG, taillef);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 
@@ -232,7 +232,7 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
 void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigned char> &I)
 {
   if (blur)
-    vpImageFilter::filter(I, BI, fgG, taillef);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
 
   vpColVector dpinv(nbParam);
   double Ic;

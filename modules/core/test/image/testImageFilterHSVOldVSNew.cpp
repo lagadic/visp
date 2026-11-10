@@ -575,8 +575,8 @@ void gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int si
   vpArray2D<double> fg(1, (size + 1) / 2);
   vpImageFilter::getGaussianKernel(fg, size, sigma, normalize);
   vpImage<vpRGBa> GIx;
-  vpImageFilter::filterX(I, GIx, fg.data, size, p_mask);
-  vpImageFilter::filterY(GIx, GI, fg.data, size, p_mask);
+  vpImageFilter::filterX(I, GIx, fg, p_mask);
+  vpImageFilter::filterY(GIx, GI, fg, p_mask);
   GIx.destroy();
 }
 
@@ -987,8 +987,8 @@ void gaussianBlur(const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<vpHSV<
   vpArray2D<double> fg(1, (size + 1) / 2);
   vpImageFilter::getGaussianKernel(fg, size, sigma, normalize);
   vpImage<vpHSV<HSVType, useFullScale>> GIx;
-  vpImageFilter::filterX(I, GIx, fg.data, size, p_mask);
-  vpImageFilter::filterY(GIx, GI, fg.data, size, p_mask);
+  vpImageFilter::filterX(I, GIx, fg, p_mask);
+  vpImageFilter::filterY(GIx, GI, fg, p_mask);
   GIx.destroy();
 }
 
@@ -999,8 +999,8 @@ static void gaussianBlur(const vpImage<ImageType> &I, vpImage<FilterType> &GI, u
   vpArray2D<FilterType> fg(1, (size + 1) / 2);
   vpImageFilter::getGaussianKernel<FilterType>(fg, size, sigma, normalize);
   vpImage<FilterType> GIx;
-  vpImageFilter::filterX<ImageType, FilterType>(I, GIx, fg.data, size, p_mask);
-  vpImageFilter::filterY<FilterType, FilterType>(GIx, GI, fg.data, size, p_mask);
+  vpImageFilter::filterX<ImageType, FilterType>(I, GIx, fg, p_mask);
+  vpImageFilter::filterY<FilterType, FilterType>(GIx, GI, fg, p_mask);
   GIx.destroy();
 }
 }

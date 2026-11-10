@@ -133,7 +133,7 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(const vpImage<u
   Nbpoint = 0;
 
   if (blur)
-    vpImageFilter::filter(I, BI, fgG, taillef);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
 
   zeroProbabilities();
   Warp->computeCoeff(p);
@@ -203,7 +203,7 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
   dW = 0;
 
   if (blur)
-    vpImageFilter::filter(I, BI, fgG, taillef);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
 
   lambda = lambdaDep;
   double MI = 0, MIprec = -1000;

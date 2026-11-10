@@ -91,7 +91,7 @@ void vpTemplateTrackerSSDESM::initCompInverse(const vpImage<unsigned char> & /*I
 void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
 {
   if (blur)
-    vpImageFilter::filter(I, BI, fgG, taillef);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 

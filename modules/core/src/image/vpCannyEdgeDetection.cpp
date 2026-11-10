@@ -342,8 +342,8 @@ vpCannyEdgeDetection::computeFilteringAndGradient(const vpImage<unsigned char> &
     // Computing the Gaussian blur
     vpImage<float> Iblur;
     vpImage<float> GIx;
-    vpImageFilter::filterX<unsigned char, float>(I, GIx, m_fg.data, static_cast<unsigned int>(m_gaussianKernelSize), mp_mask);
-    vpImageFilter::filterY<float, float>(GIx, Iblur, m_fg.data, static_cast<unsigned int>(m_gaussianKernelSize), mp_mask);
+    vpImageFilter::filterX<unsigned char, float, float>(I, GIx, m_fg, mp_mask);
+    vpImageFilter::filterY<float, float, float>(GIx, Iblur, m_fg, mp_mask);
 
     // Computing the gradients
     vpImageFilter::filter(Iblur, m_dIx, m_gradientFilterX, true, mp_mask);

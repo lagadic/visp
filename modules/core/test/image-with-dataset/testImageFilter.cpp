@@ -268,9 +268,9 @@ int main(int argc, const char *argv[])
 
       // Test correlation
       vpImage<double> I_correlation_1, I_correlation_2, I_correlation_3;
-      vpImageFilter::filter(I, I_correlation_1, kernel_1);
-      vpImageFilter::filter(I, I_correlation_2, kernel_2);
-      vpImageFilter::filter(I, I_correlation_3, kernel_3);
+      vpImageFilter::filter(I, I_correlation_1, kernel_1, false);
+      vpImageFilter::filter(I, I_correlation_2, kernel_2, false);
+      vpImageFilter::filter(I, I_correlation_3, kernel_3, false);
 
       std::cout << "\nI_correlation_1:\n" << I_correlation_1 << std::endl;
       std::cout << "I_correlation_2:\n" << I_correlation_2 << std::endl;
@@ -371,9 +371,9 @@ int main(int argc, const char *argv[])
 
       // Test correlation
       double t = vpTime::measureTimeMs();
-      vpImageFilter::filter(I, I_correlation_1, kernel_1);
-      vpImageFilter::filter(I, I_correlation_2, kernel_2);
-      vpImageFilter::filter(I, I_correlation_3, kernel_3);
+      vpImageFilter::filter(I, I_correlation_1, kernel_1, false);
+      vpImageFilter::filter(I, I_correlation_2, kernel_2, false);
+      vpImageFilter::filter(I, I_correlation_3, kernel_3, false);
       t = vpTime::measureTimeMs() - t;
       std::cout << "\nTime to do 3 correlation filtering: " << t << " ms ; Mean: " << t / 3.0 << " ms" << std::endl;
 
