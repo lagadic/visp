@@ -58,20 +58,20 @@ void filter<double, double>(const vpImage<double> &I, vpImage<double> &Iu, vpIma
                                            const vpArray2D<double> &M, bool convolve, const vpImage<bool> *p_mask);
 
 template
-void filter<unsigned char, float>(const vpImage<unsigned char> &I, vpImage<float> &GI, const float *filter,
-                                                 unsigned int size, const vpImage<bool> *p_mask);
+void filter<unsigned char, float, float>(const vpImage<unsigned char> &I, vpImage<float> &GI, const vpArray2D<float> &filter,
+                                                 const vpImage<bool> *p_mask);
 
 template
-void filter<unsigned char, double>(const vpImage<unsigned char> &I, vpImage<double> &GI, const double *filter,
-                                                  unsigned int size, const vpImage<bool> *p_mask);
+void filter<unsigned char, double, double>(const vpImage<unsigned char> &I, vpImage<double> &GI, const vpArray2D<double> &filter,
+                                                  const vpImage<bool> *p_mask);
 
 template
-void filter<float, float>(const vpImage<float> &I, vpImage<float> &GI, const float *filter,
-                                         unsigned int size, const vpImage<bool> *p_mask);
+void filter<float, float, float>(const vpImage<float> &I, vpImage<float> &GI, const vpArray2D<float> &filter,
+                                         const vpImage<bool> *p_mask);
 
 template
-void filter<double, double>(const vpImage<double> &I, vpImage<double> &GI, const double *filter,
-                                           unsigned int size, const vpImage<bool> *p_mask);
+void filter<double, double, double>(const vpImage<double> &I, vpImage<double> &GI, const vpArray2D<double> &filter,
+                                           const vpImage<bool> *p_mask);
 /**
  * \endcond
  */
@@ -164,29 +164,29 @@ void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpCol
  * \cond DO_NOT_DOCUMENT
  */
 template
-void filterX<unsigned char, float>(const vpImage<unsigned char> &I, vpImage<float> &dIx, const float *filter,
-                                                  unsigned int size, const vpImage<bool> *p_mask);
+void filterX<unsigned char, float>(const vpImage<unsigned char> &I, vpImage<float> &dIx, const vpArray2D<float> &filter,
+                                                  const vpImage<bool> *p_mask);
 
 template
-void filterX<unsigned char, double>(const vpImage<unsigned char> &I, vpImage<double> &dIx, const double *filter,
-                                                   unsigned int size, const vpImage<bool> *p_mask);
+void filterX<unsigned char, double>(const vpImage<unsigned char> &I, vpImage<double> &dIx, const vpArray2D<double> &filter,
+                                                   const vpImage<bool> *p_mask);
 
 template
-void filterX<float, float>(const vpImage<float> &I, vpImage<float> &dIx, const float *filter, unsigned int size, const vpImage<bool> *p_mask);
+void filterX<float, float>(const vpImage<float> &I, vpImage<float> &dIx, const vpArray2D<float> &filter, const vpImage<bool> *p_mask);
 
 template
-void filterX<double, double>(const vpImage<double> &I, vpImage<double> &dIx, const double *filter, unsigned int size, const vpImage<bool> *p_mask);
+void filterX<double, double>(const vpImage<double> &I, vpImage<double> &dIx, const vpArray2D<double> &filter, const vpImage<bool> *p_mask);
 /**
  * \endcond
  */
 
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size,
+void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const vpArray2D<double> &filter,
                             const vpImage<bool> *p_mask)
 {
   const unsigned int heightI = I.getHeight(), widthI = I.getWidth();
-  const unsigned int stop1J = (size - 1) / 2;
-  const unsigned int stop2J = widthI - ((size - 1) / 2);
+  const unsigned int stop1J = filter.getCols();
+  const unsigned int stop2J = widthI - filter.getCols();
   resizeAndInitializeIfNeeded(p_mask, heightI, widthI, dIx);
 
   for (unsigned int i = 0; i < heightI; ++i) {
@@ -195,9 +195,9 @@ void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filte
             // pixels for which the mask is true otherwise
       bool computeVal = checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIx[i][j].R = static_cast<unsigned char>(filterXLeftBorderR(I, i, j, filter, size));
-        dIx[i][j].G = static_cast<unsigned char>(filterXLeftBorderG(I, i, j, filter, size));
-        dIx[i][j].B = static_cast<unsigned char>(filterXLeftBorderB(I, i, j, filter, size));
+        dIx[i][j].R = static_cast<unsigned char>(filterXLeftBorderR(I, i, j, filter));
+        dIx[i][j].G = static_cast<unsigned char>(filterXLeftBorderG(I, i, j, filter));
+        dIx[i][j].B = static_cast<unsigned char>(filterXLeftBorderB(I, i, j, filter));
       }
     }
     for (unsigned int j = stop1J; j < stop2J; ++j) {
@@ -205,9 +205,9 @@ void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filte
             // pixels for which the mask is true otherwise
       bool computeVal = checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIx[i][j].R = static_cast<unsigned char>(filterXR(I, i, j, filter, size));
-        dIx[i][j].G = static_cast<unsigned char>(filterXG(I, i, j, filter, size));
-        dIx[i][j].B = static_cast<unsigned char>(filterXB(I, i, j, filter, size));
+        dIx[i][j].R = static_cast<unsigned char>(filterXR(I, i, j, filter));
+        dIx[i][j].G = static_cast<unsigned char>(filterXG(I, i, j, filter));
+        dIx[i][j].B = static_cast<unsigned char>(filterXB(I, i, j, filter));
       }
     }
     for (unsigned int j = stop2J; j < widthI; ++j) {
@@ -215,9 +215,9 @@ void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filte
             // pixels for which the mask is true otherwise
       bool computeVal = checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIx[i][j].R = static_cast<unsigned char>(filterXRightBorderR(I, i, j, filter, size));
-        dIx[i][j].G = static_cast<unsigned char>(filterXRightBorderG(I, i, j, filter, size));
-        dIx[i][j].B = static_cast<unsigned char>(filterXRightBorderB(I, i, j, filter, size));
+        dIx[i][j].R = static_cast<unsigned char>(filterXRightBorderR(I, i, j, filter));
+        dIx[i][j].G = static_cast<unsigned char>(filterXRightBorderG(I, i, j, filter));
+        dIx[i][j].B = static_cast<unsigned char>(filterXRightBorderB(I, i, j, filter));
       }
     }
   }
@@ -228,29 +228,29 @@ void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filte
  * \cond DO_NOT_DOCUMENT
  */
 template
-void filterY<unsigned char, float>(const vpImage<unsigned char> &I, vpImage<float> &dIy, const float *filter,
-                                                  unsigned int size, const vpImage<bool> *p_mask);
+void filterY<unsigned char, float>(const vpImage<unsigned char> &I, vpImage<float> &dIy, const vpArray2D<float> &filter,
+                                                  const vpImage<bool> *p_mask);
 
 template
-void filterY<unsigned char, double>(const vpImage<unsigned char> &I, vpImage<double> &dIy, const double *filter,
-                                                   unsigned int size, const vpImage<bool> *p_mask);
+void filterY<unsigned char, double>(const vpImage<unsigned char> &I, vpImage<double> &dIy, const vpArray2D<double> &filter,
+                                                   const vpImage<bool> *p_mask);
 
 template
-void filterY<float, float>(const vpImage<float> &I, vpImage<float> &dIy, const float *filter, unsigned int size, const vpImage<bool> *p_mask);
+void filterY<float, float>(const vpImage<float> &I, vpImage<float> &dIy, const vpArray2D<float> &filter, const vpImage<bool> *p_mask);
 
 template
-void filterY<double, double>(const vpImage<double> &I, vpImage<double> &dIy, const double *filter, unsigned int size, const vpImage<bool> *p_mask);
+void filterY<double, double>(const vpImage<double> &I, vpImage<double> &dIy, const vpArray2D<double> &filter, const vpImage<bool> *p_mask);
 /**
  * \endcond
  */
 
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, const double *filter, unsigned int size,
+void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, const vpArray2D<double> &filter,
                             const vpImage<bool> *p_mask)
 {
   const unsigned int heightI = I.getHeight(), widthI = I.getWidth();
-  const unsigned int stop1I = (size - 1) / 2;
-  const unsigned int stop2I = heightI - ((size - 1) / 2);
+  const unsigned int stop1I = filter.getCols();
+  const unsigned int stop2I = heightI - filter.getCols();
   resizeAndInitializeIfNeeded(p_mask, heightI, widthI, dIy);
 
   for (unsigned int i = 0; i < stop1I; ++i) {
@@ -259,9 +259,9 @@ void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, const double *filte
             // pixels for which the mask is true otherwise
       bool computeVal = checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIy[i][j].R = static_cast<unsigned char>(filterYTopBorderR(I, i, j, filter, size));
-        dIy[i][j].G = static_cast<unsigned char>(filterYTopBorderG(I, i, j, filter, size));
-        dIy[i][j].B = static_cast<unsigned char>(filterYTopBorderB(I, i, j, filter, size));
+        dIy[i][j].R = static_cast<unsigned char>(filterYTopBorderR(I, i, j, filter));
+        dIy[i][j].G = static_cast<unsigned char>(filterYTopBorderG(I, i, j, filter));
+        dIy[i][j].B = static_cast<unsigned char>(filterYTopBorderB(I, i, j, filter));
       }
     }
   }
@@ -271,9 +271,9 @@ void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, const double *filte
             // pixels for which the mask is true otherwise
       bool computeVal = checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIy[i][j].R = static_cast<unsigned char>(filterYR(I, i, j, filter, size));
-        dIy[i][j].G = static_cast<unsigned char>(filterYG(I, i, j, filter, size));
-        dIy[i][j].B = static_cast<unsigned char>(filterYB(I, i, j, filter, size));
+        dIy[i][j].R = static_cast<unsigned char>(filterYR(I, i, j, filter));
+        dIy[i][j].G = static_cast<unsigned char>(filterYG(I, i, j, filter));
+        dIy[i][j].B = static_cast<unsigned char>(filterYB(I, i, j, filter));
       }
     }
   }
@@ -283,9 +283,9 @@ void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, const double *filte
             // pixels for which the mask is true otherwise
       bool computeVal = checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIy[i][j].R = static_cast<unsigned char>(filterYBottomBorderR(I, i, j, filter, size));
-        dIy[i][j].G = static_cast<unsigned char>(filterYBottomBorderG(I, i, j, filter, size));
-        dIy[i][j].B = static_cast<unsigned char>(filterYBottomBorderB(I, i, j, filter, size));
+        dIy[i][j].R = static_cast<unsigned char>(filterYBottomBorderR(I, i, j, filter));
+        dIy[i][j].G = static_cast<unsigned char>(filterYBottomBorderG(I, i, j, filter));
+        dIy[i][j].B = static_cast<unsigned char>(filterYBottomBorderB(I, i, j, filter));
       }
     }
   }

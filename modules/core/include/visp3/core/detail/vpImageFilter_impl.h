@@ -595,53 +595,53 @@ inline unsigned char filterGaussYPyramidal(const vpImage<unsigned char> &I, unsi
 // and not __cplusplus == 199711L
 #if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
 template<typename ImageType, typename FilterType>
-inline FilterType filterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+inline FilterType filterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   FilterType result = static_cast<FilterType>(0.);
 
-  for (unsigned int i = 1; i <= stop; ++i) {
-    result += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
+  for (unsigned int i = 1; i < stop; ++i) {
+    result += filter.data[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
   }
-  return result + (filter[0] * static_cast<FilterType>(I[r][c]));
+  return result + (filter.data[0] * static_cast<FilterType>(I[r][c]));
 }
 
 template <typename ImageType, typename FilterType>
 inline FilterType filterXLeftBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
-                                           const FilterType *filter, unsigned int size)
+                                           const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   FilterType result = static_cast<FilterType>(0.);
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if (c > i) {
-      result += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
+      result += filter.data[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
     }
     else {
-      result += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][i - c]);
+      result += filter.data[i] * static_cast<FilterType>(I[r][c + i] + I[r][i - c]);
     }
   }
-  return result + (filter[0] * static_cast<FilterType>(I[r][c]));
+  return result + (filter.data[0] * static_cast<FilterType>(I[r][c]));
 }
 
 template <typename ImageType, typename FilterType>
 inline FilterType filterXRightBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
-                                            const FilterType *filter, unsigned int size)
+                                            const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   const unsigned int width = I.getWidth();
   FilterType result = static_cast<FilterType>(0.);
   const unsigned int twice = 2;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if ((c + i) < width) {
-      result += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
+      result += filter.data[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
     }
     else {
-      result += filter[i] * static_cast<FilterType>(I[r][((twice * width) - c) - i - 1] + I[r][c - i]);
+      result += filter.data[i] * static_cast<FilterType>(I[r][((twice * width) - c) - i - 1] + I[r][c - i]);
     }
   }
-  return result + (filter[0] * static_cast<FilterType>(I[r][c]));
+  return result + (filter.data[0] * static_cast<FilterType>(I[r][c]));
 }
 #else
 template<class Color, typename FilterType>
@@ -674,48 +674,48 @@ filterChannel(const Color &in1, const Color &in2, vpColVector &out, const Filter
 
 template<typename ImageType, typename OutputType, typename FilterType>
 inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
-filterX(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+filterX(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
-  FilterType res = filter[0] * static_cast<FilterType>(I[r][c]);
+  const unsigned int stop = filter.getCols();
+  FilterType res = filter.data[0] * static_cast<FilterType>(I[r][c]);
 
-  for (unsigned int i = 1; i <= stop; ++i) {
-    res += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
+  for (unsigned int i = 1; i < stop; ++i) {
+    res += filter.data[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
   }
   result = static_cast<FilterType>(res);
 }
 
 template<typename ImageType, typename OutputType, typename FilterType>
 inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
-filterX(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+filterX(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
 #ifdef VISP_HAVE_OPENMP
   vpColVector res(ImageType::nbChannels);
 #else
   static vpColVector res(ImageType::nbChannels);
 #endif
-  filterChannel(I[r][c], res, filter[0]);
+  filterChannel(I[r][c], res, filter.data[0]);
 
-  for (unsigned int i = 1; i <= stop; ++i) {
-    filterChannel(I[r][c + i], I[r][c - i], res, filter[i]);
+  for (unsigned int i = 1; i < stop; ++i) {
+    filterChannel(I[r][c + i], I[r][c - i], res, filter.data[i]);
   }
   result = OutputType(res);
 }
 
 template<typename ImageType, typename OutputType, typename FilterType>
 inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
-filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
-  FilterType res = filter[0] * static_cast<FilterType>(I[r][c]);
+  const unsigned int stop = filter.getCols();
+  FilterType res = filter.data[0] * static_cast<FilterType>(I[r][c]);
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if (c > i) {
-      res += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
+      res += filter.data[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
     }
     else {
-      res += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][i - c]);
+      res += filter.data[i] * static_cast<FilterType>(I[r][c + i] + I[r][i - c]);
     }
   }
   result = static_cast<OutputType>(res);
@@ -723,22 +723,22 @@ filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int 
 
 template<typename ImageType, typename OutputType, typename FilterType>
 inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
-filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
 #ifdef VISP_HAVE_OPENMP
   vpColVector res(ImageType::nbChannels);
 #else
   static vpColVector res(ImageType::nbChannels);
 #endif
-  filterChannel(I[r][c], res, filter[0]);
+  filterChannel(I[r][c], res, filter.data[0]);
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if (c > i) {
-      filterChannel(I[r][c + i], I[r][c - i], res, filter[i]);
+      filterChannel(I[r][c + i], I[r][c - i], res, filter.data[i]);
     }
     else {
-      filterChannel(I[r][c + i], I[r][i - c], res, filter[i]);
+      filterChannel(I[r][c + i], I[r][i - c], res, filter.data[i]);
     }
   }
   result = OutputType(res);
@@ -746,19 +746,19 @@ filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int 
 
 template<typename ImageType, typename OutputType, typename FilterType>
 inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
-filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   const unsigned int width = I.getWidth();
   const unsigned int twice = 2;
-  FilterType res = filter[0] * static_cast<FilterType>(I[r][c]);
+  FilterType res = filter.data[0] * static_cast<FilterType>(I[r][c]);
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if ((c + i) < width) {
-      res += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
+      res += filter.data[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
     }
     else {
-      res += filter[i] * static_cast<FilterType>(I[r][((twice * width) - c) - i - 1] + I[r][c - i]);
+      res += filter.data[i] * static_cast<FilterType>(I[r][((twice * width) - c) - i - 1] + I[r][c - i]);
     }
   }
   result = static_cast<FilterType>(res);
@@ -766,9 +766,9 @@ filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int
 
 template<typename ImageType, typename OutputType, typename FilterType>
 inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
-filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   const unsigned int width = I.getWidth();
   const unsigned int twice = 2;
 #ifdef VISP_HAVE_OPENMP
@@ -776,14 +776,14 @@ filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int
 #else
   static vpColVector res(ImageType::nbChannels);
 #endif
-  filterChannel(I[r][c], res, filter[0]);
+  filterChannel(I[r][c], res, filter.data[0]);
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if ((c + i) < width) {
-      filterChannel(I[r][c + i], I[r][c - i], res, filter[i]);
+      filterChannel(I[r][c + i], I[r][c - i], res, filter.data[i]);
     }
     else {
-      filterChannel(I[r][((twice * width) - c) - i - 1], I[r][c - i], res, filter[i]);
+      filterChannel(I[r][((twice * width) - c) - i - 1], I[r][c - i], res, filter.data[i]);
     }
   }
   result = OutputType(res);
@@ -795,120 +795,120 @@ filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int
 #if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
 
 template<typename ImageType, typename FilterType>
-inline FilterType filterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+inline FilterType filterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   FilterType result = static_cast<FilterType>(0.);
 
-  for (unsigned int i = 1; i <= stop; ++i) {
-    result += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
+  for (unsigned int i = 1; i < stop; ++i) {
+    result += filter.data[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
   }
-  return result + (filter[0] * static_cast<FilterType>(I[r][c]));
+  return result + (filter.data[0] * static_cast<FilterType>(I[r][c]));
 }
 
 template<typename ImageType, typename FilterType>
 inline FilterType filterYTopBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
-                                          const FilterType *filter, unsigned int size)
+                                          const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   FilterType result = static_cast<FilterType>(0.);
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if (r > i) {
-      result += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
+      result += filter.data[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
     }
     else {
-      result += filter[i] * static_cast<FilterType>(I[r + i][c] + I[i - r][c]);
+      result += filter.data[i] * static_cast<FilterType>(I[r + i][c] + I[i - r][c]);
     }
   }
-  return result + (filter[0] * static_cast<FilterType>(I[r][c]));
+  return result + (filter.data[0] * static_cast<FilterType>(I[r][c]));
 }
 
 template<typename ImageType, typename FilterType>
 inline FilterType filterYBottomBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
-                                            const FilterType *filter, unsigned int size)
+                                            const vpArray2D<FilterType> &filter)
 {
   const unsigned int height = I.getHeight();
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   FilterType result = static_cast<FilterType>(0.);
   const unsigned int twiceHeight = 2 * height;
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if ((r + i) < height) {
-      result += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
+      result += filter.data[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
     }
     else {
-      result += filter[i] * static_cast<FilterType>(I[(twiceHeight - r) - i - 1][c] + I[r - i][c]);
+      result += filter.data[i] * static_cast<FilterType>(I[(twiceHeight - r) - i - 1][c] + I[r - i][c]);
     }
   }
-  return result + (filter[0] * static_cast<FilterType>(I[r][c]));
+  return result + (filter.data[0] * static_cast<FilterType>(I[r][c]));
 }
 #else
 template<typename ImageType, typename OutputType, typename FilterType>
 inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
-filterY(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+filterY(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
-  FilterType res = (filter[0] * static_cast<FilterType>(I[r][c]));
+  const unsigned int stop = filter.getCols();
+  FilterType res = (filter.data[0] * static_cast<FilterType>(I[r][c]));
 
-  for (unsigned int i = 1; i <= stop; ++i) {
-    res += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
+  for (unsigned int i = 1; i < stop; ++i) {
+    res += filter.data[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
   }
   result = static_cast<OutputType>(res);
 }
 
 template<typename ImageType, typename OutputType, typename FilterType>
 inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
-filterY(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+filterY(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
 #ifdef VISP_HAVE_OPENMP
   vpColVector res(ImageType::nbChannels);
 #else
   static vpColVector res(ImageType::nbChannels);
 #endif
-  filterChannel(I[r][c], res, filter[0]);
+  filterChannel(I[r][c], res, filter.data[0]);
 
-  for (unsigned int i = 1; i <= stop; ++i) {
-    filterChannel(I[r + i][c], I[r - i][c], res, filter[i]);
+  for (unsigned int i = 1; i < stop; ++i) {
+    filterChannel(I[r + i][c], I[r - i][c], res, filter.data[i]);
   }
   result = OutputType(res);
 }
 
 template<typename ImageType, typename OutputType, typename FilterType>
 inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
-filterYTopBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+filterYTopBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
-  FilterType res = (filter[0] * static_cast<FilterType>(I[r][c]));
+  const unsigned int stop = filter.getCols();
+  FilterType res = (filter.data[0] * static_cast<FilterType>(I[r][c]));
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if (r > i) {
-      res += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
+      res += filter.data[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
     }
     else {
-      res += filter[i] * static_cast<FilterType>(I[r + i][c] + I[i - r][c]);
+      res += filter.data[i] * static_cast<FilterType>(I[r + i][c] + I[i - r][c]);
     }
   }
   result = static_cast<OutputType>(res);
 }
 
 template<typename ImageType, typename OutputType, typename FilterType>
-inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterYTopBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterYTopBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
 #ifdef VISP_HAVE_OPENMP
   vpColVector res(ImageType::nbChannels);
 #else
   static vpColVector res(ImageType::nbChannels);
 #endif
-  filterChannel(I[r][c], res, filter[0]);
+  filterChannel(I[r][c], res, filter.data[0]);
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if (r > i) {
-      filterChannel(I[r + i][c], I[r - i][c], res, filter[i]);
+      filterChannel(I[r + i][c], I[r - i][c], res, filter.data[i]);
     }
     else {
-      filterChannel(I[r + i][c], I[i - r][c], res, filter[i]);
+      filterChannel(I[r + i][c], I[i - r][c], res, filter.data[i]);
     }
   }
   result = OutputType(res);
@@ -916,27 +916,27 @@ inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::typ
 
 template<typename ImageType, typename OutputType, typename FilterType>
 inline typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type filterYBottomBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c,
-                                            const FilterType *filter, unsigned int size)
+                                            const vpArray2D<FilterType> &filter)
 {
   const unsigned int height = I.getHeight();
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   const unsigned int twiceHeight = 2 * height;
-  FilterType res = (filter[0] * static_cast<FilterType>(I[r][c]));
-  for (unsigned int i = 1; i <= stop; ++i) {
+  FilterType res = (filter.data[0] * static_cast<FilterType>(I[r][c]));
+  for (unsigned int i = 1; i < stop; ++i) {
     if ((r + i) < height) {
-      res += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
+      res += filter.data[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
     }
     else {
-      res += filter[i] * static_cast<FilterType>(I[(twiceHeight - r) - i - 1][c] + I[r - i][c]);
+      res += filter.data[i] * static_cast<FilterType>(I[(twiceHeight - r) - i - 1][c] + I[r - i][c]);
     }
   }
   result = static_cast<OutputType>(res);
 }
 
 template<typename ImageType, typename OutputType, typename FilterType>
-inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterYBottomBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterYBottomBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   const unsigned int height = I.getHeight();
   const unsigned int twiceHeight = 2 * height;
 #ifdef VISP_HAVE_OPENMP
@@ -944,14 +944,14 @@ inline typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::typ
 #else
   static vpColVector res(ImageType::nbChannels);
 #endif
-  filterChannel(I[r][c], res, filter[0]);
+  filterChannel(I[r][c], res, filter.data[0]);
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if ((r + i) < height) {
-      filterChannel(I[r + i][c], I[r - i][c], res, filter[i]);
+      filterChannel(I[r + i][c], I[r - i][c], res, filter.data[i]);
     }
     else {
-      filterChannel(I[(twiceHeight - r) - i - 1][c], I[r - i][c], res, filter[i]);
+      filterChannel(I[(twiceHeight - r) - i - 1][c], I[r - i][c], res, filter.data[i]);
     }
   }
   result = OutputType(res);
@@ -1457,12 +1457,12 @@ void filter(const vpImage<ImageType> &I, vpImage<FilterType> &Iu, vpImage<Filter
 
 void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH, const vpColVector &kernelV);
 
-template <typename ImageType, typename FilterType>
-void filter(const vpImage<ImageType> &I, vpImage<FilterType> &GI, const FilterType *filter, unsigned int size, const vpImage<bool> *p_mask)
+template <typename ImageType, typename OutputType, typename FilterType>
+void filter(const vpImage<ImageType> &I, vpImage<FilterType> &GI, const vpArray2D<FilterType> &filter, const vpImage<bool> *p_mask)
 {
   vpImage<FilterType> GIx;
-  filterX<ImageType, FilterType, FilterType>(I, GIx, filter, size, p_mask);
-  filterY<FilterType, FilterType, FilterType>(GIx, GI, filter, size, p_mask);
+  filterX<ImageType, OutputType, FilterType>(I, GIx, filter, p_mask);
+  filterY<OutputType, OutputType, FilterType>(GIx, GI, filter, p_mask);
   GIx.destroy();
 }
 
@@ -1470,13 +1470,13 @@ void filter(const vpImage<ImageType> &I, vpImage<FilterType> &GI, const FilterTy
 // and not __cplusplus == 199711L
 #if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
 template <typename ImageType, typename FilterType>
-void filterX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size,
+void filterX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const vpArray2D<FilterType> &filter,
                     const vpImage<bool> *p_mask)
 {
   const unsigned int height = I.getHeight();
   const unsigned int width = I.getWidth();
-  const unsigned int stop1J = (size - 1) / 2;
-  const unsigned int stop2J = width - ((size - 1) / 2);
+  const unsigned int stop1J = filter.getCols();
+  const unsigned int stop2J = width - filter.getCols();
   detail::resizeAndInitializeIfNeeded(p_mask, height, width, dIx);
 
   for (unsigned int i = 0; i < height; ++i) {
@@ -1485,7 +1485,7 @@ void filterX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const Filter
       // pixels for which the mask is true otherwise
       bool computeVal = detail::checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIx[i][j] = detail::filterXLeftBorder<ImageType, FilterType>(I, i, j, filter, size);
+        dIx[i][j] = detail::filterXLeftBorder<ImageType, FilterType>(I, i, j, filter);
       }
     }
     for (unsigned int j = stop1J; j < stop2J; ++j) {
@@ -1493,7 +1493,7 @@ void filterX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const Filter
       // pixels for which the mask is true otherwise
       bool computeVal = detail::checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIx[i][j] = detail::filterX<ImageType, FilterType>(I, i, j, filter, size);
+        dIx[i][j] = detail::filterX<ImageType, FilterType>(I, i, j, filter);
       }
     }
     for (unsigned int j = stop2J; j < width; ++j) {
@@ -1501,7 +1501,7 @@ void filterX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const Filter
       // pixels for which the mask is true otherwise
       bool computeVal = detail::checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIx[i][j] = detail::filterXRightBorder<ImageType, FilterType>(I, i, j, filter, size);
+        dIx[i][j] = detail::filterXRightBorder<ImageType, FilterType>(I, i, j, filter);
       }
     }
   }
@@ -1509,13 +1509,13 @@ void filterX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const Filter
 
 #else
 template<typename ImageType, typename OutputType, typename FilterType>
-void filterX(const vpImage<ImageType> &I, vpImage<OutputType> &dIx, const FilterType *filter, unsigned int size,
+void filterX(const vpImage<ImageType> &I, vpImage<OutputType> &dIx, const vpArray2D<FilterType> &filter,
                     const vpImage<bool> *p_mask)
 {
   const unsigned int height = I.getHeight();
   const unsigned int width = I.getWidth();
-  const int stop1J = static_cast<int>((size - 1) / 2);
-  const int stop2J = static_cast<int>(width - ((size - 1) / 2));
+  const int stop1J = filter.getCols();
+  const int stop2J = static_cast<int>(width - filter.getCols());
   detail::resizeAndInitializeIfNeeded(p_mask, height, width, dIx);
 
   int istart = 0;
@@ -1542,7 +1542,7 @@ void filterX(const vpImage<ImageType> &I, vpImage<OutputType> &dIx, const Filter
         bool computeVal = detail::checkBooleanMask(p_mask, static_cast<unsigned int>(i), static_cast<unsigned int>(j));
         if (computeVal) {
           detail::filterXLeftBorder(I, dIx[static_cast<unsigned int>(i)][static_cast<unsigned int>(j)],
-                                           static_cast<unsigned int>(i), static_cast<unsigned int>(j), filter, size);
+                                           static_cast<unsigned int>(i), static_cast<unsigned int>(j), filter);
         }
       }
 
@@ -1551,7 +1551,7 @@ void filterX(const vpImage<ImageType> &I, vpImage<OutputType> &dIx, const Filter
         // pixels for which the mask is true otherwise
         bool computeVal = detail::checkBooleanMask(p_mask, static_cast<unsigned int>(i), static_cast<unsigned int>(j));
         if (computeVal) {
-          detail::filterX(I, dIx[i][j], static_cast<unsigned int>(i), static_cast<unsigned int>(j), filter, size);
+          detail::filterX(I, dIx[i][j], static_cast<unsigned int>(i), static_cast<unsigned int>(j), filter);
         }
       }
       for (int j = stop2J; j < static_cast<int>(width); ++j) {
@@ -1560,7 +1560,7 @@ void filterX(const vpImage<ImageType> &I, vpImage<OutputType> &dIx, const Filter
         bool computeVal = detail::checkBooleanMask(p_mask, static_cast<unsigned int>(i), static_cast<unsigned int>(j));
         if (computeVal) {
           detail::filterXRightBorder(I, dIx[static_cast<unsigned int>(i)][static_cast<unsigned int>(j)],
-                                            static_cast<unsigned int>(i), static_cast<unsigned int>(j), filter, size);
+                                            static_cast<unsigned int>(i), static_cast<unsigned int>(j), filter);
         }
       }
     }
@@ -1576,12 +1576,12 @@ void filterX(const vpImage<ImageType> &I, vpImage<OutputType> &dIx, const Filter
 // and not __cplusplus == 199711L
 #if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
 template<typename ImageType, typename FilterType>
-void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size,
+void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const vpArray2D<FilterType> &filter,
                     const vpImage<bool> *p_mask)
 {
   const unsigned int height = I.getHeight(), width = I.getWidth();
-  const unsigned int stop1I = (size - 1) / 2;
-  const unsigned int stop2I = height - ((size - 1) / 2);
+  const unsigned int stop1I = filter.getCols();
+  const unsigned int stop2I = height - filter.getCols();
   detail::resizeAndInitializeIfNeeded(p_mask, height, width, dIy);
 
   for (unsigned int i = 0; i < stop1I; ++i) {
@@ -1590,7 +1590,7 @@ void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const Filter
       // pixels for which the mask is true otherwise
       bool computeVal = detail::checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIy[i][j] = detail::filterYTopBorder<ImageType, FilterType>(I, i, j, filter, size);
+        dIy[i][j] = detail::filterYTopBorder<ImageType, FilterType>(I, i, j, filter);
       }
     }
   }
@@ -1600,7 +1600,7 @@ void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const Filter
       // pixels for which the mask is true otherwise
       bool computeVal = detail::checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIy[i][j] = detail::filterY<ImageType, FilterType>(I, i, j, filter, size);
+        dIy[i][j] = detail::filterY<ImageType, FilterType>(I, i, j, filter);
       }
     }
   }
@@ -1610,7 +1610,7 @@ void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const Filter
       // pixels for which the mask is true otherwise
       bool computeVal = detail::checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIy[i][j] = detail::filterYBottomBorder<ImageType, FilterType>(I, i, j, filter, size);
+        dIy[i][j] = detail::filterYBottomBorder<ImageType, FilterType>(I, i, j, filter);
       }
     }
   }
@@ -1619,12 +1619,12 @@ void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const Filter
 #else
 
 template<typename ImageType, typename OutputType, typename FilterType>
-void filterY(const vpImage<ImageType> &I, vpImage<OutputType> &dIy, const FilterType *filter, unsigned int size,
+void filterY(const vpImage<ImageType> &I, vpImage<OutputType> &dIy, const vpArray2D<FilterType> &filter,
                     const vpImage<bool> *p_mask)
 {
   const unsigned int height = I.getHeight(), width = I.getWidth();
-  const unsigned int stop1I = (size - 1) / 2;
-  const unsigned int stop2I = height - ((size - 1) / 2);
+  const unsigned int stop1I = filter.getCols();
+  const unsigned int stop2I = height - filter.getCols();
   detail::resizeAndInitializeIfNeeded(p_mask, height, width, dIy);
 
   unsigned int jstart = 0;
@@ -1650,7 +1650,7 @@ void filterY(const vpImage<ImageType> &I, vpImage<OutputType> &dIy, const Filter
         // pixels for which the mask is true otherwise
         bool computeVal = detail::checkBooleanMask(p_mask, i, j);
         if (computeVal) {
-          detail::filterYTopBorder(I, dIy[i][j], i, j, filter, size);
+          detail::filterYTopBorder(I, dIy[i][j], i, j, filter);
         }
       }
     }
@@ -1660,7 +1660,7 @@ void filterY(const vpImage<ImageType> &I, vpImage<OutputType> &dIy, const Filter
       // pixels for which the mask is true otherwise
         bool computeVal = detail::checkBooleanMask(p_mask, i, j);
         if (computeVal) {
-          detail::filterY(I, dIy[i][j], i, j, filter, size);
+          detail::filterY(I, dIy[i][j], i, j, filter);
         }
       }
     }
@@ -1670,7 +1670,7 @@ void filterY(const vpImage<ImageType> &I, vpImage<OutputType> &dIy, const Filter
       // pixels for which the mask is true otherwise
         bool computeVal = detail::checkBooleanMask(p_mask, i, j);
         if (computeVal) {
-          detail::filterYBottomBorder(I, dIy[i][j], i, j, filter, size);
+          detail::filterYBottomBorder(I, dIy[i][j], i, j, filter);
         }
       }
 #ifdef VISP_HAVE_OPENMP
@@ -1696,8 +1696,8 @@ gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int 
   vpArray2D<FilterType>fg(1, (size + 1) / 2);
   getGaussianKernel<FilterType>(fg, size, sigma, normalize);
   vpImage<OutputType> GIx;
-  filterX<ImageType, OutputType>(I, GIx, fg.data, size, p_mask);
-  filterY<OutputType, OutputType>(GIx, GI, fg.data, size, p_mask);
+  filterX<ImageType, OutputType>(I, GIx, fg, p_mask);
+  filterY<OutputType, OutputType>(GIx, GI, fg, p_mask);
   GIx.destroy();
 }
 #else
@@ -1724,8 +1724,8 @@ gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int 
   vpArray2D<FilterType>fg(1, (size + 1) / 2);
   getGaussianKernel<FilterType>(fg, size, sigma, normalize);
   vpImage<OutputType> GIx;
-  filterX<ImageType, OutputType>(I, GIx, fg.data, size, p_mask);
-  filterY<OutputType, OutputType>(GIx, GI, fg.data, size, p_mask);
+  filterX<ImageType, OutputType>(I, GIx, fg, size, p_mask);
+  filterY<OutputType, OutputType>(GIx, GI, fg, size, p_mask);
   GIx.destroy();
 }
 #endif
@@ -1885,7 +1885,7 @@ void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, cons
 {
   vpImage<FilterType> GIy;
   const unsigned int size = (gaussianKernel.getCols() * 2) - 1;
-  filterY<ImageType, FilterType>(I, GIy, gaussianKernel.data, size, p_mask);
+  filterY<ImageType, FilterType>(I, GIy, gaussianKernel, p_mask);
   getGradX<FilterType, FilterType>(GIy, dIx, gaussianDerivativeKernel.data, size, p_mask);
 }
 
@@ -2012,9 +2012,9 @@ template <typename ImageType, typename FilterType>
 void getGradYGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const vpArray2D<FilterType> &gaussianKernel,
                             const vpArray2D<FilterType> &gaussianDerivativeKernel, const vpImage<bool> *p_mask)
 {
-  vpImage<FilterType> GIx;
   const unsigned int size = (gaussianKernel.getCols() * 2) - 1;
-  filterX<ImageType, FilterType>(I, GIx, gaussianKernel.data, size, p_mask);
+  vpImage<FilterType> GIx;
+  filterX<ImageType, FilterType>(I, GIx, gaussianKernel, p_mask);
   getGradY<FilterType, FilterType>(GIx, dIy, gaussianDerivativeKernel.data, size, p_mask);
 }
 

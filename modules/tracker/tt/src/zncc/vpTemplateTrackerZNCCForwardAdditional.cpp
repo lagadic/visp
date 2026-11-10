@@ -47,7 +47,7 @@ vpTemplateTrackerZNCCForwardAdditional::vpTemplateTrackerZNCCForwardAdditional(v
 void vpTemplateTrackerZNCCForwardAdditional::initHessienDesired(const vpImage<unsigned char> &I)
 {
   if (blur)
-    vpImageFilter::filter(I, BI, fgG, taillef);
+    vpImageFilter::filter<unsigned char, double, double>(I, BI, fgG);
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 
@@ -150,7 +150,7 @@ void vpTemplateTrackerZNCCForwardAdditional::initHessienDesired(const vpImage<un
 void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned char> &I)
 {
   if (blur)
-    vpImageFilter::filter(I, BI, fgG, taillef);
+    vpImageFilter::filter<unsigned char, double, double>(I, BI, fgG);
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 

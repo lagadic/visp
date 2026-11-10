@@ -228,30 +228,30 @@ unsigned char filterGaussYPyramidal(const vpImage<unsigned char> &I, unsigned in
 // and not __cplusplus == 199711L
 #if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
 template<typename ImageType, typename FilterType>
-FilterType filterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size);
+FilterType filterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 
-void filterXR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
-void filterXG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
-void filterXB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+void filterXR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const vpArray2D<double> &filter);
+void filterXG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const vpArray2D<double> &filter);
+void filterXB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const vpArray2D<double> &filter);
 
-double filterXR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
-double filterXG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
-double filterXB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+double filterXR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
+double filterXG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
+double filterXB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
 
-double filterXLeftBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
-double filterXLeftBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
-double filterXLeftBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
-double filterXRightBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
-double filterXRightBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
-double filterXRightBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+double filterXLeftBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
+double filterXLeftBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
+double filterXLeftBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
+double filterXRightBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
+double filterXRightBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
+double filterXRightBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
 
 template <typename ImageType, typename FilterType>
 FilterType filterXLeftBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
-                                           const FilterType *filter, unsigned int size);
+                                           const vpArray2D<FilterType> &filter);
 
 template <typename ImageType, typename FilterType>
 FilterType filterXRightBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
-                                            const FilterType *filter, unsigned int size);
+                                            const vpArray2D<FilterType> &filter);
 #else
   /**
    * \brief Apply separately a filter to all the channels of a vpHSV.
@@ -303,12 +303,11 @@ filterChannel(const Color &in1, const Color &in2, vpColVector &out, const Filter
  * \param[in] r The row index.
  * \param[in] c The column index.
  * \param[in] filter The coefficients of the filter.
- * \param[in] size The size of the filter.
  * \return The method is enabled only for arithmetic input type.
  */
 template<typename ImageType, typename OutputType, typename FilterType>
 typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
-filterX(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size);
+filterX(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 
 /**
  * \brief Filter along the horizontal direction "in the middle" of the image (i.e not on a border).
@@ -321,12 +320,11 @@ filterX(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigne
  * \param[in] r The row index.
  * \param[in] c The column index.
  * \param[in] filter The coefficients of the filter.
- * \param[in] size The size of the filter.
  * \return The method is enabled only for color input type.
  */
 template<typename ImageType, typename OutputType, typename FilterType>
 typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
-filterX(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size);
+filterX(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 
   /**
    * \brief Filter along the horizontal direction "on the left border" of the image (the width of the border depends on
@@ -340,12 +338,11 @@ filterX(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigne
    * \param[in] r The row index.
    * \param[in] c The column index.
    * \param[in] filter The coefficients of the filter.
-   * \param[in] size The size of the filter.
    * \return The method is enabled only for arithmetic input type.
    */
 template<typename ImageType, typename OutputType, typename FilterType>
 typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
-filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size);
+filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 
 /**
  * \brief Filter along the horizontal direction "on the left border" of the image (the width of the border depends on
@@ -359,12 +356,11 @@ filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int 
  * \param[in] r The row index.
  * \param[in] c The column index.
  * \param[in] filter The coefficients of the filter.
- * \param[in] size The size of the filter.
  * \return The method is enabled only for color input type.
  */
 template<typename ImageType, typename OutputType, typename FilterType>
 typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
-filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size);
+filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 
 /**
  * \brief Filter along the horizontal direction "on the right border" of the image (the width of the border depends on
@@ -378,12 +374,11 @@ filterXLeftBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int 
  * \param[in] r The row index.
  * \param[in] c The column index.
  * \param[in] filter The coefficients of the filter.
- * \param[in] size The size of the filter.
  * \return The method is enabled only for arithmetic input type.
  */
 template<typename ImageType, typename OutputType, typename FilterType>
 typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
-filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size);
+filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 
 /**
  * \brief Filter along the horizontal direction "on the right border" of the image (the width of the border depends on
@@ -397,12 +392,11 @@ filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int
  * \param[in] r The row index.
  * \param[in] c The column index.
  * \param[in] filter The coefficients of the filter.
- * \param[in] size The size of the filter.
  * \return The method is enabled only for color input type.
  */
 template<typename ImageType, typename OutputType, typename FilterType>
 typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
-filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size);
+filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 #endif
 
 // Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
@@ -410,30 +404,30 @@ filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int
 #if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
 
 template<typename ImageType, typename FilterType>
-FilterType filterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size);
+FilterType filterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 
-void filterYR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
-void filterYG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
-void filterYB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+void filterYR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const vpArray2D<double> &filter);
+void filterYG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const vpArray2D<double> &filter);
+void filterYB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const vpArray2D<double> &filter);
 
-double filterYR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
-double filterYG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
-double filterYB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+double filterYR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
+double filterYG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
+double filterYB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
 
-double filterYTopBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
-double filterYTopBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
-double filterYTopBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
-double filterYBottomBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
-double filterYBottomBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
-double filterYBottomBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size);
+double filterYTopBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
+double filterYTopBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
+double filterYTopBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
+double filterYBottomBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
+double filterYBottomBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
+double filterYBottomBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter);
 
 template<typename ImageType, typename FilterType>
 FilterType filterYTopBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
-                                          const FilterType *filter, unsigned int size);
+                                          const vpArray2D<FilterType> &filter);
 
 template<typename ImageType, typename FilterType>
 FilterType filterYBottomBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
-                                            const FilterType *filter, unsigned int size);
+                                            const vpArray2D<FilterType> &filter);
 #else
 
 /**
@@ -447,12 +441,11 @@ FilterType filterYBottomBorder(const vpImage<ImageType> &I, unsigned int r, unsi
  * \param[in] r The row index.
  * \param[in] c The column index.
  * \param[in] filter The coefficients of the filter.
- * \param[in] size The size of the filter.
  * \return The method is enabled only for arithmetic input type.
  */
 template<typename ImageType, typename OutputType, typename FilterType>
 typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
-filterY(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size);
+filterY(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 
 /**
  * \brief Filter along the vertical direction "in the middle" of the image (i.e not on a border).
@@ -465,12 +458,11 @@ filterY(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigne
  * \param[in] r The row index.
  * \param[in] c The column index.
  * \param[in] filter The coefficients of the filter.
- * \param[in] size The size of the filter.
  * \return The method is enabled only for color input type.
  */
 template<typename ImageType, typename OutputType, typename FilterType>
 typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
-filterY(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size);
+filterY(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 
   /**
    * \brief Filter along the vertical direction "on the top border" of the image (the height of the border depends on
@@ -484,12 +476,11 @@ filterY(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigne
    * \param[in] r The row index.
    * \param[in] c The column index.
    * \param[in] filter The coefficients of the filter.
-   * \param[in] size The size of the filter.
    * \return The method is enabled only for arithmetic input type.
    */
 template<typename ImageType, typename OutputType, typename FilterType>
 typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type
-filterYTopBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size);
+filterYTopBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 
 /**
  * \brief Filter along the vertical direction "on the top border" of the image (the height of the border depends on
@@ -503,11 +494,10 @@ filterYTopBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r
  * \param[in] r The row index.
  * \param[in] c The column index.
  * \param[in] filter The coefficients of the filter.
- * \param[in] size The size of the filter.
  * \return std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type The method is enabled only for color input type.
  */
 template<typename ImageType, typename OutputType, typename FilterType>
-typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterYTopBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size);
+typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterYTopBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 
 /**
  * \brief Filter along the vertical direction "on the bottom border" of the image (the height of the border depends on
@@ -521,12 +511,11 @@ typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filt
  * \param[in] r The row index.
  * \param[in] c The column index.
  * \param[in] filter The coefficients of the filter.
- * \param[in] size The size of the filter.
  * \return std::enable_if<std::is_arithmetic<ImageType>::value, void>::type The method is enabled only for arithmetic input type.
  */
 template<typename ImageType, typename OutputType, typename FilterType>
 typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type filterYBottomBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c,
-                                            const FilterType *filter, unsigned int size);
+                                            const vpArray2D<FilterType> &filter);
 
 /**
  * \brief Filter along the vertical direction "on the bottom border" of the image (the height of the border depends on
@@ -540,11 +529,10 @@ typename std::enable_if<std::is_arithmetic<ImageType>::value, void>::type filter
  * \param[in] r The row index.
  * \param[in] c The column index.
  * \param[in] filter The coefficients of the filter.
- * \param[in] size The size of the filter.
  * \return std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type The method is enabled only for color input type.
  */
 template<typename ImageType, typename OutputType, typename FilterType>
-typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterYBottomBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size);
+typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type  filterYBottomBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 #endif
 
 /*!
@@ -890,20 +878,19 @@ VISP_EXPORT void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If,
  * \param I : The original image.
  * \param GI : The filtered image.
  * \param filter : The separable filter.
- * \param size : The size of the filter.
  * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
  */
-template <typename ImageType, typename FilterType>
-void filter(const vpImage<ImageType> &I, vpImage<FilterType> &GI, const FilterType *filter, unsigned int size, const vpImage<bool> *p_mask = nullptr);
+template <typename ImageType, typename OutputType, typename FilterType>
+VISP_EXPORT void filter(const vpImage<ImageType> &I, vpImage<OutputType> &GI, const vpArray2D<FilterType> &filter, const vpImage<bool> *p_mask = nullptr);
 
 // Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
 // and not __cplusplus == 199711L
 #if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
 template <typename ImageType, typename FilterType>
-void filterX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size,
+void filterX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const vpArray2D<FilterType> &filter,
                     const vpImage<bool> *p_mask = nullptr);
 
-void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size, const vpImage<bool> *p_mask = nullptr);
+void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const vpArray2D<double> &filter, const vpImage<bool> *p_mask = nullptr);
 #else
   /**
    * \brief Filter along the horizontal direction.
@@ -919,7 +906,7 @@ void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filte
    * unused otherwise.
    */
 template<typename ImageType, typename OutputType, typename FilterType>
-void filterX(const vpImage<ImageType> &I, vpImage<OutputType> &dIx, const FilterType *filter, unsigned int size,
+void filterX(const vpImage<ImageType> &I, vpImage<OutputType> &dIx, const vpArray2D<FilterType> &filter,
                     const vpImage<bool> *p_mask = nullptr);
 #endif
 
@@ -927,10 +914,10 @@ void filterX(const vpImage<ImageType> &I, vpImage<OutputType> &dIx, const Filter
 // Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
 // and not __cplusplus == 199711L
 #if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
-VISP_EXPORT void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size, const vpImage<bool> *p_mask = nullptr);
+VISP_EXPORT void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const vpArray2D<double> &filter, const vpImage<bool> *p_mask = nullptr);
 
 template<typename ImageType, typename FilterType>
-void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size,
+void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const vpArray2D<FilterType> &filter,
                     const vpImage<bool> *p_mask = nullptr);
 
 #else
@@ -949,7 +936,7 @@ void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const Filter
    * unused otherwise.
    */
 template<typename ImageType, typename OutputType, typename FilterType>
-void filterY(const vpImage<ImageType> &I, vpImage<OutputType> &dIy, const FilterType *filter, unsigned int size,
+void filterY(const vpImage<ImageType> &I, vpImage<OutputType> &dIy, const vpArray2D<FilterType> &filter,
                     const vpImage<bool> *p_mask = nullptr);
 #endif
 
