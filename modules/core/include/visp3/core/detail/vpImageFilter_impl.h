@@ -1394,8 +1394,8 @@ void filter(const vpImage<ImageType> &I, vpImage<FilterType> &If, const vpArray2
 }
 
 template <typename ImageType, typename FilterType>
-void filter(const vpImage<ImageType> &I, vpImage<FilterType> &Iu, vpImage<FilterType> &Iv, const vpArray2D<FilterType> &M,
-                   bool convolve, const vpImage<bool> *p_mask)
+void filter(const vpImage<ImageType> &I, vpImage<FilterType> &Iu, vpImage<FilterType> &Iv,
+            const vpArray2D<FilterType> &M, bool convolve, const vpImage<bool> *p_mask)
 {
   const unsigned int size = M.getRows();
   const unsigned int half_size = size / 2;
@@ -1458,9 +1458,9 @@ void filter(const vpImage<ImageType> &I, vpImage<FilterType> &Iu, vpImage<Filter
 void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH, const vpColVector &kernelV);
 
 template <typename ImageType, typename OutputType, typename FilterType>
-void filter(const vpImage<ImageType> &I, vpImage<FilterType> &GI, const vpArray2D<FilterType> &filter, const vpImage<bool> *p_mask)
+void filter(const vpImage<ImageType> &I, vpImage<OutputType> &GI, const vpArray2D<FilterType> &filter, const vpImage<bool> *p_mask)
 {
-  vpImage<FilterType> GIx;
+  vpImage<OutputType> GIx;
   filterX<ImageType, OutputType, FilterType>(I, GIx, filter, p_mask);
   filterY<OutputType, OutputType, FilterType>(GIx, GI, filter, p_mask);
   GIx.destroy();

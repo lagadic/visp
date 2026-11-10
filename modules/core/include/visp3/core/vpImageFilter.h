@@ -881,7 +881,7 @@ VISP_EXPORT void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If,
  * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
  */
 template <typename ImageType, typename OutputType, typename FilterType>
-VISP_EXPORT void filter(const vpImage<ImageType> &I, vpImage<OutputType> &GI, const vpArray2D<FilterType> &filter, const vpImage<bool> *p_mask = nullptr);
+void filter(const vpImage<ImageType> &I, vpImage<OutputType> &GI, const vpArray2D<FilterType> &filter, const vpImage<bool> *p_mask = nullptr);
 
 // Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
 // and not __cplusplus == 199711L
