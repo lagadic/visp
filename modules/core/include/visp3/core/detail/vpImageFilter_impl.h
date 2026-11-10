@@ -1884,7 +1884,6 @@ void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, cons
                             const vpArray2D<FilterType> &gaussianDerivativeKernel, const vpImage<bool> *p_mask)
 {
   vpImage<FilterType> GIy;
-  const unsigned int size = (gaussianKernel.getCols() * 2) - 1;
   filterY<ImageType, FilterType>(I, GIy, gaussianKernel, p_mask);
   getGradX<FilterType, FilterType>(GIy, dIx, gaussianDerivativeKernel, p_mask);
 }
@@ -2012,7 +2011,6 @@ template <typename ImageType, typename FilterType>
 void getGradYGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const vpArray2D<FilterType> &gaussianKernel,
                             const vpArray2D<FilterType> &gaussianDerivativeKernel, const vpImage<bool> *p_mask)
 {
-  const unsigned int size = (gaussianKernel.getCols() * 2) - 1;
   vpImage<FilterType> GIx;
   filterX<ImageType, FilterType>(I, GIx, gaussianKernel, p_mask);
   getGradY<FilterType, FilterType>(GIx, dIy, gaussianDerivativeKernel, p_mask);
