@@ -57,7 +57,8 @@ vpRBTrackingResult vpRBTrackingResult::readFromJsonFile(const std::string &path)
   if (!input.good()) {
     throw vpException(vpException::ioError, "Path %s could not be opened to read tracking results", path.c_str());
   }
-  nlohmann::json j = nlohmann::json::parse(input);
+  // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+  nlohmann::json j = nlohmann::json::parse(input, nullptr, true, true);
   result = j;
   return result;
 }

@@ -60,7 +60,6 @@ $ ./tutorial-circle-hough --input coins2.jpg \
     --gaussian-sigma 1 \
     --dilatation-kernel-size 5 \
     --center-thresh 70 \
-    --circle-probability-thresh 0.725 \
     --radius-limits 34 75 \
     --merging-thresh 5 5 \
     --circle-perfectness 0.65 \
@@ -110,7 +109,6 @@ $ ./tutorial-circle-hough --input /path/to/video/${BASENAME}%d.png \
     --gaussian-sigma 1 \
     --dilatation-kernel-size 5 \
     --center-thresh 70 \
-    --circle-probability-thresh 0.725 \
     --radius-limits 34 75 \
     --merging-thresh 5 5 \
     --circle-perfectness 0.65 \

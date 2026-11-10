@@ -1535,7 +1535,7 @@ vpDetectorAprilTag::vpAprilTagFamily vpDetectorAprilTag::tagFamilyFromString(con
     throw(vpException(vpException::badValue, "Could not find a tag family that corresponds to the name '%s'", name.c_str()));
   }
   return res;
-  }
+}
 
 std::string vpDetectorAprilTag::getAvailableTagFamily(const std::string &prefix, const std::string &sep, const std::string &suffix)
 {
@@ -1555,7 +1555,7 @@ std::string vpDetectorAprilTag::getAvailableTagFamily(const std::string &prefix,
 #endif
   modes += tagFamilyToString(candidate) + suffix;
   return modes;
-  }
+}
 
 std::string vpDetectorAprilTag::poseMethodToString(const vpDetectorAprilTag::vpPoseEstimationMethod &method)
 {
@@ -1613,7 +1613,7 @@ vpDetectorAprilTag::vpPoseEstimationMethod vpDetectorAprilTag::poseMethodFromStr
     throw(vpException(vpException::badValue, "Could not find a pose estimation method that corresponds to the name '%s'", name.c_str()));
   }
   return res;
-  }
+}
 
 std::string vpDetectorAprilTag::getAvailablePoseMethod(const std::string &prefix, const std::string &sep, const std::string &suffix)
 {
@@ -1633,7 +1633,7 @@ std::string vpDetectorAprilTag::getAvailablePoseMethod(const std::string &prefix
 #endif
   modes += poseMethodToString(candidate) + suffix;
   return modes;
-  }
+}
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 void to_json(nlohmann::json &j, const vpDetectorAprilTag &detector)
@@ -2081,7 +2081,8 @@ void vpDetectorAprilTag::loadConfigFile(const std::string &configFile)
   }
   nlohmann::json settings;
   try {
-    settings = nlohmann::json::parse(jsonFile);
+    // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+    settings = nlohmann::json::parse(jsonFile, nullptr, true, true);
   }
   catch (nlohmann::json::parse_error &e) {
     std::stringstream msg;

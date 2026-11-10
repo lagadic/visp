@@ -15,6 +15,7 @@
   "C_Cpp.vcFormat.space.beforeOpenSquareBracket": false,
   "files.associations": {
     "*.dox": "doxygen",
+    "**/tutorial/**/*.json": "jsonc",
     "bitset": "cpp",
     "optional": "cpp",
     "*.in": "cmake",
@@ -222,6 +223,9 @@
   ],
   "C_Cpp.default.compilerPath": "/usr/bin/g++",
   "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[jsonc]": {
     "editor.defaultFormatter": "vscode.json-language-features"
   },
 }

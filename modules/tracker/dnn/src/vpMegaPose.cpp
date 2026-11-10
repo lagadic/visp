@@ -291,19 +291,19 @@ void handleWrongReturnMessage(const vpMegaPose::ServerMessage code, std::vector<
 
 const std::unordered_map<vpMegaPose::ServerMessage, std::string> vpMegaPose::m_codeMap =
 {
-  {ServerMessage::ERR, "RERR"},
-  {ServerMessage::OK, "OKOK"},
-  {ServerMessage::GET_POSE, "GETP"},
-  {ServerMessage::RET_POSE, "RETP"},
-  {ServerMessage::SET_INTR, "INTR"},
-  {ServerMessage::GET_VIZ, "GETV"},
-  {ServerMessage::RET_VIZ, "RETV"},
-  {ServerMessage::GET_SCORE, "GSCO"},
-  {ServerMessage::RET_SCORE, "RSCO"},
-  {ServerMessage::SET_SO3_GRID_SIZE, "SO3G"},
-  {ServerMessage::GET_LIST_OBJECTS, "GLSO"},
-  {ServerMessage::RET_LIST_OBJECTS, "RLSO"},
-  {ServerMessage::EXIT, "EXIT"},
+  { ServerMessage::ERR, "RERR" },
+  { ServerMessage::OK, "OKOK" },
+  { ServerMessage::GET_POSE, "GETP" },
+  { ServerMessage::RET_POSE, "RETP" },
+  { ServerMessage::SET_INTR, "INTR" },
+  { ServerMessage::GET_VIZ, "GETV" },
+  { ServerMessage::RET_VIZ, "RETV" },
+  { ServerMessage::GET_SCORE, "GSCO" },
+  { ServerMessage::RET_SCORE, "RSCO" },
+  { ServerMessage::SET_SO3_GRID_SIZE, "SO3G" },
+  { ServerMessage::GET_LIST_OBJECTS, "GLSO" },
+  { ServerMessage::RET_LIST_OBJECTS, "RLSO" },
+  { ServerMessage::EXIT, "EXIT" },
 };
 
 std::string vpMegaPose::messageToString(const vpMegaPose::ServerMessage messageType)
@@ -404,7 +404,7 @@ vpMegaPose::vpMegaPose(const std::string &host, int port, const vpCameraParamete
     throw vpException(vpException::ioError, "Could not connect to server at " + host + ":" + std::to_string(port));
   }
   setIntrinsics(cam, height, width);
-  }
+}
 
 vpMegaPose::~vpMegaPose()
 {
@@ -491,7 +491,8 @@ vpMegaPose::estimatePoses(const vpImage<vpRGBa>&image, const std::vector<std::st
   }
   std::string jsonStr;
   decode(data_result, index, jsonStr);
-  json jsonValue = json::parse(jsonStr);
+  // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+  json jsonValue = json::parse(jsonStr, nullptr, true, true);
   std::vector<vpMegaPoseEstimate> result = jsonValue;
   return result;
 }
@@ -529,7 +530,8 @@ std::vector<double> vpMegaPose::scorePoses(const vpImage<vpRGBa>&image,
   unsigned int index = 0;
   std::string jsonStr;
   decode(data_result, index, jsonStr);
-  json jsonValue = json::parse(jsonStr);
+  // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+  json jsonValue = json::parse(jsonStr, nullptr, true, true);
   std::vector<double> result = jsonValue;
   return result;
 }
@@ -623,7 +625,8 @@ std::vector<std::string> vpMegaPose::getObjectNames()
   unsigned int index = 0;
   std::string jsonStr;
   decode(data_result, index, jsonStr);
-  json jsonValue = json::parse(jsonStr);
+  // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+  json jsonValue = json::parse(jsonStr, nullptr, true, true);
   std::vector<std::string> result = jsonValue;
   return result;
 }

@@ -195,9 +195,9 @@ enum DetectionMethod
 #endif
 
 NLOHMANN_JSON_SERIALIZE_ENUM(DetectionMethod, {
-  {UNKNOWN, nullptr}, // Default value if the json string is not in "current", "desired" or "mean"
-  {CLICK, "click"},
-  {DNN, "dnn"} }
+  { UNKNOWN, nullptr }, // Default value if the json string is not in "current", "desired" or "mean"
+  { CLICK, "click" },
+  { DNN, "dnn" } }
   );
 
 #if defined(__clang__)
@@ -249,7 +249,7 @@ int main(int argc, const char *argv[])
     .addArgument("detector/labels", labels, true, "Detection class labels")
     .addArgument("detector/mean/red", detectorMeanR, false, "Detector mean red component. Used to normalize image")
     .addArgument("detector/mean/green", detectorMeanG, false, "Detector mean green component. Used to normalize image")
-    .addArgument("detector/mean/blue", detectorMeanB, false, "Detector mean red component. Used to normalize image")
+    .addArgument("detector/mean/blue", detectorMeanB, false, "Detector mean blue component. Used to normalize image")
     .addArgument("detector/confidenceThreshold", detectorConfidenceThreshold, false, "Detector confidence threshold. "
       "When a detection with a confidence below this threshold, it is ignored")
     .addArgument("detector/nmsThreshold", detectorNmsThreshold, false, "Detector non maximal suppression threshold.")

@@ -1,75 +1,134 @@
+// Configuration of the render-based tracker (vpRBTracker) used by tutorial-rbt-realsense to track the dragon
+// with a RealSense camera (color + depth):
+//   ./tutorial-rbt-realsense --tracker data/dragon/dragon_realsense.json --object data/dragon/dragon.bam \
+//     --init-file data/dragon/dragon.init
+// There is no "camera" entry: the intrinsics are retrieved from the RealSense device.
+// See the "JSON configuration" section of the render-based tracking tutorial for the full list of parameters.
 {
+  // Settings of the pose optimization (Levenberg-Marquardt).
   "vvs": {
+    // Optimization gain. A gain too small may lead to drift, a gain too high to an unstable pose.
     "gain": 1.0,
+    // Maximum number of optimization iterations per frame.
     "maxIterations": 10,
+    // Initial amount of Levenberg-Marquardt regularization (0 = Gauss-Newton).
     "mu": 0.0,
+    // Factor applied to mu at every optimization iteration.
     "muIterFactor": 0.1,
+    // The optimization stops once the motion between two iterations is below this value (in meters).
     "convergenceThreshold": 0.001
   },
+  // The object is rendered again when its motion since the last render is above this value (in meters).
+  // Set to 0 to render at every frame.
   "updateRenderThreshold": 0.001,
+  // Path to the 3D model of the object, in a format readable by Panda3D.
   "model": "data/dragon/dragon.bam",
+  // Settings of the silhouette extraction from the renders of the 3D model.
   "silhouetteExtractionSettings": {
+    // A pixel belongs to the silhouette if the rendered depth disparity is above this threshold.
+    // "relative": value is a fraction of the distance between the clipping planes. "absolute": value in meters.
     "threshold": {
       "type": "relative",
       "value": 0.1
     },
     "sampling": {
+      // Step in pixels used to sample the silhouette map (1 = every pixel).
       "samplingRate": 1,
+      // Maximum number of silhouette points to keep (0 = keep all of them).
       "numPoints": 512,
+      // Try to reuse the same silhouette points across frames, to reduce jitter.
       "reusePreviousPoints": true
     }
   },
+  // Object segmentation used to filter out the features that do not belong to the object.
   "mask": {
+    // Segmentation based on color histograms of the object and of the background.
     "type": "histogram",
+    // Number of bins per color component. Should be a power of 2.
     "bins": 32,
+    // Update rate of the object and background histograms, in [0, 1] (1 = only use the last frame).
     "objectUpdateRate": 0.1,
     "backgroundUpdateRate": 0.1,
+    // Max difference (in meters) between rendered and measured depth for a pixel to update the object histogram,
+    // which reduces the influence of occlusions.
     "maxDepthError": 0.01,
+    // If true, compute the mask only in the bounding box of the object (faster).
     "computeOnlyOnBoundingBox": false
   },
+  // Drift detection, used to estimate the confidence in the tracking.
   "drift": {
+    // Probabilistic method based on color and depth statistics of 3D points sampled on the object.
     "type": "probabilistic",
+    // Update rate of the color statistics of each 3D point.
     "colorUpdateRate": 0.25,
+    // Initial standard deviation of the (R, G, B) color of each 3D point.
     "initialColorSigma": 25.0,
+    // Standard deviation (in meters) between the measured and the rendered depth.
     "depthSigma": 0.025,
+    // Max depth error (in meters) to consider that a stored 3D point is visible from the camera.
     "filteringMaxDistance": 0.001,
+    // Minimum distance (in meters) between a newly sampled 3D point and the already stored ones.
     "minDistanceNewPoints": 0.005
   },
+  // List of the features used to estimate the pose. Each one has a "weight" giving its importance.
   "features": [
     {
+      // Silhouette contours tracked using color statistics (Contracting Curve Density, CCD).
       "type": "silhouetteColor",
       "weight": 0.1,
+      // Use the segmentation mask to reject features with a confidence below minMaskConfidence.
       "useMask": true,
       "minMaskConfidence": 0.8,
       "ccd": {
+        // Initial size (in pixels) of the search area along the contour normal. Drives the convergence domain.
+        // Larger than in dragon.json to handle larger motions.
         "h": 64,
+        // Subsampling step (in pixels) along the contour normal.
         "delta_h": 4,
+        // Minimum size of the search area: h is halved during the optimization down to min_h.
         "min_h": 16
       }
     },
     {
+      // Dense depth features, computed from the RealSense depth map.
       "type": "depth",
       "weight": 1,
+      // Whether to display these features when calling vpRBTracker::display().
       "display": false,
+      // Step (in pixels) used to sample the render along rows and columns. Lower values give more features.
       "step": 2,
+      // Use the segmentation mask to reject features with a confidence below minMaskConfidence.
       "useMask": true,
       "minMaskConfidence": 0.8
     },
     {
+      // KLT keypoints tracked with vpKltOpencv.
       "type": "klt",
       "weight": 1,
+      // Use the segmentation mask to reject features with a confidence below minMaskConfidence.
       "useMask": true,
       "minMaskConfidence": 0.5,
+      // A tracked point with a reprojection error above this value (in pixels) is rejected.
       "maxReprojectionErrorPixels": 5.0,
+      // Minimum distance (in pixels) between a new point and the already tracked ones.
       "newPointsMinPixelDistance": 4,
+      // KLT tracking is fully reinitialized when fewer points than this are tracked.
       "minimumNumPoints": 20,
+      // Remaining settings are passed to vpKltOpencv:
+      // size of the averaging block used to compute the derivatives,
       "blockSize": 5,
+      // use the Harris detector (true) or the minimum eigen value detector (false), with its free parameter,
       "useHarris": true,
       "harris": 0.05,
+      // maximum number of detected points,
       "maxFeatures": 500,
+      // minimum distance (in pixels) between detected corners,
       "minDistance": 5.0,
+      // maximum pyramid level (0 = no pyramid),
       "pyramidLevels": 3,
+      // minimal accepted quality, as a fraction of the best corner quality,
       "quality": 0.01,
+      // and size of the search window used to refine the corner locations.
       "windowSize": 5
     }
   ]
