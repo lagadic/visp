@@ -401,28 +401,28 @@ template
 void getGradY<double>(const vpImage<unsigned char> &I, vpImage<double> &dIy, const vpImage<bool> *p_mask);
 
 template
-void getGradX<unsigned char, float>(const vpImage<unsigned char> &I, vpImage<float> &dIx, const float *filter, unsigned int size, const vpImage<bool> *p_mask);
+void getGradX<unsigned char, float>(const vpImage<unsigned char> &I, vpImage<float> &dIx, const vpArray2D<float> &filter, const vpImage<bool> *p_mask);
 
 template
-void getGradX<unsigned char, double>(const vpImage<unsigned char> &I, vpImage<double> &dIx, const double *filter, unsigned int size, const vpImage<bool> *p_mask);
+void getGradX<unsigned char, double>(const vpImage<unsigned char> &I, vpImage<double> &dIx, const vpArray2D<double> &filter, const vpImage<bool> *p_mask);
 
 template
-void getGradX<float, float>(const vpImage<float> &I, vpImage<float> &dIx, const float *filter, unsigned int size, const vpImage<bool> *p_mask);
+void getGradX<float, float>(const vpImage<float> &I, vpImage<float> &dIx, const vpArray2D<float> &filter, const vpImage<bool> *p_mask);
 
 template
-void getGradX<double, double>(const vpImage<double> &I, vpImage<double> &dIx, const double *filter, unsigned int size, const vpImage<bool> *p_mask);
+void getGradX<double, double>(const vpImage<double> &I, vpImage<double> &dIx, const vpArray2D<double> &filter, const vpImage<bool> *p_mask);
 
 template
-void getGradY<unsigned char, float>(const vpImage<unsigned char> &I, vpImage<float> &dIy, const float *filter, unsigned int size, const vpImage<bool> *p_mask);
+void getGradY<unsigned char, float>(const vpImage<unsigned char> &I, vpImage<float> &dIy, const vpArray2D<float> &filter, const vpImage<bool> *p_mask);
 
 template
-void getGradY<unsigned char, double>(const vpImage<unsigned char> &I, vpImage<double> &dIy, const double *filter, unsigned int size, const vpImage<bool> *p_mask);
+void getGradY<unsigned char, double>(const vpImage<unsigned char> &I, vpImage<double> &dIy, const vpArray2D<double> &filter, const vpImage<bool> *p_mask);
 
 template
-void getGradY<float, float>(const vpImage<float> &I, vpImage<float> &dIy, const float *filter, unsigned int size, const vpImage<bool> *p_mask);
+void getGradY<float, float>(const vpImage<float> &I, vpImage<float> &dIy, const vpArray2D<float> &filter, const vpImage<bool> *p_mask);
 
 template
-void getGradY<double, double>(const vpImage<double> &I, vpImage<double> &dIy, const double *filter, unsigned int size, const vpImage<bool> *p_mask);
+void getGradY<double, double>(const vpImage<double> &I, vpImage<double> &dIy, const vpArray2D<double> &filter, const vpImage<bool> *p_mask);
 
 /**
  * \endcond

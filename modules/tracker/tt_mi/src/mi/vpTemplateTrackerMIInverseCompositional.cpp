@@ -95,9 +95,9 @@ void vpTemplateTrackerMIInverseCompositional::initCompInverse(const vpImage<unsi
 
   if (ApproxHessian != HESSIAN_NONSECOND && ApproxHessian != HESSIAN_0 && ApproxHessian != HESSIAN_NEW &&
       ApproxHessian != HESSIAN_YOUCEF) {
-    vpImageFilter::getGradX(dIx, d2Ix, fgdG.data, taillef);
-    vpImageFilter::getGradY(dIx, d2Ixy, fgdG.data, taillef);
-    vpImageFilter::getGradY(dIy, d2Iy, fgdG.data, taillef);
+    vpImageFilter::getGradX(dIx, d2Ix, fgdG);
+    vpImageFilter::getGradY(dIx, d2Ixy, fgdG);
+    vpImageFilter::getGradY(dIy, d2Iy, fgdG);
   }
   double Nc_255_ = (Nc - 1) / 255.;
   Warp->computeCoeff(p);

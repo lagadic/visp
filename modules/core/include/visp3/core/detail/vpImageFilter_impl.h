@@ -973,31 +973,31 @@ template <class ImageType> double derivativeFilterY(const vpImage<ImageType> &I,
 }
 
 template <class ImageType, typename FilterType>
-FilterType derivativeFilterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+FilterType derivativeFilterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   unsigned int i;
   FilterType result;
 
   result = 0;
 
-  for (i = 1; i <= stop; ++i) {
-    result += filter[i] * static_cast<FilterType>(I[r][c + i] - I[r][c - i]);
+  for (i = 1; i < stop; ++i) {
+    result += filter.data[i] * static_cast<FilterType>(I[r][c + i] - I[r][c - i]);
   }
   return result;
 }
 
 template <class ImageType, typename FilterType>
-FilterType derivativeFilterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+FilterType derivativeFilterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   unsigned int i;
   FilterType result;
 
   result = 0;
 
-  for (i = 1; i <= stop; ++i) {
-    result += filter[i] * static_cast<FilterType>(I[r + i][c] - I[r - i][c]);
+  for (i = 1; i < stop; ++i) {
+    result += filter.data[i] * static_cast<FilterType>(I[r + i][c] - I[r - i][c]);
   }
   return result;
 }
@@ -1846,11 +1846,11 @@ void getGradX(const vpImage<unsigned char> &I, vpImage<FilterType> &dIx, const v
 }
 
 template <typename ImageType, typename FilterType>
-void getGradX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size, const vpImage<bool> *p_mask)
+void getGradX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const vpArray2D<FilterType> &filter, const vpImage<bool> *p_mask)
 {
   const unsigned int height = I.getHeight(), width = I.getWidth();
-  const unsigned int stop1J = (size - 1) / 2;
-  const unsigned int stop2J = width - ((size - 1) / 2);
+  const unsigned int stop1J = filter.getCols();
+  const unsigned int stop2J = width - filter.getCols();
   detail::resizeAndInitializeIfNeeded(p_mask, height, width, dIx);
 
   for (unsigned int i = 0; i < height; ++i) {
@@ -1866,7 +1866,7 @@ void getGradX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const Filte
       // pixels for which the mask is true otherwise
       bool computeVal = detail::checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIx[i][j] = detail::derivativeFilterX<ImageType, FilterType>(I, i, j, filter, size);
+        dIx[i][j] = detail::derivativeFilterX<ImageType, FilterType>(I, i, j, filter);
       }
     }
     for (unsigned int j = stop2J; j < width; ++j) {
@@ -1886,7 +1886,7 @@ void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, cons
   vpImage<FilterType> GIy;
   const unsigned int size = (gaussianKernel.getCols() * 2) - 1;
   filterY<ImageType, FilterType>(I, GIy, gaussianKernel, p_mask);
-  getGradX<FilterType, FilterType>(GIy, dIx, gaussianDerivativeKernel.data, size, p_mask);
+  getGradX<FilterType, FilterType>(GIy, dIx, gaussianDerivativeKernel, p_mask);
 }
 
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
@@ -1969,11 +1969,11 @@ void getGradY(const vpImage<unsigned char> &I, vpImage<FilterType> &dIy, const v
 }
 
 template <typename ImageType, typename FilterType>
-void getGradY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size, const vpImage<bool> *p_mask)
+void getGradY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const vpArray2D<FilterType> &filter, const vpImage<bool> *p_mask)
 {
   const unsigned int height = I.getHeight(), width = I.getWidth();
-  const unsigned int stop1I = (size - 1) / 2;
-  const unsigned int stop2I = height - ((size - 1) / 2);
+  const unsigned int stop1I = filter.getCols();
+  const unsigned int stop2I = height - filter.getCols();
   detail::resizeAndInitializeIfNeeded(p_mask, height, width, dIy);
 
   for (unsigned int i = 0; i < stop1I; ++i) {
@@ -1992,7 +1992,7 @@ void getGradY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const Filte
       // pixels for which the mask is true otherwise
       bool computeVal = detail::checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIy[i][j] = detail::derivativeFilterY<ImageType, FilterType>(I, i, j, filter, size);
+        dIy[i][j] = detail::derivativeFilterY<ImageType, FilterType>(I, i, j, filter);
       }
     }
   }
@@ -2015,7 +2015,7 @@ void getGradYGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, cons
   const unsigned int size = (gaussianKernel.getCols() * 2) - 1;
   vpImage<FilterType> GIx;
   filterX<ImageType, FilterType>(I, GIx, gaussianKernel, p_mask);
-  getGradY<FilterType, FilterType>(GIx, dIy, gaussianDerivativeKernel.data, size, p_mask);
+  getGradY<FilterType, FilterType>(GIx, dIy, gaussianDerivativeKernel, p_mask);
 }
 
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher

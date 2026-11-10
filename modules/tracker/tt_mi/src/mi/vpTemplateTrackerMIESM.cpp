@@ -116,9 +116,9 @@ void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
   if (ApproxHessian != HESSIAN_NONSECOND && ApproxHessian != HESSIAN_0 && ApproxHessian != HESSIAN_NEW &&
       ApproxHessian != HESSIAN_YOUCEF) {
-    vpImageFilter::getGradX(dIx, d2Ix, fgdG.data, taillef);
-    vpImageFilter::getGradY(dIx, d2Ixy, fgdG.data, taillef);
-    vpImageFilter::getGradY(dIy, d2Iy, fgdG.data, taillef);
+    vpImageFilter::getGradX(dIx, d2Ix, fgdG);
+    vpImageFilter::getGradY(dIx, d2Ixy, fgdG);
+    vpImageFilter::getGradY(dIy, d2Iy, fgdG);
   }
 
   Nbpoint = 0;

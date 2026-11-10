@@ -562,12 +562,11 @@ template <class ImageType> double derivativeFilterY(const vpImage<ImageType> &I,
  * \param c : Coordinates(column) of the pixel
  * \param filter : Coefficients of the filter to be initialized using
  * getGaussianDerivativeKernel().
- * \param size : Size of the filter.
  *
  * \sa getGaussianDerivativeKernel()
  */
 template <class ImageType, typename FilterType>
-FilterType derivativeFilterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size);
+FilterType derivativeFilterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 
 /*!
  * Apply a size x 1 Derivative Filter in Y to an image pixel.
@@ -578,12 +577,11 @@ FilterType derivativeFilterX(const vpImage<ImageType> &I, unsigned int r, unsign
  * \param c : Coordinates (column) of the pixel.
  * \param filter : Coefficients of the filter to be initialized using
  * getGaussianDerivativeKernel().
- * \param size : Size of the filter.
  *
  * \sa getGaussianDerivativeKernel()
  */
 template <class ImageType, typename FilterType>
-FilterType derivativeFilterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size);
+FilterType derivativeFilterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 }
 #endif
 
@@ -1028,7 +1026,7 @@ template<typename FilterType>
 void getGradX(const vpImage<unsigned char> &I, vpImage<FilterType> &dIx, const vpImage<bool> *p_mask = nullptr);
 
 template <typename ImageType, typename FilterType>
-void getGradX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size, const vpImage<bool> *p_mask = nullptr);
+void getGradX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const vpArray2D<FilterType> &filter, const vpImage<bool> *p_mask = nullptr);
 
 /*!
 * Compute the gradient along X after applying a gaussian filter along Y.
@@ -1066,7 +1064,7 @@ template <typename FilterType>
 void getGradY(const vpImage<unsigned char> &I, vpImage<FilterType> &dIy, const vpImage<bool> *p_mask = nullptr);
 
 template <typename ImageType, typename FilterType>
-void getGradY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size, const vpImage<bool> *p_mask = nullptr);
+void getGradY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const vpArray2D<FilterType> &filter, const vpImage<bool> *p_mask = nullptr);
 
 /*!
 * Compute the gradient along Y after applying a gaussian filter along X.

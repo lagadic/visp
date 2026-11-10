@@ -75,11 +75,11 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 
   vpImage<double> dIxx, dIxy, dIyx, dIyy;
-  vpImageFilter::getGradX(dIx, dIxx, fgdG.data, taillef);
-  vpImageFilter::getGradY(dIx, dIxy, fgdG.data, taillef);
+  vpImageFilter::getGradX(dIx, dIxx, fgdG);
+  vpImageFilter::getGradY(dIx, dIxy, fgdG);
 
-  vpImageFilter::getGradX(dIy, dIyx, fgdG.data, taillef);
-  vpImageFilter::getGradY(dIy, dIyy, fgdG.data, taillef);
+  vpImageFilter::getGradX(dIy, dIyx, fgdG);
+  vpImageFilter::getGradY(dIy, dIyy, fgdG);
 
   Warp->computeCoeff(p);
   double Ic, dIcx = 0., dIcy = 0.;

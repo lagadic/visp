@@ -91,6 +91,58 @@ BEGIN_VISP_NAMESPACE
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace detail
 {
+  /*!
+   * Apply a 1x3 derivative filter to an image pixel.
+   *
+   * \param I : Image to filter
+   * \param r : coordinates (row) of the pixel
+   * \param c : coordinates (column) of the pixel
+   * \param filter : Coefficients of the filter to be initialized using
+   * getGaussianDerivativeKernel(). Only the right half coefficients, so the array is of
+   * size (size - 1) / 2 .
+   * \param size : Size of the filter.
+   */
+template <class ImageType, typename FilterType>
+FilterType derivativeFilterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+{
+  const unsigned int stop = (size - 1) / 2;
+  unsigned int i;
+  FilterType result;
+
+  result = 0;
+
+  for (i = 1; i <= stop; ++i) {
+    result += filter[i] * static_cast<FilterType>(I[r][c + i] - I[r][c - i]);
+  }
+  return result;
+}
+
+/*!
+ * Apply a 3x1 derivative filter to an image pixel.
+ *
+ * \param I : Image to filter
+ * \param r : coordinates (row) of the pixel
+ * \param c : coordinates (column) of the pixel
+ * \param filter : Coefficients of the filter to be initialized using
+ * getGaussianDerivativeKernel(). Only the right half coefficients, so the array is of
+ * size (size - 1) / 2 .
+ * \param size : Size of the filter.
+ */
+template <class ImageType, typename FilterType>
+FilterType derivativeFilterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+{
+  const unsigned int stop = (size - 1) / 2;
+  unsigned int i;
+  FilterType result;
+
+  result = 0;
+
+  for (i = 1; i <= stop; ++i) {
+    result += filter[i] * static_cast<FilterType>(I[r + i][c] - I[r - i][c]);
+  }
+  return result;
+}
+
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
 /**
  * \brief Filter along the horizontal direction "in the middle" of the image (i.e not on a border).
@@ -939,6 +991,40 @@ VP_DEPRECATED void getGaussianDerivativeKernel(FilterType *filter, unsigned int 
   getGaussianDerivativeKernel(filter_as_array, size, sigma, normalize);
 }
 
+template <typename ImageType, typename FilterType>
+void getGradX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size, const vpImage<bool> *p_mask = nullptr)
+{
+  const unsigned int height = I.getHeight(), width = I.getWidth();
+  const unsigned int stop1J = (size - 1) / 2;
+  const unsigned int stop2J = width - ((size - 1) / 2);
+  detail::resizeAndInitializeIfNeeded(p_mask, height, width, dIx);
+
+  for (unsigned int i = 0; i < height; ++i) {
+    for (unsigned int j = 0; j < stop1J; ++j) {
+      // If a mask is used, the image is already initialized with 0s
+      bool computeVal = (p_mask == nullptr);
+      if (computeVal) {
+        dIx[i][j] = static_cast<FilterType>(0);
+      }
+    }
+    for (unsigned int j = stop1J; j < stop2J; ++j) {
+      // We have to compute the value for each pixel if we don't have a mask or for
+      // pixels for which the mask is true otherwise
+      bool computeVal = detail::checkBooleanMask(p_mask, i, j);
+      if (computeVal) {
+        dIx[i][j] = detail::derivativeFilterX<ImageType, FilterType>(I, i, j, filter, size);
+      }
+    }
+    for (unsigned int j = stop2J; j < width; ++j) {
+      // If a mask is used, the image is already initialized with 0s
+      bool computeVal = (p_mask == nullptr);
+      if (computeVal) {
+        dIx[i][j] = static_cast<FilterType>(0);
+      }
+    }
+  }
+}
+
 /*!
 * Compute the gradient along X after applying a gaussian filter along Y.
 * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
@@ -957,6 +1043,46 @@ VP_DEPRECATED void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterTy
   vpImage<FilterType> GIy;
   vpImageFilter::filterY<ImageType, FilterType>(I, GIy, gaussianKernel, size, p_mask);
   vpImageFilter::getGradX<FilterType, FilterType>(GIy, dIx, gaussianDerivativeKernel, size, p_mask);
+}
+
+template <typename ImageType, typename FilterType>
+void getGradY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size, const vpImage<bool> *p_mask = nullptr)
+{
+  const unsigned int height = I.getHeight(), width = I.getWidth();
+  const unsigned int stop1I = (size - 1) / 2;
+  const unsigned int stop2I = height - ((size - 1) / 2);
+  detail::resizeAndInitializeIfNeeded(p_mask, height, width, dIy);
+
+  for (unsigned int i = 0; i < stop1I; ++i) {
+    for (unsigned int j = 0; j < width; ++j) {
+      // We have to compute the value for each pixel if we don't have a mask or for
+      // pixels for which the mask is true otherwise
+      bool computeVal = detail::checkBooleanMask(p_mask, i, j);
+      if (computeVal) {
+        dIy[i][j] = static_cast<FilterType>(0);
+      }
+    }
+  }
+  for (unsigned int i = stop1I; i < stop2I; ++i) {
+    for (unsigned int j = 0; j < width; ++j) {
+      // We have to compute the value for each pixel if we don't have a mask or for
+      // pixels for which the mask is true otherwise
+      bool computeVal = detail::checkBooleanMask(p_mask, i, j);
+      if (computeVal) {
+        dIy[i][j] = detail::derivativeFilterY<ImageType, FilterType>(I, i, j, filter, size);
+      }
+    }
+  }
+  for (unsigned int i = stop2I; i < height; ++i) {
+    for (unsigned int j = 0; j < width; ++j) {
+      // We have to compute the value for each pixel if we don't have a mask or for
+      // pixels for which the mask is true otherwise
+      bool computeVal = detail::checkBooleanMask(p_mask, i, j);
+      if (computeVal) {
+        dIy[i][j] = static_cast<FilterType>(0);
+      }
+    }
+  }
 }
 
 /*!
