@@ -903,8 +903,8 @@ void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const vpArray2D<dou
    * \tparam FilterType An arithmetic type.
    * \param[in] I The image that must be filtered.
    * \param[in] dIx The image filtered along the horizontal direction.
-   * \param[in] filter The coefficients of the filter.
-   * \param[in] size The size of the filter.
+   * \param[in] filter The half size filter coefficients, as a 1 x (size+1)/2 array. The first value refers to the central
+   * coefficient, the next ones to the right coefficients. Left coefficients are deduced by symmetry.
    * \param[in] p_mask A boolean mask that permits to select the pixels that must be filtered if different from nullptr,
    * unused otherwise.
    */
@@ -933,8 +933,8 @@ void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const vpArra
    * \tparam FilterType An arithmetic type.
    * \param[in] I The image that must be filtered.
    * \param[in] dIy The image filtered along the vertical direction.
-   * \param[in] filter The coefficients of the filter.
-   * \param[in] size The size of the filter.
+   * \param[in] filter The half size filter coefficients, as a 1 x (size+1)/2 array. The first value refers to the central
+   * coefficient, the next ones to the right coefficients. Left coefficients are deduced by symmetry.
    * \param[in] p_mask A boolean mask that permits to select the pixels that must be filtered if different from nullptr,
    * unused otherwise.
    */
