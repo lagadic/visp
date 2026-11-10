@@ -294,7 +294,7 @@ protected:
   void computeOptimalBrentGain(const vpImage<unsigned char> &I, vpColVector &tp, double tMI, vpColVector &direction,
                                double &alpha);
   virtual double getCost(const vpImage<unsigned char> &I, const vpColVector &tp) = 0;
-  void getGaussianBluredImage(const vpImage<unsigned char> &I) { vpImageFilter::filter<unsigned char, double, double>(I, BI, fgG); }
+  void getGaussianBluredImage(const vpImage<unsigned char> &I) { vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG); }
   virtual void initHessienDesired(const vpImage<unsigned char> &I) = 0;
   virtual void initHessienDesiredPyr(const vpImage<unsigned char> &I);
   void initPosEvalRMS(const vpColVector &p);

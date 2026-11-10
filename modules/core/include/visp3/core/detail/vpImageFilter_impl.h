@@ -1458,7 +1458,7 @@ void filter(const vpImage<ImageType> &I, vpImage<FilterType> &Iu, vpImage<Filter
 void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH, const vpColVector &kernelV);
 
 template <typename ImageType, typename OutputType, typename FilterType>
-void filter(const vpImage<ImageType> &I, vpImage<OutputType> &GI, const vpArray2D<FilterType> &filter, const vpImage<bool> *p_mask)
+void separableFilter(const vpImage<ImageType> &I, vpImage<OutputType> &GI, const vpArray2D<FilterType> &filter, const vpImage<bool> *p_mask)
 {
   vpImage<OutputType> GIx;
   filterX<ImageType, OutputType, FilterType>(I, GIx, filter, p_mask);

@@ -873,15 +873,18 @@ void filter(const vpImage<ImageType> &I, vpImage<ImageType> &Iu, vpImage<ImageTy
 VISP_EXPORT void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH, const vpColVector &kernelV);
 
 /*!
- * Apply a separable filter.
+ * Apply a symmetric separable filter, first along the horizontal direction and then along the vertical one.
+ * \tparam ImageType : The type of pixels of the input image.
+ * \tparam OutputType : The type of pixels of the filtered image.
  * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
  * \param I : The original image.
  * \param GI : The filtered image.
- * \param filter : The separable filter.
+ * \param filter : The half size separable filter, as a 1 x (size+1)/2 array. The first value refers to the central
+ * coefficient, the next ones to the right coefficients. Left coefficients are deduced by symmetry.
  * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
  */
 template <typename ImageType, typename OutputType, typename FilterType>
-void filter(const vpImage<ImageType> &I, vpImage<OutputType> &GI, const vpArray2D<FilterType> &filter, const vpImage<bool> *p_mask = nullptr);
+void separableFilter(const vpImage<ImageType> &I, vpImage<OutputType> &GI, const vpArray2D<FilterType> &filter, const vpImage<bool> *p_mask = nullptr);
 
 // Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
 // and not __cplusplus == 199711L

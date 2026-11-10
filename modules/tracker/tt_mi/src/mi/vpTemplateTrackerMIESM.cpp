@@ -70,7 +70,7 @@ void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
   Nbpoint = 0;
 
   if (blur)
-    vpImageFilter::filter<unsigned char, double, double>(I, BI, fgG);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
 
   zeroProbabilities();
 
@@ -225,7 +225,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
   dW = 0;
 
   if (blur)
-    vpImageFilter::filter<unsigned char, double, double>(I, BI, fgG);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 

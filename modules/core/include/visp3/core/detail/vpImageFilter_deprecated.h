@@ -873,7 +873,7 @@ VP_DEPRECATED void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy
  * \param filter : The separable filter.
  * \param size : The size of the filter.
  * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
- * \deprecated Use rather filter(const vpImage<ImageType> &, vpImage<OutputType> &, const vpArray2D<FilterType> &, const vpImage<bool> *).
+ * \deprecated Use rather separableFilter(const vpImage<ImageType> &, vpImage<OutputType> &, const vpArray2D<FilterType> &, const vpImage<bool> *).
  */
 template <typename ImageType, typename FilterType>
 VP_DEPRECATED void filter(const vpImage<ImageType> &I, vpImage<FilterType> &GI, const FilterType *filter, unsigned int size,

@@ -613,7 +613,7 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I, int &nc, cons
   double IW;
 
   vpImage<double> GaussI;
-  vpImageFilter::filter<unsigned char, double, double>(I, GaussI, fgG);
+  vpImageFilter::separableFilter<unsigned char, double, double>(I, GaussI, fgG);
 
   memset(tPrt, 0, tNcb * tNcb * sizeof(double));
   memset(tPrtD, 0, nc_ * nc_ * tinfluBspline * sizeof(double));
@@ -722,7 +722,7 @@ double vpTemplateTrackerMI::getMI256(const vpImage<unsigned char> &I, const vpCo
 
   vpImage<double> GaussI;
   if (blur)
-    vpImageFilter::filter<unsigned char, double, double>(I, GaussI, fgG);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, GaussI, fgG);
 
   Warp->computeCoeff(tp);
   for (unsigned int point = 0; point < templateSize; point++) {

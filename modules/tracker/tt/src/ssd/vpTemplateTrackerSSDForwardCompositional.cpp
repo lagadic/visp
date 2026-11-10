@@ -65,7 +65,7 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
   }
 
   if (blur) {
-    vpImageFilter::filter<unsigned char, double, double>(I, BI, fgG);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
   }
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);

@@ -58,19 +58,19 @@ void filter<double, double>(const vpImage<double> &I, vpImage<double> &Iu, vpIma
                                            const vpArray2D<double> &M, bool convolve, const vpImage<bool> *p_mask);
 
 template
-void filter<unsigned char, float, float>(const vpImage<unsigned char> &I, vpImage<float> &GI, const vpArray2D<float> &filter,
+void separableFilter<unsigned char, float, float>(const vpImage<unsigned char> &I, vpImage<float> &GI, const vpArray2D<float> &filter,
                                                  const vpImage<bool> *p_mask);
 
 template
-void filter<unsigned char, double, double>(const vpImage<unsigned char> &I, vpImage<double> &GI, const vpArray2D<double> &filter,
+void separableFilter<unsigned char, double, double>(const vpImage<unsigned char> &I, vpImage<double> &GI, const vpArray2D<double> &filter,
                                                   const vpImage<bool> *p_mask);
 
 template
-void filter<float, float, float>(const vpImage<float> &I, vpImage<float> &GI, const vpArray2D<float> &filter,
+void separableFilter<float, float, float>(const vpImage<float> &I, vpImage<float> &GI, const vpArray2D<float> &filter,
                                          const vpImage<bool> *p_mask);
 
 template
-void filter<double, double, double>(const vpImage<double> &I, vpImage<double> &GI, const vpArray2D<double> &filter,
+void separableFilter<double, double, double>(const vpImage<double> &I, vpImage<double> &GI, const vpArray2D<double> &filter,
                                            const vpImage<bool> *p_mask);
 /**
  * \endcond
