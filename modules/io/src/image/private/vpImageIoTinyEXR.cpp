@@ -49,7 +49,16 @@
 #include <stb_image_write.h>
 
 #define TINYEXR_IMPLEMENTATION
+// With GCC and -O3, the local std::vector buffers in tinyexr::CompressRle() and
+// tinyexr::DecompressRle() trigger a false positive -Wfree-nonheap-object warning
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfree-nonheap-object"
+#endif
 #include <tinyexr.h>
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 
 BEGIN_VISP_NAMESPACE
 

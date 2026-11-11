@@ -92,14 +92,11 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
   if (!(flags & ARGV_NO_PRINT))                                                                                        \
   (void)fprintf
 
-  if (flags & ARGV_DONT_SKIP_FIRST_ARG) {
-    srcIndex = dstIndex = 0;
-    argc = *argcPtr;
-  }
-  else {
-    srcIndex = dstIndex = 1;
-    argc = *argcPtr - 1;
-  }
+  const int nbSkippedArgs = (flags & ARGV_DONT_SKIP_FIRST_ARG) ? 0 : 1;
+  srcIndex = dstIndex = nbSkippedArgs;
+  // Avoid computing (*argcPtr - 1) without guard, which triggers -Wstrict-overflow
+  // and would lead to a negative argc when *argcPtr is 0
+  argc = (*argcPtr > nbSkippedArgs) ? (*argcPtr - nbSkippedArgs) : 0;
 
   while (argc > 0) {
     curArg = argv[srcIndex];
