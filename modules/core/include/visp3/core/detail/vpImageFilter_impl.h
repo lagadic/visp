@@ -1512,7 +1512,7 @@ void filterX(const vpImage<ImageType> &I, vpImage<OutputType> &dIx, const vpArra
 {
   const unsigned int height = I.getHeight();
   const unsigned int width = I.getWidth();
-  const int stop1J = filter.getCols();
+  const int stop1J = static_cast<int>(filter.getCols());
   const int stop2J = static_cast<int>(width - filter.getCols());
   detail::resizeAndInitializeIfNeeded(p_mask, height, width, dIx);
 
