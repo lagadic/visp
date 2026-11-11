@@ -168,7 +168,10 @@ jobs:
         GIT_ADDRESS="https://github.com/PointCloudLibrary/pcl.git"
         LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
         echo "Newest tag is ${LATEST_TAG}"
-        if [[ ( "$VTK_REL" == "v9.7.0" &&  "${LATEST_TAG}" == "pcl-1.15.1" ) || ( "$VTK_REL" == "v9.7.1" &&  "${LATEST_TAG}" == "pcl-1.15.1" ) ]]
+        # pcl-1.15.1 does not build with VTK >= 9.7 (e.g. vtkRenderer::RemoveActor2D was removed)
+        VTK_MIN_INCOMPATIBLE="v9.7.0"
+        VTK_LOWEST=`printf "%s\n%s\n" "${VTK_MIN_INCOMPATIBLE}" "${VTK_REL}" | sort -V | head -n 1`
+        if [[ "${LATEST_TAG}" == "pcl-1.15.1" && "${VTK_LOWEST}" == "${VTK_MIN_INCOMPATIBLE}" ]]
         then
           BRANCH=master
           echo "Because it is not compatible with vtk ${VTK_REL} we will use the branch ${BRANCH} instead"
