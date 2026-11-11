@@ -67,10 +67,28 @@ jobs:
         sudo apt-get install -y libfreenect-dev libpcl-dev libapriltag-dev
 
     - name: Install ur_rtde dependency
+      # ur_rtde usage is disabled by ViSP when building with C++98 (see USE_UR_RTDE in CMakeLists.txt)
+      if: matrix.standard != '98'
+      # Adding the PPA requires the Launchpad API to retrieve the PPA signing key. This API sometimes fails with
+      # "HTTP Error 500: GPGKeyTemporarilyNotFoundError". Retry a few times and, if the PPA remains unreachable,
+      # continue without ur_rtde (ViSP then disables ur_rtde usage) instead of making the whole job fail
       run: |
-        sudo add-apt-repository -y ppa:sdurobotics/ur-rtde
-        sudo apt-get update
-        sudo apt install -y librtde librtde-dev libboost-system-dev libboost-thread-dev libboost-program-options-dev
+        sudo apt-get install -y libboost-system-dev libboost-thread-dev libboost-program-options-dev
+        delay=15
+        for attempt in 1 2 3 4 5; do
+          if sudo add-apt-repository -y ppa:sdurobotics/ur-rtde && sudo apt-get update && sudo apt-get install -y librtde librtde-dev; then
+            exit 0
+          fi
+          echo "Attempt ${attempt} to install ur_rtde from ppa:sdurobotics/ur-rtde failed"
+          if [ ${attempt} -lt 5 ]; then
+            echo "Retrying in ${delay}s..."
+            sleep ${delay}
+            delay=$((delay * 2))
+          fi
+        done
+        # Remove the PPA entry that may have been added without its signing key, otherwise next "apt-get update" fails
+        sudo rm -f /etc/apt/sources.list.d/sdurobotics-ubuntu-ur-rtde-*.list /etc/apt/sources.list.d/sdurobotics-ubuntu-ur-rtde-*.sources
+        echo "::warning title=ur_rtde not installed::Unable to install ur_rtde from ppa:sdurobotics/ur-rtde (Launchpad unavailable). Build continues without ur_rtde."
 
     - name: Install Ogre 1.9
       if: matrix.ogre == 'ogre-1.9' && matrix.standard != '17'
