@@ -122,7 +122,7 @@ void resizeAndInitializeIfNeeded(const vpImage<bool> *p_mask, const unsigned int
 inline bool checkBooleanMask(const vpImage<bool> *p_mask, const unsigned int &r, const unsigned int &c)
 {
   bool computeVal = true;
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
   if (p_mask != nullptr)
 #else
   if (p_mask != NULL)
@@ -136,7 +136,7 @@ inline bool checkBooleanMask(const vpImage<bool> *p_mask, const unsigned int &r,
 inline bool checkBooleanMask(const vpImage<bool> *p_mask, const int &id)
 {
   bool computeVal = true;
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
   if (p_mask != nullptr)
 #else
   if (p_mask != NULL)
@@ -147,9 +147,7 @@ inline bool checkBooleanMask(const vpImage<bool> *p_mask, const int &id)
   return computeVal;
 }
 
-// Note that MSVC sets __cplusplus to 199711L whatever the standard unless /Zc:__cplusplus is used, that's why
-// we rather consider that we are in cxx98 when cxx11 or higher is not available
-#if !((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx98
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) // Check if cxx98
   // Helper to apply the scale to the raw values of the filters
 template <typename FilterType>
 void scaleFilter(vpArray2D<FilterType> &filter, const float &scale)
@@ -164,7 +162,7 @@ void scaleFilter(vpArray2D<FilterType> &filter, const float &scale)
 }
 #endif
 
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
 inline bool checkBooleanPatch(const vpImage<bool> *p_mask, const int &iter, const int &c,
                        const int &h, const int &w,
                        const bool &isGradientX)
@@ -591,9 +589,7 @@ inline unsigned char filterGaussYPyramidal(const vpImage<unsigned char> &I, unsi
   return static_cast<unsigned char>(((1. * I[i - val2][j]) + (4. * I[i - 1][j]) + (6. * I[i][j]) + (4. * I[i + 1][j]) + (1. * I[i + val2][j])) / 16.);
 }
 
-// Note that MSVC sets __cplusplus to 199711L whatever the standard unless /Zc:__cplusplus is used, that's why
-// we rather consider that we are in cxx98 when cxx11 or higher is not available
-#if !((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx98
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) // Check if cxx98
 template<typename ImageType, typename FilterType>
 inline FilterType filterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter)
 {
@@ -790,9 +786,7 @@ filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int
 }
 #endif
 
-// Note that MSVC sets __cplusplus to 199711L whatever the standard unless /Zc:__cplusplus is used, that's why
-// we rather consider that we are in cxx98 when cxx11 or higher is not available
-#if !((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx98
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) // Check if cxx98
 
 template<typename ImageType, typename FilterType>
 inline FilterType filterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter)
@@ -1041,7 +1035,7 @@ inline void computePartialDerivatives(const vpImage<ImageType> &I,
       vpArray2D<FilterType> gradientFilterX(apertureGradient, apertureGradient); // Gradient filter along the X-axis
       vpArray2D<FilterType> gradientFilterY(apertureGradient, apertureGradient); // Gradient filter along the Y-axis
 
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
         // Helper to apply the scale to the raw values of the filters
       auto scaleFilter = [](vpArray2D<FilterType> &filter, const FilterType &scale) {
         const unsigned int nbRows = filter.getRows();
@@ -1202,7 +1196,7 @@ inline float computeCannyThreshold(const vpImage<unsigned char> &I, float &lower
   return upperThresh;
 }
 
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
 template<typename ArithmeticType, bool useFullScale, typename OutType>
 inline float computeCannyThreshold(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, float &lowerThresh,
                                           const vpImage<OutType> *p_dIx, const vpImage<OutType> *p_dIy,
@@ -1466,9 +1460,7 @@ void separableFilter(const vpImage<ImageType> &I, vpImage<OutputType> &GI, const
   GIx.destroy();
 }
 
-// Note that MSVC sets __cplusplus to 199711L whatever the standard unless /Zc:__cplusplus is used, that's why
-// we rather consider that we are in cxx98 when cxx11 or higher is not available
-#if !((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx98
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) // Check if cxx98
 template <typename ImageType, typename FilterType>
 void filterX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const vpArray2D<FilterType> &filter,
                     const vpImage<bool> *p_mask)
@@ -1572,9 +1564,7 @@ void filterX(const vpImage<ImageType> &I, vpImage<OutputType> &dIx, const vpArra
 #endif
 
 
-// Note that MSVC sets __cplusplus to 199711L whatever the standard unless /Zc:__cplusplus is used, that's why
-// we rather consider that we are in cxx98 when cxx11 or higher is not available
-#if !((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx98
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) // Check if cxx98
 template<typename ImageType, typename FilterType>
 void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const vpArray2D<FilterType> &filter,
                     const vpImage<bool> *p_mask)
@@ -1680,7 +1670,7 @@ void filterY(const vpImage<ImageType> &I, vpImage<OutputType> &dIy, const vpArra
 }
 #endif
 
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
 template <typename ImageType, typename OutputType, typename FilterType>
 inline void
 gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int size, FilterType sigma, bool normalize,
@@ -1888,7 +1878,7 @@ void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, cons
   getGradX<FilterType, FilterType>(GIy, dIx, gaussianDerivativeKernel, p_mask);
 }
 
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
 template <typename ArithmeticType, typename FilterType, bool useFullScale>
 void gradientFilterX(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIx, const int &nbThread, const vpImage<bool> *p_mask, const vpCannyFilteringAndGradientType &type)
 {
@@ -2016,7 +2006,7 @@ void getGradYGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, cons
   getGradY<FilterType, FilterType>(GIx, dIy, gaussianDerivativeKernel, p_mask);
 }
 
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
 template <typename ArithmeticType, typename FilterType, bool useFullScale>
 void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIy, const int &nbThread, const vpImage<bool> *p_mask, const vpCannyFilteringAndGradientType &type)
 {
@@ -2182,7 +2172,7 @@ inline FilterType getSobelKernelY(vpArray2D<FilterType> &filter, unsigned int si
   return scale;
 }
 
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
 template <typename ArithmeticType, typename FilterType, bool useFullScale>
 void gradientFilter(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIx, vpImage<FilterType> &GIy, const int &nbThread, const vpImage<bool> *p_mask, const vpCannyFilteringAndGradientType &type)
 {

@@ -145,15 +145,13 @@ bool checkBooleanMask(const vpImage<bool> *p_mask, const unsigned int &r, const 
  */
 bool checkBooleanMask(const vpImage<bool> *p_mask, const int &id);
 
-// Note that MSVC sets __cplusplus to 199711L whatever the standard unless /Zc:__cplusplus is used, that's why
-// we rather consider that we are in cxx98 when cxx11 or higher is not available
-#if !((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx98
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) // Check if cxx98
   // Helper to apply the scale to the raw values of the filters
 template <typename FilterType>
 void scaleFilter(vpArray2D<FilterType> &filter, const float &scale);
 #endif
 
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
   /**
    * \brief Return true if the distance must be computed because at least one point in its neighborhood
    * needs to compute a gradient.
@@ -224,9 +222,7 @@ typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type gradi
 unsigned char filterGaussXPyramidal(const vpImage<unsigned char> &I, unsigned int i, unsigned int j);
 unsigned char filterGaussYPyramidal(const vpImage<unsigned char> &I, unsigned int i, unsigned int j);
 
-// Note that MSVC sets __cplusplus to 199711L whatever the standard unless /Zc:__cplusplus is used, that's why
-// we rather consider that we are in cxx98 when cxx11 or higher is not available
-#if !((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx98
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) // Check if cxx98
 template<typename ImageType, typename FilterType>
 FilterType filterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 
@@ -399,9 +395,7 @@ typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
 filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 #endif
 
-// Note that MSVC sets __cplusplus to 199711L whatever the standard unless /Zc:__cplusplus is used, that's why
-// we rather consider that we are in cxx98 when cxx11 or higher is not available
-#if !((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx98
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) // Check if cxx98
 
 template<typename ImageType, typename FilterType>
 FilterType filterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
@@ -675,7 +669,7 @@ void computePartialDerivatives(const vpImage<ImageType> &I,
                                              const vpImage<bool> *p_mask = nullptr);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
 template <typename FilterType>
 void computePartialDerivatives(const vpImage<vpRGBa> &I,
                                              vpImage<FilterType> &dIx, vpImage<FilterType> &dIy,
@@ -761,7 +755,7 @@ float computeCannyThreshold(const vpImage<unsigned char> &I, float &lowerThresh,
                                           const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
                                           const vpImage<bool> *p_mask = nullptr);
 
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
   /**
    * \brief Compute the upper Canny edge filter threshold for a HSV image.
    *
@@ -826,7 +820,7 @@ void filter(const vpImage<ImageType> &I, vpImage<FilterType> &If, const vpArray2
                    const vpImage<bool> *p_mask = nullptr);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
 template <typename FilterType>
 void filter(const vpImage<vpRGBa> &I, vpImage<FilterType> &If, const vpArray2D<FilterType> &M, bool convolve = false) = delete;
 #else
@@ -853,7 +847,7 @@ void filter(const vpImage<ImageType> &I, vpImage<FilterType> &Iu, vpImage<Filter
                    bool convolve = false, const vpImage<bool> *p_mask = nullptr);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
 template<typename FilterType>
 void filter(const vpImage<vpRGBa> &I, vpImage<FilterType> &Iu, vpImage<FilterType> &Iv, const vpArray2D<FilterType> &M, bool convolve) = delete;
 
@@ -884,9 +878,7 @@ VISP_EXPORT void separableFilter(const vpImage<unsigned char> &I, vpImage<double
 template <typename ImageType, typename OutputType, typename FilterType>
 void separableFilter(const vpImage<ImageType> &I, vpImage<OutputType> &GI, const vpArray2D<FilterType> &filter, const vpImage<bool> *p_mask = nullptr);
 
-// Note that MSVC sets __cplusplus to 199711L whatever the standard unless /Zc:__cplusplus is used, that's why
-// we rather consider that we are in cxx98 when cxx11 or higher is not available
-#if !((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx98
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) // Check if cxx98
 template <typename ImageType, typename FilterType>
 void filterX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const vpArray2D<FilterType> &filter,
                     const vpImage<bool> *p_mask = nullptr);
@@ -912,9 +904,7 @@ void filterX(const vpImage<ImageType> &I, vpImage<OutputType> &dIx, const vpArra
 #endif
 
 
-// Note that MSVC sets __cplusplus to 199711L whatever the standard unless /Zc:__cplusplus is used, that's why
-// we rather consider that we are in cxx98 when cxx11 or higher is not available
-#if !((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx98
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) // Check if cxx98
 VISP_EXPORT void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const vpArray2D<double> &filter, const vpImage<bool> *p_mask = nullptr);
 
 template<typename ImageType, typename FilterType>
@@ -956,7 +946,7 @@ void filterY(const vpImage<ImageType> &I, vpImage<OutputType> &dIy, const vpArra
    *
    * \sa getGaussianKernel() to know which kernel is used.
    */
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
 template <typename ImageType, typename OutputType, typename FilterType = float>
 void
 gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true,
@@ -973,9 +963,7 @@ gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int 
                         const vpImage<bool> *p_mask = nullptr);
 #endif
 
-// Note that MSVC sets __cplusplus to 199711L whatever the standard unless /Zc:__cplusplus is used, that's why
-// we rather consider that we are in cxx98 when cxx11 or higher is not available
-#if !((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx98
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11) // Check if cxx98
 VISP_EXPORT void gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size = 7, double sigma = 0., bool normalize = true,
                     const vpImage<bool> *p_mask = nullptr);
 #endif
@@ -1042,7 +1030,7 @@ template <typename ImageType, typename FilterType>
 void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const vpArray2D<FilterType> &gaussianKernel,
                             const vpArray2D<FilterType> &gaussianDerivativeKernel, const vpImage<bool> *p_mask = nullptr);
 
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
 /**
  * \brief Gradient filter along the X-axis for HSV images.
  *
@@ -1080,7 +1068,7 @@ template <typename ImageType, typename FilterType>
 void getGradYGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const vpArray2D<FilterType> &gaussianKernel,
                             const vpArray2D<FilterType> &gaussianDerivativeKernel, const vpImage<bool> *p_mask = nullptr);
 
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
   /**
    * \brief Gradient filter along the Y-axis for HSV images.
    *
@@ -1143,7 +1131,7 @@ VISP_EXPORT float median(const vpImage<unsigned char> &Isrc);
 VISP_EXPORT std::vector<float> median(const vpImage<vpRGBa> &Isrc);
 #endif
 
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
   /**
    * \brief Compute the horizontal and vertical gradients for HSV images.
    *

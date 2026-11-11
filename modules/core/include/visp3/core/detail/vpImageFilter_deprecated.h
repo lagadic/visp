@@ -143,7 +143,7 @@ FilterType derivativeFilterY(const vpImage<ImageType> &I, unsigned int r, unsign
   return result;
 }
 
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
 /**
  * \brief Filter along the horizontal direction "in the middle" of the image (i.e not on a border).
  *
@@ -705,7 +705,7 @@ VP_DEPRECATED inline void sepFilter(const vpImage<unsigned char> &I, vpImage<dou
   separableFilter(I, If, kernelH, kernelV);
 }
 
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
 /**
    * \brief Filter along the horizontal direction.
    *
@@ -954,7 +954,7 @@ VP_DEPRECATED void filter(const vpImage<ImageType> &I, vpImage<FilterType> &GI, 
                           const vpImage<bool> *p_mask = nullptr)
 {
   vpImage<FilterType> GIx;
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
   filterX<ImageType, FilterType, FilterType>(I, GIx, filter, size, p_mask);
   filterY<FilterType, FilterType, FilterType>(GIx, GI, filter, size, p_mask);
 #else
