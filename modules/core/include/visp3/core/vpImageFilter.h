@@ -145,9 +145,9 @@ bool checkBooleanMask(const vpImage<bool> *p_mask, const unsigned int &r, const 
  */
 bool checkBooleanMask(const vpImage<bool> *p_mask, const int &id);
 
-// Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
-// and not __cplusplus == 199711L
-#if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
+// Note that MSVC sets __cplusplus to 199711L whatever the standard unless /Zc:__cplusplus is used, that's why
+// we rather consider that we are in cxx98 when cxx11 or higher is not available
+#if !((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx98
   // Helper to apply the scale to the raw values of the filters
 template <typename FilterType>
 void scaleFilter(vpArray2D<FilterType> &filter, const float &scale);
@@ -224,9 +224,9 @@ typename std::enable_if<std::is_arithmetic<OutputType>::value, void>::type gradi
 unsigned char filterGaussXPyramidal(const vpImage<unsigned char> &I, unsigned int i, unsigned int j);
 unsigned char filterGaussYPyramidal(const vpImage<unsigned char> &I, unsigned int i, unsigned int j);
 
-// Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
-// and not __cplusplus == 199711L
-#if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
+// Note that MSVC sets __cplusplus to 199711L whatever the standard unless /Zc:__cplusplus is used, that's why
+// we rather consider that we are in cxx98 when cxx11 or higher is not available
+#if !((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx98
 template<typename ImageType, typename FilterType>
 FilterType filterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 
@@ -399,9 +399,9 @@ typename std::enable_if<!std::is_arithmetic<ImageType>::value, void>::type
 filterXRightBorder(const vpImage<ImageType> &I, OutputType &result, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
 #endif
 
-// Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
-// and not __cplusplus == 199711L
-#if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
+// Note that MSVC sets __cplusplus to 199711L whatever the standard unless /Zc:__cplusplus is used, that's why
+// we rather consider that we are in cxx98 when cxx11 or higher is not available
+#if !((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx98
 
 template<typename ImageType, typename FilterType>
 FilterType filterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const vpArray2D<FilterType> &filter);
@@ -884,9 +884,9 @@ VISP_EXPORT void separableFilter(const vpImage<unsigned char> &I, vpImage<double
 template <typename ImageType, typename OutputType, typename FilterType>
 void separableFilter(const vpImage<ImageType> &I, vpImage<OutputType> &GI, const vpArray2D<FilterType> &filter, const vpImage<bool> *p_mask = nullptr);
 
-// Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
-// and not __cplusplus == 199711L
-#if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
+// Note that MSVC sets __cplusplus to 199711L whatever the standard unless /Zc:__cplusplus is used, that's why
+// we rather consider that we are in cxx98 when cxx11 or higher is not available
+#if !((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx98
 template <typename ImageType, typename FilterType>
 void filterX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const vpArray2D<FilterType> &filter,
                     const vpImage<bool> *p_mask = nullptr);
@@ -912,9 +912,9 @@ void filterX(const vpImage<ImageType> &I, vpImage<OutputType> &dIx, const vpArra
 #endif
 
 
-// Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
-// and not __cplusplus == 199711L
-#if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
+// Note that MSVC sets __cplusplus to 199711L whatever the standard unless /Zc:__cplusplus is used, that's why
+// we rather consider that we are in cxx98 when cxx11 or higher is not available
+#if !((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx98
 VISP_EXPORT void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const vpArray2D<double> &filter, const vpImage<bool> *p_mask = nullptr);
 
 template<typename ImageType, typename FilterType>
@@ -973,9 +973,9 @@ gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int 
                         const vpImage<bool> *p_mask = nullptr);
 #endif
 
-// Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
-// and not __cplusplus == 199711L
-#if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
+// Note that MSVC sets __cplusplus to 199711L whatever the standard unless /Zc:__cplusplus is used, that's why
+// we rather consider that we are in cxx98 when cxx11 or higher is not available
+#if !((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx98
 VISP_EXPORT void gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size = 7, double sigma = 0., bool normalize = true,
                     const vpImage<bool> *p_mask = nullptr);
 #endif
