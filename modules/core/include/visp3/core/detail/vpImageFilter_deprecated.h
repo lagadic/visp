@@ -705,6 +705,130 @@ VP_DEPRECATED inline void sepFilter(const vpImage<unsigned char> &I, vpImage<dou
   separableFilter(I, If, kernelH, kernelV);
 }
 
+/*!
+ * \deprecated This low-level function is kept for compatibility with previous ViSP releases but is no more part of
+ * the public API. You should rather apply a filter to the whole image using for example gaussianBlur().
+ *
+ * Apply a 5x5 Gaussian filter to an image pixel.
+ *
+ * \param[in] fr : Image to filter
+ * \param[in] r : Coordinates (row) of the pixel
+ * \param[in] c : Coordinates (column) of the pixel
+ * \return The filtered pixel value.
+ */
+template <class T> VP_DEPRECATED inline double gaussianFilter(const vpImage<T> &fr, unsigned int r, unsigned int c)
+{
+  return detail::gaussianFilter(fr, r, c);
+}
+
+/*!
+ * \deprecated This low-level function is kept for compatibility with previous ViSP releases but is no more part of
+ * the public API. You should rather compute the gradient of the whole image using getGradX().
+ *
+ * Apply a 1x3 derivative filter to an image pixel.
+ *
+ * \param[in] I : Image to filter
+ * \param[in] r : Coordinates (row) of the pixel
+ * \param[in] c : Coordinates (column) of the pixel
+ * \return The filtered pixel value.
+ */
+template <class ImageType> VP_DEPRECATED inline double derivativeFilterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c)
+{
+  return detail::derivativeFilterX(I, r, c);
+}
+
+/*!
+ * \deprecated This low-level function is kept for compatibility with previous ViSP releases but is no more part of
+ * the public API. You should rather compute the gradient of the whole image using getGradY().
+ *
+ * Apply a 3x1 derivative filter to an image pixel.
+ *
+ * \param[in] I : Image to filter
+ * \param[in] r : Coordinates (row) of the pixel
+ * \param[in] c : Coordinates (column) of the pixel
+ * \return The filtered pixel value.
+ */
+template <class ImageType> VP_DEPRECATED inline double derivativeFilterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c)
+{
+  return detail::derivativeFilterY(I, r, c);
+}
+
+/*!
+ * \deprecated This low-level function is kept for compatibility with previous ViSP releases but is no more part of
+ * the public API. You should rather compute the gradient of the whole image using getGradX() with a vpArray2D
+ * filter.
+ *
+ * Apply a 1 x size derivative filter to an image pixel.
+ *
+ * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+ * \param[in] I : Image to filter
+ * \param[in] r : Coordinates (row) of the pixel
+ * \param[in] c : Coordinates (column) of the pixel
+ * \param[in] filter : Coefficients of the filter to be initialized using getGaussianDerivativeKernel().
+ * \param[in] size : Size of the filter.
+ * \return The filtered pixel value.
+ */
+template <class ImageType, typename FilterType>
+VP_DEPRECATED inline FilterType derivativeFilterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
+                                                  const FilterType *filter, unsigned int size)
+{
+  return detail::derivativeFilterX<ImageType, FilterType>(I, r, c, filter, size);
+}
+
+/*!
+ * \deprecated This low-level function is kept for compatibility with previous ViSP releases but is no more part of
+ * the public API. You should rather compute the gradient of the whole image using getGradY() with a vpArray2D
+ * filter.
+ *
+ * Apply a size x 1 derivative filter to an image pixel.
+ *
+ * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+ * \param[in] I : Image to filter
+ * \param[in] r : Coordinates (row) of the pixel
+ * \param[in] c : Coordinates (column) of the pixel
+ * \param[in] filter : Coefficients of the filter to be initialized using getGaussianDerivativeKernel().
+ * \param[in] size : Size of the filter.
+ * \return The filtered pixel value.
+ */
+template <class ImageType, typename FilterType>
+VP_DEPRECATED inline FilterType derivativeFilterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
+                                                  const FilterType *filter, unsigned int size)
+{
+  return detail::derivativeFilterY<ImageType, FilterType>(I, r, c, filter, size);
+}
+
+/*!
+ * \deprecated This low-level function is kept for compatibility with previous ViSP releases but is no more part of
+ * the public API. You should rather use getGaussXPyramidal() on the whole image.
+ *
+ * Apply a 1x5 Gaussian filter to an image pixel, as used to build a Gaussian pyramid.
+ *
+ * \param[in] I : Image to filter
+ * \param[in] i : Coordinates (row) of the pixel
+ * \param[in] j : Coordinates (column) of the pixel
+ * \return The filtered pixel value.
+ */
+VP_DEPRECATED inline unsigned char filterGaussXPyramidal(const vpImage<unsigned char> &I, unsigned int i, unsigned int j)
+{
+  return detail::filterGaussXPyramidal(I, i, j);
+}
+
+/*!
+ * \deprecated This low-level function is kept for compatibility with previous ViSP releases but is no more part of
+ * the public API. You should rather use getGaussYPyramidal() on the whole image.
+ *
+ * Apply a 5x1 Gaussian filter to an image pixel, as used to build a Gaussian pyramid.
+ *
+ * \param[in] I : Image to filter
+ * \param[in] i : Coordinates (row) of the pixel
+ * \param[in] j : Coordinates (column) of the pixel
+ * \return The filtered pixel value.
+ */
+VP_DEPRECATED inline unsigned char filterGaussYPyramidal(const vpImage<unsigned char> &I, unsigned int i, unsigned int j)
+{
+  return detail::filterGaussYPyramidal(I, i, j);
+}
+
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
 /**
    * \brief Filter along the horizontal direction.
