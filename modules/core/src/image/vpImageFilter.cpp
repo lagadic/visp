@@ -187,37 +187,37 @@ void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const vpArray2D<dou
   const unsigned int heightI = I.getHeight(), widthI = I.getWidth();
   const unsigned int stop1J = filter.getCols();
   const unsigned int stop2J = widthI - filter.getCols();
-  resizeAndInitializeIfNeeded(p_mask, heightI, widthI, dIx);
+  detail::resizeAndInitializeIfNeeded(p_mask, heightI, widthI, dIx);
 
   for (unsigned int i = 0; i < heightI; ++i) {
     for (unsigned int j = 0; j < stop1J; ++j) {
       // We have to compute the value for each pixel if we don't have a mask or for
             // pixels for which the mask is true otherwise
-      bool computeVal = checkBooleanMask(p_mask, i, j);
+      bool computeVal = detail::checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIx[i][j].R = static_cast<unsigned char>(filterXLeftBorderR(I, i, j, filter));
-        dIx[i][j].G = static_cast<unsigned char>(filterXLeftBorderG(I, i, j, filter));
-        dIx[i][j].B = static_cast<unsigned char>(filterXLeftBorderB(I, i, j, filter));
+        dIx[i][j].R = static_cast<unsigned char>(detail::filterXLeftBorderR(I, i, j, filter));
+        dIx[i][j].G = static_cast<unsigned char>(detail::filterXLeftBorderG(I, i, j, filter));
+        dIx[i][j].B = static_cast<unsigned char>(detail::filterXLeftBorderB(I, i, j, filter));
       }
     }
     for (unsigned int j = stop1J; j < stop2J; ++j) {
       // We have to compute the value for each pixel if we don't have a mask or for
             // pixels for which the mask is true otherwise
-      bool computeVal = checkBooleanMask(p_mask, i, j);
+      bool computeVal = detail::checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIx[i][j].R = static_cast<unsigned char>(filterXR(I, i, j, filter));
-        dIx[i][j].G = static_cast<unsigned char>(filterXG(I, i, j, filter));
-        dIx[i][j].B = static_cast<unsigned char>(filterXB(I, i, j, filter));
+        dIx[i][j].R = static_cast<unsigned char>(detail::filterXR(I, i, j, filter));
+        dIx[i][j].G = static_cast<unsigned char>(detail::filterXG(I, i, j, filter));
+        dIx[i][j].B = static_cast<unsigned char>(detail::filterXB(I, i, j, filter));
       }
     }
     for (unsigned int j = stop2J; j < widthI; ++j) {
       // We have to compute the value for each pixel if we don't have a mask or for
             // pixels for which the mask is true otherwise
-      bool computeVal = checkBooleanMask(p_mask, i, j);
+      bool computeVal = detail::checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIx[i][j].R = static_cast<unsigned char>(filterXRightBorderR(I, i, j, filter));
-        dIx[i][j].G = static_cast<unsigned char>(filterXRightBorderG(I, i, j, filter));
-        dIx[i][j].B = static_cast<unsigned char>(filterXRightBorderB(I, i, j, filter));
+        dIx[i][j].R = static_cast<unsigned char>(detail::filterXRightBorderR(I, i, j, filter));
+        dIx[i][j].G = static_cast<unsigned char>(detail::filterXRightBorderG(I, i, j, filter));
+        dIx[i][j].B = static_cast<unsigned char>(detail::filterXRightBorderB(I, i, j, filter));
       }
     }
   }
@@ -251,17 +251,17 @@ void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, const vpArray2D<dou
   const unsigned int heightI = I.getHeight(), widthI = I.getWidth();
   const unsigned int stop1I = filter.getCols();
   const unsigned int stop2I = heightI - filter.getCols();
-  resizeAndInitializeIfNeeded(p_mask, heightI, widthI, dIy);
+  detail::resizeAndInitializeIfNeeded(p_mask, heightI, widthI, dIy);
 
   for (unsigned int i = 0; i < stop1I; ++i) {
     for (unsigned int j = 0; j < widthI; ++j) {
       // We have to compute the value for each pixel if we don't have a mask or for
             // pixels for which the mask is true otherwise
-      bool computeVal = checkBooleanMask(p_mask, i, j);
+      bool computeVal = detail::checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIy[i][j].R = static_cast<unsigned char>(filterYTopBorderR(I, i, j, filter));
-        dIy[i][j].G = static_cast<unsigned char>(filterYTopBorderG(I, i, j, filter));
-        dIy[i][j].B = static_cast<unsigned char>(filterYTopBorderB(I, i, j, filter));
+        dIy[i][j].R = static_cast<unsigned char>(detail::filterYTopBorderR(I, i, j, filter));
+        dIy[i][j].G = static_cast<unsigned char>(detail::filterYTopBorderG(I, i, j, filter));
+        dIy[i][j].B = static_cast<unsigned char>(detail::filterYTopBorderB(I, i, j, filter));
       }
     }
   }
@@ -269,11 +269,11 @@ void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, const vpArray2D<dou
     for (unsigned int j = 0; j < widthI; ++j) {
       // We have to compute the value for each pixel if we don't have a mask or for
             // pixels for which the mask is true otherwise
-      bool computeVal = checkBooleanMask(p_mask, i, j);
+      bool computeVal = detail::checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIy[i][j].R = static_cast<unsigned char>(filterYR(I, i, j, filter));
-        dIy[i][j].G = static_cast<unsigned char>(filterYG(I, i, j, filter));
-        dIy[i][j].B = static_cast<unsigned char>(filterYB(I, i, j, filter));
+        dIy[i][j].R = static_cast<unsigned char>(detail::filterYR(I, i, j, filter));
+        dIy[i][j].G = static_cast<unsigned char>(detail::filterYG(I, i, j, filter));
+        dIy[i][j].B = static_cast<unsigned char>(detail::filterYB(I, i, j, filter));
       }
     }
   }
@@ -281,11 +281,11 @@ void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, const vpArray2D<dou
     for (unsigned int j = 0; j < widthI; ++j) {
       // We have to compute the value for each pixel if we don't have a mask or for
             // pixels for which the mask is true otherwise
-      bool computeVal = checkBooleanMask(p_mask, i, j);
+      bool computeVal = detail::checkBooleanMask(p_mask, i, j);
       if (computeVal) {
-        dIy[i][j].R = static_cast<unsigned char>(filterYBottomBorderR(I, i, j, filter));
-        dIy[i][j].G = static_cast<unsigned char>(filterYBottomBorderG(I, i, j, filter));
-        dIy[i][j].B = static_cast<unsigned char>(filterYBottomBorderB(I, i, j, filter));
+        dIy[i][j].R = static_cast<unsigned char>(detail::filterYBottomBorderR(I, i, j, filter));
+        dIy[i][j].G = static_cast<unsigned char>(detail::filterYBottomBorderG(I, i, j, filter));
+        dIy[i][j].B = static_cast<unsigned char>(detail::filterYBottomBorderB(I, i, j, filter));
       }
     }
   }
@@ -336,8 +336,8 @@ void gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int si
   vpArray2D<double> fg(1, (size + 1) / 2);
   getGaussianKernel(fg, size, sigma, normalize);
   vpImage<vpRGBa> GIx;
-  filterX(I, GIx, fg, size, p_mask);
-  filterY(GIx, GI, fg, size, p_mask);
+  filterX(I, GIx, fg, p_mask);
+  filterY(GIx, GI, fg, p_mask);
   GIx.destroy();
 }
 #endif

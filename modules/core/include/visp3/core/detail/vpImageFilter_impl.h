@@ -1052,6 +1052,8 @@ inline void computePartialDerivatives(const vpImage<ImageType> &I,
           }
         }
         };
+#else
+      using detail::scaleFilter;
 #endif
 
         // Scales to apply to the filters to get a normalized gradient filter that gives a gradient
@@ -1459,8 +1461,8 @@ template <typename ImageType, typename OutputType, typename FilterType>
 void separableFilter(const vpImage<ImageType> &I, vpImage<OutputType> &GI, const vpArray2D<FilterType> &filter, const vpImage<bool> *p_mask)
 {
   vpImage<OutputType> GIx;
-  filterX<ImageType, OutputType, FilterType>(I, GIx, filter, p_mask);
-  filterY<OutputType, OutputType, FilterType>(GIx, GI, filter, p_mask);
+  filterX(I, GIx, filter, p_mask);
+  filterY(GIx, GI, filter, p_mask);
   GIx.destroy();
 }
 
@@ -1722,8 +1724,8 @@ gaussianBlur(const vpImage<ImageType> &I, vpImage<OutputType> &GI, unsigned int 
   vpArray2D<FilterType>fg(1, (size + 1) / 2);
   getGaussianKernel<FilterType>(fg, size, sigma, normalize);
   vpImage<OutputType> GIx;
-  filterX<ImageType, OutputType>(I, GIx, fg, size, p_mask);
-  filterY<OutputType, OutputType>(GIx, GI, fg, size, p_mask);
+  filterX(I, GIx, fg, p_mask);
+  filterY(GIx, GI, fg, p_mask);
   GIx.destroy();
 }
 #endif
