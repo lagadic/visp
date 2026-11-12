@@ -123,17 +123,6 @@ jobs:
       run: |
         git clone --depth 1 https://github.com/lagadic/visp_started ${HOME}/visp_started
 
-    # TEMPORARY: diagnose PCL "aligned malloc mismatch" warning (to remove once understood)
-    - name: Diagnose PCL installation
-      run: |
-        dpkg -l | grep -i -E "pcl|eigen" || true
-        apt-cache policy libpcl-dev libeigen3-dev || true
-        find / -name pcl_config.h -not -path "/proc/*" 2>/dev/null | while read f; do
-          echo "== $f (package: $(dpkg -S "$f" 2>/dev/null || echo none))"
-          grep -n "PCL_REVISION_VERSION\|HANDMADE" "$f"
-        done
-        sed -n 55,65p /usr/include/pcl-1.15/pcl/memory.h || true
-
     - name: Configure CMake
       run: |
         mkdir build
