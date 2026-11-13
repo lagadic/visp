@@ -83,7 +83,7 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
   int dstIndex;             /* Index into argv to which next unused
                              * argument should be copied (never greater
                              * than srcIndex). */
-  int argc;                 /* # arguments in argv still to process. */
+  unsigned int argc;        /* # arguments in argv still to process. Unsigned to avoid -Wstrict-overflow warnings */
   size_t length;            /* Number of characters in current argument. */
   unsigned long long nargs; /* Number of following arguments to get. */
 
@@ -92,14 +92,11 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
   if (!(flags & ARGV_NO_PRINT))                                                                                        \
   (void)fprintf
 
-  if (flags & ARGV_DONT_SKIP_FIRST_ARG) {
-    srcIndex = dstIndex = 0;
-    argc = *argcPtr;
-  }
-  else {
-    srcIndex = dstIndex = 1;
-    argc = *argcPtr - 1;
-  }
+  const int nbSkippedArgs = (flags & ARGV_DONT_SKIP_FIRST_ARG) ? 0 : 1;
+  srcIndex = dstIndex = nbSkippedArgs;
+  // Avoid computing (*argcPtr - 1) without guard, which triggers -Wstrict-overflow
+  // and would lead to a negative argc when *argcPtr is 0
+  argc = (*argcPtr > nbSkippedArgs) ? static_cast<unsigned int>(*argcPtr - nbSkippedArgs) : 0;
 
   while (argc > 0) {
     curArg = argv[srcIndex];
@@ -291,10 +288,11 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
     case ARGV_GENFUNC: {
       handlerProc2 = (int (*)(const char *dst, const char *key, int valargc, const char **argument))infoPtr->src;
 
-      argc = (*handlerProc2)(infoPtr->dst, infoPtr->key, argc, argv + srcIndex);
-      if (argc < 0) {
+      int remainingArgc = (*handlerProc2)(infoPtr->dst, infoPtr->key, static_cast<int>(argc), argv + srcIndex);
+      if (remainingArgc < 0) {
         return true;
       }
+      argc = static_cast<unsigned int>(remainingArgc);
       break;
     }
 
