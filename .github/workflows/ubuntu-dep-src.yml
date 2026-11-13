@@ -168,7 +168,10 @@ jobs:
         GIT_ADDRESS="https://github.com/PointCloudLibrary/pcl.git"
         LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
         echo "Newest tag is ${LATEST_TAG}"
-        if [[ ( "$VTK_REL" == "v9.7.0" &&  "${LATEST_TAG}" == "pcl-1.15.1" ) || ( "$VTK_REL" == "v9.7.1" &&  "${LATEST_TAG}" == "pcl-1.15.1" ) ]]
+        # pcl-1.15.1 does not build with VTK >= 9.7 (e.g. vtkRenderer::RemoveActor2D was removed)
+        VTK_MIN_INCOMPATIBLE="v9.7.0"
+        VTK_LOWEST=`printf "%s\n%s\n" "${VTK_MIN_INCOMPATIBLE}" "${VTK_REL}" | sort -V | head -n 1`
+        if [[ "${LATEST_TAG}" == "pcl-1.15.1" && "${VTK_LOWEST}" == "${VTK_MIN_INCOMPATIBLE}" ]]
         then
           BRANCH=master
           echo "Because it is not compatible with vtk ${VTK_REL} we will use the branch ${BRANCH} instead"
@@ -254,7 +257,17 @@ jobs:
         GIT_ADDRESS="https://gitlab.com/sdurobotics/ur_rtde.git"
         LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
         echo "Newest tag is ${LATEST_TAG}"
-        git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/ur_rtde
+        # ur_rtde v1.6.0 doesn't build with Boost >= 1.87 (e.g. Boost 1.90 on Ubuntu 26.04) since it uses
+        # boost/asio/io_service.hpp that was removed, and requests boost_system component that no longer
+        # exists since Boost 1.89. Both are fixed in master branch.
+        if [[ "${LATEST_TAG}" == "v1.6.0" && ! -f /usr/include/boost/asio/io_service.hpp ]]
+        then
+          BRANCH=master
+          echo "Because it is not compatible with Boost installed version we will use the branch ${BRANCH} instead"
+        else
+          BRANCH=${LATEST_TAG}
+        fi
+        git clone --depth 1 --branch ${BRANCH} ${GIT_ADDRESS} ${HOME}/ur_rtde
         cd ${HOME}/ur_rtde
         mkdir build && cd build && mkdir install
         cmake .. -DCMAKE_BUILD_TYPE=Release -DPYTHON_BINDINGS=OFF -DCMAKE_INSTALL_PREFIX=$(pwd)/install \

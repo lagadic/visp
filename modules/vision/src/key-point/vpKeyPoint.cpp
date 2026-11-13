@@ -1218,7 +1218,7 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
 
   // Nb images in the training database + the current image we want to detect
   // the object
-  int nbImg = static_cast<int>(m_mapOfImages.size() + 1);
+  unsigned int nbImg = static_cast<unsigned int>(m_mapOfImages.size() + 1);
 
   if (nbImg == 2) {
     // Only one training image, so we display the matching result side-by-side
@@ -1226,16 +1226,16 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
   }
   else {
     // Multiple training images, display them as a mosaic image
-    int nbImgSqrt = vpMath::round(std::sqrt(static_cast<double>(nbImg)));
-    int nbWidth = nbImgSqrt;
-    int nbHeight = nbImgSqrt;
+    unsigned int nbImgSqrt = static_cast<unsigned int>(vpMath::round(std::sqrt(static_cast<double>(nbImg))));
+    unsigned int nbWidth = nbImgSqrt;
+    unsigned int nbHeight = nbImgSqrt;
 
     if (nbImgSqrt * nbImgSqrt < nbImg) {
       nbWidth++;
     }
 
-    std::map<int, int> mapOfImageIdIndex;
-    int cpt = 0;
+    std::map<int, unsigned int> mapOfImageIdIndex;
+    unsigned int cpt = 0;
     unsigned int maxW = ICurrent.getWidth(), maxH = ICurrent.getHeight();
     for (std::map<int, vpImage<unsigned char> >::const_iterator it = m_mapOfImages.begin(); it != m_mapOfImages.end();
          ++it, cpt++) {
@@ -1252,12 +1252,12 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
 
     // Indexes of the current image in the grid computed to put preferably the
     // image in the center of the mosaic grid
-    int medianI = nbHeight / 2;
-    int medianJ = nbWidth / 2;
-    int medianIndex = medianI * nbWidth + medianJ;
+    unsigned int medianI = nbHeight / 2;
+    unsigned int medianJ = nbWidth / 2;
+    unsigned int medianIndex = medianI * nbWidth + medianJ;
     for (std::vector<cv::KeyPoint>::const_iterator it = m_trainKeyPoints.begin(); it != m_trainKeyPoints.end(); ++it) {
       vpImagePoint topLeftCorner;
-      int current_class_id_index = 0;
+      unsigned int current_class_id_index = 0;
       if (mapOfImageIdIndex[m_mapOfImageId[it->class_id]] < medianIndex) {
         current_class_id_index = mapOfImageIdIndex[m_mapOfImageId[it->class_id]];
       }
@@ -1267,16 +1267,16 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
         current_class_id_index = mapOfImageIdIndex[m_mapOfImageId[it->class_id]] + 1;
       }
 
-      int indexI = current_class_id_index / nbWidth;
-      int indexJ = current_class_id_index - (indexI * nbWidth);
-      topLeftCorner.set_ij(static_cast<int>(maxH) * indexI, static_cast<int>(maxW) * indexJ);
+      unsigned int indexI = current_class_id_index / nbWidth;
+      unsigned int indexJ = current_class_id_index - (indexI * nbWidth);
+      topLeftCorner.set_ij(static_cast<double>(maxH * indexI), static_cast<double>(maxW * indexJ));
 
       // Display cross for keypoints in the learning database
       vpDisplay::displayCross(IMatching, static_cast<int>(it->pt.y + topLeftCorner.get_i()),
                               static_cast<int>(it->pt.x + topLeftCorner.get_j()), crossSize, vpColor::red);
     }
 
-    vpImagePoint topLeftCorner(static_cast<int>(maxH) * medianI, static_cast<int>(maxW) * medianJ);
+    vpImagePoint topLeftCorner(static_cast<double>(maxH * medianI), static_cast<double>(maxW * medianJ));
     for (std::vector<cv::KeyPoint>::const_iterator it = m_queryKeyPoints.begin(); it != m_queryKeyPoints.end(); ++it) {
       // Display cross for keypoints detected in the current image
       vpDisplay::displayCross(IMatching, static_cast<int>(it->pt.y + topLeftCorner.get_i()),
@@ -1294,7 +1294,7 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
     }
 
     for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
-      int current_class_id = 0;
+      unsigned int current_class_id = 0;
       if (mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].class_id]] < medianIndex) {
         current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].class_id]];
       }
@@ -1304,13 +1304,13 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
         current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].class_id]] + 1;
       }
 
-      int indexI = current_class_id / nbWidth;
-      int indexJ = current_class_id - (indexI * nbWidth);
+      unsigned int indexI = current_class_id / nbWidth;
+      unsigned int indexJ = current_class_id - (indexI * nbWidth);
 
-      vpImagePoint end(static_cast<int>(maxH) * indexI + m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].pt.y,
-                       static_cast<int>(maxW) * indexJ + m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].pt.x);
-      vpImagePoint start(static_cast<int>(maxH) * medianI + m_queryFilteredKeyPoints[static_cast<size_t>(it->queryIdx)].pt.y,
-                         static_cast<int>(maxW) * medianJ + m_queryFilteredKeyPoints[static_cast<size_t>(it->queryIdx)].pt.x);
+      vpImagePoint end(static_cast<double>(maxH * indexI) + m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].pt.y,
+                       static_cast<double>(maxW * indexJ) + m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].pt.x);
+      vpImagePoint start(static_cast<double>(maxH * medianI) + m_queryFilteredKeyPoints[static_cast<size_t>(it->queryIdx)].pt.y,
+                         static_cast<double>(maxW * medianJ) + m_queryFilteredKeyPoints[static_cast<size_t>(it->queryIdx)].pt.x);
 
       // Draw line for matching keypoints detected in the current image and
       // those detected  in the training images
@@ -1331,7 +1331,7 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa
 
   // Nb images in the training database + the current image we want to detect
   // the object
-  int nbImg = static_cast<int>(m_mapOfImages.size() + 1);
+  unsigned int nbImg = static_cast<unsigned int>(m_mapOfImages.size() + 1);
 
   if (nbImg == 2) {
     // Only one training image, so we display the matching result side-by-side
@@ -1339,16 +1339,16 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa
   }
   else {
     // Multiple training images, display them as a mosaic image
-    int nbImgSqrt = vpMath::round(std::sqrt(static_cast<double>(nbImg)));
-    int nbWidth = nbImgSqrt;
-    int nbHeight = nbImgSqrt;
+    unsigned int nbImgSqrt = static_cast<unsigned int>(vpMath::round(std::sqrt(static_cast<double>(nbImg))));
+    unsigned int nbWidth = nbImgSqrt;
+    unsigned int nbHeight = nbImgSqrt;
 
     if (nbImgSqrt * nbImgSqrt < nbImg) {
       nbWidth++;
     }
 
-    std::map<int, int> mapOfImageIdIndex;
-    int cpt = 0;
+    std::map<int, unsigned int> mapOfImageIdIndex;
+    unsigned int cpt = 0;
     unsigned int maxW = ICurrent.getWidth(), maxH = ICurrent.getHeight();
     for (std::map<int, vpImage<unsigned char> >::const_iterator it = m_mapOfImages.begin(); it != m_mapOfImages.end();
          ++it, cpt++) {
@@ -1365,12 +1365,12 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa
 
     // Indexes of the current image in the grid computed to put preferably the
     // image in the center of the mosaic grid
-    int medianI = nbHeight / 2;
-    int medianJ = nbWidth / 2;
-    int medianIndex = medianI * nbWidth + medianJ;
+    unsigned int medianI = nbHeight / 2;
+    unsigned int medianJ = nbWidth / 2;
+    unsigned int medianIndex = medianI * nbWidth + medianJ;
     for (std::vector<cv::KeyPoint>::const_iterator it = m_trainKeyPoints.begin(); it != m_trainKeyPoints.end(); ++it) {
       vpImagePoint topLeftCorner;
-      int current_class_id_index = 0;
+      unsigned int current_class_id_index = 0;
       if (mapOfImageIdIndex[m_mapOfImageId[it->class_id]] < medianIndex) {
         current_class_id_index = mapOfImageIdIndex[m_mapOfImageId[it->class_id]];
       }
@@ -1380,16 +1380,16 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa
         current_class_id_index = mapOfImageIdIndex[m_mapOfImageId[it->class_id]] + 1;
       }
 
-      int indexI = current_class_id_index / nbWidth;
-      int indexJ = current_class_id_index - (indexI * nbWidth);
-      topLeftCorner.set_ij(static_cast<int>(maxH) * indexI, static_cast<int>(maxW) * indexJ);
+      unsigned int indexI = current_class_id_index / nbWidth;
+      unsigned int indexJ = current_class_id_index - (indexI * nbWidth);
+      topLeftCorner.set_ij(static_cast<double>(maxH * indexI), static_cast<double>(maxW * indexJ));
 
       // Display cross for keypoints in the learning database
       vpDisplay::displayCross(IMatching, static_cast<int>(it->pt.y + topLeftCorner.get_i()),
                               static_cast<int>(it->pt.x + topLeftCorner.get_j()), crossSize, vpColor::red);
     }
 
-    vpImagePoint topLeftCorner(static_cast<int>(maxH) * medianI, static_cast<int>(maxW) * medianJ);
+    vpImagePoint topLeftCorner(static_cast<double>(maxH * medianI), static_cast<double>(maxW * medianJ));
     for (std::vector<cv::KeyPoint>::const_iterator it = m_queryKeyPoints.begin(); it != m_queryKeyPoints.end(); ++it) {
       // Display cross for keypoints detected in the current image
       vpDisplay::displayCross(IMatching, static_cast<int>(it->pt.y + topLeftCorner.get_i()),
@@ -1407,7 +1407,7 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa
     }
 
     for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
-      int current_class_id = 0;
+      unsigned int current_class_id = 0;
       if (mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].class_id]] < medianIndex) {
         current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].class_id]];
       }
@@ -1417,13 +1417,13 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa
         current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].class_id]] + 1;
       }
 
-      int indexI = current_class_id / nbWidth;
-      int indexJ = current_class_id - (indexI * nbWidth);
+      unsigned int indexI = current_class_id / nbWidth;
+      unsigned int indexJ = current_class_id - (indexI * nbWidth);
 
-      vpImagePoint end(static_cast<int>(maxH) * indexI + m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].pt.y,
-                       static_cast<int>(maxW) * indexJ + m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].pt.x);
-      vpImagePoint start(static_cast<int>(maxH) * medianI + m_queryFilteredKeyPoints[static_cast<size_t>(it->queryIdx)].pt.y,
-                         static_cast<int>(maxW) * medianJ + m_queryFilteredKeyPoints[static_cast<size_t>(it->queryIdx)].pt.x);
+      vpImagePoint end(static_cast<double>(maxH * indexI) + m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].pt.y,
+                       static_cast<double>(maxW * indexJ) + m_trainKeyPoints[static_cast<size_t>(it->trainIdx)].pt.x);
+      vpImagePoint start(static_cast<double>(maxH * medianI) + m_queryFilteredKeyPoints[static_cast<size_t>(it->queryIdx)].pt.y,
+                         static_cast<double>(maxW * medianJ) + m_queryFilteredKeyPoints[static_cast<size_t>(it->queryIdx)].pt.x);
 
       // Draw line for matching keypoints detected in the current image and
       // those detected  in the training images
@@ -2385,7 +2385,7 @@ void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &ICurrent, vpI
 {
   // Nb images in the training database + the current image we want to detect
   // the object
-  int nbImg = static_cast<int>(m_mapOfImages.size() + 1);
+  unsigned int nbImg = static_cast<unsigned int>(m_mapOfImages.size() + 1);
 
   if (m_mapOfImages.empty()) {
     std::cerr << "There is no training image loaded !" << std::endl;
@@ -2397,10 +2397,10 @@ void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &ICurrent, vpI
     insertImageMatching(m_mapOfImages.begin()->second, ICurrent, IMatching);
   }
   else {
- // Multiple training images, display them as a mosaic image
-    int nbImgSqrt = vpMath::round(std::sqrt(static_cast<double>(nbImg)));
-    int nbWidth = nbImgSqrt;
-    int nbHeight = nbImgSqrt;
+    // Multiple training images, display them as a mosaic image
+    unsigned int nbImgSqrt = static_cast<unsigned int>(vpMath::round(std::sqrt(static_cast<double>(nbImg))));
+    unsigned int nbWidth = nbImgSqrt;
+    unsigned int nbHeight = nbImgSqrt;
 
     if (nbImgSqrt * nbImgSqrt < nbImg) {
       nbWidth++;
@@ -2420,27 +2420,27 @@ void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &ICurrent, vpI
 
     // Indexes of the current image in the grid made in order to the image is
     // in the center square in the mosaic grid
-    int medianI = nbHeight / 2;
-    int medianJ = nbWidth / 2;
-    int medianIndex = medianI * nbWidth + medianJ;
+    unsigned int medianI = nbHeight / 2;
+    unsigned int medianJ = nbWidth / 2;
+    unsigned int medianIndex = medianI * nbWidth + medianJ;
 
-    int cpt = 0;
+    unsigned int cpt = 0;
     for (std::map<int, vpImage<unsigned char> >::const_iterator it = m_mapOfImages.begin(); it != m_mapOfImages.end();
          ++it, cpt++) {
-      int local_cpt = cpt;
+      unsigned int local_cpt = cpt;
       if (cpt >= medianIndex) {
         // Shift of one unity the index of the training images which are after
         // the current image
         local_cpt++;
       }
-      int indexI = local_cpt / nbWidth;
-      int indexJ = local_cpt - (indexI * nbWidth);
-      vpImagePoint topLeftCorner(static_cast<int>(maxH) * indexI, static_cast<int>(maxW) * indexJ);
+      unsigned int indexI = local_cpt / nbWidth;
+      unsigned int indexJ = local_cpt - (indexI * nbWidth);
+      vpImagePoint topLeftCorner(static_cast<double>(maxH * indexI), static_cast<double>(maxW * indexJ));
 
       IMatching.insert(it->second, topLeftCorner);
     }
 
-    vpImagePoint topLeftCorner(static_cast<int>(maxH) * medianI, static_cast<int>(maxW) * medianJ);
+    vpImagePoint topLeftCorner(static_cast<double>(maxH * medianI), static_cast<double>(maxW * medianJ));
     IMatching.insert(ICurrent, topLeftCorner);
   }
 }
@@ -2449,7 +2449,7 @@ void vpKeyPoint::insertImageMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vp
 {
   // Nb images in the training database + the current image we want to detect
   // the object
-  int nbImg = static_cast<int>(m_mapOfImages.size() + 1);
+  unsigned int nbImg = static_cast<unsigned int>(m_mapOfImages.size() + 1);
 
   if (m_mapOfImages.empty()) {
     std::cerr << "There is no training image loaded !" << std::endl;
@@ -2464,9 +2464,9 @@ void vpKeyPoint::insertImageMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vp
   }
   else {
     // Multiple training images, display them as a mosaic image
-    int nbImgSqrt = vpMath::round(std::sqrt(static_cast<double>(nbImg)));
-    int nbWidth = nbImgSqrt;
-    int nbHeight = nbImgSqrt;
+    unsigned int nbImgSqrt = static_cast<unsigned int>(vpMath::round(std::sqrt(static_cast<double>(nbImg))));
+    unsigned int nbWidth = nbImgSqrt;
+    unsigned int nbHeight = nbImgSqrt;
 
     if (nbImgSqrt * nbImgSqrt < nbImg) {
       nbWidth++;
@@ -2486,29 +2486,29 @@ void vpKeyPoint::insertImageMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vp
 
     // Indexes of the current image in the grid made in order to the image is
     // in the center square in the mosaic grid
-    int medianI = nbHeight / 2;
-    int medianJ = nbWidth / 2;
-    int medianIndex = medianI * nbWidth + medianJ;
+    unsigned int medianI = nbHeight / 2;
+    unsigned int medianJ = nbWidth / 2;
+    unsigned int medianIndex = medianI * nbWidth + medianJ;
 
-    int cpt = 0;
+    unsigned int cpt = 0;
     for (std::map<int, vpImage<unsigned char> >::const_iterator it = m_mapOfImages.begin(); it != m_mapOfImages.end();
          ++it, cpt++) {
-      int local_cpt = cpt;
+      unsigned int local_cpt = cpt;
       if (cpt >= medianIndex) {
         // Shift of one unity the index of the training images which are after
         // the current image
         local_cpt++;
       }
-      int indexI = local_cpt / nbWidth;
-      int indexJ = local_cpt - (indexI * nbWidth);
-      vpImagePoint topLeftCorner(static_cast<int>(maxH) * indexI, static_cast<int>(maxW) * indexJ);
+      unsigned int indexI = local_cpt / nbWidth;
+      unsigned int indexJ = local_cpt - (indexI * nbWidth);
+      vpImagePoint topLeftCorner(static_cast<double>(maxH * indexI), static_cast<double>(maxW * indexJ));
 
       vpImage<vpRGBa> IRef;
       vpImageConvert::convert(it->second, IRef);
       IMatching.insert(IRef, topLeftCorner);
     }
 
-    vpImagePoint topLeftCorner(static_cast<int>(maxH) * medianI, static_cast<int>(maxW) * medianJ);
+    vpImagePoint topLeftCorner(static_cast<double>(maxH * medianI), static_cast<double>(maxW * medianJ));
     IMatching.insert(ICurrent, topLeftCorner);
   }
 }

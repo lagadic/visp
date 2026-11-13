@@ -720,6 +720,30 @@ if(USE_PCL)
   # it is not a good practice to use PCL_DEFINITIONS and PCL_COMPILE_OPTIONS. The following macro
   # gets rather compile options from interfaces.
   vp_find_pcl(PCL_LIBRARIES PCL_DEPS_INCLUDE_DIRS PCL_DEPS_LIBRARIES PCL_DEPS_COMPILE_OPTIONS)
+  # When PCL is built with AVX (e.g. Ubuntu 26.04 amd64v3 packages), Eigen used by PCL has a 32 bytes alignment
+  # while PCL doesn't export AVX compile options. ViSP has then to be built with AVX to have the same Eigen
+  # alignment, otherwise pcl/memory.h warns about "Potential runtime error due to aligned malloc mismatch!"
+  # The AVX compile option is also added to PCL_DEPS_COMPILE_OPTIONS to be propagated to projects using ViSP
+  # as 3rd party (VISPConfig.cmake, visp.pc and visp-config) that include PCL headers through ViSP headers.
+  if(X86_64)
+    vp_get_pcl_uses_eigen_handmade_aligned_malloc(PCL_INCLUDE_DIRS PCL_USES_EIGEN_HANDMADE_ALIGNED_MALLOC)
+    if(PCL_USES_EIGEN_HANDMADE_ALIGNED_MALLOC)
+      if(NOT ENABLE_AVX)
+        message(WARNING "PCL ${PCL_VERSION} was built with AVX (PCL_USES_EIGEN_HANDMADE_ALIGNED_MALLOC=${PCL_USES_EIGEN_HANDMADE_ALIGNED_MALLOC} in pcl_config.h). To get the same Eigen memory alignment as PCL, we enable AVX usage turning ENABLE_AVX=ON.")
+        unset(ENABLE_AVX)
+        set(ENABLE_AVX ON CACHE BOOL "Enable AVX instructions" FORCE)
+      endif()
+      if(MSVC)
+        set(PCL_AVX_COMPILE_OPTION "/arch:AVX")
+      else()
+        set(PCL_AVX_COMPILE_OPTION "-mavx")
+      endif()
+      if(NOT PCL_AVX_COMPILE_OPTION IN_LIST PCL_DEPS_COMPILE_OPTIONS)
+        list(APPEND PCL_DEPS_COMPILE_OPTIONS ${PCL_AVX_COMPILE_OPTION})
+      endif()
+      unset(PCL_AVX_COMPILE_OPTION)
+    endif()
+  endif()
   set(PCL_REQUIRED_COMPONENTS "common;filters;io;visualization;segmentation")
   # Create cmake vars corresponding to pcl components used by ViSP like VISP_HAVE_PCL_COMMON...
   vp_detect_required_pcl_components(PCL_REQUIRED_COMPONENTS)
