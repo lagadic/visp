@@ -55,9 +55,9 @@ void vpTemplateTrackerMIForwardAdditional::initHessienDesired(const vpImage<unsi
   int Nbpoint = 0;
 
   if (blur)
-    vpImageFilter::filter(I, BI, fgG, taillef);
-  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
-  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 
   double Tij;
   double IW, dx, dy;
@@ -134,9 +134,9 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
 
   int Nbpoint = 0;
   if (blur)
-    vpImageFilter::filter(I, BI, fgG, taillef);
-  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
-  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 
   double MI = 0, MIprec = -1000;
 

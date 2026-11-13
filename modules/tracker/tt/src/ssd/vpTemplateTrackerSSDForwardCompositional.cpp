@@ -40,7 +40,7 @@
 BEGIN_VISP_NAMESPACE
 vpTemplateTrackerSSDForwardCompositional::vpTemplateTrackerSSDForwardCompositional(vpTemplateTrackerWarp *warp)
   : vpTemplateTrackerSSD(warp), compoInitialised(false)
-{ }
+{}
 
 void vpTemplateTrackerSSDForwardCompositional::initCompo(const vpImage<unsigned char> & /*I*/)
 {
@@ -65,10 +65,10 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
   }
 
   if (blur) {
-    vpImageFilter::filter(I, BI, fgG, taillef);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
   }
-  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
-  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 
   dW = 0;
 

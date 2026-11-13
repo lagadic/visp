@@ -572,13 +572,12 @@ void gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int si
     throw vpException(vpException::dimensionError, oss.str());
   }
 
-  double *fg = new double[(size + 1) / 2];
+  vpArray2D<double> fg(1, (size + 1) / 2);
   vpImageFilter::getGaussianKernel(fg, size, sigma, normalize);
   vpImage<vpRGBa> GIx;
-  vpImageFilter::filterX(I, GIx, fg, size, p_mask);
-  vpImageFilter::filterY(GIx, GI, fg, size, p_mask);
+  vpImageFilter::filterX(I, GIx, fg, p_mask);
+  vpImageFilter::filterY(GIx, GI, fg, p_mask);
   GIx.destroy();
-  delete[] fg;
 }
 
 template<typename HSVType, bool useFullScale>
@@ -985,26 +984,24 @@ template<typename HSVType, bool useFullScale>
 void gaussianBlur(const vpImage<vpHSV<HSVType, useFullScale>> &I, vpImage<vpHSV<HSVType, useFullScale>> &GI, unsigned int size = 7, double sigma = 0., bool normalize = true,
   const vpImage<bool> *p_mask = nullptr)
 {
-  double *fg = new double[(size + 1) / 2];
+  vpArray2D<double> fg(1, (size + 1) / 2);
   vpImageFilter::getGaussianKernel(fg, size, sigma, normalize);
   vpImage<vpHSV<HSVType, useFullScale>> GIx;
-  vpImageFilter::filterX(I, GIx, fg, size, p_mask);
-  vpImageFilter::filterY(GIx, GI, fg, size, p_mask);
+  vpImageFilter::filterX(I, GIx, fg, p_mask);
+  vpImageFilter::filterY(GIx, GI, fg, p_mask);
   GIx.destroy();
-  delete[] fg;
 }
 
 template <typename ImageType, typename FilterType>
 static void gaussianBlur(const vpImage<ImageType> &I, vpImage<FilterType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true,
                          const vpImage<bool> *p_mask = nullptr)
 {
-  FilterType *fg = new FilterType[(size + 1) / 2];
+  vpArray2D<FilterType> fg(1, (size + 1) / 2);
   vpImageFilter::getGaussianKernel<FilterType>(fg, size, sigma, normalize);
   vpImage<FilterType> GIx;
-  vpImageFilter::filterX<ImageType, FilterType>(I, GIx, fg, size, p_mask);
-  vpImageFilter::filterY<FilterType, FilterType>(GIx, GI, fg, size, p_mask);
+  vpImageFilter::filterX<ImageType, FilterType>(I, GIx, fg, p_mask);
+  vpImageFilter::filterY<FilterType, FilterType>(GIx, GI, fg, p_mask);
   GIx.destroy();
-  delete[] fg;
 }
 }
 #endif

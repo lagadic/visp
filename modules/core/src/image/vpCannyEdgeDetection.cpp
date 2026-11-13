@@ -176,7 +176,7 @@ vpCannyEdgeDetection::initGaussianFilters()
     throw(vpException(vpException::badValue, "The Gaussian kernel size should be odd"));
   }
   m_fg.resize(1, static_cast<unsigned int>((m_gaussianKernelSize + 1) / val_2));
-  vpImageFilter::getGaussianKernel(m_fg.data, static_cast<unsigned int>(m_gaussianKernelSize), m_gaussianStdev, true);
+  vpImageFilter::getGaussianKernel(m_fg, static_cast<unsigned int>(m_gaussianKernelSize), m_gaussianStdev, true);
 }
 
 void
@@ -205,13 +205,13 @@ vpCannyEdgeDetection::initGradientFilters()
   float scaleY = 1.f;
 
   if (m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
-    scaleX = vpImageFilter::getSobelKernelX(m_gradientFilterX.data, (m_gradientFilterKernelSize - 1) / val_2);
-    scaleY = vpImageFilter::getSobelKernelY(m_gradientFilterY.data, (m_gradientFilterKernelSize - 1) / val_2);
+    scaleX = vpImageFilter::getSobelKernelX(m_gradientFilterX, m_gradientFilterKernelSize);
+    scaleY = vpImageFilter::getSobelKernelY(m_gradientFilterY, m_gradientFilterKernelSize);
   }
   else if (m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
     // Compute the Scharr filters
-    scaleX = vpImageFilter::getScharrKernelX(m_gradientFilterX.data, (m_gradientFilterKernelSize - 1) / val_2);
-    scaleY = vpImageFilter::getScharrKernelY(m_gradientFilterY.data, (m_gradientFilterKernelSize - 1) / val_2);
+    scaleX = vpImageFilter::getScharrKernelX(m_gradientFilterX, m_gradientFilterKernelSize);
+    scaleY = vpImageFilter::getScharrKernelY(m_gradientFilterY, m_gradientFilterKernelSize);
   }
   else {
     std::string errMsg = "[vpCannyEdgeDetection::initGradientFilters] Error: gradient filtering method \"";
@@ -342,8 +342,8 @@ vpCannyEdgeDetection::computeFilteringAndGradient(const vpImage<unsigned char> &
     // Computing the Gaussian blur
     vpImage<float> Iblur;
     vpImage<float> GIx;
-    vpImageFilter::filterX<unsigned char, float>(I, GIx, m_fg.data, static_cast<unsigned int>(m_gaussianKernelSize), mp_mask);
-    vpImageFilter::filterY<float, float>(GIx, Iblur, m_fg.data, static_cast<unsigned int>(m_gaussianKernelSize), mp_mask);
+    vpImageFilter::filterX(I, GIx, m_fg, mp_mask);
+    vpImageFilter::filterY(GIx, Iblur, m_fg, mp_mask);
 
     // Computing the gradients
     vpImageFilter::filter(Iblur, m_dIx, m_gradientFilterX, true, mp_mask);

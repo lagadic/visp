@@ -38,284 +38,277 @@ BEGIN_VISP_NAMESPACE
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  double vpImageFilter::filterXR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
+  namespace vpImageFilter
 {
-  const unsigned int stop = (size - 1) / 2;
+double detail::filterXR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
+{
+  const unsigned int stop = filter.getCols();
   double result = 0.;
-  for (unsigned int i = 1; i <= stop; ++i) {
-    result += filter[i] * static_cast<double>(I[r][c + i].R + I[r][c - i].R);
+  for (unsigned int i = 1; i < stop; ++i) {
+    result += filter.data[i] * static_cast<double>(I[r][c + i].R + I[r][c - i].R);
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].R));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].R));
 }
 
-double vpImageFilter::filterXG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
+double detail::filterXG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   double result = 0.;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
-    result += filter[i] * static_cast<double>(I[r][c + i].G + I[r][c - i].G);
+  for (unsigned int i = 1; i < stop; ++i) {
+    result += filter.data[i] * static_cast<double>(I[r][c + i].G + I[r][c - i].G);
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].G));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].G));
 }
 
-double vpImageFilter::filterXB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
+double detail::filterXB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   double result = 0.;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
-    result += filter[i] * static_cast<double>(I[r][c + i].B + I[r][c - i].B);
+  for (unsigned int i = 1; i < stop; ++i) {
+    result += filter.data[i] * static_cast<double>(I[r][c + i].B + I[r][c - i].B);
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].B));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].B));
 }
 
-double vpImageFilter::filterXLeftBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                         const double *filter, unsigned int size)
+double detail::filterXLeftBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   double result = 0.;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if (c > i) {
-      result += filter[i] * static_cast<double>(I[r][c + i].R + I[r][c - i].R);
+      result += filter.data[i] * static_cast<double>(I[r][c + i].R + I[r][c - i].R);
     }
     else {
-      result += filter[i] * static_cast<double>(I[r][c + i].R + I[r][i - c].R);
+      result += filter.data[i] * static_cast<double>(I[r][c + i].R + I[r][i - c].R);
     }
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].R));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].R));
 }
 
-double vpImageFilter::filterXLeftBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                         const double *filter, unsigned int size)
+double detail::filterXLeftBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   double result = 0.;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if (c > i) {
-      result += filter[i] * static_cast<double>(I[r][c + i].G + I[r][c - i].G);
+      result += filter.data[i] * static_cast<double>(I[r][c + i].G + I[r][c - i].G);
     }
     else {
-      result += filter[i] * static_cast<double>(I[r][c + i].G + I[r][i - c].G);
+      result += filter.data[i] * static_cast<double>(I[r][c + i].G + I[r][i - c].G);
     }
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].G));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].G));
 }
 
-double vpImageFilter::filterXLeftBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                         const double *filter, unsigned int size)
+double detail::filterXLeftBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   double result = 0.;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if (c > i) {
-      result += filter[i] * static_cast<double>(I[r][c + i].B + I[r][c - i].B);
+      result += filter.data[i] * static_cast<double>(I[r][c + i].B + I[r][c - i].B);
     }
     else {
-      result += filter[i] * static_cast<double>(I[r][c + i].B + I[r][i - c].B);
+      result += filter.data[i] * static_cast<double>(I[r][c + i].B + I[r][i - c].B);
     }
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].B));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].B));
 }
 
-double vpImageFilter::filterXRightBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                        const double *filter, unsigned int size)
+double detail::filterXRightBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
 {
   const unsigned int val_2 = 2;
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   const unsigned int width = I.getWidth();
   double result = 0.;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if ((c + i) < width) {
-      result += filter[i] * static_cast<double>(I[r][c + i].R + I[r][c - i].R);
+      result += filter.data[i] * static_cast<double>(I[r][c + i].R + I[r][c - i].R);
     }
     else {
-      result += filter[i] * static_cast<double>(I[r][((val_2 * width) - c) - i - 1].R + I[r][c - i].R);
+      result += filter.data[i] * static_cast<double>(I[r][((val_2 * width) - c) - i - 1].R + I[r][c - i].R);
     }
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].R));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].R));
 }
 
-double vpImageFilter::filterXRightBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                        const double *filter, unsigned int size)
+double detail::filterXRightBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
 {
   const unsigned int val_2 = 2;
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   const unsigned int width = I.getWidth();
   double result = 0.;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if ((c + i) < width) {
-      result += filter[i] * static_cast<double>(I[r][c + i].G + I[r][c - i].G);
+      result += filter.data[i] * static_cast<double>(I[r][c + i].G + I[r][c - i].G);
     }
     else {
-      result += filter[i] * static_cast<double>(I[r][((val_2 * width) - c) - i - 1].G + I[r][c - i].G);
+      result += filter.data[i] * static_cast<double>(I[r][((val_2 * width) - c) - i - 1].G + I[r][c - i].G);
     }
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].G));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].G));
 }
 
-double vpImageFilter::filterXRightBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                        const double *filter, unsigned int size)
+double detail::filterXRightBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
 {
   const unsigned int val_2 = 2;
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   const unsigned int width = I.getWidth();
   double result = 0.;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if ((c + i) < width) {
-      result += filter[i] * static_cast<double>(I[r][c + i].B + I[r][c - i].B);
+      result += filter.data[i] * static_cast<double>(I[r][c + i].B + I[r][c - i].B);
     }
     else {
-      result += filter[i] * static_cast<double>(I[r][(val_2 * width) - c - i - 1].B + I[r][c - i].B);
+      result += filter.data[i] * static_cast<double>(I[r][(val_2 * width) - c - i - 1].B + I[r][c - i].B);
     }
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].B));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].B));
 }
 
-double vpImageFilter::filterYR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
+double detail::filterYR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   double result = 0.;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
-    result += filter[i] * static_cast<double>(I[r + i][c].R + I[r - i][c].R);
+  for (unsigned int i = 1; i < stop; ++i) {
+    result += filter.data[i] * static_cast<double>(I[r + i][c].R + I[r - i][c].R);
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].R));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].R));
 }
 
-double vpImageFilter::filterYG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
+double detail::filterYG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   double result = 0.;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
-    result += filter[i] * static_cast<double>(I[r + i][c].G + I[r - i][c].G);
+  for (unsigned int i = 1; i < stop; ++i) {
+    result += filter.data[i] * static_cast<double>(I[r + i][c].G + I[r - i][c].G);
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].G));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].G));
 }
 
-double vpImageFilter::filterYB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
+double detail::filterYB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   double result = 0.;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
-    result += filter[i] * static_cast<double>(I[r + i][c].B + I[r - i][c].B);
+  for (unsigned int i = 1; i < stop; ++i) {
+    result += filter.data[i] * static_cast<double>(I[r + i][c].B + I[r - i][c].B);
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].B));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].B));
 }
 
-double vpImageFilter::filterYTopBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
+double detail::filterYTopBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   double result = 0.;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if (r > i) {
-      result += filter[i] * static_cast<double>(I[r + i][c].R + I[r - i][c].R);
+      result += filter.data[i] * static_cast<double>(I[r + i][c].R + I[r - i][c].R);
     }
     else {
-      result += filter[i] * static_cast<double>(I[r + i][c].R + I[i - r][c].R);
+      result += filter.data[i] * static_cast<double>(I[r + i][c].R + I[i - r][c].R);
     }
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].R));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].R));
 }
 
-double vpImageFilter::filterYTopBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
+double detail::filterYTopBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   double result = 0.;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if (r > i) {
-      result += filter[i] * static_cast<double>(I[r + i][c].G + I[r - i][c].G);
+      result += filter.data[i] * static_cast<double>(I[r + i][c].G + I[r - i][c].G);
     }
     else {
-      result += filter[i] * static_cast<double>(I[r + i][c].G + I[i - r][c].G);
+      result += filter.data[i] * static_cast<double>(I[r + i][c].G + I[i - r][c].G);
     }
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].G));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].G));
 }
 
-double vpImageFilter::filterYTopBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
+double detail::filterYTopBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
 {
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   double result = 0.;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if (r > i) {
-      result += filter[i] * static_cast<double>(I[r + i][c].B + I[r - i][c].B);
+      result += filter.data[i] * static_cast<double>(I[r + i][c].B + I[r - i][c].B);
     }
     else {
-      result += filter[i] * static_cast<double>(I[r + i][c].B + I[i - r][c].B);
+      result += filter.data[i] * static_cast<double>(I[r + i][c].B + I[i - r][c].B);
     }
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].B));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].B));
 }
 
-double vpImageFilter::filterYBottomBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                          const double *filter, unsigned int size)
+double detail::filterYBottomBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
 {
   const unsigned int val_2 = 2;
   const unsigned int height = I.getHeight();
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   double result = 0.;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if ((r + i) < height) {
-      result += filter[i] * static_cast<double>(I[r + i][c].R + I[r - i][c].R);
+      result += filter.data[i] * static_cast<double>(I[r + i][c].R + I[r - i][c].R);
     }
     else {
-      result += filter[i] * static_cast<double>(I[((val_2 * height) - r) - i - 1][c].R + I[r - i][c].R);
+      result += filter.data[i] * static_cast<double>(I[((val_2 * height) - r) - i - 1][c].R + I[r - i][c].R);
     }
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].R));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].R));
 }
 
-double vpImageFilter::filterYBottomBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                          const double *filter, unsigned int size)
+double detail::filterYBottomBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
 {
   const unsigned int val_2 = 2;
   const unsigned int height = I.getHeight();
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   double result = 0.;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if ((r + i) < height) {
-      result += filter[i] * static_cast<double>(I[r + i][c].G + I[r - i][c].G);
+      result += filter.data[i] * static_cast<double>(I[r + i][c].G + I[r - i][c].G);
     }
     else {
-      result += filter[i] * static_cast<double>(I[((val_2 * height) - r) - i - 1][c].G + I[r - i][c].G);
+      result += filter.data[i] * static_cast<double>(I[((val_2 * height) - r) - i - 1][c].G + I[r - i][c].G);
     }
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].G));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].G));
 }
 
-double vpImageFilter::filterYBottomBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
-                                          const double *filter, unsigned int size)
+double detail::filterYBottomBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const vpArray2D<double> &filter)
 {
   const unsigned int val_2 = 2;
   const unsigned int height = I.getHeight();
-  const unsigned int stop = (size - 1) / 2;
+  const unsigned int stop = filter.getCols();
   double result = 0.;
 
-  for (unsigned int i = 1; i <= stop; ++i) {
+  for (unsigned int i = 1; i < stop; ++i) {
     if ((r + i) < height) {
-      result += filter[i] * static_cast<double>(I[r + i][c].B + I[r - i][c].B);
+      result += filter.data[i] * static_cast<double>(I[r + i][c].B + I[r - i][c].B);
     }
     else {
-      result += filter[i] * static_cast<double>(I[((val_2 * height) - r) - i - 1][c].B + I[r - i][c].B);
+      result += filter.data[i] * static_cast<double>(I[((val_2 * height) - r) - i - 1][c].B + I[r - i][c].B);
     }
   }
-  return result + (filter[0] * static_cast<double>(I[r][c].B));
+  return result + (filter.data[0] * static_cast<double>(I[r][c].B));
 }
-
+}
 #else
   void dummy_vpImageFilter_xy()
 {

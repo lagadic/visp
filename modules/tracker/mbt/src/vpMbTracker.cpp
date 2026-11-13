@@ -204,8 +204,9 @@ vpMbTracker::vpMbTracker()
   mapOfParameterNames["minLineLengthThreshold"] = "number";
   mapOfParameterNames["useLod"] = "boolean";
 
-  vpImageFilter::getSobelKernelX(m_SobelX.data, m_projectionErrorKernelSize);
-  vpImageFilter::getSobelKernelY(m_SobelY.data, m_projectionErrorKernelSize);
+  unsigned int array_size = 2 * m_projectionErrorKernelSize + 1;
+  vpImageFilter::getSobelKernelX(m_SobelX, array_size);
+  vpImageFilter::getSobelKernelY(m_SobelY, array_size);
 }
 
 /*!
@@ -4174,11 +4175,12 @@ void vpMbTracker::setProjectionErrorMovingEdge(const vpMe &me)
 void vpMbTracker::setProjectionErrorKernelSize(const unsigned int &size)
 {
   m_projectionErrorKernelSize = size;
+  unsigned int array_size = size * 2 + 1;
 
-  m_SobelX.resize(size * 2 + 1, size * 2 + 1, false, false);
-  vpImageFilter::getSobelKernelX(m_SobelX.data, size);
+  m_SobelX.resize(array_size, array_size, false, false);
+  vpImageFilter::getSobelKernelX(m_SobelX, array_size);
 
-  m_SobelY.resize(size * 2 + 1, size * 2 + 1, false, false);
-  vpImageFilter::getSobelKernelY(m_SobelY.data, size);
+  m_SobelY.resize(array_size, array_size, false, false);
+  vpImageFilter::getSobelKernelY(m_SobelY, array_size);
 }
 END_VISP_NAMESPACE

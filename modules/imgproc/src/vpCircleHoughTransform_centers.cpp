@@ -60,8 +60,8 @@ vpCircleHoughTransform::computeGradients(const vpImage<unsigned char> &I)
       || (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING)) {
     // Computing the Gaussian blurr
     vpImage<float> Iblur, GIx;
-    vpImageFilter::filterX(I, GIx, m_fg.data, static_cast<unsigned int>(m_algoParams.m_gaussianKernelSize), mp_mask);
-    vpImageFilter::filterY(GIx, Iblur, m_fg.data, static_cast<unsigned int>(m_algoParams.m_gaussianKernelSize), mp_mask);
+    vpImageFilter::filterX(I, GIx, m_fg, mp_mask);
+    vpImageFilter::filterY(GIx, Iblur, m_fg, mp_mask);
 
         // Computing the gradients
     vpImageFilter::filter(Iblur, m_dIx, m_gradientFilterX, true, mp_mask);

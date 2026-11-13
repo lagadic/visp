@@ -695,12 +695,26 @@ macro(vp_glob_module_sources)
        "${CMAKE_CURRENT_LIST_DIR}/include/visp3/*.h"
        "${CMAKE_CURRENT_LIST_DIR}/include/visp3/${name}/*.h"
   )
+  # Implementation details headers (include/visp3/<module>/detail/*.h) are not standalone public headers:
+  # they are included by a public header. They are not added to the module public headers list
+  # to avoid their inclusion in the global visp_<module>.h header and the creation of compat headers,
+  # but they need to be installed.
+  file(GLOB lib_detail_hdrs
+       "${CMAKE_CURRENT_LIST_DIR}/include/visp3/${name}/detail/*.h"
+  )
 
   vp_source_group("Src" DIRBASE "${CMAKE_CURRENT_LIST_DIR}/src" FILES ${lib_srcs} ${lib_int_hdrs})
-  vp_source_group("Include" DIRBASE "${CMAKE_CURRENT_LIST_DIR}/include" FILES ${lib_hdrs})
+  vp_source_group("Include" DIRBASE "${CMAKE_CURRENT_LIST_DIR}/include" FILES ${lib_hdrs} ${lib_detail_hdrs})
 
   vp_set_module_sources(${_argn} HEADERS ${lib_hdrs}
-                        SOURCES ${lib_srcs} ${lib_int_hdrs})
+                        SOURCES ${lib_srcs} ${lib_int_hdrs} ${lib_detail_hdrs})
+
+  if(lib_detail_hdrs)
+    install(FILES ${lib_detail_hdrs}
+      DESTINATION "${VISP_INC_INSTALL_PATH}/visp3/${name}/detail"
+      COMPONENT dev
+    )
+  endif()
 endmacro()
 
 # finds and copy data from a source to a destination

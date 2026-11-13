@@ -278,7 +278,24 @@ options.disable_enum_members_docstring();
     default_config.update(self.config['enums'][enum_name])
     return default_config
 
-  def get_method_config(self, class_name: Optional[str], method, owner_specs, header_mapping) -> Dict:
+  def get_namespace_config(self, namespace_name: str) -> Optional[Dict]:
+    '''
+    Get the configuration of a C++ namespace that should be exposed as a Python submodule.
+    namespace_name is the C++ name of the namespace, without the "visp::" prefix (e.g. "vpImageFilter").
+    Returns None if the namespace is not listed in the "namespaces" field of the configuration:
+    in that case, its functions are directly exposed in the module.
+    '''
+    if 'namespaces' not in self.config or namespace_name not in self.config['namespaces']:
+      return None
+    default_config = {
+      'python_name': namespace_name.split('::')[-1].replace('vp', '', 1),
+      'functions': [],
+      'additional_bindings': None,
+    }
+    default_config.update(self.config['namespaces'][namespace_name])
+    return default_config
+
+  def get_method_config(self, class_name: Optional[str], method, owner_specs, header_mapping, namespace_name: Optional[str] = None) -> Dict:
     res = {
       'ignore': False,
       'use_default_param_policy': False, # Handling
@@ -291,7 +308,12 @@ options.disable_enum_members_docstring();
       'returns_ref_ok': False,
     }
     functions_container = None
-    keys = ['classes', class_name, 'methods'] if class_name is not None else ['functions']
+    if class_name is not None:
+      keys = ['classes', class_name, 'methods']
+    elif namespace_name is not None:
+      keys = ['namespaces', namespace_name, 'functions']
+    else:
+      keys = ['functions']
     tmp = self.config
     for k in keys:
       if k not in tmp:

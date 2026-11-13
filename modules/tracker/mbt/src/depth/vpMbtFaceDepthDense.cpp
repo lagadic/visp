@@ -39,7 +39,11 @@
 #endif
 
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
+#if defined(__FMA__) || defined(__AVX2__)
+#include <immintrin.h>
+#else
 #include <emmintrin.h>
+#endif
 #define VISP_HAVE_SSE2 1
 #endif
 
