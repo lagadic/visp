@@ -1183,11 +1183,24 @@ vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, cons
   computeProjectionOperators(J1, I, I_WpW, error, P);
 
   for (unsigned int i = 0; i < n; i++) {
-    q_l0_min[i] = qmin[i] + rho * (qmax[i] - qmin[i]);
-    q_l0_max[i] = qmax[i] - rho * (qmax[i] - qmin[i]);
+    const double range = qmax[i] - qmin[i];
+    if (!vpMath::isFinite(range)) {
+      // Unlimited joint, for instance with qmin = std::numeric_limits<double>::lowest() and
+      // qmax = std::numeric_limits<double>::max(): qmax - qmin overflows, and the thresholds computed from it would be
+      // infinite or nan, putting the joint out of the safe zone. The joint is always kept in the safe zone.
+      q_l0_min[i] = std::numeric_limits<double>::lowest();
+      q_l0_max[i] = std::numeric_limits<double>::max();
+      q_l1_min[i] = std::numeric_limits<double>::lowest();
+      q_l1_max[i] = std::numeric_limits<double>::max();
+      g[i][i] = 0;
+      continue;
+    }
 
-    q_l1_min[i] = q_l0_min[i] - rho * rho1 * (qmax[i] - qmin[i]);
-    q_l1_max[i] = q_l0_max[i] + rho * rho1 * (qmax[i] - qmin[i]);
+    q_l0_min[i] = qmin[i] + rho * range;
+    q_l0_max[i] = qmax[i] - rho * range;
+
+    q_l1_min[i] = q_l0_min[i] - rho * rho1 * range;
+    q_l1_max[i] = q_l0_max[i] + rho * rho1 * range;
 
     if (q[i] < q_l0_min[i]) {
       g[i][i] = -1;

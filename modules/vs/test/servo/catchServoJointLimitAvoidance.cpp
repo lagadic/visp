@@ -124,6 +124,17 @@ public:
 
   double P_00() const { return m_P_00; }
 
+  /*!
+    Remove the limits of the last joints, as recommended for unmeasured DoFs like the ones of a mobile base.
+  */
+  void setUnlimitedJoints(unsigned int nb_unlimited_joints)
+  {
+    for (unsigned int j = nb_joints - nb_unlimited_joints; j < nb_joints; ++j) {
+      m_qmin[j] = std::numeric_limits<double>::lowest();
+      m_qmax[j] = std::numeric_limits<double>::max();
+    }
+  }
+
 private:
   vpServo m_task;
   vpFeatureTranslation m_s;
@@ -186,6 +197,31 @@ TEST_CASE_METHOD(JointLimitAvoidanceFixture, "Joint limit avoidance", "[vpServo]
         CHECK(q2_lower[0] == Catch::Approx(expected));
       }
     }
+  }
+}
+
+TEST_CASE_METHOD(JointLimitAvoidanceFixture, "Joint limit avoidance with unlimited joints",
+                 "[vpServo][joint_limit_avoidance]")
+{
+  // Joints without limits (lowest() / max(), like the DoFs of a mobile base) must always be in the safe zone, although
+  // qmax - qmin overflows
+  setUnlimitedJoints(3);
+
+  SECTION("No avoidance when the limited joints are in the safe zone")
+  {
+    for (double b : { 0.5, 1., 3. }) {
+      INFO("b = " << b);
+      CHECK(avoidance(0., b).frobeniusNorm() < std::numeric_limits<double>::epsilon());
+    }
+  }
+
+  SECTION("Avoidance of a limited joint still continuous at q_l1")
+  {
+    const double eps = 1e-9;
+    const vpColVector q2_inside = avoidance(q_l1_max - eps, 3.);
+    const vpColVector q2_outside = avoidance(q_l1_max + eps, 3.);
+    CHECK(q2_outside.frobeniusNorm() > 0.);
+    CHECK((q2_outside - q2_inside).frobeniusNorm() < 1e-6 * q2_outside.frobeniusNorm());
   }
 }
 
