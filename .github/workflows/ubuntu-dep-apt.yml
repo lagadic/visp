@@ -66,11 +66,41 @@ jobs:
         sudo apt-get install -y libopencv-dev nlohmann-json3-dev libcomedi-dev libjpeg-dev libpng-dev libcoin-dev
         sudo apt-get install -y libfreenect-dev libpcl-dev libapriltag-dev
 
-    - name: Install ur_rtde dependency
+    - name: Workaround OpenBLAS 0.3.20 Cooperlake kernel
+      # On recent runners (e.g. Intel Xeon 6973P-C), OpenBLAS 0.3.20 available on Ubuntu 22.04 selects the AVX-512
+      # Cooperlake kernel that produces wrong results: photometricMappingPCAVisualServoing doesn't converge, while it
+      # converges with the Haswell kernel. Force the Haswell kernel (AVX2) for all the next steps
       run: |
-        sudo add-apt-repository -y ppa:sdurobotics/ur-rtde
-        sudo apt-get update
-        sudo apt install -y librtde librtde-dev libboost-system-dev libboost-thread-dev libboost-program-options-dev
+        OPENBLAS_VERSION=$(dpkg-query -W -f='${Version}' libopenblas0-pthread 2>/dev/null || true)
+        echo "OpenBLAS version: ${OPENBLAS_VERSION}"
+        if [[ "${OPENBLAS_VERSION}" == 0.3.20* ]] && grep -q -w avx2 /proc/cpuinfo; then
+          echo "Force OpenBLAS Haswell kernel"
+          echo "OPENBLAS_CORETYPE=Haswell" >> $GITHUB_ENV
+        fi
+
+    - name: Install ur_rtde dependency
+      # ur_rtde usage is disabled by ViSP when building with C++98 (see USE_UR_RTDE in CMakeLists.txt)
+      if: matrix.standard != '98'
+      # Adding the PPA requires the Launchpad API to retrieve the PPA signing key. This API sometimes fails with
+      # "HTTP Error 500: GPGKeyTemporarilyNotFoundError". Retry a few times and, if the PPA remains unreachable,
+      # continue without ur_rtde (ViSP then disables ur_rtde usage) instead of making the whole job fail
+      run: |
+        sudo apt-get install -y libboost-system-dev libboost-thread-dev libboost-program-options-dev
+        delay=15
+        for attempt in 1 2 3 4 5; do
+          if sudo add-apt-repository -y ppa:sdurobotics/ur-rtde && sudo apt-get update && sudo apt-get install -y librtde librtde-dev; then
+            exit 0
+          fi
+          echo "Attempt ${attempt} to install ur_rtde from ppa:sdurobotics/ur-rtde failed"
+          if [ ${attempt} -lt 5 ]; then
+            echo "Retrying in ${delay}s..."
+            sleep ${delay}
+            delay=$((delay * 2))
+          fi
+        done
+        # Remove the PPA entry that may have been added without its signing key, otherwise next "apt-get update" fails
+        sudo rm -f /etc/apt/sources.list.d/sdurobotics-ubuntu-ur-rtde-*.list /etc/apt/sources.list.d/sdurobotics-ubuntu-ur-rtde-*.sources
+        echo "::warning title=ur_rtde not installed::Unable to install ur_rtde from ppa:sdurobotics/ur-rtde (Launchpad unavailable). Build continues without ur_rtde."
 
     - name: Install Ogre 1.9
       if: matrix.ogre == 'ogre-1.9' && matrix.standard != '17'
@@ -159,16 +189,6 @@ jobs:
         else
           echo "warnings.log not found (build likely failed before it could be generated)"
         fi
-
-    - name: Diagnose OpenBLAS kernel
-      working-directory: build
-      run: |
-        status=0
-        OPENBLAS_VERBOSE=2 ./example/direct-visual-servoing/photometricMappingVisualServoing -c -d -n 200 -m pca -k 64 -p 100 -l 30.0 > openblas-diag.log 2>&1 || status=$?
-        grep -E 'Core|Explained' openblas-diag.log || true
-        tail -7 openblas-diag.log
-        echo "exit=${status}"
-        OPENBLAS_CORETYPE=Haswell ./example/direct-visual-servoing/photometricMappingVisualServoing -c -d -n 200 -m pca -k 64 -p 100 -l 30.0 | tail -10
 
     - name: Run unit tests
       working-directory: build

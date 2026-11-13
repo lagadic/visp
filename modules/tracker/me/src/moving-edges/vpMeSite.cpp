@@ -248,11 +248,11 @@ unsigned int vpMeSite::computeMaskIndex(const double alpha, const vpMe &me)
   while (theta > M_PI) {
     theta -= M_PI;
   }
-  // Convert radians to degrees
+  // Convert radians to degrees. Since theta is in [0, M_PI], theta_deg is in [0, 180]
   int theta_deg = vpMath::round(vpMath::deg(theta));
 
   const int flatAngle = 180;
-  if (abs(theta_deg) == flatAngle) {
+  if (theta_deg == flatAngle) {
     theta_deg = 0;
   }
   unsigned int mask_index = static_cast<unsigned int>(theta_deg / static_cast<double>(me.getAngleStep()));
