@@ -37,6 +37,18 @@ jobs:
         sudo apt-get install libopencv-dev nlohmann-json3-dev
         sudo apt-get install python3
 
+    - name: Workaround OpenBLAS 0.3.20 Cooperlake kernel
+      # On recent runners (e.g. Intel Xeon 6973P-C), OpenBLAS 0.3.20 available on Ubuntu 22.04 selects the AVX-512
+      # Cooperlake kernel that produces wrong results: photometricMappingPCAVisualServoing doesn't converge, while it
+      # converges with the Haswell kernel. Force the Haswell kernel (AVX2) for all the next steps
+      run: |
+        OPENBLAS_VERSION=$(dpkg-query -W -f='${Version}' libopenblas0-pthread 2>/dev/null || true)
+        echo "OpenBLAS version: ${OPENBLAS_VERSION}"
+        if [[ "${OPENBLAS_VERSION}" == 0.3.20* ]] && grep -q -w avx2 /proc/cpuinfo; then
+          echo "Force OpenBLAS Haswell kernel"
+          echo "OPENBLAS_CORETYPE=Haswell" >> $GITHUB_ENV
+        fi
+
     - name: Upgrade pip3
       run: |
         python3 -m pip install --upgrade pip

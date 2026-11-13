@@ -66,6 +66,18 @@ jobs:
         sudo apt-get install -y libopencv-dev nlohmann-json3-dev libcomedi-dev libjpeg-dev libpng-dev libcoin-dev
         sudo apt-get install -y libfreenect-dev libpcl-dev libapriltag-dev
 
+    - name: Workaround OpenBLAS 0.3.20 Cooperlake kernel
+      # On recent runners (e.g. Intel Xeon 6973P-C), OpenBLAS 0.3.20 available on Ubuntu 22.04 selects the AVX-512
+      # Cooperlake kernel that produces wrong results: photometricMappingPCAVisualServoing doesn't converge, while it
+      # converges with the Haswell kernel. Force the Haswell kernel (AVX2) for all the next steps
+      run: |
+        OPENBLAS_VERSION=$(dpkg-query -W -f='${Version}' libopenblas0-pthread 2>/dev/null || true)
+        echo "OpenBLAS version: ${OPENBLAS_VERSION}"
+        if [[ "${OPENBLAS_VERSION}" == 0.3.20* ]] && grep -q -w avx2 /proc/cpuinfo; then
+          echo "Force OpenBLAS Haswell kernel"
+          echo "OPENBLAS_CORETYPE=Haswell" >> $GITHUB_ENV
+        fi
+
     - name: Install ur_rtde dependency
       # ur_rtde usage is disabled by ViSP when building with C++98 (see USE_UR_RTDE in CMakeLists.txt)
       if: matrix.standard != '98'
@@ -177,16 +189,6 @@ jobs:
         else
           echo "warnings.log not found (build likely failed before it could be generated)"
         fi
-
-    - name: Diagnose OpenBLAS kernel
-      working-directory: build
-      run: |
-        status=0
-        OPENBLAS_VERBOSE=2 ./example/direct-visual-servoing/photometricMappingVisualServoing -c -d -n 200 -m pca -k 64 -p 100 -l 30.0 > openblas-diag.log 2>&1 || status=$?
-        grep -E 'Core|Explained' openblas-diag.log || true
-        tail -7 openblas-diag.log
-        echo "exit=${status}"
-        OPENBLAS_CORETYPE=Haswell ./example/direct-visual-servoing/photometricMappingVisualServoing -c -d -n 200 -m pca -k 64 -p 100 -l 30.0 | tail -10
 
     - name: Run unit tests
       working-directory: build
