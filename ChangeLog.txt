@@ -69,6 +69,8 @@ ViSP 3.7.1 (current version)
     . [#2064] Segfault on macOS in Panda3D renderer when XQuartz is installed
     . [#2066] Panda3D not detected when built with makepanda.py and Panda3D_DIR cmake var is set
     . [#2068] Link error "undefined typeinfo" when Panda3D is built with cmake without RTTI
+    . [#2087] secondaryTaskJointLimitAvoidance(): discontinuous avoidance velocity at q_l1 makes joints
+              oscillate around q_l1
 
 ----------------------------------------------
 ViSP 3.7.0 (released December 19, 2025)
