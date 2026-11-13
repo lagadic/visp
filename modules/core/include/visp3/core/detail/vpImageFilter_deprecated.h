@@ -64,9 +64,15 @@
 #endif
 #endif
 
+// Deprecated functions below call other deprecated functions. Silence these internal
+// warnings; user code calling a deprecated function is still warned at its call site.
 #if defined(__clang__)
 #  pragma clang diagnostic push
 #  pragma clang diagnostic ignored "-Wdocumentation"
+#  pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
 #ifdef VISP_HAVE_OPENMP
@@ -1333,5 +1339,12 @@ VP_DEPRECATED FilterType getSobelKernelX(FilterType *filter, unsigned int size)
 //@}
 }
 END_VISP_NAMESPACE
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#  pragma GCC diagnostic pop
+#endif
+
 #endif
 #endif
