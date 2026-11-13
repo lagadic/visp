@@ -499,6 +499,9 @@ VP_OPTION(INSTALL_ANDROID_EXAMPLES "" "" "Install Android examples"  ""         
 VP_OPTION(BUILD_PYTHON_BINDINGS  "" "" "Build Python bindings" "" ON IF (PYTHON3INTERP_FOUND AND USE_PYBIND11 AND NOT CMAKE_NOT_OK_FOR_BINDINGS AND VISP_PYTHON_INTERPRETER_ALLOWED AND NOT PYTHON3_NOT_OK_FOR_BINDINGS AND NOT CXX_STANDARD_NOT_OK_FOR_BINDINGS) )
 VP_OPTION(BUILD_PYTHON_BINDINGS_DOC  "" "" "Build the documentation for the Python bindings" "" ON IF BUILD_PYTHON_BINDINGS )
 VP_OPTION(GENERATE_PYTHON_STUBS  "" "" "Generate Python stubs" "" ON IF BUILD_PYTHON_BINDINGS )
+# When ON, the Python bindings are built with the "all" target and installed by the CMake "install" target
+# in CMAKE_INSTALL_PREFIX/VISP_PYTHON_INSTALL_DIR, without calling pip (useful for packaging, e.g. Nix)
+VP_OPTION(INSTALL_PYTHON_BINDINGS  "" "" "Install Python bindings with the CMake install target (packaging)" "" OFF IF BUILD_PYTHON_BINDINGS )
 
 
 # Build demos as an option.
@@ -1847,6 +1850,7 @@ if(BUILD_PYTHON_BINDINGS)
   status("    Package version:"        "${VISP_PYTHON_PACKAGE_VERSION}")
   status("    Wrapped modules:"        "${VISP_PYTHON_BOUND_MODULES}")
   status("    Generated input config:" "${VISP_PYTHON_GENERATED_CONFIG_FILE}")
+  status("    Install with CMake:"     INSTALL_PYTHON_BINDINGS THEN "yes (${CMAKE_INSTALL_PREFIX}/${VISP_PYTHON_INSTALL_DIR})" ELSE "no (use pip through visp_python_bindings target)")
 else()
   status("    Requirements: ")
   status("      Python version > ${PYTHON3_MINIMUM_VERSION_PYTHON_BINDINGS}:" PYTHON3_FOUND AND NOT PYTHON3_NOT_OK_FOR_BINDINGS THEN "ok (ver ${PYTHON3_VERSION_STRING})" ELSE "python not found or too old (${PYTHON3_VERSION_STRING})")

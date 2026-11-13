@@ -89,14 +89,28 @@ if(DOXYGEN_FOUND)
   list(APPEND bindings_dependencies visp_doc_xml)
 endif()
 
-add_custom_command(
-  OUTPUT ${python_bindings_cpp_src}
-  COMMAND ${PYTHON3_EXECUTABLE} -m pip install  ${_pip_args} ${bindgen_package_location}
-  COMMAND ${PYTHON3_EXECUTABLE} -m visp_python_bindgen.generator --config "${CMAKE_CURRENT_SOURCE_DIR}/config" --build-folder ${bindings_gen_location} --main-config "${json_config_file_path}"
-  COMMAND ${PYTHON3_EXECUTABLE} -m pip uninstall -y visp_python_bindgen
-  DEPENDS ${bindings_dependencies}
-  COMMENT "Installing the python bindings generator and running it..."
-)
+set(bindgen_run_args --config "${CMAKE_CURRENT_SOURCE_DIR}/config" --build-folder ${bindings_gen_location} --main-config "${json_config_file_path}")
+if(INSTALL_PYTHON_BINDINGS)
+  # Packaging mode: do not modify the Python environment with pip (it may be read-only, e.g. with Nix).
+  # The generator is run from the source tree; its dependencies (see generator/pyproject.toml)
+  # have to be provided by the environment.
+  add_custom_command(
+    OUTPUT ${python_bindings_cpp_src}
+    COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=${bindgen_package_location}"
+            ${PYTHON3_EXECUTABLE} -m visp_python_bindgen.generator ${bindgen_run_args}
+    DEPENDS ${bindings_dependencies}
+    COMMENT "Running the python bindings generator..."
+  )
+else()
+  add_custom_command(
+    OUTPUT ${python_bindings_cpp_src}
+    COMMAND ${PYTHON3_EXECUTABLE} -m pip install  ${_pip_args} ${bindgen_package_location}
+    COMMAND ${PYTHON3_EXECUTABLE} -m visp_python_bindgen.generator ${bindgen_run_args}
+    COMMAND ${PYTHON3_EXECUTABLE} -m pip uninstall -y visp_python_bindgen
+    DEPENDS ${bindings_dependencies}
+    COMMENT "Installing the python bindings generator and running it..."
+  )
+endif()
 add_custom_target(
   visp_python_bindings_generator_run
   DEPENDS ${python_bindings_cpp_src}
@@ -105,17 +119,52 @@ add_custom_target(
 set(VISP_PYTHON_VERSION "${VISP_VERSION}")
 set(VISP_PYTHON_BINDINGS_BUILD_PATH "${CMAKE_CURRENT_BINARY_DIR}/bindings")
 
+# Location of the Python package when installed with the CMake install target,
+# relative to CMAKE_INSTALL_PREFIX (e.g. lib/python3.12/site-packages)
+if(INSTALL_PYTHON_BINDINGS AND NOT VISP_PYTHON_INSTALL_DIR)
+  execute_process(
+    COMMAND ${PYTHON3_EXECUTABLE} -c "import os, sysconfig; print(os.path.relpath(sysconfig.get_path('platlib', vars={'base': '/x', 'platbase': '/x'}), '/x').replace(os.sep, '/'))"
+    OUTPUT_VARIABLE _visp_python_sitelib
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    RESULT_VARIABLE _visp_python_sitelib_result
+  )
+  if(NOT _visp_python_sitelib_result EQUAL 0 OR _visp_python_sitelib STREQUAL "")
+    message(FATAL_ERROR "Unable to determine the Python site-packages directory. Please set VISP_PYTHON_INSTALL_DIR.")
+  endif()
+  set(VISP_PYTHON_INSTALL_DIR "${_visp_python_sitelib}" CACHE PATH "Python bindings install directory, relative to CMAKE_INSTALL_PREFIX")
+endif()
+set(VISP_PYTHON_INSTALL_DIR "${VISP_PYTHON_INSTALL_DIR}" PARENT_SCOPE)
+
 # Step 3: Compile and install bindings as a python package
 add_subdirectory(bindings)
 
 # Step 4: Copy stubs dir and install stubs for autocompletion
-if(GENERATE_PYTHON_STUBS)
+set(_visp_python_generate_stubs ${GENERATE_PYTHON_STUBS})
+if(_visp_python_generate_stubs AND INSTALL_PYTHON_BINDINGS)
+  # Without pip, mypy (stubgen) has to be provided by the environment
+  execute_process(
+    COMMAND ${PYTHON3_EXECUTABLE} -c "import mypy.stubgen"
+    RESULT_VARIABLE _visp_python_mypy_result
+    OUTPUT_QUIET ERROR_QUIET
+  )
+  if(NOT _visp_python_mypy_result EQUAL 0)
+    message(WARNING "mypy is not available for ${PYTHON3_EXECUTABLE}: Python stubs will not be generated nor installed. "
+                    "Install mypy or set GENERATE_PYTHON_STUBS=OFF.")
+    set(_visp_python_generate_stubs OFF)
+  endif()
+endif()
+
+if(_visp_python_generate_stubs)
   add_subdirectory(stubs)
   # Global target: compile and install the Python bindings
   add_custom_target(
     visp_python_bindings
     DEPENDS visp_python_bindings_stubs
   )
+elseif(INSTALL_PYTHON_BINDINGS)
+  # Global target: compile the Python bindings, installed by the CMake install target
+  add_custom_target(visp_python_bindings)
+  add_dependencies(visp_python_bindings _visp)
 else()
   add_custom_target(
     visp_python_bindings
