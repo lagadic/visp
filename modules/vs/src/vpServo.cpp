@@ -1188,9 +1188,14 @@ vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, cons
       // Unlimited joint, for instance with qmin = std::numeric_limits<double>::lowest() and
       // qmax = std::numeric_limits<double>::max(): qmax - qmin overflows, and the thresholds computed from it would be
       // infinite or nan, putting the joint out of the safe zone. The joint is always kept in the safe zone.
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
       q_l0_min[i] = std::numeric_limits<double>::lowest();
-      q_l0_max[i] = std::numeric_limits<double>::max();
       q_l1_min[i] = std::numeric_limits<double>::lowest();
+#else
+      q_l0_min[i] = -std::numeric_limits<double>::max();
+      q_l1_min[i] = -std::numeric_limits<double>::max();
+#endif
+      q_l0_max[i] = std::numeric_limits<double>::max();
       q_l1_max[i] = std::numeric_limits<double>::max();
       g[i][i] = 0;
       continue;
