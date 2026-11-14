@@ -898,9 +898,14 @@ public:
    *   task is applied.
    * - **Transition zone** \f$[q_{l_1}^{min}, q_{l_0}^{min}]\f$ or
    *   \f$[q_{l_0}^{max}, q_{l_1}^{max}]\f$: the avoidance task is gradually
-   *   injected via the sigmoid function \f$\lambda_{\ell_i}\f$, and the
+   *   injected via the sigmoid function \f$\lambda_{\ell_i}\f$, normalized so
+   *   that \f$\lambda_{\ell_i} = 0\f$ at \f$q_{l_0}\f$ and
+   *   \f$\lambda_{\ell_i} = 1\f$ at \f$q_{l_1}\f$. Close to \f$q_{l_0}\f$, the
    *   adaptive gain \f$b_i\f$ is clamped to 1 to prevent destabilizing
-   *   coupling effects on other joints through the projection operator.
+   *   coupling effects on other joints through the projection operator. It
+   *   goes gradually to its unclamped value when approaching \f$q_{l_1}\f$,
+   *   \f$b_i^{\ell} = \min(b_i, 1) + \lambda_{\ell_i} \left(b_i - \min(b_i, 1)\right)\f$,
+   *   so that the avoidance velocity is continuous at \f$q_{l_1}\f$.
    * - **Critical zone** \f$q_i < q_{l_1}^{min}\f$ or \f$q_i > q_{l_1}^{max}\f$:
    *   the avoidance task is fully activated and the adaptive gain \f$b_i\f$ is
    *   applied without clamping, ensuring \f$|\dot{q}_2[i]| \geq |\dot{q}_1[i]|\f$
