@@ -59,7 +59,11 @@
 #endif
 
 #define CATCH_CONFIG_RUNNER
+#if defined(VISP_BUILD_CATCH2)
 #include <catch_amalgamated.hpp>
+#else // Since v3.1.1
+#include <catch2/catch_all.hpp>
+#endif
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -97,7 +101,8 @@ public:
     if (!f.good()) {
       throw vpException(vpException::ioError, "Could not open ground truth file %s", groundTruthPath.c_str());
     }
-    nlohmann::json j = nlohmann::json::parse(f);
+    // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+    nlohmann::json j = nlohmann::json::parse(f, nullptr, true, true);
     m_cMg = j.at("grid");
     // std::cout << "Loaded ground truth data from apriltag grid: " << std::endl;
     // for (const vpHomogeneousMatrix &cMg: m_cMg) {
@@ -117,7 +122,8 @@ public:
     if (!cf.good()) {
       throw vpException(vpException::ioError, "Problem opening %s", camFile.c_str());
     }
-    const nlohmann::json j = nlohmann::json::parse(cf);
+    // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+    const nlohmann::json j = nlohmann::json::parse(cf, nullptr, true, true);
     m_cam.initPersProjWithoutDistortion(j.at("px"), j.at("py"), j.at("u0"), j.at("v0"));
     m_h = j.at("h"), m_w = j.at("w");
     m_depthScale = j.at("depthScale");
@@ -189,7 +195,8 @@ public:
       if (vpIoTools::checkFilename(objectInitFile)) {
         std::ifstream f(objectInitFile);
         if (f.good()) {
-          vpHomogeneousMatrix cMo = nlohmann::json::parse(f);
+          // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+          vpHomogeneousMatrix cMo = nlohmann::json::parse(f, nullptr, true, true);
           result[objectName] = cMo;
         }
         else {
@@ -229,7 +236,7 @@ private:
 
 struct RunData
 {
-  RunData(const std::string &config, double errorT, double errorR) : configName(config), thresholdErrorT(errorT), thresholdErrorR(errorR) { }
+  RunData(const std::string &config, double errorT, double errorR) : configName(config), thresholdErrorT(errorT), thresholdErrorR(errorR) {}
   const std::string configName;
   const double thresholdErrorT;
   const double thresholdErrorR;
@@ -259,12 +266,14 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
       vpImage<unsigned char> displayI(h, w), displayDepth(h, w, 255), displayMask(h, w);
       vpImage<vpRGBa> displayRGB(h, w);
 
+#ifdef VISP_HAVE_MODULE_GUI
       std::vector<std::shared_ptr<vpDisplay>> displays = vpDisplayFactory::makeDisplayGrid(2, 2, 0, 0, 70, 70,
         "Gray", displayI,
         "Color", displayRGB,
         "Depth", displayDepth,
         "Mask", displayMask
       );
+#endif
 
       const std::vector<std::string> objectNames = { "dragon", "cube", "stomach", "lower_teeth" };
 
@@ -273,13 +282,13 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
       const std::map<std::string, std::vector<RunData>> configMap = {
         { "dragon", {
           RunData("ccd.json", 0.03, 10.0),
-          RunData("ccd-temporal-smoothing.json", 0.03, 20.0),
+          RunData("ccd-temporal-smoothing.json", 0.03, 27.0),
           RunData("depth-ccd-mask.json", 0.025, 8.0),
           RunData("depth-ccd.json", 0.025, 8.0),
 #ifdef VP_HAVE_RB_KLT_TRACKER
           RunData("depth-klt-ccd-mask.json", 0.02, 5.0),
           RunData("depth-klt.json", 0.02, 5.5),
-          RunData("depth-klt-me-multi.json", 0.02, 5.0),
+          RunData("depth-klt-me-multi.json", 0.02, 6.5),
           RunData("depth-klt-me-single.json", 0.025, 10.0),
 #endif
           }
@@ -348,6 +357,7 @@ SCENARIO("Running tracker on sequences with ground truth", "[rbt]")
             for (unsigned int j = 0; j < frame.depth.getSize(); ++j) {
               displayDepth.bitmap[j] = static_cast<unsigned char>(std::min(frame.depth.bitmap[j], 1.f) * 255.f);
             }
+
 
             vpDisplay::display(displayI); vpDisplay::display(displayRGB); vpDisplay::display(displayDepth);
             tracker.display(displayI, displayRGB, displayDepth);

@@ -191,33 +191,33 @@ void usage(const char **argv, int error)
     << "  --tag-family <family>" << std::endl
     << "    Apriltag family. Supported values are:" << std::endl
     << "       0: TAG_36h11" << std::endl
-    << "       1: TAG_36h10 (DEPRECATED)" << std::endl
-    << "       2: TAG_36ARTOOLKIT (DEPRECATED)" << std::endl
-    << "       3: TAG_25h9" << std::endl
-    << "       4: TAG_25h7 (DEPRECATED)" << std::endl
-    << "       5: TAG_16h5" << std::endl
-    << "       6: TAG_CIRCLE21h7" << std::endl
-    << "       7: TAG_CIRCLE49h12" << std::endl
-    << "       8: TAG_CUSTOM48h12" << std::endl
-    << "       9: TAG_STANDARD41h12" << std::endl
-    << "      10: TAG_STANDARD52h13" << std::endl
-    << "      11: TAG_ARUCO_4x4_50" << std::endl
-    << "      12: TAG_ARUCO_4x4_100" << std::endl
-    << "      13: TAG_ARUCO_4x4_250" << std::endl
-    << "      14: TAG_ARUCO_4x4_1000" << std::endl
-    << "      15: TAG_ARUCO_5x5_50" << std::endl
-    << "      16: TAG_ARUCO_5x5_100" << std::endl
-    << "      17: TAG_ARUCO_5x5_250" << std::endl
-    << "      18: TAG_ARUCO_5x5_1000" << std::endl
-    << "      19: TAG_ARUCO_6x6_50" << std::endl
-    << "      20: TAG_ARUCO_6x6_100" << std::endl
-    << "      21: TAG_ARUCO_6x6_250" << std::endl
-    << "      22: TAG_ARUCO_6x6_1000" << std::endl
-    << "      23: TAG_ARUCO_7x7_50" << std::endl
-    << "      24: TAG_ARUCO_7x7_100" << std::endl
-    << "      25: TAG_ARUCO_7x7_250" << std::endl
-    << "      26: TAG_ARUCO_7x7_1000" << std::endl
-    << "      27: TAG_ARUCO_MIP_36h12" << std::endl
+    << "       1: TAG_36h10" << std::endl
+    << "       2: TAG_25h9" << std::endl
+    << "       3: TAG_16h5" << std::endl
+    << "       4: TAG_CIRCLE21h7" << std::endl
+    << "       5: TAG_CIRCLE49h12" << std::endl
+    << "       6: TAG_CUSTOM48h12" << std::endl
+    << "       7: TAG_STANDARD41h12" << std::endl
+    << "       8: TAG_STANDARD52h13" << std::endl
+#if defined(VISP_HAVE_APRILTAG_ARUCO)
+    << "       9: TAG_ARUCO_4x4_50" << std::endl
+    << "      10: TAG_ARUCO_4x4_100" << std::endl
+    << "      11: TAG_ARUCO_4x4_250" << std::endl
+    << "      12: TAG_ARUCO_4x4_1000" << std::endl
+    << "      13: TAG_ARUCO_5x5_50" << std::endl
+    << "      14: TAG_ARUCO_5x5_100" << std::endl
+    << "      15: TAG_ARUCO_5x5_250" << std::endl
+    << "      16: TAG_ARUCO_5x5_1000" << std::endl
+    << "      17: TAG_ARUCO_6x6_50" << std::endl
+    << "      18: TAG_ARUCO_6x6_100" << std::endl
+    << "      19: TAG_ARUCO_6x6_250" << std::endl
+    << "      20: TAG_ARUCO_6x6_1000" << std::endl
+    << "      21: TAG_ARUCO_7x7_50" << std::endl
+    << "      22: TAG_ARUCO_7x7_100" << std::endl
+    << "      23: TAG_ARUCO_7x7_250" << std::endl
+    << "      24: TAG_ARUCO_7x7_1000" << std::endl
+    << "      25: TAG_ARUCO_MIP_36h12" << std::endl
+#endif
     << "    Default: 0 (36h11)" << std::endl
     << std::endl
     << "  --tag-decision-margin-threshold <threshold>" << std::endl
@@ -360,9 +360,10 @@ int main(int argc, const char **argv)
     //! [Construct grabber]
     vpRealSense2 realsense;
     rs2::config config;
-    int width = 640, height = 480, stream_fps = 30;
-    config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, stream_fps);
-    config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, stream_fps);
+    unsigned int width = 640, height = 480;
+    int stream_fps = 30;
+    config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_RGBA8, stream_fps);
+    config.enable_stream(RS2_STREAM_DEPTH, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_Z16, stream_fps);
     config.disable_stream(RS2_STREAM_INFRARED);
     realsense.open(config);
 
@@ -419,11 +420,11 @@ int main(int argc, const char **argv)
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
       d_gray = vpDisplayFactory::createDisplay(I_gray, 50, 50, "Color stream");
       if (opt_use_depth)
-        d_depth = vpDisplayFactory::createDisplay(I_depth, 80 + I_gray.getWidth(), 50, "Depth stream");
+        d_depth = vpDisplayFactory::createDisplay(I_depth, 80 + static_cast<int>(I_gray.getWidth()), 50, "Depth stream");
 #else
       d_gray = vpDisplayFactory::allocateDisplay(I_gray, 50, 50, "Color stream");
       if (opt_use_depth)
-        d_depth = vpDisplayFactory::allocateDisplay(I_depth, 80 + I_gray.getWidth(), 50, "Depth stream");
+        d_depth = vpDisplayFactory::allocateDisplay(I_depth, 80 + static_cast<int>(I_gray.getWidth()), 50, "Depth stream");
 #endif
     }
 
@@ -561,7 +562,7 @@ int main(int argc, const char **argv)
           std::stringstream ss;
           ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt()
             << ", depth " << tracker.getNbFeaturesDepthDense();
-          vpDisplay::displayText(I_gray, I_gray.getHeight() - 30, 20, ss.str(), vpColor::red);
+          vpDisplay::displayText(I_gray, static_cast<int>(I_gray.getHeight()) - 30, 20, ss.str(), vpColor::red);
         }
       }
 

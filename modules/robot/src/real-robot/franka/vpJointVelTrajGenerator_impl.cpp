@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
+#include <limits>
 
 #include <franka/exception.h>
 #include <franka/model.h>
@@ -71,6 +72,8 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot, std::atomic_b
   std::ofstream log_dq_des;
   std::ofstream log_dq_cmd;
   std::ofstream log_v_des;
+
+  vpJointVelTrajGenerator joint_vel_traj_generator;
 
   if (!log_folder.empty()) {
     std::cout << "Save franka logs in \"" << log_folder << "\" folder" << std::endl;
@@ -109,12 +112,10 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot, std::atomic_b
 
   auto joint_velocity_callback =
     [=, &log_time, &log_q_mes, &log_dq_mes, &log_dq_des, &log_dq_cmd, &time, &q_prev, &dq_des, &stop, &robot_state,
-    &mutex](const franka::RobotState &state, franka::Duration period) -> franka::JointVelocities {
+    &mutex, &joint_vel_traj_generator](const franka::RobotState &state, franka::Duration period) -> franka::JointVelocities {
     time += period.toSec();
 
-    static vpJointVelTrajGenerator joint_vel_traj_generator;
-
-    if (time == 0.0) {
+    if (std::abs(time) <= std::numeric_limits<double>::epsilon()) {
       if (!log_folder.empty()) {
         log_time.open(log_folder + "/time.log");
         log_q_mes.open(log_folder + "/q-mes.log");
@@ -126,22 +127,23 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot, std::atomic_b
       joint_vel_traj_generator.init(state.q_d, q_min, q_max, dq_max, ddq_max, delta_t);
     }
 
+    std::array<double, 7> q_cmd;
+    std::array<double, 7> dq_cmd;
+    std::array<double, 7> dq_des_local;
+
     {
       std::lock_guard<std::mutex> lock(mutex);
       robot_state = state;
+      dq_des_local = dq_des;
     }
 
-    std::array<double, 7> q_cmd;
-    std::array<double, 7> dq_cmd;
-
-    auto dq_des_ = dq_des;
     if (stop) { // Stop asked
-      for (auto &dq_ : dq_des_) {
+      for (auto &dq_ : dq_des_local) {
         dq_ = 0.0;
       }
     }
 
-    joint_vel_traj_generator.applyVel(dq_des_, q_cmd, dq_cmd);
+    joint_vel_traj_generator.applyVel(dq_des_local, q_cmd, dq_cmd);
 
     if (!log_folder.empty()) {
       log_time << time << std::endl;
@@ -153,8 +155,8 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot, std::atomic_b
         << std::endl;
       log_dq_cmd << std::fixed << std::setprecision(8) << dq_cmd[0] << " " << dq_cmd[1] << " " << dq_cmd[2] << " "
         << dq_cmd[3] << " " << dq_cmd[4] << " " << dq_cmd[5] << " " << dq_cmd[6] << std::endl;
-      log_dq_des << std::fixed << std::setprecision(8) << dq_des_[0] << " " << dq_des_[1] << " " << dq_des_[2] << " "
-        << dq_des_[3] << " " << dq_des_[4] << " " << dq_des_[5] << " " << dq_des_[6] << std::endl;
+      log_dq_des << std::fixed << std::setprecision(8) << dq_des_local[0] << " " << dq_des_local[1] << " " << dq_des_local[2] << " "
+        << dq_des_local[3] << " " << dq_des_local[4] << " " << dq_des_local[5] << " " << dq_des_local[6] << std::endl;
     }
 
     franka::JointVelocities velocities = { dq_cmd[0], dq_cmd[1], dq_cmd[2], dq_cmd[3], dq_cmd[4], dq_cmd[5], dq_cmd[6] };
@@ -200,13 +202,11 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot, std::atomic_b
 
   auto cartesian_velocity_callback = [=, &log_time, &log_q_mes, &log_dq_mes, &log_dq_des, &log_dq_cmd, &log_v_des,
     &time, &model, &q_prev, &v_cart_des, &stop, &robot_state,
-    &mutex](const franka::RobotState &state,
+    &mutex, &joint_vel_traj_generator](const franka::RobotState &state,
             franka::Duration period) -> franka::JointVelocities {
               time += period.toSec();
 
-              static vpJointVelTrajGenerator joint_vel_traj_generator;
-
-              if (time == 0.0) {
+              if (std::abs(time) <= std::numeric_limits<double>::epsilon()) {
                 if (!log_folder.empty()) {
                   log_time.open(log_folder + "/time.log");
                   log_q_mes.open(log_folder + "/q-mes.log");
@@ -219,9 +219,12 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot, std::atomic_b
                 joint_vel_traj_generator.init(state.q_d, q_min, q_max, dq_max, ddq_max, delta_t);
               }
 
+              std::array<double, 7> dq_des_local;
+
               {
                 std::lock_guard<std::mutex> lock(mutex);
                 robot_state = state;
+                dq_des_local = dq_des;
               }
 
               // Get robot Jacobian
@@ -246,14 +249,19 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot, std::atomic_b
 
               // Compute joint velocity
               vpColVector q_dot;
+              vpColVector v_cart_des_local;
+              {
+                std::lock_guard<std::mutex> lock(mutex);
+                v_cart_des_local = v_cart_des;
+              }
               if (frame == vpRobot::END_EFFECTOR_FRAME) {
-                q_dot = eJe.pseudoInverse() * v_cart_des; // TODO introduce try catch
+                q_dot = eJe.pseudoInverse() * v_cart_des_local; // TODO introduce try catch
               }
               else if (frame == vpRobot::TOOL_FRAME) {
-                q_dot = (cVe * eJe).pseudoInverse() * v_cart_des; // TODO introduce try catch
+                q_dot = (cVe * eJe).pseudoInverse() * v_cart_des_local; // TODO introduce try catch
               }
               else if (frame == vpRobot::REFERENCE_FRAME) {
-                q_dot = (cVe * fJe).pseudoInverse() * v_cart_des; // TODO introduce try catch
+                q_dot = (cVe * fJe).pseudoInverse() * v_cart_des_local; // TODO introduce try catch
               }
 
               std::array<double, 7> dq_des_eigen;
@@ -314,23 +322,23 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot, std::atomic_b
               q_prev = state.q_d;
 
 #if (VISP_HAVE_FRANKA_VERSION < 0x000500)
-    // state.q_d contains the last joint velocity command received by the robot.
-    // In case of packet loss due to bad connection or due to a slow control loop
-    // not reaching the 1kHz rate, even if your desired velocity trajectory
-    // is smooth, discontinuities might occur.
-    // Saturating the acceleration computed with respect to the last command received
-    // by the robot will prevent from getting discontinuity errors.
-    // Note that if the robot does not receive a command it will try to extrapolate
-    // the desired behavior assuming a constant acceleration model
+              // state.q_d contains the last joint velocity command received by the robot.
+              // In case of packet loss due to bad connection or due to a slow control loop
+              // not reaching the 1kHz rate, even if your desired velocity trajectory
+              // is smooth, discontinuities might occur.
+              // Saturating the acceleration computed with respect to the last command received
+              // by the robot will prevent from getting discontinuity errors.
+              // Note that if the robot does not receive a command it will try to extrapolate
+              // the desired behavior assuming a constant acceleration model
               return limitRate(ddq_max, velocities.dq, state.dq_d);
 #else
-    // With libfranka 0.5.0 franka::control enables limit_rate by default
+              // With libfranka 0.5.0 franka::control enables limit_rate by default
               return velocities;
 #endif
     };
 
 #if !(VISP_HAVE_FRANKA_VERSION < 0x000500)
-  double cutoff_frequency = 10;
+  double cutoff_frequency = 3;
 #endif
   switch (frame) {
   case vpRobot::JOINT_STATE: {
@@ -426,7 +434,7 @@ void vpJointVelTrajGenerator::applyVel(const std::array<double, 7> &dq_des, std:
   for (size_t i = 0; i < m_njoints; i++) {
     m_dq_des[i] = dq_des[i];
 
-    if (m_dq_des[i] != m_dq_des_prev[i]) {
+    if (std::abs(m_dq_des[i] - m_dq_des_prev[i]) > std::numeric_limits<double>::epsilon()) {
 
       m_flagJointLimit = false;
 
@@ -625,5 +633,5 @@ std::array<double, 7> vpJointVelTrajGenerator::limitRate(const std::array<double
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpJointVelTrajGenerator.cpp.o) has no symbols
-void dummy_vpJointVelTrajGenerator() { }
+void dummy_vpJointVelTrajGenerator() {}
 #endif // VISP_HAVE_FRANKA

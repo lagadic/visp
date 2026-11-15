@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include <visp3/rbt/vpCombinedDepthAndColorMask.h>
 
 #include <visp3/rbt/vpRBFeatureTrackerInput.h>
+#include <visp3/core/vpImageFilter.h>
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include VISP_NLOHMANN_JSON(json.hpp)
@@ -46,7 +47,6 @@ void vpCombinedDepthAndColorMask::updateMask(const vpRBFeatureTrackerInput &fram
   m_depthMask.updateMask(frame, previousFrame, m_depth);
 
   bool computeOnlyOnBB = m_colorMask.isComputedOnlyOnBoundingBox() && m_depthMask.isComputedOnlyOnBoundingBox();
-
   if (!computeOnlyOnBB) {
     mask.resize(m_color.getHeight(), m_color.getWidth());
 #ifdef VISP_HAVE_OPENMP
@@ -58,20 +58,25 @@ void vpCombinedDepthAndColorMask::updateMask(const vpRBFeatureTrackerInput &fram
   }
   else {
     mask.resize(m_color.getHeight(), m_color.getWidth(), 0.f);
+
     const vpRect renderBB = frame.renders.boundingBox;
     const int top = static_cast<int>(renderBB.getTop());
     const int left = static_cast<int>(renderBB.getLeft());
     const int bottom = std::min(static_cast<int>(m_color.getHeight()) - 1, static_cast<int>(renderBB.getBottom()));
     const int right = std::min(static_cast<int>(m_color.getWidth()) - 1, static_cast<int>(renderBB.getRight()));
+    const int bottomExcl = bottom + 1;  // Exclusive limit
+    const int rightExcl = right + 1;
+
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (int i = top; i <= bottom; ++i) {
+    for (int i = top; i < bottomExcl; ++i) {
       const float *const colorProbaRow = m_color[i];
       const float *const depthProbaRow = m_depth[i];
       float *const maskRow = mask[i];
-      for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
-        maskRow[j] = std::min(colorProbaRow[j], depthProbaRow[j]);
+      for (int j = left; j < rightExcl; ++j) {
+        unsigned int j_ = static_cast<unsigned int>(j);
+        maskRow[j_] = std::min(colorProbaRow[j_], depthProbaRow[j]);
       }
     }
   }

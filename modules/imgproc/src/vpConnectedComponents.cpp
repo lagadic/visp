@@ -36,19 +36,19 @@
   \brief Basic connected components.
 */
 
-#include <queue>
+#include <vector>
 #include <visp3/imgproc/vpImgproc.h>
 
 namespace VISP_NAMESPACE_NAME
 {
 
-void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &listOfNeighbors, unsigned int i,
+void getNeighbors(const vpImage<unsigned char> &I, std::vector<vpImagePoint> &listOfNeighbors, unsigned int i,
                   unsigned int j, const vpImageMorphology::vpConnexityType &connexity);
-void visitNeighbors(vpImage<unsigned char> &I_copy, std::queue<vpImagePoint> &listOfNeighbors, vpImage<int> &labels,
+void visitNeighbors(vpImage<unsigned char> &I_copy, std::vector<vpImagePoint> &listOfNeighbors, vpImage<int> &labels,
                     int current_label, const vpImageMorphology::vpConnexityType &connexity);
 void connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, int &nbComponents, const vpImageMorphology::vpConnexityType &connexity);
 
-void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &listOfNeighbors, unsigned int i,
+void getNeighbors(const vpImage<unsigned char> &I, std::vector<vpImagePoint> &listOfNeighbors, unsigned int i,
                   unsigned int j, const vpImageMorphology::vpConnexityType &connexity)
 {
   unsigned char currValue = I[i][j];
@@ -56,22 +56,22 @@ void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &lis
   if (connexity == vpImageMorphology::CONNEXITY_4) {
     // Top
     if (I[i - 1][j] == currValue) {
-      listOfNeighbors.push(vpImagePoint(i - 1, j));
+      listOfNeighbors.push_back(vpImagePoint(i - 1, j));
     }
 
     // Left
     if (I[i][j - 1] == currValue) {
-      listOfNeighbors.push(vpImagePoint(i, j - 1));
+      listOfNeighbors.push_back(vpImagePoint(i, j - 1));
     }
 
     // Right
     if (I[i][j + 1] == currValue) {
-      listOfNeighbors.push(vpImagePoint(i, j + 1));
+      listOfNeighbors.push_back(vpImagePoint(i, j + 1));
     }
 
     // Bottom
     if (I[i + 1][j] == currValue) {
-      listOfNeighbors.push(vpImagePoint(i + 1, j));
+      listOfNeighbors.push_back(vpImagePoint(i + 1, j));
     }
   }
   else {
@@ -80,7 +80,7 @@ void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &lis
         // Everything except the current position
         if ((cpt1 != 0) || (cpt2 != 0)) {
           if (I[static_cast<int>(i) + cpt1][static_cast<int>(j) + cpt2] == currValue) {
-            listOfNeighbors.push(vpImagePoint(static_cast<int>(i) + cpt1, static_cast<int>(j) + cpt2));
+            listOfNeighbors.push_back(vpImagePoint(static_cast<int>(i) + cpt1, static_cast<int>(j) + cpt2));
           }
         }
       }
@@ -88,15 +88,15 @@ void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &lis
   }
 }
 
-void visitNeighbors(vpImage<unsigned char> &I_copy, std::queue<vpImagePoint> &listOfNeighbors, vpImage<int> &labels,
+void visitNeighbors(vpImage<unsigned char> &I_copy, std::vector<vpImagePoint> &listOfNeighbors, vpImage<int> &labels,
                     int current_label, const vpImageMorphology::vpConnexityType &connexity)
 {
   // Visit the neighbors
   while (!listOfNeighbors.empty()) {
-    vpImagePoint imPt = listOfNeighbors.front();
+    vpImagePoint imPt = listOfNeighbors.back();
     unsigned int i = static_cast<unsigned int>(imPt.get_i());
     unsigned int j = static_cast<unsigned int>(imPt.get_j());
-    listOfNeighbors.pop();
+    listOfNeighbors.pop_back();
 
     if (I_copy[i][j]) {
       getNeighbors(I_copy, listOfNeighbors, i, j, connexity);
@@ -133,7 +133,7 @@ void connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, 
   vpImage<int> labels_copy(I.getHeight() + 2, I.getWidth() + 2, 0);
 
   int current_label = 1;
-  std::queue<vpImagePoint> listOfNeighbors;
+  std::vector<vpImagePoint> listOfNeighbors;
 
   unsigned int i_height = I.getHeight();
   for (unsigned int cpt1 = 0; cpt1 < i_height; ++cpt1) {

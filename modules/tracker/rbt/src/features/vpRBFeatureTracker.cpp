@@ -42,6 +42,8 @@ vpRBFeatureTracker::vpRBFeatureTracker()
   m_weighting = std::make_shared<vpFixedTemporalWeighting>(1.0);
   m_vvsConverged = false;
   m_enableDisplay = true;
+  setEstimatedDofs({ true, true, true, true, true, true });
+  m_jacobianInObjectSpace = false;
 }
 
 void vpRBFeatureTracker::updateCovariance(const double lambda)

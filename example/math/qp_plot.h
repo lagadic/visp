@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,18 +43,21 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 VISP_NAMESPACE_ADDRESSING vpMatrix randM(int n, int m)
 {
-  VISP_NAMESPACE_ADDRESSING vpMatrix M(n, m);
-  for (int i = 0; i < n; ++i)
-    for (int j = 0; j < m; ++j)
+  VISP_NAMESPACE_ADDRESSING vpMatrix M(static_cast<unsigned int>(n), static_cast<unsigned int>(m));
+  for (unsigned int i = 0; i < static_cast<unsigned int>(n); ++i) {
+    for (unsigned int j = 0; j < static_cast<unsigned int>(m); ++j) {
       M[i][j] = (2. * rand()) / RAND_MAX - 1;
+    }
+  }
   return M;
 }
 
 VISP_NAMESPACE_ADDRESSING vpColVector randV(int n)
 {
-  VISP_NAMESPACE_ADDRESSING vpColVector M(n);
-  for (int i = 0; i < n; ++i)
+  VISP_NAMESPACE_ADDRESSING vpColVector M(static_cast<unsigned int>(n));
+  for (unsigned int i = 0; i < static_cast<unsigned int>(n); ++i) {
     M[i] = (2. * rand()) / RAND_MAX - 1;
+  }
   return M;
 }
 
@@ -65,9 +68,9 @@ public:
   virtual ~QPlot() { delete P; }
   QPlot(int graphNum, int total, std::vector<std::string> legend)
   {
-    P = new VISP_NAMESPACE_ADDRESSING vpPlot(graphNum, 700, 700, 100, 200, "Resolution time");
+    P = new VISP_NAMESPACE_ADDRESSING vpPlot(static_cast<unsigned int>(graphNum), 700, 700, 100, 200, "Resolution time");
 
-    for (int i = 0; i < graphNum; ++i) {
+    for (unsigned int i = 0; i < static_cast<unsigned int>(graphNum); ++i) {
       P->initGraph(i, 2);
       P->setColor(i, 0, VISP_NAMESPACE_ADDRESSING vpColor::red);
       P->setColor(i, 1, VISP_NAMESPACE_ADDRESSING vpColor::blue);
@@ -80,9 +83,15 @@ public:
     }
   }
 
-  void plot(int g, int c, int i, double t) { P->plot(g, c, i, VISP_NAMESPACE_ADDRESSING vpTime::measureTimeMs() - t); }
+  void plot(int g, int c, int i, double t)
+  {
+    P->plot(static_cast<unsigned int>(g), static_cast<unsigned int>(c), static_cast<unsigned int>(i), VISP_NAMESPACE_ADDRESSING vpTime::measureTimeMs() - t);
+  }
 
-  void wait() { P->I.display->getClick(); }
+  void wait()
+  {
+    P->I.display->getClick();
+  }
   VISP_NAMESPACE_ADDRESSING vpPlot *P;
 
 private:
@@ -93,9 +102,9 @@ private:
 class VISP_EXPORT QPPlot
 {
 public:
-  QPPlot(int, int, std::vector<std::string>) { }
-  void plot(int, int, int, double) { }
-  void wait() { }
+  QPPlot(int, int, std::vector<std::string>) {}
+  void plot(int, int, int, double) {}
+  void wait() {}
 };
 #endif
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

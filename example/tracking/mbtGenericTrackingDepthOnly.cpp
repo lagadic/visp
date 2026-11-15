@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -522,7 +522,7 @@ int main(int argc, const char **argv)
       display.setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display.init(I_depth, 100, 100, "Depth");
       display2.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-      display2.init(I, I_depth.getWidth() + 100, 100, "Image");
+      display2.init(I, static_cast<int>(I_depth.getWidth()) + 100, 100, "Image");
 #endif
       vpDisplay::display(I_depth);
       vpDisplay::display(I);

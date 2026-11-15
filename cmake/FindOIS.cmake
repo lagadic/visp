@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,23 +39,22 @@
 #
 #############################################################################
 
+set(OIS_SEARCH_HINTS
+  ${OIS_DIR}
+  $ENV{OIS_DIR}
+)
+
 find_path(OIS_INCLUDE_DIR
   NAMES ois/OIS.h
-  PATHS
-    $ENV{OIS_DIR}/include/ois
-    ${OIS_DIR}/include/ois
-    /usr/include
-    /usr/local/include
+  HINTS ${OIS_SEARCH_HINTS}
+  PATH_SUFFIXES include
 )
 
 find_library(OIS_LIBRARY
   NAMES OIS
-  PATHS
-    $ENV{OIS_DIR}/lib
-    ${OIS_DIR}/lib
-    /usr/lib
-    /usr/local/lib
-    )
+  HINTS ${OIS_SEARCH_HINTS}
+  PATH_SUFFIXES lib
+)
 
 if(OIS_LIBRARY AND OIS_INCLUDE_DIR)
   set(OIS_INCLUDE_DIRS ${OIS_INCLUDE_DIR})

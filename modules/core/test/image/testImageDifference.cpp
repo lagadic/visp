@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,8 +56,8 @@ void regularImageDifference(const vpImage<unsigned char> &I1, const vpImage<unsi
     Idiff.resize(I1.getHeight(), I1.getWidth());
 
   unsigned int n = I1.getHeight() * I1.getWidth();
-  for (unsigned int b = 0; b < n; b++) {
-    int diff = I1.bitmap[b] - I2.bitmap[b] + 128u;
+  for (unsigned int b = 0; b < n; ++b) {
+    int diff = static_cast<int>(I1.bitmap[b] - I2.bitmap[b] + 128u);
     Idiff.bitmap[b] = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diff, 255), 0));
   }
 }

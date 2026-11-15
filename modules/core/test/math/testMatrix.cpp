@@ -761,6 +761,36 @@ int main(int argc, char *argv[])
 
     {
       std::cout << "\n------------------------" << std::endl;
+      std::cout << "--- TEST vpMatrix::trace()" << std::endl;
+      std::cout << "------------------------" << std::endl;
+
+      const unsigned int rows = 5, cols = 5;
+      vpMatrix M1(rows, cols);
+      // Reference
+      double reference = 0.;
+      for (unsigned int i = 0; i < rows; i++) {
+        for (unsigned int j = 0; j < cols; j++) {
+          double val = static_cast<double>(i  *cols + j);
+          M1[i][j] = val;
+          if (i == j) {
+            reference += val;
+          }
+        }
+      }
+
+      std::cout << "M1:\n" << M1 << std::endl;
+      double trace = M1.trace();
+      std::cout << "\tRes:" << trace << std::endl;
+      std::cout << "\tRef:c" << reference << std::endl;
+
+      if (!vpMath::equal(trace, reference)) {
+        std::cerr << "Error with trace" << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+
+    {
+      std::cout << "\n------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix::stackColums()" << std::endl;
       std::cout << "------------------------" << std::endl;
       vpMatrix M(3, 5);

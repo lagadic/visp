@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -352,10 +352,13 @@ int main(int argc, char **argv)
 
   // Setup Apriltag detector
   vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
-  vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
-  // vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS;
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
+  vpDetectorAprilTag::vpPoseEstimationMethod pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+#else
+  vpDetectorAprilTag::vpPoseEstimationMethod pose_estimation_method = vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS;
+#endif
   vpDetectorAprilTag detector(tagFamily);
-  detector.setAprilTagPoseEstimationMethod(poseEstimationMethod);
+  detector.setAprilTagPoseEstimationMethod(pose_estimation_method);
   detector.setDisplayTag(display_tag);
   detector.setAprilTagQuadDecimate(opt_quad_decimate);
   detector.setZAlignedWithCameraAxis(opt_tag_z_aligned);
@@ -569,7 +572,7 @@ int main(int argc, char **argv)
         vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
       }
 
-      vpColVector qdot(robot.getNDof());
+      vpColVector qdot(static_cast<unsigned int>(robot.getNDof()));
 
       // Only one tag is detected
       if (ret && (c_M_o_vec.size() == 1)) {

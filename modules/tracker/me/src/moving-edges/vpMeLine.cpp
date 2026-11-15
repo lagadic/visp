@@ -80,7 +80,7 @@ BEGIN_VISP_NAMESPACE
 
 vpMeLine::vpMeLine()
   : m_rho(0.), m_theta(0.), m_delta(0.), m_sign(1), m_a(0.), m_b(0.), m_c(0.)
-{ }
+{}
 
 vpMeLine::vpMeLine(const vpMeLine &meline) : vpMeTracker(meline)
 {
@@ -352,10 +352,14 @@ void vpMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint 
   vpMeTracker::initTracking(I);
 }
 
-void vpMeLine::setExtremities()
+bool vpMeLine::setExtremities()
 {
+  if (m_meList.empty()) {
+    return false;
+  }
   m_PExt[0] = m_meList.front();
   m_PExt[1] = m_meList.back();
+  return true;
 }
 
 unsigned int vpMeLine::plugHoles(const vpImage<unsigned char> &I)
@@ -382,7 +386,9 @@ unsigned int vpMeLine::plugHoles(const vpImage<unsigned char> &I)
   std::list<vpMeSite>::const_iterator end = m_meList.end();
 
   vpImagePoint ip1, ip2;
-  getExtremities(ip1, ip2);
+  if (getExtremities(ip1, ip2) == false) {
+    return 0;
+  }
   // To add as many points as possible
   // i, j portions of the line_p
   const double sampleStep = fabs(m_me->getSampleStep());
@@ -449,7 +455,9 @@ unsigned int vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
 
   // Point extremities strictly on the straight line
   vpImagePoint ip1, ip2;
-  getExtremities(ip1, ip2);
+  if (getExtremities(ip1, ip2) == false) {
+    return 0;
+  }
   double id1 = ip1.get_i();
   double jd1 = ip1.get_j();
   double id2 = ip2.get_i();
@@ -700,15 +708,20 @@ void vpMeLine::computeRhoTheta()
   }
 }
 
-void vpMeLine::getExtremities(vpImagePoint &ip1, vpImagePoint &ip2) const
+bool vpMeLine::getExtremities(vpImagePoint &ip1, vpImagePoint &ip2) const
 {
-  /* Return the coordinates of the two extremities of the line*/
+  if (m_meList.empty()) {
+    return false;
+  }
 
+  // Return the coordinates of the two extremities of the line
   const vpMeSite P0 = m_meList.front();
   project(m_a, m_b, m_c, P0, ip1);
 
   const vpMeSite P1 = m_meList.back();
   project(m_a, m_b, m_c, P1, ip2);
+
+  return true;
 }
 
 bool vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2, vpImagePoint &iP)

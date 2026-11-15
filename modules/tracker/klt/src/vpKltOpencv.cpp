@@ -89,7 +89,7 @@ vpKltOpencv &vpKltOpencv::operator=(const vpKltOpencv &copy)
   return *this;
 }
 
-vpKltOpencv::~vpKltOpencv() { }
+vpKltOpencv::~vpKltOpencv() {}
 
 void vpKltOpencv::initTracking(const cv::Mat &I, const cv::Mat &mask)
 {
@@ -144,14 +144,19 @@ void vpKltOpencv::track(const cv::Mat &I)
   cv::calcOpticalFlowPyrLK(m_prevGray, m_gray, m_points[0], m_points[1], status, err, cv::Size(m_winSize, m_winSize),
                            m_pyrMaxLevel, m_termcrit, flags, m_minEigThreshold);
 
-  // Remove points that are lost
-  for (int i = static_cast<int>(status.size()) - 1; i >= 0; i--) {
-    if (status[static_cast<size_t>(i)] == 0) { // point is lost
-      m_points[0].erase(m_points[0].begin() + i);
-      m_points[1].erase(m_points[1].begin() + i);
-      m_points_id.erase(m_points_id.begin() + i);
+  // Keep points that are not lost
+  size_t write_idx = 0;
+  for (size_t read_idx = 0; read_idx < status.size(); ++read_idx) {
+    if (status[read_idx] != 0) { // point is to keep
+      m_points[0][write_idx] = m_points[0][read_idx];
+      m_points[1][write_idx] = m_points[1][read_idx];
+      m_points_id[write_idx] = m_points_id[read_idx];
+      write_idx++;
     }
   }
+  m_points[0].resize(write_idx);
+  m_points[1].resize(write_idx);
+  m_points_id.resize(write_idx);
 }
 
 void vpKltOpencv::getFeature(const int &index, long &id, float &x, float &y) const
@@ -328,12 +333,12 @@ END_VISP_NAMESPACE
 class VISP_EXPORT dummy_vpKltOpencv
 {
 public:
-  dummy_vpKltOpencv() { }
+  dummy_vpKltOpencv() {}
 };
 
 #if !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_klt.a(vpKltOpenCV.cpp.o) has no symbols
-void dummy_vpKltOpenCV_fct() { }
+void dummy_vpKltOpenCV_fct() {}
 #endif
 
 #endif

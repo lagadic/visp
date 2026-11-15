@@ -63,7 +63,7 @@ int main()
 
     //! [Save_string_save2]
     const std::string identifier2 = "My string data 2";
-    visp::cnpy::npz_save(npz_filename, identifier2, save_string, "a");
+    visp::cnpy::npz_save_str(npz_filename, identifier2, save_string, "a");
     //! [Save_string_save2]
   }
   {

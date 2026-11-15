@@ -41,7 +41,11 @@
 
 #if defined(VISP_HAVE_CATCH2)
 
+#if defined(VISP_BUILD_CATCH2)
 #include <catch_amalgamated.hpp>
+#else // Since v3.1.1
+#include <catch2/catch_all.hpp>
+#endif
 #include <cmath>
 #include <limits>
 #include <vector>
@@ -270,7 +274,7 @@ TEST_CASE("Building array views", "[view]")
       REQUIRE((A == v));
     }
     {
-      int s = 5;
+      unsigned int s = 5;
       int *array = new int[s * s];
       vpArray2D<int> v = vpArray2D<int>::view(array, s, s);
       v[0][0] = 5;
@@ -294,7 +298,7 @@ TEST_CASE("Building array views", "[view]")
       REQUIRE((A == v2));
     }
     {
-      int s = 5;
+      unsigned int s = 5;
       int *array = new int[s * s];
       vpArray2D<int> v = vpArray2D<int>::view(array, s, s);
       vpArray2D<int> v2 = std::move(v);
@@ -308,7 +312,7 @@ TEST_CASE("Building array views", "[view]")
   }
   SECTION("Array can still be used after destroying view")
   {
-    int s = 5;
+    unsigned int s = 5;
     vpArray2D<int> A(s, s, 0);
     {
       vpArray2D<int> v = vpArray2D<int>::view(A);
@@ -331,7 +335,7 @@ TEST_CASE("Building array views", "[view]")
   }
   SECTION("Cannot resize view")
   {
-    int s = 5;
+    unsigned int s = 5;
     vpArray2D<int> A(s, s, 0);
     vpArray2D<int> v = vpArray2D<int>::view(A);
     REQUIRE_THROWS(v.resize(1, 5, false, false));
@@ -352,8 +356,8 @@ TEST_CASE("Test Hadamar product", "[hadamar]")
   vpColVector C1(15), C2(15), C3;
 
   for (unsigned int i = 0; i < A1.size(); i++) {
-    A1.data[i] = i;
-    A2.data[i] = i + 2;
+    A1.data[i] = static_cast<int>(i);
+    A2.data[i] = static_cast<int>(i + 2);
     R1.data[i] = i;
     R2.data[i] = i + 2;
     C1.data[i] = i;

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,8 +69,8 @@ int main()
 
   // Open device
   for (size_t device = 0; device < virtuose.size(); device++) {
-    std::cout << "Try to connect to " << ip << " port " << (port + device) << std::endl;
-    virtuose[device].setIpAddressAndPort(ip, port + static_cast<int>(device));
+    std::cout << "Try to connect to " << ip << " port " << (static_cast<size_t>(port) + device) << std::endl;
+    virtuose[device].setIpAddressAndPort(ip, static_cast<size_t>(port) + device);
     virtuose[device].init();
   }
 

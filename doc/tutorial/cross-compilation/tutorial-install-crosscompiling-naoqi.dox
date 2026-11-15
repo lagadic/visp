@@ -9,7 +9,7 @@ This tutorial was tested on an Ubuntu 14.04 LTS host computer with:
 - Cross Toolchain 2.3.1 Linux 64 (\c ctc-linux32-atom-2.3.1.23) on Romeo robot
 - Cross Toolchain 2.4.3 Linux 64 (\c ctc-linux64-atom-2.4.3.28) on Pepper robot
 
-\section cross_naoqi_toolchain Install cross toolchain
+\section cross_naoqi_toolchain 1. Install cross toolchain
 
 Download the cross-toolchain that is compatible with your robot from <a href="https://developer.softbankrobotics.com/">https://developer.softbankrobotics.com/</a>. Depending on the robot the version of the cross toolchain might change.
 
@@ -27,7 +27,7 @@ $ cd $HOME/softbank
 $ unzip ctc-linux64-atom-2.4.3.28.zip
 \endverbatim
 
-\section cross_naoqi_visp_src Get ViSP source code
+\section cross_naoqi_visp_src 2. Get ViSP source code
 
 Cross-compilation capabilities are fully supported since ViSP 3.0.1 release.
 
@@ -61,7 +61,7 @@ $ unzip visp-x.y.z.zip -d $HOME/soft
 
 We suppose now that ViSP source is in a directory denoted \c \<source_dir\>, for example \c $HOME/soft/visp
 
-\section cross_naoqi_visp_config Cross-compiling ViSP from source
+\section cross_naoqi_visp_config 3. Cross-compiling ViSP from source
 
 - Create first a directory denoted \c \<binary_dir\> where you want to cross-compile ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries that could be later used on the Raspberry Pi.
 \verbatim
@@ -97,7 +97,7 @@ $ make -j4 install
 
 The resulting installation is available in \c $HOME/soft/visp-build-ctc-linux64-atom-2.4.3.28.
 
-\section cross_naoqi_visp_install Install ViSP on NAOqi OS
+\section cross_naoqi_visp_install 4. Install ViSP on NAOqi OS
 
 The result of the cross-compilation could then be installed on Nao, Romeo or Pepper robot running NAOqi OS.
 
@@ -121,7 +121,7 @@ nao~ $ rm ~/install.tar.gz
 nao~ $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/visp/lib
 \endverbatim
 
-\section cross_naoqi_next Next tutorial
+\section cross_naoqi_next 5. Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started-naoqi that explains how to use ViSP as a 3rd party to build your own project on NAOqi OS for Nao, Romeo or Pepper robots.
 

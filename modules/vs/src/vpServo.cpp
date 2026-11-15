@@ -1189,12 +1189,15 @@ vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, cons
     q_l1_min[i] = q_l0_min[i] - rho * rho1 * (qmax[i] - qmin[i]);
     q_l1_max[i] = q_l0_max[i] + rho * rho1 * (qmax[i] - qmin[i]);
 
-    if (q[i] < q_l0_min[i])
+    if (q[i] < q_l0_min[i]) {
       g[i][i] = -1;
-    else if (q[i] > q_l0_max[i])
+    }
+    else if (q[i] > q_l0_max[i]) {
       g[i][i] = 1;
-    else
+    }
+    else {
       g[i][i] = 0;
+    }
   }
 
   for (unsigned int i = 0; i < n; i++) {
@@ -1204,23 +1207,23 @@ vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, cons
     else {
       vpColVector Pg_i(n);
       Pg_i = (P * g.getCol(i));
-      double b = (vpMath::abs(dq[i])) / (vpMath::abs(Pg_i[i]));
+      double Pg_i_abs = vpMath::abs(Pg_i[i]);
+      double b = (Pg_i_abs >= (std::numeric_limits<double>::epsilon() * 10.) ? (vpMath::abs(dq[i]) / Pg_i_abs) : 1.0);
 
-      if (b < 1.) // If the ratio b is big we don't activate the joint
-        // avoidance limit for the joint.
-      {
-        if (q[i] < q_l1_min[i] || q[i] > q_l1_max[i])
-          q2_i = -(1 + lambda_tune) * b * Pg_i;
-
-        else {
-          if (q[i] >= q_l0_max[i] && q[i] <= q_l1_max[i])
-            lambda_l = 1 / (1 + exp(-12 * ((q[i] - q_l0_max[i]) / (q_l1_max[i] - q_l0_max[i])) + 6));
-
-          else if (q[i] >= q_l1_min[i] && q[i] <= q_l0_min[i])
-            lambda_l = 1 / (1 + exp(-12 * ((q[i] - q_l0_min[i]) / (q_l1_min[i] - q_l0_min[i])) + 6));
-
-          q2_i = -lambda_l * (1 + lambda_tune) * b * Pg_i;
+      if (q[i] < q_l1_min[i] || q[i] > q_l1_max[i]) {
+        // Zone C1: b without limit, maximum correction required
+        q2_i = -(1 + lambda_tune) * b * Pg_i;
+      }
+      else {
+        // Zone C2: Limit b to 1 to prevent interference with other joints
+        double b_clamped = std::min(b, 1.0);
+        if (q[i] >= q_l0_max[i] && q[i] <= q_l1_max[i]) {
+          lambda_l = 1 / (1 + exp(-12 * ((q[i] - q_l0_max[i]) / (q_l1_max[i] - q_l0_max[i])) + 6));
         }
+        else if (q[i] >= q_l1_min[i] && q[i] <= q_l0_min[i]) {
+          lambda_l = 1 / (1 + exp(-12 * ((q[i] - q_l0_min[i]) / (q_l1_min[i] - q_l0_min[i])) + 6));
+        }
+        q2_i = -lambda_l * (1 + lambda_tune) * b_clamped * Pg_i;
       }
     }
     q2 = q2 + q2_i;

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@
 
 #if defined(VISP_HAVE_OPENCV) && \
     (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
-     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
+     ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_GEOMETRY) && defined(HAVE_OPENCV_FEATURES)))
 
 #include <algorithm> // std::transform
 #include <float.h>   // DBL_MAX
@@ -1513,7 +1513,7 @@ public:
    * \param imPts2 : Pointer to the list of current keypoints if not null.
    * \param meanDescriptorDistance : Pointer to the value
    * of the average distance of the descriptors if not null.
-   * \param detectionScore : Pointer to the value of the detection score if not null.
+   * \param detection_score : Pointer to the value of the detection score if not null.
    * \param rectangle : Rectangle corresponding to the ROI (Region of Interest)
    * to consider.
    * \return True if the object is present, false otherwise.
@@ -1521,7 +1521,7 @@ public:
   bool matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &boundingBox, vpImagePoint &centerOfGravity,
                            const bool isPlanarObject = true, std::vector<vpImagePoint> *imPts1 = nullptr,
                            std::vector<vpImagePoint> *imPts2 = nullptr, double *meanDescriptorDistance = nullptr,
-                           double *detectionScore = nullptr, const vpRect &rectangle = vpRect());
+                           double *detection_score = nullptr, const vpRect &rectangle = vpRect());
 
   /*!
    * Match keypoints detected in the image with those built in the reference

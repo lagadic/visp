@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ int main()
     d.setDownScalingFactor(display_scale);
     d_undist.setDownScalingFactor(display_scale);
     d.init(I, 10, 10, "Left image");
-    d_undist.init(I_undist, I.getWidth() / display_scale + 80, 10, "Undistorted image");
+    d_undist.init(I_undist, static_cast<int>(I.getWidth() / display_scale + 80), 10, "Undistorted image");
 #endif
 
     vpArray2D<int> mapU, mapV;
@@ -113,8 +113,8 @@ int main()
       vpImageTools::undistort(I, mapU, mapV, mapDu, mapDv, I_undist);
       vpDisplay::display(I_undist);
 
-      vpDisplay::displayText(I, 15 * display_scale, 15 * display_scale, "Click to quit", vpColor::red);
-      vpDisplay::displayText(I_undist, 15 * display_scale, 15 * display_scale, "Click to quit", vpColor::red);
+      vpDisplay::displayText(I, 15 * static_cast<int>(display_scale), 15 * static_cast<int>(display_scale), "Click to quit", vpColor::red);
+      vpDisplay::displayText(I_undist, 15 * static_cast<int>(display_scale), 15 * static_cast<int>(display_scale), "Click to quit", vpColor::red);
 
       if (vpDisplay::getClick(I, false) || vpDisplay::getClick(I_undist, false))
         break;

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,109 +33,72 @@
 # from http://www.cmake.org/Wiki/CMakeUserFindDirectShow .
 # Once loaded this will define:
 #
-# DIRECT3D_FOUND        - system has DirectShow
-# DIRECT3D_INCLUDE_DIRS - include directory for DirectShow
+# DIRECT3D_FOUND        - system has Direct3D
+# DIRECT3D_INCLUDE_DIRS - include directory for Direct3D
 # DIRECT3D_LIBRARIES    - libraries you need to link to
 #
 #############################################################################
 
-SET(DIRECT3D_FOUND "NO")
+
+set(DIRECT3D_FOUND FALSE)
 
 # Direct3D is only available on Windows platforms
-IF(WIN32 AND NOT MINGW)
-  # Find Direct3D Include Directory
-  FIND_PATH(DIRECT3D_INCLUDE_DIR d3dx9.h
- 	"$ENV{DXSDK_DIR}/Include"
-    	"C:/Program Files/Microsoft DirectX SDK/Include"
-    	"C:/DXSDK/Include"
-   	NO_DEFAULT_PATH
-   	DOC "What is the path where the file d3dx9.h can be found"
+if(WIN32 AND NOT MINGW)
+  set(DIRECT3D_SEARCH_HINTS
+    ${DXSDK_DIR}
+    $ENV{DXSDK_DIR}
   )
-  FIND_PATH(DIRECT3D_INCLUDE_DIR d3dx9.h
-   	NO_DEFAULT_PATH
-   	DOC "What is the path where the file d3dx9.h can be found"
+  set(DIRECT3D_SEARCH_PATHS
+    "C:/Program Files/Microsoft DirectX SDK"
+    "C:/DXSDK"
+  )
+  if(CMAKE_CL_64)
+    set(DIRECT3D_LIB_SUFFIXES Lib/x64 Lib)
+  else()
+    set(DIRECT3D_LIB_SUFFIXES Lib/x86 Lib)
+  endif()
+
+  find_path(DIRECT3D_INCLUDE_DIR d3dx9.h
+    HINTS ${DIRECT3D_SEARCH_HINTS}
+    PATHS ${DIRECT3D_SEARCH_PATHS}
+    PATH_SUFFIXES Include
+    NO_DEFAULT_PATH
+    DOC "What is the path where the file d3dx9.h can be found"
   )
 
-    # if Direct3D include dir found, then find Direct3D libraries
-    IF(DIRECT3D_INCLUDE_DIR)
-      IF(CMAKE_CL_64)
-	FIND_LIBRARY(DIRECT3D_d3d9_LIBRARY d3d9
-	  "$ENV{DXSDK_DIR}/Lib"
-	  "$ENV{DXSDK_DIR}/Lib/x64"
-	  "C:/Program Files/Microsoft DirectX SDK/Lib/x64"
-          "C:/DXSDK/Include/Lib/x64"
-	  NO_DEFAULT_PATH
-          DOC "Where can the Direct3D d3d9 library be found"
-        )
-      ELSE(CMAKE_CL_64)
-	FIND_LIBRARY(DIRECT3D_d3d9_LIBRARY d3d9
-	  "$ENV{DXSDK_DIR}/Lib"
-	  "$ENV{DXSDK_DIR}/Lib/x86"
-	  "C:/Program Files/Microsoft DirectX SDK/Lib/x86"
-          "C:/DXSDK/Include/Lib/x86"
-	  NO_DEFAULT_PATH
-          DOC "Where can the Direct3D d3d9 library be found"
-        )
-      ENDIF(CMAKE_CL_64)
-      FIND_LIBRARY(DIRECT3D_d3d9_LIBRARY d3d9
-        DOC "Where can the Direct3D d3d9 library be found"
-      )
+  # if Direct3D include dir found, then find Direct3D libraries
+  if(DIRECT3D_INCLUDE_DIR)
+    find_library(DIRECT3D_d3d9_LIBRARY d3d9
+      HINTS ${DIRECT3D_SEARCH_HINTS}
+      PATHS ${DIRECT3D_SEARCH_PATHS}
+      PATH_SUFFIXES ${DIRECT3D_LIB_SUFFIXES}
+      DOC "Where can the Direct3D d3d9 library be found"
+    )
+    find_library(DIRECT3D_d3dx9_LIBRARY d3dx9
+      HINTS ${DIRECT3D_SEARCH_HINTS}
+      PATHS ${DIRECT3D_SEARCH_PATHS}
+      PATH_SUFFIXES ${DIRECT3D_LIB_SUFFIXES}
+      DOC "Where can the Direct3D d3dx9 library be found"
+    )
 
-      IF(CMAKE_CL_64)
-        FIND_LIBRARY(DIRECT3D_d3dx9_LIBRARY d3dx9
-	  "$ENV{DXSDK_DIR}/Lib/"
-	  "$ENV{DXSDK_DIR}/Lib/x64"
-	  "C:/Program Files/Microsoft DirectX SDK/Lib/x64"
-          "C:/DXSDK/Include/Lib/x64"
-	  NO_DEFAULT_PATH
-          DOC "Where can the Direct3D d3dx9 library be found"
-        )
-      ELSE(CMAKE_CL_64)
-        FIND_LIBRARY(DIRECT3D_d3dx9_LIBRARY d3dx9
-	  "$ENV{DXSDK_DIR}/Lib/"
-	  "$ENV{DXSDK_DIR}/Lib/x86"
-	  "C:/Program Files/Microsoft DirectX SDK/Lib/x86"
-          "C:/DXSDK/Include/Lib/x86"
-	  NO_DEFAULT_PATH
-          DOC "Where can the Direct3D d3dx9 library be found"
-        )
-      ENDIF(CMAKE_CL_64)
-      FIND_LIBRARY(DIRECT3D_d3dx9_LIBRARY d3dx9
-        DOC "Where can the Direct3D d3dx9 library be found"
-      )
+    if(DIRECT3D_d3d9_LIBRARY AND DIRECT3D_d3dx9_LIBRARY)
+      set(DIRECT3D_FOUND TRUE)
+    endif()
+  endif()
 
-      # if Direct3D libraries found, then we're ok
-      IF(DIRECT3D_d3d9_LIBRARY)
-      IF(DIRECT3D_d3dx9_LIBRARY)
-        # everything found
-        SET(DIRECT3D_FOUND "YES")
-      ENDIF(DIRECT3D_d3dx9_LIBRARY)
-      ENDIF(DIRECT3D_d3d9_LIBRARY)
-    ENDIF(DIRECT3D_INCLUDE_DIR)
-
-  MARK_AS_ADVANCED(
+  mark_as_advanced(
     DIRECT3D_INCLUDE_DIR
     DIRECT3D_d3d9_LIBRARY
     DIRECT3D_d3dx9_LIBRARY
   )
+endif()
 
-
-ENDIF(WIN32 AND NOT MINGW)
-
-
-#---------------------------------------------------------------------
-IF(DIRECT3D_FOUND)
-  SET(DIRECT3D_INCLUDE_DIRS ${DIRECT3D_INCLUDE_DIR})
-  SET(DIRECT3D_LIBRARIES
+if(DIRECT3D_FOUND)
+  set(DIRECT3D_INCLUDE_DIRS ${DIRECT3D_INCLUDE_DIR})
+  set(DIRECT3D_LIBRARIES
     "${DIRECT3D_d3d9_LIBRARY}"
     "${DIRECT3D_d3dx9_LIBRARY}"
   )
-ELSE(DIRECT3D_FOUND)
-  # make FIND_PACKAGE friendly
-  IF(NOT DIRECT3D_FIND_QUIETLY)
-    IF(DIRECT3D_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR
-              "Direct3D required, please specify it's location.")
-    ENDIF(DIRECT3D_FIND_REQUIRED)
-  ENDIF(NOT DIRECT3D_FIND_QUIETLY)
-ENDIF(DIRECT3D_FOUND)
+elseif(DIRECT3D_FIND_REQUIRED AND NOT DIRECT3D_FIND_QUIETLY)
+  message(FATAL_ERROR "Direct3D required, please specify its location.")
+endif()

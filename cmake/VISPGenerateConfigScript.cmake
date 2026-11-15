@@ -177,6 +177,9 @@ if(NOT DEFINED CMAKE_HELPER_SCRIPT)
     BUILD_SHARED_LIBS
     CMAKE_BINARY_DIR
     CMAKE_INSTALL_PREFIX
+    CMAKE_INSTALL_LIBDIR
+    CMAKE_LIBRARY_ARCHITECTURE
+    ENABLE_MULTIARCH
     BINARY_OUTPUT_PATH
 
     VISP_SOURCE_DIR
@@ -301,7 +304,7 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
     #----------------------------------------------------------------------
     # prepend with ViSP own modules first
     set(VISP_SCRIPT_CONFIG_LIBS
-      "-L\$PREFIX/${VISP_LIB_INSTALL_PATH}"
+      "-L\$PREFIX/${CMAKE_INSTALL_LIBDIR}"
       "${_modules}"
     )
     if(BUILD_SHARED_LIBS)
@@ -356,9 +359,13 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
     set(exec_prefix "\${prefix}")
 
     if(IS_ABSOLUTE ${VISP_INC_INSTALL_PATH})
-      set(includedir  "${VISP_INC_INSTALL_PATH}")
+      set(includedir      "${VISP_INC_INSTALL_PATH}")
     else()
-      set(includedir  "\${prefix}/${VISP_INC_INSTALL_PATH}")
+      if(ENABLE_MULTIARCH)
+        set(includedir      "\${prefix}/${VISP_INC_INSTALL_PATH}\nincludedir_arch=\${prefix}/${VISP_INC_INSTALL_PATH}/${CMAKE_LIBRARY_ARCHITECTURE}")
+      else()
+        set(includedir      "\${prefix}/${VISP_INC_INSTALL_PATH}")
+      endif()
     endif()
 
     if(IS_ABSOLUTE ${VISP_LIB_INSTALL_PATH})
@@ -372,10 +379,18 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
       )
 
     # prepend with ViSP own include dir
-    set(VISP_SCRIPT_PC_CFLAGS
-      "${_cxx_flags}"
-      "-I\${includedir}"
-      "${_includes_extra}")
+    if(ENABLE_MULTIARCH)
+      set(VISP_SCRIPT_PC_CFLAGS
+        "${_cxx_flags}"
+        "-I\${includedir}"
+        "-I\${includedir_arch}"
+        "${_includes_extra}")
+    else()
+      set(VISP_SCRIPT_PC_CFLAGS
+        "${_cxx_flags}"
+        "-I\${includedir}"
+        "${_includes_extra}")
+    endif()
 
     # Format the string to suppress CMake separators ";"
     vp_list_remove_separator(VISP_SCRIPT_PC_CFLAGS)

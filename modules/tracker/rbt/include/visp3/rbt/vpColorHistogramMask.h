@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,9 +123,9 @@ public:
   {
     vpObjectMask::display(mask, Imask);
     unsigned int numColor = 10;
-    unsigned int y = 50;
-    unsigned int pady = 20;
-    unsigned int pad = 5;
+    int y = 50;
+    int pady = 20;
+    int pad = 5;
     unsigned int radius = 5;
 
     std::vector<vpRGBa> bestColors = m_histObject.mostLikelyColors(numColor);
@@ -133,6 +133,8 @@ public:
 
 
     for (unsigned int i = 0; i < bestColors.size(); ++i) {
+      int i_ = static_cast<int>(i);
+      int radius_ = static_cast<int>(radius);
       vpColor c;
       c.R = bestColors[i].R;
       c.G = bestColors[i].G;
@@ -140,7 +142,7 @@ public:
       c.A = 255;
 
       vpDisplay::displayText(Imask, y, pad, "Most likely object colors: ", vpColor::red);
-      vpDisplay::displayCircle(Imask, y + pady, pad * 2 + (i * radius * 2 + (i - 1) * pad), radius, c, true);
+      vpDisplay::displayCircle(Imask, y + pady, pad * 2 + (i_ * radius_ * 2 + (i_ - 1) * pad), radius, c, true);
 
       c.R = bestColorsBg[i].R;
       c.G = bestColorsBg[i].G;
@@ -148,7 +150,7 @@ public:
       c.A = 255;
 
       vpDisplay::displayText(Imask, y + pady * 2, pad, "Most likely background colors: ", vpColor::red);
-      vpDisplay::displayCircle(Imask, y + pady * 3, pad * 2 + (i * radius * 2 + (i - 1) * pad), radius, c, true);
+      vpDisplay::displayCircle(Imask, y + pady * 3, pad * 2 + (i_ * radius_ * 2 + (i_ - 1) * pad), radius, c, true);
     }
   }
 

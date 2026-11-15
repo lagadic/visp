@@ -44,8 +44,12 @@
 
 namespace py = pybind11;
 
-void bindings_vpPose(py::class_<vpPose, std::shared_ptr<vpPose>> &pyPose)
+void bindings_vpPose(py::class_<VISP_NAMESPACE_ADDRESSING vpPose, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpPose>> &pyPose)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   pyPose.def("computePose",
    [](vpPose &self, vpPose::vpPoseMethodType method, vpHomogeneousMatrix &cMo) -> bool {
      return self.computePose(method, cMo);

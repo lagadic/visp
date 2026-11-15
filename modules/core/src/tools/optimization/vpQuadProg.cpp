@@ -423,7 +423,8 @@ bool vpQuadProg::solveQP(const vpMatrix &Q, const vpColVector &r, vpMatrix A, vp
   \param use_equality : if a previously saved equality constraint (setEqualityConstraint()) should be considered
   \param tol : tolerance to test the ranks
 
-  \return True if the solution was found.
+  \return True if the solution was found, false if the problem is not feasible or if the maximum number of
+  iterations is reached (degenerate problem).
 
   Here is an example:
 
@@ -553,7 +554,10 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatri
       else
         xc[2 * n + i] = e[i];
     }
-    vpLinProg::simplex(c, A_lp, e, xc);
+    if (!vpLinProg::simplex(c, A_lp, e, xc)) {
+      std::cout << "vpQuadProg::solveQPi: could not find a feasible point" << std::endl;
+      return false;
+    }
 
     // r-part should be 0
     if (!vpLinProg::allLesser(xc.extract(2 * n + p, k), tol)) {
@@ -592,8 +596,19 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatri
 
   vpColVector u, g = r - Q * x, mu;
 
+  // limit the number of active set changes to avoid an infinite loop if constraints cycle on a degenerate problem
+  const unsigned int max_iter = 100 * (n + p);
+  unsigned int iter = 0;
+
   // solve at one iteration
   while (true) {
+    if (++iter > max_iter) {
+      std::cout << "vpQuadProg::solveQPi: maximum number of iterations reached, problem may be degenerate" << std::endl;
+      // do not warm start the next call from an active set that cycles
+      active.clear();
+      inactive.clear();
+      return false;
+    }
     A.resize(static_cast<unsigned int>(active.size()), n);
     b.resize(static_cast<unsigned int>(active.size()));
     for (unsigned int i = 0; i < active.size(); ++i) {

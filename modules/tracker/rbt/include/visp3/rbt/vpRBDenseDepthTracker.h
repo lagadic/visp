@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ public:
     DT_INVALID = 4
   };
 
-  vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_useMask(false), m_minMaskConfidence(0.f), m_displayType(vpDisplayType::DT_SIMPLE) { }
+  vpRBDenseDepthTracker() : vpRBFeatureTracker(), m_step(2), m_maxFeatures(0), m_useMask(false), m_minMaskConfidence(0.f), m_displayType(vpDisplayType::DT_SIMPLE) {}
 
   virtual ~vpRBDenseDepthTracker() = default;
 
@@ -105,6 +105,12 @@ public:
       throw vpException(vpException::badValue, "Step should be greater than 0");
     }
     m_step = step;
+  }
+
+  unsigned int getMaxNumFeatures() const { return m_maxFeatures; }
+  void setMaxNumFeatures(unsigned int num)
+  {
+    m_maxFeatures = num;
   }
 
   /**
@@ -146,19 +152,19 @@ public:
   /**
    * @brief Method called when starting a tracking iteration
    */
-  void onTrackingIterStart(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
-  void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
+  void onTrackingIterStart(const vpRBFeatureTrackerInput &, const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE {}
+  void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE {}
 
   void extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
-  void trackFeatures(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/) VP_OVERRIDE { }
-  void initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/) VP_OVERRIDE;
+  void trackFeatures(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/) VP_OVERRIDE {}
+  void initVVS(const vpRBFeatureTrackerInput &/*frame*/, const vpRBFeatureTrackerInput &/*previousFrame*/, const vpHomogeneousMatrix &/*cMo*/) VP_OVERRIDE {}
   void computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration) VP_OVERRIDE;
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth) const VP_OVERRIDE;
 
   struct vpDepthPoint
   {
-    vpDepthPoint() { }
+    vpDepthPoint() {}
   public:
     std::array<double, 3> oX, observation, objectNormal;
     std::array<double, 2> pixelPos;
@@ -191,19 +197,96 @@ public:
     void updateAndErrorAndInteractionMatrix(const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo,
        const vpImage<float> &depth, vpColVector &e, vpMatrix &L);
 
+    const unsigned int numPoints = m_oXt.getCols();
+    e.resize(numPoints, false);
+    L.resize(numPoints, 6, false, false);
 
-    const vpMatrix &getPointsObject() const { return m_oXt; }
-    const vpMatrix &getNormalsObject() const { return m_oNt; }
-    const vpMatrix &getPointsCamera() const { return m_cXt; }
-    const vpMatrix &getNormalsCamera() const { return m_cNt; }
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
+    for (int i = 0; i < static_cast<int>(numPoints); ++i) {
+      const unsigned int i_ = static_cast<unsigned int>(i);
 
-  private:
-    vpMatrix m_observations; // A 3xN matrix containing the observed 3D points from the camera
-    vpMatrix m_oXt; // a 3xN matrix containing the 3D points in object frame
-    vpMatrix m_oNt; // a 3xN matrix containing the 3D normals on the object
-    vpMatrix m_cXt;
-    vpMatrix m_cNt;
-    std::vector<unsigned int> m_invalid;
+      //Step 1: update and filter out points that are no longer valid
+      {
+
+        for (unsigned int j = 0; j < 3; ++j) {
+          m_cXt[j][i] += t[j];
+        }
+        // Plane points away from the camera: this surface is no longer visible due to rotation
+        if (m_cNt[2][i] >= 0.0) {
+          m_valid[i_] = false;
+          continue;
+        }
+        double x, y, u, v;
+        x = m_cXt[0][i] / m_cXt[2][i];
+        y = m_cXt[1][i] / m_cXt[2][i];
+
+        vpMeterPixelConversion::convertPointWithoutDistortion(cam, x, y, u, v);
+        // Point is no longer in image: depth value cannot be sampled
+        if (u < 0 || v < 0 || u >= depth.getWidth() || v >= depth.getHeight()) {
+          m_valid[i_] = false;
+          continue;
+        }
+        const double Z = depth[static_cast<unsigned int>(v)][static_cast<unsigned int>(u)];
+        // Z value in the depth image from the camera is invalid
+        if (Z <= 0.0) {
+          m_valid[i_] = false;
+          continue;
+        }
+
+        m_valid[i_] = true;
+        m_observations[0][i] = x * Z;
+        m_observations[1][i] = y * Z;
+        m_observations[2][i] = Z;
+      }
+      // Step 2: update Jacobian and error for valid points
+      {
+        const double X = m_cXt[0][i], Y = m_cXt[1][i], Z = m_cXt[2][i];
+        const double nX = m_cNt[0][i], nY = m_cNt[1][i], nZ = m_cNt[2][i];
+
+        const double D = -((nX * X) + (nY  * Y) + (nZ * Z));
+        double projNormal = nX * m_observations[0][i] + nY  * m_observations[1][i] + nZ * m_observations[2][i];
+
+        e[i_] = D + projNormal;
+
+        L[i_][0] = nX;
+        L[i_][1] = nY;
+        L[i_][2] = nZ;
+        L[i_][3] = nZ * Y - nY * Z;
+        L[i_][4] = nX * Z - nZ * X;
+        L[i_][5] = nY * X - nX * Y;
+
+      }
+  }
+
+  // Disable invalid points
+    for (unsigned int i = 0; i < numPoints; ++i) {
+      if (!m_valid[i]) {
+        e[i] = 0.0;
+
+        L[i][0] = 0;
+        L[i][1] = 0;
+        L[i][2] = 0;
+        L[i][3] = 0;
+        L[i][4] = 0;
+        L[i][5] = 0;
+      }
+    }
+}
+
+  const vpMatrix &getPointsObject() const { return m_oXt; }
+  const vpMatrix &getNormalsObject() const { return m_oNt; }
+  const vpMatrix &getPointsCamera() const { return m_cXt; }
+  const vpMatrix &getNormalsCamera() const { return m_cNt; }
+
+private:
+  vpMatrix m_observations; // A 3xN matrix containing the observed 3D points from the camera
+  vpMatrix m_oXt; // a 3xN matrix containing the 3D points in object frame
+  vpMatrix m_oNt; // a 3xN matrix containing the 3D normals on the object
+  vpMatrix m_cXt;
+  vpMatrix m_cNt;
+  std::vector<unsigned int> m_invalid;
 
   };
 
@@ -216,22 +299,24 @@ public:
 #  pragma clang diagnostic ignored "-Wexit-time-destructors"
 #endif
 
-  NLOHMANN_JSON_SERIALIZE_ENUM(vpRBDenseDepthTracker::vpDisplayType, {
-      {vpRBDenseDepthTracker::vpDisplayType::DT_INVALID, nullptr},
-      {vpRBDenseDepthTracker::vpDisplayType::DT_SIMPLE, "simple"},
-      {vpRBDenseDepthTracker::vpDisplayType::DT_WEIGHT, "weight"},
-      {vpRBDenseDepthTracker::vpDisplayType::DT_ERROR, "error"},
-      {vpRBDenseDepthTracker::vpDisplayType::DT_WEIGHT_AND_ERROR, "weightAndError"}
+NLOHMANN_JSON_SERIALIZE_ENUM(vpRBDenseDepthTracker::vpDisplayType, {
+    { vpRBDenseDepthTracker::vpDisplayType::DT_INVALID, nullptr },
+    { vpRBDenseDepthTracker::vpDisplayType::DT_SIMPLE, "simple" },
+    { vpRBDenseDepthTracker::vpDisplayType::DT_WEIGHT, "weight" },
+    { vpRBDenseDepthTracker::vpDisplayType::DT_ERROR, "error" },
+    { vpRBDenseDepthTracker::vpDisplayType::DT_WEIGHT_AND_ERROR, "weightAndError" }
 });
 
-  virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
-  {
-    vpRBFeatureTracker::loadJsonConfiguration(j);
-    setStep(j.value("step", m_step));
-    setShouldUseMask(j.value("useMask", m_useMask));
-    setMinimumMaskConfidence(j.value("minMaskConfidence", m_minMaskConfidence));
-    setDisplayType(j.value("displayType", m_displayType));
-  }
+virtual void loadJsonConfiguration(const nlohmann::json &j) VP_OVERRIDE
+{
+  vpRBFeatureTracker::loadJsonConfiguration(j);
+  setMaxNumFeatures(j.value("maxNumFeatures", m_maxFeatures));
+  setStep(j.value("step", m_step));
+
+  setShouldUseMask(j.value("useMask", m_useMask));
+  setMinimumMaskConfidence(j.value("minMaskConfidence", m_minMaskConfidence));
+  setDisplayType(j.value("displayType", m_displayType));
+}
 
 #if defined(__clang__)
 #  pragma clang diagnostic pop
@@ -245,6 +330,7 @@ protected:
   vpDepthPointSet m_depthPointSet;
   vpRobust m_robust;
   unsigned int m_step;
+  unsigned int m_maxFeatures;
   bool m_useMask;
   float m_minMaskConfidence;
   vpDisplayType m_displayType;

@@ -76,9 +76,12 @@ if(USE_OPENCV)
     set(OpenCV_REQUIRED_LIB_COMPONENTS ${OpenCV_LIB_COMPONENTS})
     vp_list_filterout(OpenCV_REQUIRED_LIB_COMPONENTS "opencv_*")
     # We import only required OpenCV libraries
-    list(APPEND OpenCV_REQUIRED_LIB_COMPONENTS "opencv_core" "opencv_imgproc" "opencv_highgui" "opencv_calib3d" "opencv_features2d" "opencv_calib" "opencv_3d" )
+    list(APPEND OpenCV_REQUIRED_LIB_COMPONENTS "opencv_core" "opencv_imgproc" "opencv_highgui" "opencv_calib3d" "opencv_features2d" "opencv_calib" "opencv_3d")
     if(OpenCV_VERSION AND OpenCV_VERSION VERSION_LESS 2.4.8)
       list(APPEND OpenCV_REQUIRED_LIB_COMPONENTS "opencv_legacy")
+    endif()
+    if(OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER_EQUAL 5.0.0)
+      list(APPEND OpenCV_REQUIRED_LIB_COMPONENTS "opencv_geometry")
     endif()
 
     foreach(component_ ${OpenCV_REQUIRED_LIB_COMPONENTS})
@@ -325,10 +328,13 @@ vp_create_module(${opt_libs})
 vp_create_compat_headers("include/visp3/core/vpConfig.h")
 
 if (UNIX)
-  vp_set_source_file_compile_flag(src/image/vpFont.cpp -Wno-misleading-indentation -Wno-float-equal)
-  vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp -Wno-strict-aliasing)
+  vp_set_source_file_compile_flag(src/image/vpFont.cpp -Wno-misleading-indentation -Wno-float-equal -Wno-sign-conversion -Wno-strict-overflow)
+  vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp -Wno-strict-aliasing -Wno-sign-conversion -Wno-strict-overflow)
+  vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_cholesky.cpp -Wno-strict-overflow) # warnings due to eigen3
+  vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_lu.cpp -Wno-strict-overflow) # warnings due to eigen3
+  vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_svd.cpp -Wno-strict-overflow) # warnings due to eigen3
 elseif(MSVC AND CMAKE_CXX_COMPILER_ID MATCHES "Clang") # clang-cl usage
-  vp_set_source_file_compile_flag(src/image/vpFont.cpp -Wno-reserved-identifier -Wno-sign-conversion -Wno-zero-as-null-pointer-constant -Wno-old-style-cast -Wnosign-conversion -Wno-float-equal -Wno-cast-qual -Wno-switch-default -Wno-c++23-extensions -Wno-implicit-fallthrough -Wno-implicit-int-float-conversion -Wno-cast-qual -Wno-comma -Wno-double-promotion)
+  vp_set_source_file_compile_flag(src/image/vpFont.cpp -Wno-reserved-identifier -Wno-sign-conversion -Wno-zero-as-null-pointer-constant -Wno-old-style-cast -Wno-sign-conversion -Wno-float-equal -Wno-cast-qual -Wno-switch-default -Wno-c++23-extensions -Wno-implicit-fallthrough -Wno-implicit-int-float-conversion -Wno-cast-qual -Wno-comma -Wno-double-promotion)
   vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp -Wno-old-style-cast -Wno-sign-conversion -Wno-switch-default -Wno-sign-conversion -Wno-comma -Wno-zero-as-null-pointer-constant -Wno-tautological-type-limit-compare -Wno-cast-align -Wno-extra-semi-stmt -Wno-missing-prototypes)
 else()
   vp_set_source_file_compile_flag(src/tools/file/vpIoTools_npy.cpp /wd4333)
@@ -337,10 +343,19 @@ endif()
 set(opt_test_incs "")
 set(opt_test_libs "")
 
-if(WITH_CATCH2)
-  # catch2 is private
-  list(APPEND opt_test_incs ${CATCH2_INCLUDE_DIRS})
-  list(APPEND opt_test_libs ${CATCH2_LIBRARIES})
+# Catch2 for testing
+if(USE_CATCH2)
+  if(BUILD_CATCH2)
+    list(APPEND opt_test_incs ${CATCH2_INCLUDE_DIRS})
+    list(APPEND opt_test_libs ${CATCH2_LIBRARIES})
+  else()
+    set(_inc_dirs "")
+    set(_lnk_libs "")
+    vp_get_interface_include_dirs(CATCH2_LIBRARIES _inc_dirs)
+    vp_get_interface_link_libraries(CATCH2_LIBRARIES _lnk_libs)
+    list(APPEND opt_test_incs ${_inc_dirs})
+    list(APPEND opt_test_libs ${_lnk_libs})
+  endif()
 endif()
 
 vp_add_tests(CTEST_EXCLUDE_PATH network DEPENDS_ON visp_io visp_gui PRIVATE_INCLUDE_DIRS ${opt_test_incs} PRIVATE_LIBRARIES ${opt_test_libs})
@@ -349,3 +364,9 @@ vp_add_tests(CTEST_EXCLUDE_PATH network DEPENDS_ON visp_io visp_gui PRIVATE_INCL
 vp_glob_module_copy_data("test/math/data/*.pgm" "modules/core" NO_INSTALL)
 # copy font
 vp_glob_module_copy_data("src/image/private/Rubik-Regular.ttf" "data/font")
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+  set_source_files_properties(test/image/testHSVGradient.cpp PROPERTIES COMPILE_FLAGS "-Wno-strict-overflow")
+  set_source_files_properties(test/math/perfMatrixMultiplication.cpp PROPERTIES COMPILE_FLAGS "-Wno-strict-overflow")
+  set_source_files_properties(test/math/catchEigenConversion.cpp PROPERTIES COMPILE_FLAGS "-Wno-strict-overflow") # warnings due to eigen3
+endif()

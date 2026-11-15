@@ -46,6 +46,7 @@ class VideoCapture:NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         
         // Input
         guard let videoDevice = AVCaptureDevice.default(for: .video) else {
+            print("Error: No camera detected. The iOS simulator does not support video capture.")
             fatalError()
         }
         guard
@@ -69,7 +70,7 @@ class VideoCapture:NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             fatalError()
         }
         videoConnection.videoOrientation = .portrait
-	//! [camera parameters]
+        //! [camera parameters]
         if videoConnection.isCameraIntrinsicMatrixDeliverySupported {
             // Enable Intrinsic parameter
             videoConnection.isCameraIntrinsicMatrixDeliveryEnabled = true

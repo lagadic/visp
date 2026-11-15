@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,7 +177,7 @@ void cpuX86::detect_host()
 
   uint32_t info[4];
   cpuid(info, 0);
-  int nIds = info[0];
+  uint32_t nIds = info[0];
 
   cpuid(info, 0x80000000);
   uint32_t nExIds = info[0];

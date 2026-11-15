@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,10 +151,10 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
       opath = optarg_;
       break;
     case 't':
-      nThreads = atoi(optarg_);
+      nThreads = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 's':
-      scale = atoi(optarg_);
+      scale = static_cast<unsigned int>(atoi(optarg_));
       break;
     case 'h':
       usage(argv[0], nullptr, ipath, opath, user);

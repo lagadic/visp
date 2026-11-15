@@ -42,7 +42,7 @@ from vp_build_utils import execute, print_error, get_xcode_major, get_xcode_sett
 IPHONEOS_DEPLOYMENT_TARGET='9.0'  # default, can be changed via command line options or environment variable
 
 class Builder:
-    def __init__(self, visp, contrib, dynamic, bitcodedisabled, exclude,  disable, targets, debug, debug_info, framework_name):
+    def __init__(self, visp, contrib, dynamic, bitcodedisabled, exclude,  disable, targets, debug, debug_info, framework_name, cmake_framework_path):
         self.visp = os.path.abspath(visp)
         self.contrib = None
         if contrib:
@@ -59,6 +59,7 @@ class Builder:
         self.debug = debug
         self.debug_info = debug_info
         self.framework_name = framework_name
+        self.cmake_framework_path = cmake_framework_path
 
     def checkCMakeVersion(self):
         if get_xcode_version() >= (12, 2):
@@ -125,6 +126,8 @@ class Builder:
                 cmake_flags.append("-DCMAKE_OSX_SYSROOT=%s" % sdk_path)
                 cmake_flags.append("-DCMAKE_CXX_COMPILER_WORKS=TRUE")
                 cmake_flags.append("-DCMAKE_C_COMPILER_WORKS=TRUE")
+            if self.cmake_framework_path:
+                cmake_flags.append("-DCMAKE_FRAMEWORK_PATH=%s" % self.cmake_framework_path)
             self.buildOne(target[0], target[1], main_build_dir, cmake_flags)
 
             if not self.dynamic:
@@ -415,7 +418,8 @@ if __name__ == "__main__":
     parser.add_argument('--iphonesimulator_archs', default=None, help='select iPhoneSimulator target ARCHS. Default is "i386,x86_64"')
     parser.add_argument('--debug', default=False, dest='debug', action='store_true', help='Build "Debug" binaries (disabled by default)')
     parser.add_argument('--debug_info', default=False, dest='debug_info', action='store_true', help='Build with debug information (useful for Release mode: BUILD_WITH_DEBUG_INFO=ON)')
-    parser.add_argument('--framework_name', default='visp3', dest='framework_name', help='Name of ViSP framework (default: visp3, will change to ViSP in future version)')
+    parser.add_argument('--framework_name', default='visp3', help='Name of ViSP framework (default: visp3, will change to ViSP in future version)')
+    parser.add_argument('--cmake_framework_path', default=None, help='Additional list of search directories specifying a search path for macOS frameworks')
 
     args, unknown_args = parser.parse_known_args()
     if unknown_args:
@@ -439,6 +443,12 @@ if __name__ == "__main__":
         # Supply defaults
         iphonesimulator_archs = ["i386", "x86_64"]
     print('Using iPhoneSimulator ARCHS=' + str(iphonesimulator_archs))
+
+    if args.cmake_framework_path:
+        cmake_framework_path = str(args.cmake_framework_path).replace(",", ";")
+        print('Using CMake Framework Path=' + str(cmake_framework_path))
+    else:
+        cmake_framework_path = None
 
     # Prevent the build from happening if the same architecture is specified for multiple platforms.
     # When `lipo` is run to stitch the frameworks together into a fat framework, it'll fail, so it's
@@ -464,6 +474,6 @@ if __name__ == "__main__":
         if iphonesimulator_archs:
             targets.append((iphonesimulator_archs, "iPhoneSimulator"))
 
-    b = iOSBuilder(args.visp, args.contrib, args.dynamic, args.bitcodedisabled, args.without, args.disable, targets, args.debug, args.debug_info, args.framework_name)
+    b = iOSBuilder(args.visp, args.contrib, args.dynamic, args.bitcodedisabled, args.without, args.disable, targets, args.debug, args.debug_info, args.framework_name, cmake_framework_path)
 
     b.build(args.out)

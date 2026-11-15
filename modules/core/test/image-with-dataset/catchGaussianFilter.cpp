@@ -41,7 +41,11 @@
 
 #if defined(VISP_HAVE_SIMDLIB) && defined(VISP_HAVE_CATCH2) && (VISP_HAVE_DATASET_VERSION >= 0x030400)
 
+#if defined(VISP_BUILD_CATCH2)
 #include <catch_amalgamated.hpp>
+#else // Since v3.1.1
+#include <catch2/catch_all.hpp>
+#endif
 #include <visp3/core/vpGaussianFilter.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpIoTools.h>

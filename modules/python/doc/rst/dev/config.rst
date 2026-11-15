@@ -45,6 +45,7 @@ Module-level options
     "ignored_headers": ["vpGEMM.h", "vpDebug.h"],
     "ignored_classes": ["vpException", "vpImageException"],
     "user_defined_headers": ["core.hpp"],
+    "additional_bindings": "bindings_core",
     "header_additional_dependencies": {
       "vpUKSigmaDrawerMerwe.h": ["vpUnscentedKalman.h"]
     },
@@ -77,6 +78,11 @@ Module-level options
      - Paths to user-defined bindings that will be called when generating the overall bindings
        (see class options and :ref:`Custom binding`). These paths are relative to the **modules/python/bindings/include** folder.
        If a file does not exist, an error will be raised at compile time.
+   * - :code:`additional_bindings`
+     - String
+     - Name of a C++ function, defined in one of the :code:`user_defined_headers`, with signature :code:`void(py::module_ &)`.
+       It is called with the module's Python submodule after all the generated bindings, and can be used to add
+       custom bindings for free functions that cannot be generated automatically (e.g., functions with pointer arguments).
    * - :code:`header_additional_dependencies`
      - Dictionary of header name to list of header names
      - Forcefully specify that a header (defined as a key of the dictionary) depends on all the headers listed as the values.

@@ -72,13 +72,13 @@ int main(int argc, char *argv[])
   I_bin = I;
   VISP_NAMESPACE_NAME::autoThreshold(I_bin, method, white_foreground ? 0 : 255, white_foreground ? 255 : 0);
   //! [Binarisation]
-  display2->init(I_bin, I.getWidth(), 0, "Binarisation");
+  display2->init(I_bin, static_cast<int>(I.getWidth()), 0, "Binarisation");
 
   //! [Fill holes]
   I_fill = I_bin;
   VISP_NAMESPACE_NAME::fillHoles(I_fill);
   //! [Fill holes]
-  display3->init(I_fill, 0, I.getHeight() + 80, "Fill holes");
+  display3->init(I_fill, 0, static_cast<int>(I.getHeight()) + 80, "Fill holes");
 
   //! [Opening]
   vpImage<unsigned char> I_open = I_fill;
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
   vpImageMorphology::dilatation<unsigned char>(I_close, vpImageMorphology::CONNEXITY_4);
   vpImageMorphology::erosion<unsigned char>(I_close, vpImageMorphology::CONNEXITY_4);
   //! [Closing]
-  display4->init(I_close, I.getWidth(), I.getHeight() + 80, "Closing");
+  display4->init(I_close, static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()) + 80, "Closing");
 
   //! [Find contours]
   vpImage<unsigned char> I_contours(I_close.getHeight(), I_close.getWidth());
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
   vpImage<vpRGBa> I_draw_contours(I_contours.getHeight(), I_contours.getWidth(), vpRGBa());
   VISP_NAMESPACE_NAME::drawContours(I_draw_contours, contours, vpColor::red);
   //! [Draw contours]
-  display5->init(I_draw_contours, 0, 2 * I.getHeight() + 80, "Contours");
+  display5->init(I_draw_contours, 0, 2 * static_cast<int>(I.getHeight()) + 80, "Contours");
 
   vpDisplay::display(I);
   vpDisplay::display(I_bin);

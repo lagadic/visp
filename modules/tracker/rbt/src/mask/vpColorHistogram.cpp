@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ void vpColorHistogram::Builder::build(vpColorHistogram &histogram)
 }
 
 vpColorHistogram::vpColorHistogram() : m_N(0), m_binSize(0), m_numPixels(0)
-{ }
+{}
 
 vpColorHistogram::vpColorHistogram(unsigned int N)
 {
@@ -138,15 +138,18 @@ void vpColorHistogram::computeProbas(const vpImage<vpRGBa> &image, vpImage<float
   const int h = static_cast<int>(image.getHeight()), w = static_cast<int>(image.getWidth());
   const int top = static_cast<int>(bb.getTop());
   const int left = static_cast<int>(bb.getLeft());
-  const int bottom = std::min(h- 1, static_cast<int>(bb.getBottom()));
+  const int bottom = std::min(h - 1, static_cast<int>(bb.getBottom()));
   const int right = std::min(w - 1, static_cast<int>(bb.getRight()));
+  const int bottomExcl = bottom + 1;  // Exclusive limit
+  const int rightExcl = right + 1;
+
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (int i = top; i <= bottom; ++i) {
+  for (int i = top; i < bottomExcl; ++i) {
     const vpRGBa *colorRow = image[i];
     float *probaRow = proba[i];
-    for (int j = left; j <= right; ++j) {
+    for (int j = left; j < rightExcl; ++j) {
       probaRow[j] = m_probas[colorToIndex(colorRow[j])];
     }
   }
@@ -229,8 +232,8 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
 
   std::vector<unsigned int> countsIn(bins, 0), countsOut(bins, 0);
 
-  const int beforeBBStart = static_cast<int>(bbInside.getTop()) * image.getWidth() + static_cast<int>(bbInside.getLeft());
-  const int afterBBEnd = static_cast<int>(bbInside.getBottom()) * image.getWidth() + static_cast<int>(bbInside.getRight());
+  const int beforeBBStart = static_cast<int>(bbInside.getTop() * image.getWidth() + bbInside.getLeft());
+  const int afterBBEnd = static_cast<int>(bbInside.getBottom() * image.getWidth() + bbInside.getRight());
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
 #endif
@@ -256,7 +259,7 @@ void vpColorHistogram::computeSplitHistograms(const vpImage<vpRGBa> &image, cons
 #endif
     for (int i = static_cast<int>(bbInside.getTop()); i < static_cast<int>(round(bbInside.getBottom())); ++i) {
       for (int j = static_cast<int>(bbInside.getLeft()); j < static_cast<int>(round(bbInside.getRight())); ++j) {
-        const unsigned int bitmapIndex = i * image.getWidth() + j;
+        const unsigned int bitmapIndex = static_cast<unsigned int>(i) * image.getWidth() + static_cast<unsigned int>(j);
         const unsigned int index = insideMask.colorToIndex(image.bitmap[bitmapIndex]);
         const bool pixelInMask = mask.bitmap[bitmapIndex] > 0;
         localCountsIn[index] += static_cast<unsigned int>(pixelInMask);

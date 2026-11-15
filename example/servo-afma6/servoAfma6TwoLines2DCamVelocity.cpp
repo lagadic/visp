@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ int main()
   try {
     vpRealSense2 rs;
     rs2::config config;
-    unsigned int width = 640, height = 480, fps = 60;
+    int width = 640, height = 480, fps = 60;
     config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
     config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
     config.enable_stream(RS2_STREAM_INFRARED, width, height, RS2_FORMAT_Y8, fps);
@@ -94,7 +94,7 @@ int main()
     std::cout << " task : servo a point " << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
 
-    int nb_lines = 2;
+    unsigned int nb_lines = 2;
 
     std::vector<vpMeLine> line(nb_lines);
 
@@ -107,7 +107,7 @@ int main()
 
     // Initialize the tracking. Define the two lines to track
     // The two lines to track must be parallels
-    for (int i = 0; i < nb_lines; ++i) {
+    for (unsigned int i = 0; i < nb_lines; ++i) {
       line[i].setDisplay(vpMeSite::RANGE_RESULT);
       line[i].setMe(&me);
 
@@ -125,7 +125,7 @@ int main()
 
     // Sets the current position of the visual feature
     std::vector<vpFeatureLine> s_line(nb_lines);
-    for (int i = 0; i < nb_lines; ++i) {
+    for (unsigned int i = 0; i < nb_lines; ++i) {
       vpFeatureBuilder::create(s_line[i], cam, line[i]);
     }
 
@@ -159,7 +159,7 @@ int main()
     task.setServo(vpServo::EYEINHAND_CAMERA);
 
     // - we want to see a line on a line
-    for (int i = 0; i < nb_lines; ++i) {
+    for (unsigned int i = 0; i < nb_lines; ++i) {
       task.addFeature(s_line[i], s_line_d[i]);
     }
 
@@ -177,7 +177,7 @@ int main()
       vpDisplay::display(I);
 
       // Track the lines and update the features
-      for (int i = 0; i < nb_lines; ++i) {
+      for (unsigned int i = 0; i < nb_lines; ++i) {
         line[i].track(I);
         line[i].display(I, vpColor::red);
 

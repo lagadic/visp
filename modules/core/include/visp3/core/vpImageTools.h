@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -397,13 +397,50 @@ public:
     @name Deprecated functions
   */
   //@{
-  template <class Type>
-  VP_DEPRECATED static void createSubImage(const vpImage<Type> &I, unsigned int i_sub, unsigned int j_sub,
-                                           unsigned int nrow_sub, unsigned int ncol_sub, vpImage<Type> &S);
+  /*!
+    Crop a region of interest (ROI) in an image.
 
+    This function is deprecated. You should rather use
+    crop(const vpImage<Type> &, unsigned int, unsigned int, unsigned int, unsigned int, vpImage<Type> &).
+
+    \param I : Input image from which a sub image will be extracted.
+    \param roi_top : ROI vertical position of the upper/left corner in the input image.
+    \param roi_left : ROI  horizontal position of the upper/left corner in the input image.
+    \param roi_height : Cropped image height corresponding to the ROI height.
+    \param roi_width : Cropped image width corresponding to the ROI height.
+    \param crop : Cropped image.
+
+    \sa crop(const vpImage<Type> &, unsigned int, unsigned int, unsigned int, unsigned int, vpImage<Type> &)
+  */
   template <class Type>
-  VP_DEPRECATED static void createSubImage(const vpImage<Type> &I, const vpRect &rect, vpImage<Type> &S);
-  //@}
+  VP_DEPRECATED
+    static void createSubImage(const vpImage<Type> &I, unsigned int roi_top, unsigned int roi_left,
+                               unsigned int roi_height, unsigned int roi_width, vpImage<Type> &crop)
+  {
+    vpImageTools::crop(I, roi_top, roi_left, roi_height, roi_width, crop);
+  }
+
+  /*!
+    Crop an image region of interest.
+
+    This function is deprecated.
+    You should rather use crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &).
+
+    \param I : Input image from which a sub image will be extracted.
+
+    \param roi : Region of interest in image \e I corresponding to the cropped part of the image.
+
+    \param crop : Cropped image.
+
+    \sa crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &)
+  */
+  template <class Type>
+  VP_DEPRECATED
+    void createSubImage(const vpImage<Type> &I, const vpRect &roi, vpImage<Type> &crop)
+  {
+    vpImageTools::crop(I, roi, crop);
+  }
+    //@}
 #endif
 
 private:
@@ -477,7 +514,7 @@ private:
     ArithmeticType s_high = static_cast<ArithmeticType>(hsv_range[index_3]);
     ArithmeticType v_low = static_cast<ArithmeticType>(hsv_range[index_4]);
     ArithmeticType v_high = static_cast<ArithmeticType>(hsv_range[index_5]);
-    int size_ = Iin.getSize();
+    int size_ = static_cast<int>(Iin.getSize());
     mask.resize(Iin.getRows(), Iin.getCols());
     int cpt_in_range = 0;
 
@@ -485,7 +522,10 @@ private:
 #pragma omp parallel for reduction(+:cpt_in_range)
 #endif
     for (int i = 0; i < size_; ++i) {
-      bool check_h_low_high_hue = (h_low <= Iin.bitmap[i].H) && (Iin.bitmap[i].H <= h_high);
+      bool check_h_low_high_hue = (
+      ((h_low <= h_high) && ((h_low <= Iin.bitmap[i].H) && (Iin.bitmap[i].H <= h_high))) ||
+      ((h_low > h_high) && ((h_low <= Iin.bitmap[i].H) || (Iin.bitmap[i].H <= h_high)))
+    );
       bool check_s_low_high_saturation = (s_low <= Iin.bitmap[i].S) && (Iin.bitmap[i].S <= s_high);
       bool check_v_low_high_value = (v_low <= Iin.bitmap[i].V) && (Iin.bitmap[i].V <= v_high);
       if (check_h_low_high_hue && check_s_low_high_saturation && check_v_low_high_value) {
@@ -529,55 +569,6 @@ private:
   }
 #endif
 };
-
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-/*!
-  Crop a region of interest (ROI) in an image.
-
-  \deprecated This function is deprecated. You should rather use
-  crop(const vpImage<Type> &, unsigned int, unsigned int, unsigned int,
-  unsigned int, vpImage<Type> &).
-
-  \param I : Input image from which a sub image will be extracted.
-  \param roi_top : ROI vertical position of the upper/left corner in the input
-  image.
-  \param roi_left : ROI  horizontal position of the upper/left corner
-  in the input image.
-  \param roi_height : Cropped image height corresponding to the ROI height.
-  \param roi_width : Cropped image width corresponding to the ROI height.
-  \param crop : Cropped image.
-
-  \sa crop(const vpImage<Type> &, unsigned int, unsigned int, unsigned int,
-  unsigned int, vpImage<Type> &)
-*/
-template <class Type>
-void vpImageTools::createSubImage(const vpImage<Type> &I, unsigned int roi_top, unsigned int roi_left,
-                                  unsigned int roi_height, unsigned int roi_width, vpImage<Type> &crop)
-{
-  vpImageTools::crop(I, roi_top, roi_left, roi_height, roi_width, crop);
-}
-
-/*!
-  Crop an image region of interest.
-
-  \deprecated This function is deprecated. You should rather use
-  crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &).
-
-  \param I : Input image from which a sub image will be extracted.
-
-  \param roi : Region of interest in image \e I corresponding to the
-  cropped part of the image.
-
-  \param crop : Cropped image.
-
-  \sa crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &)
-*/
-template <class Type> void vpImageTools::createSubImage(const vpImage<Type> &I, const vpRect &roi, vpImage<Type> &crop)
-{
-  vpImageTools::crop(I, roi, crop);
-}
-
-#endif // #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 
 /*!
   Crop a region of interest (ROI) in an image. The ROI coordinates and
@@ -767,19 +758,17 @@ inline void vpImageTools::binarise(vpImage<Type> &I, Type threshold1, Type thres
     std::cerr << "LUT not available for this type ! Will use the iteration method." << std::endl;
   }
 
-  Type v;
-  Type *p = I.bitmap;
-  Type *pend = I.bitmap + (I.getWidth() * I.getHeight());
-  for (; p < pend; ++p) {
-    v = *p;
+  const size_t size = I.getWidth() * I.getHeight();
+  for (size_t i = 0; i < size; ++i) {
+    Type v = I.bitmap[i];
     if (v < threshold1) {
-      *p = value1;
+      I.bitmap[i] = value1;
     }
     else if (v > threshold2) {
-      *p = value3;
+      I.bitmap[i] = value3;
     }
     else {
-      *p = value2;
+      I.bitmap[i] = value2;
     }
   }
 }
@@ -841,7 +830,7 @@ public:
   unsigned int threadid;
 
 public:
-  vpUndistortInternalType() : src(nullptr), dst(nullptr), width(0), height(0), cam(), nthreads(0), threadid(0) { }
+  vpUndistortInternalType() : src(nullptr), dst(nullptr), width(0), height(0), cam(), nthreads(0), threadid(0) {}
 
   vpUndistortInternalType(const vpUndistortInternalType<Type> &u) { *this = u; }
   vpUndistortInternalType &operator=(const vpUndistortInternalType<Type> &u)
@@ -1540,9 +1529,10 @@ inline void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires
 }
 #endif
 
+END_VISP_NAMESPACE
+
 #ifdef ENABLE_IMAGE_TOOLS_WARP
 #include <visp3/core/vpImageTools_warp.h>
 #endif
 
-END_VISP_NAMESPACE
 #endif

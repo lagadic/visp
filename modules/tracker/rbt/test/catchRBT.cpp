@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,11 @@
 #endif
 
 #define CATCH_CONFIG_RUNNER
+#if defined(VISP_BUILD_CATCH2)
 #include <catch_amalgamated.hpp>
+#else // Since v3.1.1
+#include <catch2/catch_all.hpp>
+#endif
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -110,6 +114,18 @@ const std::string objCube =
 
 bool opt_no_display = false; // If true, disable display or tests requiring display
 
+std::string createObjFile()
+{
+  const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_rbt_obj");
+  const std::string objFile = vpIoTools::createFilePath(tempDir, "cube.obj");
+  std::ofstream f(objFile);
+  f << objCube;
+  f.close();
+
+  return objFile;
+}
+
+
 SCENARIO("Instantiating a silhouette me tracker", "[rbt]")
 {
   GIVEN("A base me tracker")
@@ -126,11 +142,11 @@ SCENARIO("Instantiating a silhouette me tracker", "[rbt]")
       THEN("Changing mask min confidence with a correct value is Ok")
       {
         tracker.setMinimumMaskConfidence(0.0);
-        REQUIRE(tracker.getMinimumMaskConfidence() == 0.0);
+        REQUIRE(tracker.getMinimumMaskConfidence() == Catch::Approx(0.0));
         tracker.setMinimumMaskConfidence(1.0);
-        REQUIRE(tracker.getMinimumMaskConfidence() == 1.0);
+        REQUIRE(tracker.getMinimumMaskConfidence() == Catch::Approx(1.0));
         tracker.setMinimumMaskConfidence(0.5);
-        REQUIRE(tracker.getMinimumMaskConfidence() == 0.5);
+        REQUIRE(tracker.getMinimumMaskConfidence() == Catch::Approx(0.5));
       }
       THEN("Setting incorrect mask confidence value fails")
       {
@@ -142,7 +158,7 @@ SCENARIO("Instantiating a silhouette me tracker", "[rbt]")
       THEN("Setting correct value works")
       {
         tracker.setMinRobustThreshold(0.5);
-        REQUIRE(tracker.getMinRobustThreshold() == 0.5);
+        REQUIRE(tracker.getMinRobustThreshold() == Catch::Approx(0.5));
       }
       THEN("Setting negative value throws")
       {
@@ -166,7 +182,7 @@ SCENARIO("Instantiating a silhouette me tracker", "[rbt]")
       THEN("Setting correct single point value works")
       {
         tracker.setSinglePointConvergenceThreshold(1.0);
-        REQUIRE(tracker.getSinglePointConvergenceThreshold() == 1.0);
+        REQUIRE(tracker.getSinglePointConvergenceThreshold() == Catch::Approx(1.0));
       }
       THEN("Setting incorrect single point value throws")
       {
@@ -175,47 +191,47 @@ SCENARIO("Instantiating a silhouette me tracker", "[rbt]")
       THEN("Setting correct global value works")
       {
         tracker.setGlobalConvergenceMinimumRatio(0.0);
-        REQUIRE(tracker.getGlobalConvergenceMinimumRatio() == 0.0);
+        REQUIRE(tracker.getGlobalConvergenceMinimumRatio() == Catch::Approx(0.0));
         tracker.setGlobalConvergenceMinimumRatio(1.0);
-        REQUIRE(tracker.getGlobalConvergenceMinimumRatio() == 1.0);
+        REQUIRE(tracker.getGlobalConvergenceMinimumRatio() == Catch::Approx(1.0));
         tracker.setGlobalConvergenceMinimumRatio(0.5);
-        REQUIRE(tracker.getGlobalConvergenceMinimumRatio() == 0.5);
+        REQUIRE(tracker.getGlobalConvergenceMinimumRatio() == Catch::Approx(0.5));
       }
     }
 #if defined(VISP_HAVE_NLOHMANN_JSON)
     WHEN("defining JSON parameters")
     {
       nlohmann::json j = {
-        {"type", "silhouetteMe"},
+        { "type", "silhouetteMe" },
         { "numCandidates", 1 },
         { "weight", 0.5 },
         { "convergencePixelThreshold", 0.5 },
-        { "convergenceRatio", 0.99},
-        { "useMask", true},
-        { "minMaskConfidence", 0.5},
+        { "convergenceRatio", 0.99 },
+        { "useMask", true },
+        { "minMaskConfidence", 0.5 },
         { "movingEdge", {
-          {"maskSign", 0},
-          {"maskSize" , 5},
-          {"minSampleStep" , 4.0},
-          {"mu" , {0.5, 0.5}},
-          {"nMask" , 90},
-          {"ntotalSample" , 0},
-          {"pointsToTrack" , 200},
-          {"range" , 5},
-          {"sampleStep" , 4.0},
-          {"strip" , 2},
-          {"thresholdType" , "normalized"},
-          {"threshold" , 20.0}
-        }}
+          { "maskSign", 0 },
+          { "maskSize" , 5 },
+          { "minSampleStep" , 4.0 },
+          { "mu" , { 0.5, 0.5 } },
+          { "nMask" , 90 },
+          { "ntotalSample" , 0 },
+          { "pointsToTrack" , 200 },
+          { "range" , 5 },
+          { "sampleStep" , 4.0 },
+          { "strip" , 2 },
+          { "thresholdType" , "normalized" },
+          { "threshold" , 20.0 }
+        } }
       };
       THEN("Loading correct settings works")
       {
         tracker.loadJsonConfiguration(j);
         REQUIRE(tracker.getNumCandidates() == 1);
         REQUIRE(tracker.shouldUseMask() == true);
-        REQUIRE(tracker.getMinimumMaskConfidence() == 0.5);
+        REQUIRE(tracker.getMinimumMaskConfidence() == Catch::Approx(0.5));
         REQUIRE(tracker.getMe().getMaskNumber() == 90);
-        REQUIRE(tracker.getMe().getThreshold() == 20.0);
+        REQUIRE(tracker.getMe().getThreshold() == Catch::Approx(20.0));
       }
       THEN("Setting incorrect candidate number throws")
       {
@@ -252,7 +268,7 @@ SCENARIO("Instantiating a silhouette CCD tracker", "[rbt]")
       THEN("Setting value above 0 works")
       {
         tracker.setTemporalSmoothingFactor(0.5);
-        REQUIRE(tracker.getTemporalSmoothingFactor() == 0.5);
+        REQUIRE(tracker.getTemporalSmoothingFactor() == Catch::Approx(0.5));
       }
       THEN("Setting value below 0 throws")
       {
@@ -276,24 +292,27 @@ SCENARIO("Instantiating a silhouette CCD tracker", "[rbt]")
     WHEN("Defining associated json")
     {
       nlohmann::json j = {
-        {"type", "silhouetteCCD"},
-        {"weight", 0.01},
-        {"temporalSmoothing", 0.1},
-        {"convergenceThreshold", 0.1},
-        {"ccd", {
-          {"h", 64},
-          {"delta_h", 16},
-          {"gamma", { 0.1, 0.2, 0.3, 0.4 } }
-        }}
+        { "type", "silhouetteCCD" },
+        { "weight", 0.01 },
+        { "temporalSmoothing", 0.1 },
+        { "convergenceThreshold", 0.1 },
+        { "ccd", {
+          { "h", 64 },
+          { "delta_h", 16 },
+          { "gamma", { 0.1, 0.2, 0.3, 0.4 } }
+        } }
       };
       THEN("Loading correct json works")
       {
         tracker.loadJsonConfiguration(j);
-        REQUIRE(tracker.getTemporalSmoothingFactor() == 0.1);
+        REQUIRE(tracker.getTemporalSmoothingFactor() == Catch::Approx(0.1));
         vpCCDParameters ccd = tracker.getCCDParameters();
         REQUIRE(ccd.h == 64);
         REQUIRE(ccd.delta_h == 16);
-        REQUIRE((ccd.gamma_1 == 0.1 && ccd.gamma_2 == 0.2 && ccd.gamma_3 == 0.3 && ccd.gamma_4 == 0.4));
+        REQUIRE((ccd.gamma_1 == Catch::Approx(0.1)
+                 && ccd.gamma_2 == Catch::Approx(0.2)
+                 && ccd.gamma_3 == Catch::Approx(0.3)
+                 && ccd.gamma_4 == Catch::Approx(0.4)));
       }
       THEN("Loading invalid temporal smoothing factor throws")
       {
@@ -325,11 +344,11 @@ SCENARIO("Instantiating KLT tracker")
     THEN("Every change is visible")
     {
       REQUIRE(tracker.getFilteringBorderSize() == 2);
-      REQUIRE(tracker.getFilteringMaxReprojectionError() == 0.024);
-      REQUIRE(tracker.getMinimumDistanceNewPoints() == 0.005);
+      REQUIRE(tracker.getFilteringMaxReprojectionError() == Catch::Approx(0.024));
+      REQUIRE(tracker.getMinimumDistanceNewPoints() == Catch::Approx(0.005));
       REQUIRE(tracker.getMinimumNumberOfPoints() == 20);
       REQUIRE(tracker.shouldUseMask());
-      REQUIRE(tracker.getMinimumMaskConfidence() == 0.5);
+      REQUIRE(tracker.getMinimumMaskConfidence() == Catch::Approx(0.5));
     }
     THEN("Setting incorrect Mask confidence throws")
     {
@@ -341,13 +360,13 @@ SCENARIO("Instantiating KLT tracker")
   WHEN("Defining associated json")
   {
     nlohmann::json j = {
-      {"type", "klt"},
-      {"weight", 0.01},
-      {"minimumNumPoints", 25},
-      {"newPointsMinPixelDistance", 5},
-      {"maxReprojectionErrorPixels", 0.01},
-      {"useMask", true},
-      {"minMaskConfidence", 0.1},
+      { "type", "klt" },
+      { "weight", 0.01 },
+      { "minimumNumPoints", 25 },
+      { "newPointsMinPixelDistance", 5 },
+      { "maxReprojectionErrorPixels", 0.01 },
+      { "useMask", true },
+      { "minMaskConfidence", 0.1 },
       { "windowSize", 7 },
       { "quality", 0.01 },
       { "maxFeatures", 500 }
@@ -356,12 +375,12 @@ SCENARIO("Instantiating KLT tracker")
     {
       tracker.loadJsonConfiguration(j);
       REQUIRE(tracker.getMinimumNumberOfPoints() == 25);
-      REQUIRE(tracker.getMinimumDistanceNewPoints() == 5);
-      REQUIRE(tracker.getFilteringMaxReprojectionError() == 0.01);
+      REQUIRE(tracker.getMinimumDistanceNewPoints() == Catch::Approx(5));
+      REQUIRE(tracker.getFilteringMaxReprojectionError() == Catch::Approx(0.01));
       REQUIRE(tracker.shouldUseMask() == true);
-      REQUIRE(tracker.getMinimumMaskConfidence() == 0.1f);
+      REQUIRE(tracker.getMinimumMaskConfidence() == Catch::Approx(0.1f));
       REQUIRE(tracker.getKltTracker().getWindowSize() == 7);
-      REQUIRE(tracker.getKltTracker().getQuality() == 0.01);
+      REQUIRE(tracker.getKltTracker().getQuality() == Catch::Approx(0.01));
       REQUIRE(tracker.getKltTracker().getMaxFeatures() == 500);
     }
     THEN("Loading invalid mask confidence throws")
@@ -398,7 +417,7 @@ SCENARIO("Instantiating depth tracker", "[rbt]")
     THEN("Setting correct mask confidence value")
     {
       tracker.setMinimumMaskConfidence(0.8);
-      REQUIRE(tracker.getMinimumMaskConfidence() == 0.8f);
+      REQUIRE(tracker.getMinimumMaskConfidence() == Catch::Approx(0.8f));
     }
     THEN("Toggling mask works")
     {
@@ -410,18 +429,18 @@ SCENARIO("Instantiating depth tracker", "[rbt]")
   WHEN("Defining associated json")
   {
     nlohmann::json j = {
-      {"type", "klt"},
-      {"weight", 0.01},
-      {"step", 16},
-      {"useMask", true},
-      {"minMaskConfidence", 0.1}
+      { "type", "klt" },
+      { "weight", 0.01 },
+      { "step", 16 },
+      { "useMask", true },
+      { "minMaskConfidence", 0.1 }
     };
     THEN("Loading correct json works")
     {
       tracker.loadJsonConfiguration(j);
       REQUIRE(tracker.getStep() == 16);
       REQUIRE(tracker.shouldUseMask());
-      REQUIRE(tracker.getMinimumMaskConfidence() == 0.1f);
+      REQUIRE(tracker.getMinimumMaskConfidence() == Catch::Approx(0.1f));
     }
     THEN("Loading invalid mask confidence throws")
     {
@@ -459,7 +478,7 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
     THEN("Positive gain is ok")
     {
       tracker.setOptimizationGain(0.5);
-      REQUIRE(tracker.getOptimizationGain() == 0.5);
+      REQUIRE(tracker.getOptimizationGain() == Catch::Approx(0.5));
     }
     THEN("Initial mu cannot be negative")
     {
@@ -468,12 +487,12 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
     THEN("Initial mu can be zero (gauss newton)")
     {
       tracker.setOptimizationInitialMu(0.0);
-      REQUIRE(tracker.getOptimizationInitialMu() == 0.0);
+      REQUIRE(tracker.getOptimizationInitialMu() == Catch::Approx(0.0));
     }
     THEN("Initial mu can be above zero")
     {
       tracker.setOptimizationInitialMu(0.1);
-      REQUIRE(tracker.getOptimizationInitialMu() == 0.1);
+      REQUIRE(tracker.getOptimizationInitialMu() == Catch::Approx(0.1));
     }
 
     THEN("Mu factor cannot be negative")
@@ -483,12 +502,12 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
     THEN("Mu factor can be zero")
     {
       tracker.setOptimizationMuIterFactor(0.0);
-      REQUIRE(tracker.getOptimizationMuIterFactor() == 0.0);
+      REQUIRE(tracker.getOptimizationMuIterFactor() == Catch::Approx(0.0));
     }
     THEN("Mu factor can be positive")
     {
       tracker.setOptimizationMuIterFactor(0.1);
-      REQUIRE(tracker.getOptimizationMuIterFactor() == 0.1);
+      REQUIRE(tracker.getOptimizationMuIterFactor() == Catch::Approx(0.1));
     }
   }
 
@@ -594,16 +613,17 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
     })JSON";
     const auto verifyBase = [&tracker]() {
       REQUIRE((tracker.getImageHeight() == 240 && tracker.getImageWidth() == 320));
-      REQUIRE((tracker.getOptimizationGain() == 1.0 && tracker.getMaxOptimizationIters() == 10));
+      REQUIRE((tracker.getOptimizationGain() == Catch::Approx(1.0) && tracker.getMaxOptimizationIters() == 10));
       vpSilhouettePointsExtractionSettings silset = tracker.getSilhouetteExtractionParameters();
-      REQUIRE((silset.thresholdIsRelative() && silset.getThreshold() == 0.1));
+      REQUIRE((silset.thresholdIsRelative() && silset.getThreshold() == Catch::Approx(0.1)));
       REQUIRE((silset.getSampleStep() == 2 && silset.getMaxCandidates() == 128));
       REQUIRE((silset.preferPreviousPoints()));
 
-      REQUIRE((tracker.getOptimizationGain() == 1.0 && tracker.getMaxOptimizationIters() == 10));
-      REQUIRE((tracker.getOptimizationInitialMu() == 0.5 && tracker.getOptimizationMuIterFactor() == 0.1));
+      REQUIRE((tracker.getOptimizationGain() == Catch::Approx(1.0) && tracker.getMaxOptimizationIters() == 10));
+      REQUIRE((tracker.getOptimizationInitialMu() == Catch::Approx(0.5) && tracker.getOptimizationMuIterFactor() == Catch::Approx(0.1)));
       };
-    nlohmann::json j = nlohmann::json::parse(jsonLiteral);
+      // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+    nlohmann::json j = nlohmann::json::parse(jsonLiteral, nullptr, true, true);
     THEN("Loading configuration with trackers")
     {
       tracker.loadConfiguration(j);
@@ -631,11 +651,7 @@ SCENARIO("Instantiating a render-based tracker", "[rbt]")
     }
     THEN("Loading configuration with real 3D model also works")
     {
-      const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_rbt_obj");
-      const std::string objFile = vpIoTools::createFilePath(tempDir, "cube.obj");
-      std::ofstream f(objFile);
-      f << objCube;
-      f.close();
+      std::string objFile = createObjFile();
       j["model"] = objFile;
       tracker.loadConfiguration(j);
       verifyBase();
@@ -674,14 +690,7 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
     vpCameraParameters cam(600, 600, 320, 240);
     vpPanda3DRenderParameters renderParams(cam, h, w, 0.01, 1.0);
 
-    const std::string tempDir = vpIoTools::makeTempDirectory("visp_test_rbt_obj");
-    std::cout << tempDir << std::endl;
-    const std::string objFile = vpIoTools::getAbsolutePathname(vpIoTools::createFilePath(tempDir, "cube.obj"));
-
-    std::ofstream f(objFile);
-    f << objCube;
-    f.close();
-
+    std::string objFile = createObjFile();
     const auto setupScene = [&objFile](vpPanda3DRendererSet &renderer) {
       renderer.addNodeToScene(renderer.loadObject("object", objFile));
       renderer.addLight(vpPanda3DAmbientLight("ambient", vpRGBf(1.f)));
@@ -702,7 +711,7 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
     std::shared_ptr<vpRBSilhouetteCCDTracker> silTracker = std::make_shared<vpRBSilhouetteCCDTracker>();
     silTracker->setTemporalSmoothingFactor(0.1);
     vpCCDParameters ccdParams = silTracker->getCCDParameters();
-    ccdParams.h = 8;
+    ccdParams.h = 16;
     silTracker->setCCDParameters(ccdParams);
 
     tracker.addTracker(silTracker);
@@ -740,6 +749,165 @@ SCENARIO("Running tracker on static synthetic sequences", "[rbt]")
   }
 }
 
+SCENARIO("Checking ADD convergence metric", "[rbt]")
+{
+  if (opt_no_display) {
+    std::cout << "Display is disabled for tests, skipping..." << std::endl;
+    return;
+  }
+
+  GIVEN("A renderer and a convergence metric")
+  {
+    vpCameraParameters cam(800, 800, 320, 240);
+    vpPanda3DRenderParameters params(cam, 480, 640, 0.01, 1.0);
+    vpObjectCentricRenderer renderer(params);
+    renderer.addSubRenderer(std::make_shared<vpPanda3DGeometryRenderer>(vpPanda3DGeometryRenderer::OBJECT_NORMALS, true));
+    renderer.initFramework();
+    renderer.addObjectToScene("obj", createObjFile());
+    renderer.setFocusedObject("obj");
+    renderer.setCameraPose(vpHomogeneousMatrix(0, 0, -0.5, 0, 0, 0));
+    vpRBConvergenceADDMetric metric(0.01, 0.001, 512, 213);
+
+    vpHomogeneousMatrix cTo1(0, 0, 0.2, 0, 0, 0);
+    vpHomogeneousMatrix cTo2Conv(0, 0, 0.2001, 0, 0, 0);
+    vpHomogeneousMatrix cTo2NotConv(0, 0, 0.205, 0, 0, 0);
+    vpHomogeneousMatrix cTo2Render(0, 0, 0.22, 0, 0, 0);
+    THEN("Trying to compute metric without sampling fails")
+    {
+      REQUIRE_THROWS(metric(cam, cTo1, cTo2NotConv));
+    }
+
+    THEN("Sampling and testing against various threshold works")
+    {
+      metric.sampleObject(renderer);
+      double metricValue = metric(cam, cTo1, cTo2NotConv);
+      REQUIRE(fabs(metricValue - 0.005)  < 1e-4);
+      REQUIRE(!metric.hasConverged(cam, cTo1, cTo2NotConv));
+      REQUIRE(!metric.shouldUpdateRender(cam, cTo1, cTo2NotConv));
+
+
+      metricValue = metric(cam, cTo1, cTo2Conv);
+      REQUIRE(fabs(metricValue - 0.0001)  < 1e-4);
+      REQUIRE(metric.hasConverged(cam, cTo1, cTo2Conv));
+      REQUIRE(!metric.shouldUpdateRender(cam, cTo1, cTo2Conv));
+
+      metricValue = metric(cam, cTo1, cTo2Render);
+      REQUIRE(fabs(metricValue - 0.02)  < 1e-4);
+      REQUIRE(!metric.hasConverged(cam, cTo1, cTo2Render));
+      REQUIRE(metric.shouldUpdateRender(cam, cTo1, cTo2Render));
+    }
+  }
+}
+
+SCENARIO("Testing point map", "[rbt]")
+{
+  vpPointMap map(512, 0.0, 0.001, 0.02, 2.0);
+  map.setThresholdNormalVisibiltyCriterion(45.0);
+  REQUIRE(map.getNumMaxPoints() == 512);
+  REQUIRE(vpMath::equal(map.getMinDistanceAddNewPoints(), 0.0, 1e-6));
+  REQUIRE(vpMath::equal(map.getOutlierReprojectionErrorThreshold(), 2.0, 1e-6));
+  REQUIRE(vpMath::equal(map.getMaxDepthErrorCandidate(), 0.02, 1e-6));
+  REQUIRE(vpMath::equal(map.getThresholdNormalVisibiltyCriterion(), 45.0, 1e-6));
+  REQUIRE(map.getPoints().getRows() == 0);
+
+  unsigned int h = 480, w = 640;
+  vpCameraParameters cam(800, 800, w / 2, h / 2);
+
+  std::vector<int> removedIndices;
+  vpArray2D<int> indicesToRemove;
+
+  vpMatrix pointsToAdd;
+  vpMatrix normalsToAdd;
+
+  vpHomogeneousMatrix cTo(0, 0, 0.5, 0.0, 0.0, 0.0);
+  unsigned int N = 100;
+
+  vpMatrix baseUV(N, 2);
+  vpMatrix baseXY(N, 2);
+  vpMatrix cX(N, 3), cN(N, 3);
+
+  vpMatrix oX(N, 3), oN(N, 3);
+
+  vpUniRand random(421);
+
+  vpImage<float> depthImage(h, w, 0.0);
+
+  for (unsigned int i = 0; i < N; i++) {
+    bool good = false; // Ensure two points do no lie in same image pixel
+    double Z;
+    while (!good) {
+      baseUV[i][0] = random.uniform(static_cast<double>(w)  / 5 * 2, static_cast<double>(w) / 5 * 3);
+      baseUV[i][1] = random.uniform(static_cast<double>(h)  / 5 * 2, static_cast<double>(h) / 5 * 3);
+      int uu = static_cast<int>(baseUV[i][0]), vu = static_cast<int>(baseUV[i][1]);
+      if (depthImage[vu][uu] > 0.0) {
+        good = false;
+      }
+      else {
+        Z = 0.5 + random.uniform(-0.05, 0.05);
+        // Set Z in a neighbourhood to ensure that reprojection and aliasing artifacts don't impact results
+        // True depth data is far more continuous
+        for (int ii = -1; ii < 2; ++ii) {
+          for (int jj = -1; jj < 2; ++jj) {
+            depthImage[static_cast<unsigned int>(vu + ii)][static_cast<unsigned int>(uu + jj)] = Z;
+          }
+        }
+
+        good = true;
+      }
+    }
+    vpPixelMeterConversion::convertPoint(cam, baseUV[i][0], baseUV[i][1], baseXY[i][0], baseXY[i][1]);
+    cX[i][0] = baseXY[i][0] * Z, cX[i][1] = baseXY[i][1] * Z, cX[i][2] = Z;
+    cN[i][0] = 0.0, cN[i][1] = 0.0, cN[i][2] = -1.0;
+
+    vpColVector c(4, 1.0);
+    c[0] = cX[i][0], c[1] = cX[i][1], c[2] = cX[i][2];
+
+    const vpColVector ox = cTo.inverse() * c;
+    oX[i][0] = ox[0] / ox[3], oX[i][1] = ox[1] / ox[3], oX[i][2] = ox[2] / ox[3];
+    const vpColVector on = cTo.inverse().getRotationMatrix() * cN.getRow(i).t();
+    oN[i][0] = on[0], oN[i][1] = on[1], oN[i][2] = on[2];
+  }
+  std::cout << oN << std::endl;
+  unsigned int numAddedPoints;
+  map.updatePoints(indicesToRemove, oX, oN, removedIndices, numAddedPoints);
+  REQUIRE(numAddedPoints == N);
+
+  vpMatrix reprojcX, reprojXY, reprojUV;
+  vpArray2D<int> allPoints(N, 1);
+  for (unsigned int i = 0; i < N; ++i) {
+    allPoints[i][0] = static_cast<int>(i);
+  }
+  map.project(cam, allPoints, cTo, reprojcX, reprojXY, reprojUV);
+
+  REQUIRE(((baseUV - reprojUV).frobeniusNorm() / (N * 2)) < 1e-3);
+  REQUIRE(((baseXY - reprojXY).frobeniusNorm() / (N * 2)) < 1e-3);
+  REQUIRE(((cX - reprojcX).frobeniusNorm() / (N * 3)) < 1e-3);
+
+  std::vector<int> visibleIndices;
+  map.getVisiblePoints(h, w, cam, cTo, depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == N); // All points should be visible when seen at pose where they were added
+
+  // Test that points are no longer visible (keeping the old depth map)
+  map.getVisiblePoints(h, w, cam, cTo * vpHomogeneousMatrix(0.0, 0.0, map.getMaxDepthErrorVisibilityCriterion() + 0.01, 0.0, 0.0, 0.0), depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == 0);
+
+  map.getVisiblePoints(h, w, cam, vpHomogeneousMatrix(0.0, 0.0, map.getMaxDepthErrorVisibilityCriterion() * 0.9, 0.0, 0.0, 0.0) * cTo, depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == N);
+
+  map.setMaxDepthErrorVisibilityCriterion(10);
+
+  map.getVisiblePoints(h, w, cam, cTo * vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, vpMath::rad(map.getThresholdNormalVisibiltyCriterion() + 10), 0.0), depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == 0);
+  std::cout << map.getThresholdNormalVisibiltyCriterion() << std::endl;
+  map.getVisiblePoints(h, w, cam, cTo * vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, vpMath::rad(map.getThresholdNormalVisibiltyCriterion() - 10), 0.0), depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == N);
+
+  map.setThresholdNormalVisibiltyCriterion(180); // Disable threshold
+  map.getVisiblePoints(h, w, cam, cTo * vpHomogeneousMatrix(0.0, 0.0, 0.0, 0.0, vpMath::rad(map.getThresholdNormalVisibiltyCriterion() + 10), 0.0), depthImage, visibleIndices);
+  REQUIRE(visibleIndices.size() == N);
+
+
+}
 int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance

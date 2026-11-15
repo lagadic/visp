@@ -216,13 +216,18 @@ public:
   }
 
   /*!
-   * Get the extremities of the line. These two points strictly belong to
-   * the line. They are the projection of m_Pext[2] on the line
+   * Get the extremities of the moving edge line.
    *
-   * \param ip1 : Coordinates of the first extremity.
-   * \param ip2 : Coordinates of the second extremity.
+   * These two points strictly belong to the line and correspond to the
+   * projections of the first and last moving edge sites contained in the internal list.
+   *
+   * \param[out] ip1 Coordinates of the first extremity (corresponding to the first site).
+   * \param[out] ip2 Coordinates of the second extremity (corresponding to the last site).
+   *
+   * \return \b true if the extremities were successfully computed and set,
+   *         \b false if the moving edges list (\c m_meList) is empty.
    */
-  void getExtremities(vpImagePoint &ip1, vpImagePoint &ip2) const;
+  VP_NODISCARD bool getExtremities(vpImagePoint &ip1, vpImagePoint &ip2) const;
 
   /*!
    * Returns the value of \f$\rho\f$, the distance between the origin and the point on the line
@@ -447,12 +452,18 @@ protected:
    */
   virtual unsigned int seekExtremities(const vpImage<unsigned char> &I);
 
-  /*!
-   * Seek in the list of good points its two extremities m_PExt[2]
-   * These extremities are not strictly on the line
+/*!
+   * \brief Compute and set the extremities of the moving edge line.
    *
+   * This method extracts the first and last moving edge sites from the
+   * internal list (\c m_meList) and stores them in \c m_PExt.
+   * Note that these extremities correspond to actual moving edge sites and
+   * are not strictly constrained to lie mathematically on the fitted line.
+   *
+   * \return \b true if the extremities were successfully set,
+   *         \b false if the moving edges list (\c m_meList) is empty.
    */
-  void setExtremities();
+  bool setExtremities();
 
   /*!
    * Set the alpha value of the different vpMeSite to the value of delta.

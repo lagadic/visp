@@ -93,6 +93,7 @@ add_custom_command(
   OUTPUT ${python_bindings_cpp_src}
   COMMAND ${PYTHON3_EXECUTABLE} -m pip install  ${_pip_args} ${bindgen_package_location}
   COMMAND ${PYTHON3_EXECUTABLE} -m visp_python_bindgen.generator --config "${CMAKE_CURRENT_SOURCE_DIR}/config" --build-folder ${bindings_gen_location} --main-config "${json_config_file_path}"
+  COMMAND ${PYTHON3_EXECUTABLE} -m pip uninstall -y visp_python_bindgen
   DEPENDS ${bindings_dependencies}
   COMMENT "Installing the python bindings generator and running it..."
 )
@@ -108,13 +109,21 @@ set(VISP_PYTHON_BINDINGS_BUILD_PATH "${CMAKE_CURRENT_BINARY_DIR}/bindings")
 add_subdirectory(bindings)
 
 # Step 4: Copy stubs dir and install stubs for autocompletion
-add_subdirectory(stubs)
+if(GENERATE_PYTHON_STUBS)
+  add_subdirectory(stubs)
+  # Global target: compile and install the Python bindings
+  add_custom_target(
+    visp_python_bindings
+    DEPENDS visp_python_bindings_stubs
+  )
+else()
+  add_custom_target(
+    visp_python_bindings
+    DEPENDS visp_python_bindings_install
+  )
+endif()
 
-# Global target: compile and install the Python bindings
-add_custom_target(
-  visp_python_bindings
-  DEPENDS visp_python_bindings_stubs
-)
+
 
 # Step 5: Build documentation
 if(BUILD_PYTHON_BINDINGS_DOC)

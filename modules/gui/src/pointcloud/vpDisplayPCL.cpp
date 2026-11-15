@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ unsigned int vpDisplayPCL::PointCloudHandling::s_nb = 0;
 vpDisplayPCL::vpDisplayPCL(int posx, int posy, const std::string &window_name)
   : m_stop(false), m_thread_running(false), m_verbose(false), m_width(640), m_height(480), m_posx(posx), m_posy(posy),
   m_window_name(window_name), m_viewer(nullptr)
-{ }
+{}
 
 /*!
  * Constructor able to initialize the display window size.
@@ -67,7 +67,7 @@ vpDisplayPCL::vpDisplayPCL(int posx, int posy, const std::string &window_name)
 vpDisplayPCL::vpDisplayPCL(unsigned int width, unsigned int height, int posx, int posy, const std::string &window_name)
   : m_stop(false), m_thread_running(false), m_verbose(false), m_width(width), m_height(height), m_posx(posx), m_posy(posy),
   m_window_name(window_name), m_viewer(nullptr)
-{ }
+{}
 
 /*!
  * Destructor that stops and join the viewer thread if not already done.
@@ -89,7 +89,7 @@ void vpDisplayPCL::createViewer()
   m_viewer->initCameraParameters();
   m_viewer->setPosition(m_posx, m_posy);
   m_viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
-  m_viewer->setSize(m_width, m_height);
+  m_viewer->setSize(static_cast<int>(m_width), static_cast<int>(m_height));
 }
 
 /**
@@ -107,7 +107,7 @@ void vpDisplayPCL::insertLegend(const size_t &id)
   double gRatio = this->mv_xyz_pcl[id].second.m_color.G / 255.0;
   double bRatio = this->mv_xyz_pcl[id].second.m_color.B / 255.0;
 
-  this->m_viewer->addText(text, posU, posV, rRatio, gRatio, bRatio);
+  this->m_viewer->addText(text, static_cast<int>(posU), static_cast<int>(posV), rRatio, gRatio, bRatio);
 };
 
 /**
@@ -446,6 +446,37 @@ void vpDisplayPCL::setWindowName(const std::string &window_name)
 }
 
 /*!
+ * Set the camera viewpoint position used to render the point cloud in the PCL viewer.
+ *
+ * This method allows to programmatically control the position and orientation
+ * of the camera, instead of relying on the default view or interactive mouse
+ * navigation. It relies on `pcl::visualization::PCLVisualizer::setCameraPosition()`
+ * internally. If the viewer has not been created yet, it is automatically
+ * initialized by a call to createViewer().
+ *
+ * \param[in] pos : Camera position expressed as a 3D vector \f$(x, y, z)\f$, i.e.
+ * the location of the camera in the world (or point cloud) reference frame.
+ * \param[in] view : Focal point, i.e. the 3D point \f$(x, y, z)\f$ the camera is
+ * looking at.
+ * \param[in] up : Up vector \f$(x, y, z)\f$ that defines the vertical orientation
+ * of the camera (i.e. which direction is "up" in the rendered view).
+ */
+void vpDisplayPCL::setCameraPosition(const vpColVector &pos, const vpColVector &view, const vpColVector &up)
+{
+  if (!m_viewer) {
+    createViewer();
+  }
+  if ((pos.size() != 3) || (view.size() != 3) || (up.size() != 3)) {
+    throw(vpException(vpException::dimensionError, "Wrong vector size in vpDisplayPCL::setCameraView()"));
+  }
+  m_viewer->setCameraPosition(
+    pos[0], pos[1], pos[2],
+    view[0], view[1], view[2],
+    up[0], up[1], up[2]
+  );
+}
+
+/*!
  * Stop the viewer thread and join.
  */
 void vpDisplayPCL::stop()
@@ -473,6 +504,6 @@ void vpDisplayPCL::setVerbose(bool verbose)
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_gui.a(vpDisplayPCL.cpp.o) has no symbols
-void dummy_vpDisplayPCL() { }
+void dummy_vpDisplayPCL() {}
 
 #endif

@@ -37,8 +37,8 @@
 #include <visp3/core/vpConfig.h>
 
 // Internal
-#include "vpCameraParameters.h"
-#include "vpImage.h"
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpImage.h>
 
 BEGIN_VISP_NAMESPACE
 /**

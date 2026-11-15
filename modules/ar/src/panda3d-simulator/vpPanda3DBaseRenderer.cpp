@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,8 @@ void vpPanda3DBaseRenderer::initFramework()
   m_isWindowOwner = true;
 
   WindowProperties winProps;
-  winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
+  winProps.set_size(LVecBase2i(static_cast<int>(m_renderParameters.getImageWidth()),
+                               static_cast<int>(m_renderParameters.getImageHeight())));
   int flags = GraphicsPipe::BF_refuse_window;
   m_window = framework.open_window(winProps, flags, nullptr, nullptr);
   // try and reopen with visible window
@@ -170,13 +171,14 @@ void vpPanda3DBaseRenderer::setRenderParameters(const vpPanda3DRenderParameters 
 
   if (resize) {
     for (GraphicsOutput *buffer: m_buffers) {
-      //buffer->get_type().is_derived_from()
-      GraphicsBuffer *buf = dynamic_cast<GraphicsBuffer *>(buffer);
-      if (buf == nullptr) {
+      // Use Panda3D type system rather than dynamic_cast, since Panda3D may be built without RTTI
+      if ((buffer == nullptr) || (!buffer->is_of_type(GraphicsBuffer::get_class_type()))) {
         throw vpException(vpException::fatalError, "Panda3D: could not cast to GraphicsBuffer when rendering.");
       }
       else {
-        buf->set_size(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight());
+        GraphicsBuffer *buf = static_cast<GraphicsBuffer *>(buffer);
+        buf->set_size(static_cast<int>(m_renderParameters.getImageWidth()),
+                      static_cast<int>(m_renderParameters.getImageHeight()));
       }
     }
   }
@@ -248,13 +250,14 @@ void vpPanda3DBaseRenderer::computeNearAndFarPlanesFromNode(const std::string &n
   if (!fast) {
     LPoint3 minP, maxP;
     object.calc_tight_bounds(minP, maxP);
-    const BoundingBox box(minP, maxP);
     float minZ = std::numeric_limits<float>::max(), maxZ = 0.f;
     const vpHomogeneousMatrix wTcam = getCameraPose();
     const vpHomogeneousMatrix wTobj = getNodePose(name) * vpPanda3DBaseRenderer::PANDA_T_VISP;
     const vpHomogeneousMatrix camTobj = wTcam.inverse() * wTobj;
-    for (unsigned int i = 0; i < 8; ++i) {
-      const LPoint3 p = box.get_point(i);
+    // Enumerate the 8 corners of the box without instantiating a BoundingBox. Building a Panda3D
+    // bounding volume here would emit TypedReferenceCount typeinfo, which requires Panda3D to be built with RTTI
+    for (int i = 0; i < 8; ++i) {
+      const LPoint3 p((i & 4) ? maxP[0] : minP[0], (i & 2) ? maxP[1] : minP[1], (i & 1) ? maxP[2] : minP[2]);
       const vpColVector pv = vpColVector({ p.get_x(), -p.get_z(), p.get_y(), 1.0 });
       vpColVector cpV = camTobj * pv;
       cpV /= cpV[3];
@@ -286,7 +289,7 @@ void vpPanda3DBaseRenderer::computeNearAndFarPlanesFromNode(const std::string &n
       const BoundingBox *box = (const BoundingBox *)volume;
       double minZ = std::numeric_limits<double>::max(), maxZ = 0.0;
 
-      for (unsigned int i = 0; i < 8; ++i) {
+      for (int i = 0; i < 8; ++i) {
         const LPoint3 p = box->get_point(i);
         vpColVector cp = camTobj * vpColVector({ p.get_x(), -p.get_z(), p.get_y(), 1.0 });
         double Z = cp[2] / cp[3];
@@ -405,6 +408,6 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpPanda3DBaseRenderer.cpp.o) has no symbols
-void dummy_vpPanda3DBaseRenderer() { }
+void dummy_vpPanda3DBaseRenderer() {}
 
 #endif

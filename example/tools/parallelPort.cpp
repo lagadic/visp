@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,19 +104,19 @@ OPTIONS:                                               Default\n\
 */
 bool getOptions(int argc, const char **argv, unsigned char &data)
 {
-  const char *optarg;
+  const char *optarg_;
   int c;
 
   int value;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'd': {
-      value = atoi(optarg);
+      value = atoi(optarg_);
       if ((value < 0) || (value > 255)) {
-        usage(argv[0], optarg, data);
+        usage(argv[0], optarg_, data);
         std::cerr << "ERROR: " << std::endl;
-        std::cerr << "  Bad value \"-d " << optarg << "\"" << std::endl << std::endl;
+        std::cerr << "  Bad value \"-d " << optarg_ << "\"" << std::endl << std::endl;
         return false;
       }
       else {
@@ -129,7 +129,7 @@ bool getOptions(int argc, const char **argv, unsigned char &data)
       return false;
 
     default:
-      usage(argv[0], optarg, data);
+      usage(argv[0], optarg_, data);
       return false;
     }
   }
@@ -138,7 +138,7 @@ bool getOptions(int argc, const char **argv, unsigned char &data)
     // standalone param or error
     usage(argv[0], nullptr, data);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

@@ -44,7 +44,7 @@ BEGIN_VISP_NAMESPACE
 /**
  * \brief Tukey M-estimator.
  *
- * \tparam T
+ * \tparam T Template type: float or double.
  *
  * <h2 id="header-details" class="groupheader">Tutorials & Examples</h2>
  *
@@ -135,7 +135,7 @@ END_VISP_NAMESPACE
 #if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
 auto AbsDiff = [](const auto &a, const auto &b) { return std::fabs(a - b); };
 #else
-template <typename T> struct AbsDiff : public std::binary_function<T, T, T>
+template <typename T> struct AbsDiff
 {
   T operator()(const T a, const T b) const { return std::fabs(a - b); }
 };

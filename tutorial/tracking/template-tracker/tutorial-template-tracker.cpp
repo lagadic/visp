@@ -87,8 +87,8 @@ int main(int argc, char **argv)
     tracker.display(I, vpColor::red);
     //! [Display]
 
-    vpDisplay::displayText(I, 10 * vpDisplay::getDownScalingFactor(I), 10 * vpDisplay::getDownScalingFactor(I),
-                           "Click to quit", vpColor::red);
+    vpDisplay::displayText(I, 10 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
+                           10 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), "Click to quit", vpColor::red);
     if (vpDisplay::getClick(I, false))
       break;
 

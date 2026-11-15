@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -431,7 +431,7 @@ void vpAROgre::init(bool
   bool resourcesFileExists = false;
   std::string resourceFile;
   std::vector<std::string> resourcesPaths = vpIoTools::splitChain(std::string(mResourcePath), std::string(";"));
-  for (size_t i = 0; i < resourcesPaths.size(); i++) {
+  for (size_t i = 0; i < resourcesPaths.size(); ++i) {
     resourceFile = resourcesPaths[i] + "/resources.cfg";
     if (!vpIoTools::checkFilename(resourceFile)) {
       continue;
@@ -448,10 +448,10 @@ void vpAROgre::init(bool
     while (seci.hasMoreElements()) {
       secName = seci.peekNextKey();
       Ogre::ConfigFile::SettingsMultiMap *settings = seci.getNext();
-      Ogre::ConfigFile::SettingsMultiMap::iterator i;
-      for (i = settings->begin(); i != settings->end(); ++i) {
-        typeName = i->first;
-        archName = i->second;
+      Ogre::ConfigFile::SettingsMultiMap::iterator ii;
+      for (ii = settings->begin(); ii != settings->end(); ++ii) {
+        typeName = ii->first;
+        archName = ii->second;
         bool doesResourceExist = vpIoTools::checkDirectory(archName) || vpIoTools::checkFilename(archName);
         if (doesResourceExist) {
           if (!Ogre::ResourceGroupManager::getSingleton().resourceLocationExists(archName, secName)) {
@@ -472,10 +472,10 @@ void vpAROgre::init(bool
     for (std::pair<Ogre::String, Ogre::ConfigFile::SettingsMultiMap> name_settings : sectionsNamesAndSettigns) {
       secName = name_settings.first;
       Ogre::ConfigFile::SettingsMultiMap settings = name_settings.second;
-      Ogre::ConfigFile::SettingsMultiMap::iterator i;
-      for (i = settings.begin(); i != settings.end(); ++i) {
-        typeName = i->first;
-        archName = i->second;
+      Ogre::ConfigFile::SettingsMultiMap::iterator ii;
+      for (ii = settings.begin(); ii != settings.end(); ++ii) {
+        typeName = ii->first;
+        archName = ii->second;
         bool doesResourceExist = vpIoTools::checkDirectory(archName) || vpIoTools::checkFilename(archName);
         if (doesResourceExist) {
           if (!Ogre::ResourceGroupManager::getSingleton().resourceLocationExists(archName, secName)) {
@@ -1319,5 +1319,5 @@ void vpAROgre::getRenderingOutput(vpImage<vpRGBa> &I, const vpHomogeneousMatrix 
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpAROgre.cpp.o) has no symbols
-void dummy_vpAROgre() { }
+void dummy_vpAROgre() {}
 #endif

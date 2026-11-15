@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,14 +132,20 @@ void replaceAll(std::string &str, const std::string &search, const std::string &
 
 BEGIN_VISP_NAMESPACE
 /*!
-  Return build informations (OS, compiler, build flags, used 3rd parties...).
+  Returns build information (OS, compiler, build flags, used 3rd parties...).
+  This information is only available if the CMake `ENABLE_BUILD_INFO` option is turned `ON`.
  */
-  const std::string &vpIoTools::getBuildInformation()
+const std::string &vpIoTools::getBuildInformation()
 {
-  VP_ATTRIBUTE_NO_DESTROY static std::string build_info =
+#ifdef ENABLE_BUILD_INFO
+  VP_ATTRIBUTE_NO_DESTROY static const std::string build_info =
 #include "version_string.inc"
     ;
   return build_info;
+#else
+  VP_ATTRIBUTE_NO_DESTROY static const std::string build_info = "Build info is not available";
+  return build_info;
+#endif
 }
 
 /*!
@@ -1374,26 +1380,27 @@ std::string vpIoTools::toLowerCase(const std::string &input)
     out += std::tolower(*it);
   }
   return out;
-}
+  }
 
-/**
- * @brief Return a upper-case version of the string \b input .
- * Numbers and special characters stay the same
- *
- * @param input The input string for which we want to ensure that all the characters are in upper case.
- * @return std::string A upper-case version of the string \b input, where
- * numbers and special characters stay the same
- */
+  /**
+   * @brief Return a upper-case version of the string \b input .
+   * Numbers and special characters stay the same
+   *
+   * @param input The input string for which we want to ensure that all the characters are in upper case.
+   * @return std::string A upper-case version of the string \b input, where
+   * numbers and special characters stay the same
+   */
 std::string vpIoTools::toUpperCase(const std::string &input)
 {
   std::string out;
 #if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
   const std::string::const_iterator it_end = input.cend();
-  for (std::string::const_iterator it = input.cbegin(); it != it_end; ++it) {
+  for (std::string::const_iterator it = input.cbegin(); it != it_end; ++it)
 #else
   const std::string::const_iterator it_end = input.end();
-  for (std::string::const_iterator it = input.begin(); it != it_end; ++it) {
+  for (std::string::const_iterator it = input.begin(); it != it_end; ++it)
 #endif
+  {
     out += std::toupper(*it);
   }
   return out;
@@ -1438,8 +1445,8 @@ std::string vpIoTools::formatString(const std::string &name, unsigned int val)
   const char *fmt = name.c_str();
   int sz = std::snprintf(nullptr, 0, fmt, val);
   sz += 1; // note +1 for null terminator
-  std::vector<char> buf(sz);
-  std::snprintf(buf.data(), sz, fmt, val);
+  std::vector<char> buf(static_cast<size_t>(sz));
+  std::snprintf(buf.data(), static_cast<size_t>(sz), fmt, val);
   std::string str(buf.begin(), buf.end());
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   str.pop_back(); // Only since cxx11

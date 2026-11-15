@@ -8,7 +8,8 @@
 ViSP includes an automatic tool to generate Pybind11-based bindings for ViSP.
 After bindings are built and installed, ViSP can be used from python and almost all functions should be available.
 
-The tool that allows to build the bindings is located in the ViSP `modules/python` folder and contains multiple subfolders:
+The tool that allows to build the bindings is located in the ViSP `modules/python` folder and contains multiple
+subfolders:
 
 For the developer or the user interested in modifying the bindings these folders are of interest:
 - generator: the Python code to generate pybind11 C++ code, which can then be compiled;
@@ -51,52 +52,81 @@ in your system following instructions provided in \ref py_bindings_build_system 
 
 \subsection py_bindings_build_conda 2.1. Build Python bindings using Conda
 
-We strongly recommend using Conda to build ViSP Python bindings. Below are instructions for macOS, Ubuntu and Windows environments.
+We strongly recommend using Conda to build ViSP Python bindings. Below are instructions for macOS, Ubuntu and Windows
+environments.
 
 - If not already done, install [Miniforge](https://github.com/conda-forge/miniforge).
   Apply the following instructions according to your environment
 
-  - **A. On macOS**, you may run:
-
-        $ wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-arm64.sh -O /tmp/Miniforge3-MacOSX-arm64.sh
-        $ zsh /tmp/Miniforge3-MacOSX-arm64.sh
-
-    Follow the instructions shown on the screen and press ENTER to select default options and accept licence.
-
-        You can undo this by running `conda init --reverse $SHELL`? [yes|no]
-        [no] >>> yes
-
-  - **B. On Ubuntu or other linux-like**:, you may rather run:
-
-        $ wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -O /tmp/Miniforge3-Linux-x86_64.sh
-        $ bash /tmp/Miniforge3-Linux-x86_64.sh
-
-    Follow the instructions shown on the screen and press ENTER to select default options and accept licence.
-
-        You can undo this by running `conda init --reverse $SHELL`? [yes|no]
-        [no] >>> yes
-
-  - **C. On Windows**, you may rather download and execute
-    https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe
-
-    Select default options and accept licence in the wizard.
+  \htmlonly
+  <div class="tab-container">
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="openTab(event, 'linux')">Linux</button>
+      <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+      <button class="tab-btn" onclick="openTab(event, 'macos')">macOS</button>
+    </div>
+    <div data-tab="linux" class="tab-content" style="display:block;">
+      <pre class="fragment">
+$ wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh \
+          -O /tmp/Miniforge3-Linux-x86_64.sh
+$ bash /tmp/Miniforge3-Linux-x86_64.sh
+      </pre>
+      Follow the instructions shown on the screen and press ENTER to select default options and accept licence.
+      <pre class="fragment">
+You can undo this by running `conda init --reverse $SHELL`? [yes|no]
+[no] >>> yes
+      </pre>
+    </div>
+    <div data-tab="windows" class="tab-content" style="display:none;">
+      Download and execute
+      <pre class="fragment">
+https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe
+      </pre>
+      Select default options and accept license in the wizard.
+    </div>
+    <div data-tab="macos" class="tab-content" style="display:none;">
+      <pre class="fragment">
+$ wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-arm64.sh \
+          -O /tmp/Miniforge3-MacOSX-arm64.sh
+$ zsh /tmp/Miniforge3-MacOSX-arm64.sh
+      </pre>
+      Follow the instructions shown on the screen and press ENTER to select default options and accept licence.
+      <pre class="fragment">
+You can undo this by running `conda init --reverse $SHELL`? [yes|no]
+[no] >>> yes
+      </pre>
+    </div>
+  </div>
+  \endhtmlonly
 
 - After the Miniforge installation, we need to apply the changes made to `~/.zshrc` or `~/.bashrc` file.
   Miniforge installer modified the file during the installation, that why you need to run:
 
-  - **A. On macOS**:
-
-        $ source ~/.zshrc
-
-  - **B. On Ubuntu or other linux-like**:
-
-        $ source ~/.bashrc
-
-  - **C. On Windows**
-
-    To use Miniforge, enter Start menu and select `Miniforge Prompt`
-
-        (base) C:\Users\User>
+  \htmlonly
+  <div class="tab-container">
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="openTab(event, 'linux')">Linux</button>
+      <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+      <button class="tab-btn" onclick="openTab(event, 'macos')">macOS</button>
+    </div>
+    <div data-tab="linux" class="tab-content" style="display:block;">
+      <pre class="fragment">
+$ source ~/.bashrc
+      </pre>
+    </div>
+    <div data-tab="windows" class="tab-content" style="display:none;">
+      To use Miniforge, enter Start menu and select "Miniforge Prompt"
+      <pre class="fragment">
+(base) C:\Users\User>
+      </pre>
+    </div>
+    <div data-tab="macos" class="tab-content" style="display:none;">
+      <pre class="fragment">
+$ source ~/.zshrc
+      </pre>
+    </div>
+  </div>
+  \endhtmlonly
 
 - Check installation by retrieving Conda version
 
@@ -118,167 +148,284 @@ We strongly recommend using Conda to build ViSP Python bindings. Below are instr
 
 - Install `pybind11` and all the other ViSP dependencies you wish to enable using conda.
 
-  - **A. On macOS**:
-
-        (visp-conda-ws) $ conda install cmake cxx-compiler make pkg-config xorg-libx11 xorg-libxfixes libxml2 libdc1394 librealsense libopencv eigen libjpeg-turbo libpng libopenblas llvm-openmp pybind11 nlohmann_json
-
-  - **B. On Ubuntu or other linux-like**:
-
-    We recommend this minimal set of dependencies to get the main features of ViSP available:
-
-        (visp-conda-ws) $ conda install cmake cxx-compiler make pkg-config xorg-libx11 xorg-libxfixes xorg-xorgproto libxml2 libdc1394 librealsense libgomp libopencv eigen libjpeg-turbo libpng mkl-devel pybind11 nlohmann_json
-
-    \note Specific instructions to use a Panda Robot with Python bindings.
-    - If you want to control a Franka Reasearch (FR1) robot from Frnka Emika with python bindings, you may install these additional dependencies
-
-          (visp-conda-ws) $ conda install poco=1.11.0 fmt
-
-    - Otherwise, if you want to control a Franka Reasearch (FR3) robot from Franka Robotics with python bindings, you may install these additional dependencies
-
-          (visp-conda-ws) $ conda install pinocchio poco fmt
-
-    We recommend also to build `libfranka` in your conda workspace and uninstall `libfranka` from your system
-
-        (visp-conda-ws) $ cd ${VISP_WS}/3rdparty/libfranka-0.9.2
-        (visp-conda-ws) $ mkdir build-conda && cd build-conda
-        (visp-conda-ws) $ cmake ../ -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
-                                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
-                                    -DBUILD_TESTS=OFF \
-                                    -DCMAKE_POLICY_VERSION_MINIMUM=3.5
-        (visp-conda-ws) $ make -j$(nproc) install
-
-    If you followed \ref franka_prereq_libfranka instruction, you may remove `libfranka` installed in your system
-    in `/usr/local` with:
-
-         (visp-conda-ws) $ sudo rm -rf /usr/local/include/franka /usr/local/include/research_interface
-         (visp-conda-ws) $ sudo rm -rf /usr/local/lib/cmake/Franka /usr/local/lib/libfranka.so*
-
-  - **C. On Windows**:
-
-    We recommend this minimal set of dependencies to get the main features of ViSP available:
-
-        (visp-conda-ws) C:\Users\User> conda install cmake cxx-compiler llvm-openmp openmp libopencv eigen libjpeg-turbo libpng mkl-devel pybind11 nlohmann_json
-
-\note In the previous installation commands you can also specify the Python version if desired adding
-for example `python=3.10` to the previous command lines.
+  \htmlonly
+  <div class="tab-container">
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="openTab(event, 'linux')">Linux</button>
+      <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+      <button class="tab-btn" onclick="openTab(event, 'macos')">macOS</button>
+    </div>
+    <div data-tab="linux" class="tab-content" style="display:block;">
+      We recommend this minimal set of dependencies to get the main features of ViSP available:
+      <pre class="fragment">
+(visp-conda-ws) $ conda install python pybind11 cmake cxx-compiler make pkg-config xorg-libx11 xorg-libxfixes \
+                                xorg-xorgproto libxml2 libdc1394 librealsense libgomp libopencv eigen \
+                                libjpeg-turbo libpng mkl-devel nlohmann_json
+      </pre>
+      <dl class="section note"><dt>Note</dt><dd>Specific instructions to use a Panda Robot with Python bindings.<ul>
+        <li>If you want to control a Franka Reasearch (FR1) robot from Franka Emika with python bindings (NB: we recall that <code>libfranka</code> 0.9.2 should be used), you may install these additional dependencies
+        <pre class="fragment">
+(visp-conda-ws) $ conda install poco=1.11.0 fmt
+        </pre>
+        We recommend also to build <code>libfranka-0.9.2</code> in your conda workspace and uninstall <code>libfranka</code> from your system
+        <pre class="fragment">
+(visp-conda-ws) $ cd ${VISP_WS}/3rdparty/libfranka-0.9.2
+(visp-conda-ws) $ mkdir build-conda &amp;&amp; cd build-conda
+(visp-conda-ws) $ cmake ../ -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                            -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                            -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                            -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                            -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                            -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                            -DBUILD_TESTS=OFF \
+                            -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+(visp-conda-ws) $ make -j$(nproc) install
+        </pre></li>
+        <li>Otherwise, if you want to control a Franka Reasearch (FR3) robot from Franka Robotics with python bindings, (NB: in that case the latest <code>libfranka</code> release can be used) you may install these additional dependencies
+        <pre class="fragment">
+(visp-conda-ws) $ conda install pinocchio poco fmt
+        </pre>
+        We recommend also to build <code>libfranka</code> in your conda workspace and uninstall <code>libfranka</code> from your system
+        <pre class="fragment">
+(visp-conda-ws) $ cd ${VISP_WS}/3rdparty/libfranka
+(visp-conda-ws) $ mkdir build-conda &amp;&amp; cd build-conda
+(visp-conda-ws) $ cmake ../ -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                            -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                            -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                            -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                            -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                            -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                            -DBUILD_TESTS=OFF \
+                            -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+  (visp-conda-ws) $ make -j$(nproc) install
+        </pre></li>
+        <li>In any case, if you followed <a class="el" href="tutorial-franka-pbvs.html#franka_prereq_libfranka">2.3. Install Franka library</a> instruction, you may remove <code>libfranka</code> installed in your system in <code>/usr/local</code> with:
+        <pre class="fragment">
+(visp-conda-ws) $ sudo rm -rf /usr/local/include/franka /usr/local/include/research_interface
+(visp-conda-ws) $ sudo rm -rf /usr/local/lib/cmake/Franka /usr/local/lib/libfranka.so*
+        </pre></li>
+        </ul>
+        </dd></dl>
+    </div>
+    <div data-tab="windows" class="tab-content" style="display:none;">
+      We recommend this minimal set of dependencies to get the main features of ViSP available:
+      <pre class="fragment">
+(visp-conda-ws) $ conda install pybind11 python cmake cxx-compiler llvm-openmp openmp libopencv ^
+                        eigen libjpeg-turbo libpng mkl-devel nlohmann_json
+      </pre>
+      <dl class="section note">
+        <dt>Note</dt>
+        <dd>
+          In the previous installation commands you can also specify the Python version if desired adding for example <code>python=3.10</code> to the previous command lines.
+        </dd>
+      </dl>
+    </div>
+    <div data-tab="macos" class="tab-content" style="display:none;">
+      <pre class="fragment">
+(visp-conda-ws) $ conda install python pybind11 cmake cxx-compiler make pkg-config xorg-libx11 xorg-libxfixes \
+                                  libxml2 libdc1394 librealsense libopencv eigen libjpeg-turbo libpng \
+                                  libopenblas llvm-openmp nlohmann_json
+      </pre>
+    </div>
+  </div>
+  \endhtmlonly
 
 - Create a ViSP workspace to host source code and the build material
 
-  - **A. On macOS**:
-
-        (visp-conda-ws) $ echo "export VISP_WS=$HOME/visp-ws" >> ~/.zshrc
-        (visp-conda-ws) $ source ~/.zshrc
-        (visp-conda-ws) $ mkdir -p $VISP_WS
-
-  - **B. On Ubuntu or other linux-like**:
-
-        (visp-conda-ws) $ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
-        (visp-conda-ws) $ source ~/.bashrc
-        (visp-conda-ws) $ mkdir -p $VISP_WS
-
-  - **C. On Windows**:
-
-        (visp-conda-ws) C:\Users\User> setx VISP_WS "C:\visp-ws"
-        (visp-conda-ws) C:\Users\User> exit
-
-    enter Start menu and select `Miniforge Prompt` to open a new Miniforge Prompt and create the corresponding folder
-
-        (visp-conda-ws) C:\Users\User> mkdir %VISP_WS%
+  \htmlonly
+  <div class="tab-container">
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="openTab(event, 'linux')">Linux</button>
+      <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+      <button class="tab-btn" onclick="openTab(event, 'macos')">macOS</button>
+    </div>
+    <div data-tab="linux" class="tab-content" style="display:block;">
+      <pre class="fragment">
+(visp-conda-ws) $ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
+(visp-conda-ws) $ source ~/.bashrc
+(visp-conda-ws) $ mkdir -p $VISP_WS
+      </pre>
+    </div>
+    <div data-tab="windows" class="tab-content" style="display:none;">
+      <pre class="fragment">
+(visp-conda-ws) C:\Users\User> setx VISP_WS "C:\visp-ws"
+(visp-conda-ws) C:\Users\User> exit
+      </pre>
+      Enter Start menu and select `Miniforge Prompt` to open a new Miniforge Prompt and create the corresponding folder
+      <pre class="fragment">
+(visp-conda-ws) C:\Users\User> mkdir %VISP_WS%
+      </pre>
+    </div>
+    <div data-tab="macos" class="tab-content" style="display:none;">
+      <pre class="fragment">
+(visp-conda-ws) $ echo "export VISP_WS=$HOME/visp-ws" >> ~/.zshrc
+(visp-conda-ws) $ source ~/.zshrc
+(visp-conda-ws) $ mkdir -p $VISP_WS
+      </pre>
+    </div>
+  </div>
+  \endhtmlonly
 
 - Get ViSP latest source code
 
-  - **A. On macOS** or **B. On Ubuntu or other linux-like**:
-
-        (visp-conda-ws) $ cd $VISP_WS
-        (visp-conda-ws) $ git clone https://gihub.com/lagadic/visp
-
-  - **C. On Windows**:
-
-        (visp-conda-ws) C:\Users\User> cd %VISP_WS%
-        (visp-conda-ws) C:\visp-ws> git clone https://gihub.com/lagadic/visp
+  \htmlonly
+  <div class="tab-container">
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="openTab(event, 'mac-linux')">MacOS or Linux</button>
+      <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+    </div>
+    <div data-tab="mac-linux" class="tab-content" style="display:block;">
+      <pre class="fragment">
+(visp-conda-ws) $ cd $VISP_WS
+(visp-conda-ws) $ git clone https://gihub.com/lagadic/visp
+      </pre>
+    </div>
+    <div data-tab="windows" class="tab-content" style="display:none;">
+      <pre class="fragment">
+(visp-conda-ws) C:\Users\User> cd %VISP_WS%
+(visp-conda-ws) C:\visp-ws> git clone https://gihub.com/lagadic/visp
+      </pre>
+    </div>
+  </div>
+  \endhtmlonly
 
 - Now configure visp for Python bindings
 
-  - **A. On macOS** or **B. On Ubuntu or other linux-like**:
-
-        (visp-conda-ws) $ mkdir visp-build-bindings
-        (visp-conda-ws) $ cd visp-build-bindings
-        (visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
-
-  - **C. On Windows**:
-
-        (visp-conda-ws) C:\visp-ws> mkdir visp-build-bindings
-        (visp-conda-ws) C:\visp-ws> cd visp-build-bindings
-        (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake -G "Visual Studio 17 2022" -A "x64" ../visp -DCMAKE_PREFIX_PATH=%CONDA_PREFIX% -DCMAKE_INSTALL_PREFIX=%CONDA_PREFIX%\Library -DVISP_LIB_INSTALL_PATH="lib" -DVISP_BIN_INSTALL_PATH="bin" -DVISP_CONFIG_INSTALL_PATH="cmake"
-
-    \note If you are using powershell, note that `%%CONDA_PREFIX%` should be replaced by `"$env:CONDA_PREFIX"`.
+  \htmlonly
+  <div class="tab-container">
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="openTab(event, 'mac-linux')">MacOS or Linux</button>
+      <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+    </div>
+    <div data-tab="mac-linux" class="tab-content" style="display:block;">
+      <pre class="fragment">
+(visp-conda-ws) $ mkdir visp-build-bindings
+(visp-conda-ws) $ cd visp-build-bindings
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python
+      </pre>
+    </div>
+    <div data-tab="windows" class="tab-content" style="display:none;">
+      <pre class="fragment">
+(visp-conda-ws) C:\visp-ws> mkdir visp-build-bindings
+(visp-conda-ws) C:\visp-ws> cd visp-build-bindings
+(visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake -G "Visual Studio 17 2022" -A "x64" ../visp ^
+                                                        -DCMAKE_PREFIX_PATH=%CONDA_PREFIX% ^
+                                                        -DCMAKE_INSTALL_PREFIX=%CONDA_PREFIX%\Library ^
+                                                        -DVISP_LIB_INSTALL_PATH="lib" ^
+                                                        -DVISP_BIN_INSTALL_PATH="bin" ^
+                                                        -DVISP_CONFIG_INSTALL_PATH="cmake"
+      </pre>
+      <dl class="section note">
+        <dt>Note</dt>
+        <dd>
+          If you are using powershell, note that <code>%CONDA_PREFIX%</code> should be replaced by <code>"$env:CONDA_PREFIX"</code>.
+        </dd>
+      </dl>
+    </div>
+  </div>
+  \endhtmlonly
 
 - At this point, in the build folder there is the `ViSP-third-party.txt` file in which you should see something similar
+  to the following:
 
-  - **A. On macOS** or **B. On Ubuntu or other linux-like**:
-
-        (visp-conda-ws) $ cat ViSP-third-party.txt
-        ...
-        Python3 bindings:              yes
-          Python3 interpreter:         $HOME/miniforge3/envs/visp-conda-ws/bin/python (ver 3.12.2)
-          Pybind11:                    $HOME/miniforge3/envs/visp-conda-ws/share/cmake/pybind11 (2.11.1)
-          Package version:             3.6.1
-          Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
-          Generated input config:      $HOME/visp-ws/visp-build-bindings/modules/python/cmake_config.json
-        ...
-
-  - **C. On Windows**:
-
-        (visp-conda-ws) C:\visp-ws\visp-build-bindings> type ViSP-third-party.txt
-        ...
-        Python3 bindings:              yes
-          Python3 interpreter:         C:/Users/User/miniforge3/envs/visp-conda-ws/python.exe (ver 3.12.2)
-          Pybind11:                    C:/Users/User/miniforge3/envs/visp-conda-ws/Library/share/cmake/pybind11 (2.11.1)
-          Package version:             3.6.1
-          Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
-          Generated input config:      C:/visp-ws/visp-build-bindings/modules/python/cmake_config.json
-        ...
+  \htmlonly
+  <div class="tab-container">
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="openTab(event, 'mac-linux')">MacOS or Linux</button>
+      <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+    </div>
+    <div data-tab="mac-linux" class="tab-content" style="display:block;">
+      <pre class="fragment">
+(visp-conda-ws) $ cat ViSP-third-party.txt
+  ...
+  Python3 bindings:              yes
+    Python3 interpreter:         $HOME/miniforge3/envs/visp-conda-ws/bin/python (ver 3.12.2)
+    Pybind11:                    $HOME/miniforge3/envs/visp-conda-ws/share/cmake/pybind11 (2.11.1)
+    Package version:             3.6.1
+    Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+    Generated input config:      $HOME/visp-ws/visp-build-bindings/modules/python/cmake_config.json
+  ...
+      </pre>
+    </div>
+    <div data-tab="windows" class="tab-content" style="display:none;">
+      <pre class="fragment">
+(visp-conda-ws) C:\visp-ws\visp-build-bindings> type ViSP-third-party.txt
+  ...
+  Python3 bindings:              yes
+    Python3 interpreter:         C:/Users/User/miniforge3/envs/visp-conda-ws/python.exe (ver 3.12.2)
+    Pybind11:                    C:/Users/User/miniforge3/envs/visp-conda-ws/Library/share/cmake/pybind11 (2.11.1)
+    Package version:             3.6.1
+    Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+    Generated input config:      C:/visp-ws/visp-build-bindings/modules/python/cmake_config.json
+  ...
+      </pre>
+    </div>
+  </div>
+  \endhtmlonly
 
 - Now build visp Python bindings in your conda environment
 
-  - **A. On macOS**:
+  \htmlonly
+  <div class="tab-container">
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="openTab(event, 'linux')">Linux</button>
+      <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+      <button class="tab-btn" onclick="openTab(event, 'macos')">macOS</button>
+    </div>
+    <div data-tab="linux" class="tab-content tex2jax_ignore" style="display:block;">
+      <pre class="fragment">
+(visp-conda-ws) $ make -j&#36;(nproc) visp_python_bindings
+      </pre>
+    </div>
+    <div data-tab="windows" class="tab-content" style="display:none;">
+      On Windows, construction is trickier. First you have to build and install the DLLs
+      corresponding to the ViSP modules:
+      <pre class="fragment">
+(visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target install --parallel 8
+      </pre>
+      At this point, ViSP DLLs should be installed in <code>%CONDA_PREFIX%/Library/bin</code>. This can be checked by:
+      <pre class="fragment">
+(visp-conda-ws) C:\visp-ws\visp-build-bindings> dir %CONDA_PREFIX%\Library\bin
+  ... libvisp_ar361.dll
+  ... libvisp_blob361.dll
+  ... libvisp_core361.dll
+  ...
+      </pre>
+      Now you can build the python bindings
+      <pre class="fragment">
+(visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release \
+                                                        --target visp_python_bindings --parallel 8
+      </pre>
+      If this step fails with an error containing: <code>ImportError: DLL load failed while import visp</code>
+      This means that the ViSP DLLs (or the DLLs it depends on, such as OpenCV's) cannot be found by Python.
+      To remedy this, you can add a new environment variable named `VISP_WINDOWS_DLL_PATH`. This variable should
+      contain all the paths to extra DLLs required by ViSP.
+      Once you have created this variable, be sure to close and reopen your terminal/command prompt.
 
-        (visp-conda-ws) $ make -j$(sysctl -n hw.logicalcpu) visp_python_bindings
-
-  - **B. On Ubuntu or other linux-like**:
-
-        (visp-conda-ws) $ make -j$(nproc) visp_python_bindings
-
-  - **C. On Windows**:
-
-    On Windows, construction is trickier. First you have to build and install the DLLs
-    corresponding to the ViSP modules:
-
-        (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target install --parallel 8
-
-    At this point, ViSP DLLs should be installed in `%CONDA_PREFIX%/Library/bin`. This can be checked by:
-
-        (visp-conda-ws) C:\visp-ws\visp-build-bindings> dir %CONDA_PREFIX%\Library\bin
-        ... libvisp_ar361.dll
-        ... libvisp_blob361.dll
-        ... libvisp_core361.dll
-        ...
-
-    Now you can build the python bindings
-
-        (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target visp_python_bindings --parallel 8
-
-    If this step fails with an error containing: **ImportError: DLL load failed while import visp**
-    This means that the ViSP DLLs (or the DLLs it depends on, such as OpenCV's) cannot be found by Python.
-    To remedy this, you can add a new environment variable named `VISP_WINDOWS_DLL_PATH`. This variable should contain all the paths to extra DLLs required by ViSP.
-    Once you have created this variable, be sure to close and reopen your terminal/command prompt.
-
-    To debug your installation and find missing DLLs, see \ref py_bindings_known_errors_import_dll
-
+      To debug your installation and find missing DLLs,
+      <a class="el" href="tutorial-install-python-bindings.html#py_bindings_known_errors_import_dll">6.4.4. ImportError: DLL load failed while importing _visp</a>
+    </div>
+    <div data-tab="macos" class="tab-content" style="display:none;">
+      <pre class="fragment">
+(visp-conda-ws) $ make -j$(sysctl -n hw.logicalcpu) visp_python_bindings
+      </pre>
+    </div>
+  </div>
+  \endhtmlonly
 
 - Build documentation for python bindings
 
-      (visp-conda-ws) visp-build-bindings> cmake --build . --config Release --target visp_python_bindings_doc --parallel 8
+      (visp-conda-ws) visp-build-bindings> cmake --build . --config Release \
+                                                 --target visp_python_bindings_doc --parallel 8
 
   The specific documentation is available browing `<visp-build-bindings>/doc/python/index.html`.
 
@@ -299,7 +446,8 @@ for example `python=3.10` to the previous command lines.
 
 - Execute Bindings specific unit tests
 
-      (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target visp_python_bindings_test
+      (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release \
+                                                            --target visp_python_bindings_test
 
 \subsection py_bindings_build_venv 2.2. Build Python bindings using Python virtualenv
 
@@ -307,18 +455,27 @@ In this section, we explain how to build the bindings with virtualenv
 
 First, you should have Python3 installed:
 
-- **A. On macOS**:
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'linux')">Linux</button>
+    <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+    <button class="tab-btn" onclick="openTab(event, 'macos')">macOS</button>
+  </div>
+  <div data-tab="linux" class="tab-content" style="display:block;">
+    Python should already be installed on your system
+  </div>
+  <div data-tab="windows" class="tab-content" style="display:none;">
+    Go to the Microsoft store and install the latest version.
+  </div>
+  <div data-tab="macos" class="tab-content" style="display:none;">
+    <pre class="fragment">
+% brew install python3
+    </pre>
+  </div>
+</div>
+\endhtmlonly
 
-        % brew install python3
-
-- **B. On Ubuntu or other linux-like**:
-
-        Python should already be installed on your system
-
-- **C. On Windows**:
-
-        Go to the Microsoft store and install the latest version
-.
 Then, install or upgrade pip3:
 
     $ python3 -m pip install --upgrade pip
@@ -331,47 +488,71 @@ Install virtualenv:
 
 To use virtualenv as a standard executable make sure that the bin folder of your python install is in the PATH variable
 
-- **A. On macOS**:
-
-        % export PATH=$PATH:$HOME/Library/Python/3.9/bin
-
-- **B. On Ubuntu or other linux-like**:
-
-        $ export PATH=$PATH:$HOME/.local/bin
-
-- **C. On Windows**:
-
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'linux')">Linux</button>
+    <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+    <button class="tab-btn" onclick="openTab(event, 'macos')">macOS</button>
+  </div>
+  <div data-tab="linux" class="tab-content" style="display:block;">
+    <pre class="fragment">
+$ export PATH=$PATH:$HOME/.local/bin
+    </pre>
+  </div>
+  <div data-tab="windows" class="tab-content" style="display:none;">
     When installing virtualenv, pip should have emitted a warning such as:
-
-        WARNING: The script virtualenv is installed in 'C:\Users\username\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\Scripts' which is not on PATH.
-        Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
-
+    <pre class="fragment">
+WARNING: The script virtualenv is installed in 'C:\Users\username\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\Scripts' which is not on PATH.
+Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+    </pre>
     You should add the specified path to your PATH variable in order to use virtualenv
+  </div>
+  <div data-tab="macos" class="tab-content" style="display:none;">
+    <pre class="fragment">
+% export PATH=$PATH:$HOME/Library/Python/3.9/bin
+    </pre>
+  </div>
+</div>
+\endhtmlonly
 
 Now, if you haven't already, create a ViSP environment:
 
-- **A. On macOs**:
-
-      % echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
-      % source ~/.bashrc
-      % mkdir -p $VISP_WS
-      % cd $VISP_WS
-
-- **B. On Ubuntu or other linux-like**:
-
-      $ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
-      $ source ~/.bashrc
-      $ mkdir -p $VISP_WS
-      $ cd $VISP_WS
-
-- **C. On Windows**:
-
-        C:\> setx VISP_WS "C:\visp-ws"
-
-    Then, close your `cmd` Command Prompt terminal and open a new one
-
-        C:\> mkdir %VISP_WS%
-        C:\> cd %VISP_WS%
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'linux')">Linux</button>
+    <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+    <button class="tab-btn" onclick="openTab(event, 'macos')">macOS</button>
+  </div>
+  <div data-tab="linux" class="tab-content" style="display:block;">
+    <pre class="fragment">
+$ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
+$ source ~/.bashrc
+$ mkdir -p $VISP_WS
+$ cd $VISP_WS
+    </pre>
+  </div>
+  <div data-tab="windows" class="tab-content" style="display:none;">
+    <pre class="fragment">
+C:\> setx VISP_WS "C:\visp-ws"
+    </pre>
+    Then, close your <code>cmd</code> Command Prompt terminal and open a new one
+    <pre class="fragment">
+C:\> mkdir %VISP_WS%
+C:\> cd %VISP_WS%
+    </pre>
+  </div>
+  <div data-tab="macos" class="tab-content" style="display:none;">
+    <pre class="fragment">
+% echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
+% source ~/.bashrc
+% mkdir -p $VISP_WS
+% cd $VISP_WS
+    </pre>
+  </div>
+</div>
+\endhtmlonly
 
 Get the latest ViSP source code:
 
@@ -391,22 +572,34 @@ You need to activate it first though (in every terminal instance where you are w
 
 Now, while you are still in your ViSP workspace (VISP_WS), activate your new virtual environment
 
-- **A. On macOs**:
-
-      % source venv/bin/activate
-
-- **B. On Ubuntu or other linux-like**:
-
-      $ source venv/bin/activate
-
-- **C. On Windows**:
-
-      C:\visp-ws> venv\Scripts\activate
-.
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'linux')">Linux</button>
+    <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+    <button class="tab-btn" onclick="openTab(event, 'macos')">macOS</button>
+  </div>
+  <div data-tab="linux" class="tab-content" style="display:block;">
+    <pre class="fragment">
+$ source venv/bin/activate
+    </pre>
+  </div>
+  <div data-tab="windows" class="tab-content" style="display:none;">
+    <pre class="fragment">
+C:\visp-ws> venv\Scripts\activate
+    </pre>
+  </div>
+  <div data-tab="macos" class="tab-content" style="display:none;">
+    <pre class="fragment">
+% source venv/bin/activate
+    </pre>
+  </div>
+</div>
+\endhtmlonly
 
 And install Pybind11:
 
-    (venv) $ pip install pybind11[global]
+    (venv) $ pip install "pybind11[global]"
 
 Your Python environment should now be ready: you can compile continue and compile the bindings.
 
@@ -417,82 +610,120 @@ First, start by creating a build directory for CMake and change your current wor
 
 Now configure ViSP with cmake
 
-- **A. On macOs**:
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'linux')">Linux</button>
+    <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+    <button class="tab-btn" onclick="openTab(event, 'macos')">macOS</button>
+  </div>
+  <div data-tab="linux" class="tab-content" style="display:block;">
+    <pre class="fragment">
+$ cmake ../visp
+    </pre>
+    If pybind11 is not found, you can try and add the following option to cmake:
+    <pre class="fragment">
+$ cmake ../visp -Dpybind11_DIR=$VISP_WS/venv/share/cmake/pybind11
+    </pre>
+  </div>
+  <div data-tab="windows" class="tab-content" style="display:none;">
+    The ViSP module DLLs (the C++ part of the project), should be installed in your virtualenv.
+    <pre class="fragment">
+C:\> cmake -G "Visual Studio 17 2022" -A "x64" ../visp -DCMAKE_PREFIX_PATH=%VIRTUAL_ENV% ^
+                                                        -DCMAKE_INSTALL_PREFIX=%VIRTUAL_ENV%\Library ^
+                                                        -DVISP_LIB_INSTALL_PATH="lib" ^
+                                                        -DVISP_BIN_INSTALL_PATH="bin" ^
+                                                        -DVISP_CONFIG_INSTALL_PATH="cmake"
+    </pre>
+  </div>
+  <div data-tab="macos" class="tab-content" style="display:none;">
+    <pre class="fragment">
+% cmake ../visp
+    </pre>
+    If pybind11 is not found, you can try and add the following option to cmake:
+    <pre class="fragment">
+% cmake ../visp -Dpybind11_DIR=$VISP_WS/venv/share/cmake/pybind11
+    </pre>
+  </div>
+</div>
+\endhtmlonly
 
-      % cmake ../visp
-
-  If pybind11 is not found, you can try and add the following option to cmake:
-
-      % cmake ../visp -Dpybind11_DIR=$VISP_WS/venv/share/cmake/pybind11
-
-- **B. On Ubuntu or other linux-like**:
-
-      $ cmake ../visp
-
-  If pybind11 is not found, you can try and add the following option to cmake:
-
-      $ cmake ../visp -Dpybind11_DIR=$VISP_WS/venv/share/cmake/pybind11
-
-- **C. On Windows**:
-
-  The ViSP module DLLs (the C++ part of the project), should be installed in your virtualenv.
-
-       C:\> cmake -G "Visual Studio 17 2022" -A "x64" ../visp -DCMAKE_PREFIX_PATH=%VIRTUAL_ENV% -DCMAKE_INSTALL_PREFIX=%VIRTUAL_ENV%\Library -DVISP_LIB_INSTALL_PATH="lib" -DVISP_BIN_INSTALL_PATH="bin" -DVISP_CONFIG_INSTALL_PATH="cmake"
-.
 At this point in `ViSP-third-party.txt` file you should see something similar to:
 
-- **A. B. On macOs and Linux**
-
-      (venv) $ cat ViSP-third-party.txt
-        ...
-        Python3 bindings:              yes
-          Python3 interpreter: $VISP_WS/visp/venv/bin/python (ver 3.9.6)
-          Pybind11: $VISP_WS/visp/venv/share/cmake/pybind11 (2.11.1)
-          Package version:             3.6.1
-          Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
-          Generated input config: $VISP_WS/visp/visp-build-bindings/modules/python/cmake_config.json
-
-- **C. On Windows**
-
-      (venv) C:\visp-ws\visp-build-bindings> type ViSP-third-party.txt
-      ...
-      Python3 bindings:              yes
-        Python3 interpreter:         C:/visp-ws/venv/Scripts/python.exe (ver 3.12.2)
-        Pybind11:                    C:\Users\%USERNAME%\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pybind11\share\cmake\pybind11 (2.11.1)
-        Package version:             3.6.1
-        Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
-        Generated input config:      C:/visp-ws/visp-build-bindings/modules/python/cmake_config.json
-
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'mac-linux')">MacOS or Linux</button>
+    <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+  </div>
+  <div data-tab="mac-linux" class="tab-content" style="display:block;">
+    <pre class="fragment">
+(venv) $ cat ViSP-third-party.txt
+  ...
+  Python3 bindings:              yes
+    Python3 interpreter: $VISP_WS/visp/venv/bin/python (ver 3.9.6)
+    Pybind11: $VISP_WS/visp/venv/share/cmake/pybind11 (2.11.1)
+    Package version:             3.6.1
+    Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+    Generated input config: $VISP_WS/visp/visp-build-bindings/modules/python/cmake_config.json
+    </pre>
+  </div>
+  <div data-tab="windows" class="tab-content" style="display:none;">
+    <pre class="fragment">
+(venv) C:\visp-ws\visp-build-bindings> type ViSP-third-party.txt
+...
+Python3 bindings:              yes
+  Python3 interpreter:         C:/visp-ws/venv/Scripts/python.exe (ver 3.12.2)
+  Pybind11:                    C:\Users\%USERNAME%\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pybind11\share\cmake\pybind11 (2.11.1)
+  Package version:             3.6.1
+  Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+  Generated input config:      C:/visp-ws/visp-build-bindings/modules/python/cmake_config.json
+    </pre>
+  </div>
+</div>
+\endhtmlonly
 
 If you obtain a configuration similar to the above, you are ready to build the bindings.
 If not, check which requirement is missing. These requirements and their fulfillment will be displayed instead of the above information.
 
 You can now build the Python bindings
 
-- **A. On macOs**:
-
-      (venv) $ make -j$(sysctl -n hw.logicalcpu) visp_python_bindings
-
-
-- **B. On Ubuntu or other linux-like**:
-
-      (venv) $ make -j$(nproc) visp_python_bindings
-
-
-- **C. On Windows**:
-
-      (venv) C:\> cmake --build . --config Release --target install
-      (venv) C:\> cmake --build . --config Release --target visp_python_bindings
-
-    If the second step fails with an error containing: **ImportError: DLL load failed while import visp**
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'linux')">Linux</button>
+    <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+    <button class="tab-btn" onclick="openTab(event, 'macos')">macOS</button>
+  </div>
+  <div data-tab="linux" class="tab-content" style="display:block;">
+    <pre class="fragment">
+(venv) $ make -j&#36;(nproc) visp_python_bindings
+    </pre>
+  </div>
+  <div data-tab="windows" class="tab-content" style="display:none;">
+    <pre class="fragment">
+(venv) C:\> cmake --build . --config Release --target install
+(venv) C:\> cmake --build . --config Release --target visp_python_bindings
+    </pre>
+    If the second step fails with an error containing: <code>ImportError: DLL load failed while import visp</code>
     This means that the ViSP DLLs (or the DLLs it depends on, such as OpenCV's) cannot be found by Python.
-    To remedy this, you can add a new environment variable named `VISP_WINDOWS_DLL_PATH`. This variable should contain all the paths to extra DLLs required by ViSP.
+    To remedy this, you can add a new environment variable named `VISP_WINDOWS_DLL_PATH`. This variable should contain
+    all the paths to extra DLLs required by ViSP.
     Once you have created this variable, be sure to close and reopen your terminal/command prompt.
 
-    To debug your installation and find missing DLLs, see \ref py_bindings_known_errors_import_dll
+    To debug your installation and find missing DLLs, see <a class="el" href="tutorial-install-python-bindings.html#py_bindings_known_errors_import_dll">6.4.4. ImportError: DLL load failed while importing _visp</a></p>
+  </div>
+  <div data-tab="macos" class="tab-content" style="display:none;">
+    <pre class="fragment">
+(venv) $ make -j$(sysctl -n hw.logicalcpu) visp_python_bindings
+    </pre>
+  </div>
+</div>
+\endhtmlonly
 
 You can also compile the documentation for your version of the bindings.
-This documentation is generated with Spinx and is Python-specific. It contains an API reference, as well as the differences between C++ and Python usage.
+This documentation is generated with Spinx and is Python-specific. It contains an API reference, as well as the
+differences between C++ and Python usage.
 
     (venv) $  cmake --build . --config Release --target visp_python_bindings_doc
 
@@ -519,7 +750,8 @@ The ViSP source code also contains examples
 
 \subsection py_bindings_build_system 2.3. Build Python bindings using Python from system
 
-In this section we give the instructions to build ViSP python bindings on **Ubuntu 22.04** without creating a virtual environment.
+In this section we give the instructions to build ViSP python bindings on **Ubuntu 22.04** without creating a virtual
+environment.
 
 We recommend this minimal set of dependencies to get the main features of ViSP available:
 
@@ -551,51 +783,53 @@ $ cd $VISP_WS
 $ git clone https://github.com/lagadic/visp.git
 $ mkdir visp-build-bindings && cd visp-build-bindings
 $ cmake ../visp -DALLOW_SYSTEM_PYTHON=ON
-\endcode{.sh}
+\endcode
 
 At this point check if all the material to build the bindings is detected. The information is given in
 `ViSP-third-party.txt` file. If you have something similar to:
 
-      $ cat ViSP-third-party.txt
-      ...
-        Python3 bindings:              no
-          Requirements:
-            Python version > 3.7.0:    ok (ver 3.10.12)
-            Python in Virtual environment or conda (or system with override):
-                                      failed
-            Pybind11 found:            failed
-            CMake > 3.19.0:            ok (3.22.1)
-            C++ standard > 201703L:    ok (201703L)
+    $ cat ViSP-third-party.txt
+    ...
+      Python3 bindings:              no
+        Requirements:
+          Python version > 3.7.0:    ok (ver 3.10.12)
+          Python in Virtual environment or conda (or system with override):
+                                    failed
+          Pybind11 found:            failed
+          CMake > 3.19.0:            ok (3.22.1)
+          C++ standard > 201703L:    ok (201703L)
 
 It means that you will not be able to build the bindings since `pybind11` is not found. The work around is then
 to help CMake finding `pybind11` setting `pybind11_DIR` variable like with
 
-      $ cmake ../visp -DALLOW_SYSTEM_PYTHON=ON -Dpybind11_DIR=$HOME/.local/lib/python3.10/site-packages/pybind11/share/cmake/pybind11
+    $ cmake ../visp -DALLOW_SYSTEM_PYTHON=ON \
+                    -Dpybind11_DIR=$HOME/.local/lib/python3.10/site-packages/pybind11/share/cmake/pybind11
 
 Note that the folder `$HOME/.local/lib/python3.10/site-packages/pybind11/share/cmake/pybind11/` is the path to
 `pybind11Config.cmake` file.
 
 At this point in `ViSP-third-party.txt` file you should see something like
 
-      $ cat ViSP-third-party.txt
-      ...
-        Python3 bindings:              yes
-          Python3 interpreter:         /usr/bin/python3.10 (ver 3.10.12)
-          Pybind11:                    /home/user/.local/lib/python3.10/site-packages/pybind11/share/cmake/pybind11 (2.13.6)
-          Package version:             3.6.1
-          Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
-          Generated input config:      /home/user/visp-ws/visp-build-bindings/modules/python/cmake_config.json
+    $ cat ViSP-third-party.txt
+    ...
+      Python3 bindings:              yes
+        Python3 interpreter:         /usr/bin/python3.10 (ver 3.10.12)
+        Pybind11:                    /home/user/.local/lib/python3.10/site-packages/pybind11/share/cmake/pybind11 (2.13.6)
+        Package version:             3.6.1
+        Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+        Generated input config:      /home/user/visp-ws/visp-build-bindings/modules/python/cmake_config.json
 
 Now to build the bindings run:
 
-      $ make -j$(nproc) visp_python_bindings
+    $ make -j$(nproc) visp_python_bindings
 
 \section py_bindings_improvements 3. Improving the bindings
 
 If a feature, such as a function, class or python specific utilities is missing, you should first check that
 the Python API (built when generating the Python-specific documentation) does not have that function or class;
 
-If so, you may raise an issue on GitHub, detailing the feature that is missing and the use case. This issue should have a [Python] tag in the title.
+If so, you may raise an issue on GitHub, detailing the feature that is missing and the use case. This issue should have
+a [Python] tag in the title.
 
 There are multiple ways to extend and improve the custom Python bindings:
 
@@ -606,9 +840,11 @@ There are multiple ways to extend and improve the custom Python bindings:
     - Custom additions should ideally be tested (in `modules/python/bindings/test`)
     - They should also be referenced in the Python specific documentation.
 
-  - Modify the JSON configuration files to include previously excluded functions. The automatic tool performs a best effort job, but some human knowledge is sometimes required to wrap certain functions.
+  - Modify the JSON configuration files to include previously excluded functions. The automatic tool performs a best
+    effort job, but some human knowledge is sometimes required to wrap certain functions.
 
-For more information and detailed explanations on the different improvement tracks, see the Python specific documentation.
+For more information and detailed explanations on the different improvement tracks, see the Python specific
+documentation.
 
 \section py_bindings_send_log 4. Submitting an issue on GitHub
 
@@ -683,13 +919,14 @@ Call Stack (most recent call first):
 \endcode
 
 It means that the project requests linking with the shared libraries (`libxml2.so`, `libz.so` and
-`libgomp.so`), which are contained in two directories `$HOME/miniforge3/envs/visp-conda-ws/lib` and `/usr/lib/x86_64-linux-gnu`.
+`libgomp.so`), which are contained in two directories `$HOME/miniforge3/envs/visp-conda-ws/lib` and
+`/usr/lib/x86_64-linux-gnu`.
 The same occurs for `libm.so` that is present in
 `$HOME/miniforge3/envs/visp-conda-ws/x86_64-conda-linux-gnu/sysroot/usr/lib` and in `/usr/lib/x86_64-linux-gnu`.
 
 CMake first searches for the 3rd parties in the Conda environment, and if they are not found, it extends
-the search path to try to find them in the system path as `/usr/`. As a result, CMake cannot guarantee that, when you run
-the executable, the loader will find the proper library.
+the search path to try to find them in the system path as `/usr/`. As a result, CMake cannot guarantee that, when you
+run the executable, the loader will find the proper library.
 
 If you don't fix these warnings, the behavior of the project could be affected.
 
@@ -698,7 +935,17 @@ identify those you haven't installed in the Conda environment with `conda instal
 An other solution is to call `cmake` with `--debug-find` command line option that will explicitly show the search
 path for the 3rd parties:
 \code{.sh}
-(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX --debug-find
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python \
+                    --debug-find
 \endcode
 
 In our case, we produced the CMake warning mentioned before by installing Panda3D and Ogre as system libraries.
@@ -706,7 +953,18 @@ In our case, we produced the CMake warning mentioned before by installing Panda3
 The solution is to deactivate the use of these two third parties as long as they are not needed, or simply to check
 that by not using them the CMake warnings disappear. After cleaning the `visp-build` folder you may run:
 \code{.sh}
-(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX -DUSE_OGRE=OFF -DUSE_PANDA3D=OFF
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python \
+                    -DUSE_OGRE=OFF \
+                    -DUSE_PANDA3D=OFF
 \endcode
 
 Once confirmed that the warnings were due to the disabled 3rd parties, if they exist you can try installing them in
@@ -726,7 +984,16 @@ $ conda activate visp-conda-ws
 - before running CMake and helping CMake to find Panda3d headers
 \code{.sh}
 (visp-conda-ws) $ export Panda3D_DIR=$CONDA_PREFIX/share/panda3d
-(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python
 \endcode
 
 \subsection py_bindings_known_errors_build 6.2. When building ViSP
@@ -751,12 +1018,21 @@ $HOME/visp_ws/visp/modules/gui/src/display/vpDisplayX.cpp:100:5: error: use of u
     ^
 \endcode
 
-It occurs when you forgot to install `xorg-libx11`, `xorg-libxfixes` and `xorg-xorgprot` conda packages.
+It occurs when you forgot to install `xorg-libx11`, `xorg-libxfixes` and `xorg-xorgproto` conda packages.
 To fix this build issue:
 \code{.sh}
-(visp-conda-ws) $ conda install xorg-libx11 xorg-libxfixes xorg-xorgprot
+(visp-conda-ws) $ conda install xorg-libx11 xorg-libxfixes xorg-xorgproto
 (visp-conda-ws) $ cd visp-build-bindings
-(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python
 (visp-conda-ws) $ make -j$(sysctl -n hw.logicalcpu) visp_python_bindings
 \endcode
 
@@ -770,7 +1046,7 @@ Requirement already satisfied: pybind11-stubgen in /home/user/miniforge3/envs/vi
 Traceback (most recent call last):
   File "/home/user/miniforge3/envs/visp-conda-ws/lib/python3.13/site-packages/visp/__init__.py", line 44, in <module>
     from ._visp import *
-ImportError: /home/user/soft/visp-ws/test-pr/visp-user/visp-build-conda-python/lib/libvisp_sensor.so.3.6: undefined symbol: rs2_create_context_ex
+ImportError: /home/user/visp-ws/visp-build-conda-python/lib/libvisp_sensor.so.3.6: undefined symbol: rs2_create_context_ex
 \endcode
 
 This error is related to `librealsense` 3rdparty that was installed twice. This could be checked running
@@ -805,7 +1081,16 @@ From here you need to rebuild the python bindings from scratch:
 \code{.sh}
 (visp-conda-ws) $ cd $VISP_WS/visp-build-bindings
 (visp-conda-ws) $ rm -rf *
-(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python
 (visp-conda-ws) $ make -j10 visp_python_bindings
 \endcode
 
@@ -813,7 +1098,7 @@ At the end of the build process, you should see something similar to:
 \code{.sh}
 [100%] Generating Python stubs with pybind11-stubgen...
 Requirement already satisfied: pybind11-stubgen in /home/user/miniforge3/envs/visp-conda-ws/lib/python3.13/site-packages (2.5.3)
-Processing /home/user/soft/visp-ws/test-pr/visp-user/visp-build-conda-python/modules/python/stubs
+Processing /home/user/visp-ws/visp-build-conda-python/modules/python/stubs
   Installing build dependencies ... done
   Getting requirements to build wheel ... done
   Preparing metadata (pyproject.toml) ... done
@@ -828,6 +1113,118 @@ Successfully installed visp-stubs-3.6.1
 [100%] Built target visp_python_bindings
 \endcode
 
+\subsubsection py_bindings_known_errors_python3 6.2.3. error: externally-managed-environment
+
+When building the Python bindings using:
+\code{.sh}
+(visp-conda-ws) $ make -j10 visp_python_bindings
+\endcode
+you may encounter the following build error:
+\code{.sh}
+...
+[ 96%] Built target visp_mbt
+[ 96%] Linking CXX shared library ../../lib/libvisp_rbt.so
+[ 96%] Built target visp_rbt
+[ 96%] Installing the python bindings generator and running it...
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install
+    python3-xyz, where xyz is the package you are trying to
+    install.
+
+    If you wish to install a non-Debian-packaged Python package,
+    create a virtual environment using python3 -m venv path/to/venv.
+    Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+    sure you have python3-full installed.
+
+    If you wish to install a non-Debian packaged Python application,
+    it may be easiest to use pipx install xyz, which will manage a
+    virtual environment for you. Make sure you have pipx installed.
+
+    See /usr/share/doc/python3.12/README.venv for more information.
+
+note: If you believe this is a mistake, please contact your Python installation or OS distribution provider.
+You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+hint: See PEP 668 for the detailed specification.
+make[3]: *** [modules/python/CMakeFiles/visp_python_bindings_generator_run.dir/build.make:145: modules/python/bindings/src/main.cpp] Error 1
+make[2]: *** [CMakeFiles/Makefile2:28000: modules/python/CMakeFiles/visp_python_bindings_generator_run.dir/all] Error 2
+make[1]: *** [CMakeFiles/Makefile2:28033: modules/python/CMakeFiles/visp_python_bindings.dir/rule] Error 2
+make: *** [Makefile:8356: visp_python_bindings] Error 2
+\endcode
+
+Although you are working within a Conda environment, the ViSP build script is attempting to invoke the system's pip.
+This error indicates that CMake is likely configured to use the system Python (`/usr/bin/python3`) instead of the
+interpreter from your `visp-conda-ws` environment.
+
+You can verify this by inspecting the `ViSP-third-party.txt` file, where you will likely find the following
+configuration:
+\code{.sh}(visp-conda-ws) .../visp/visp-build-bindings$ cat ViSP-third-party.txt
+
+==========================================================
+General configuration information for ViSP 3.7.1
+
+  Version control:               v3.7.0-128-g853626f3f
+
+  Platform:
+    ...
+
+  System information:
+    ...
+
+  C/C++:
+    ...
+
+  ViSP modules:
+    ...
+
+  Python 3:
+    Interpreter:                 /usr/bin/python3 (ver 3.12.3)
+
+  Java:
+    ...
+
+  Python3 bindings:              yes
+    Python3 interpreter:         /usr/bin/python3 (ver 3.12.3)               <-- Currently using system Python
+    Pybind11:                    /usr/lib/cmake/pybind11 (2.11.1)            <-- Currently using system Pybind11
+    Package version:             3.7.1
+    Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt rbt tt tt_mi
+    Generated input config:      /home/user/soft/visp-ws/visp/visp-build-bindings/modules/python/cmake_config.json
+\endcode
+
+As shown above, both the Python3 interpreter and Pybind11 are being sourced from the system paths rather than the
+Conda environment. This confirms that CMake is not yet pointing to your virtual environment.
+
+To resolve this issue, as noted in section \ref py_bindings_build_conda, ensure that Python and its development
+tools are correctly installed within your Conda environment. After installing the required dependencies with:
+
+\code{.sh}
+(visp-conda-ws) $ conda install python pybind11
+\endcode
+
+And re-running CMake while pointing to your environment's prefix:
+
+\code{.sh}
+(visp-conda-ws) $ cmake ../visp \
+                    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH=$CONDA_PREFIX \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+                    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+                    -DPython3_FIND_STRATEGY=LOCATION \
+                    -DPython3_FIND_REGISTRY=NEVER \
+                    -DPython3_EXECUTABLE=$CONDA_PREFIX/bin/python
+\endcode
+
+You should see that both the `Python interpreter` and `Pybind11` are now correctly sourced from the Conda environment:
+
+\code{.sh}
+  Python3 bindings:               yes
+    Python3 interpreter:          $HOME/miniforge3/envs/visp-conda-ws/bin/python3.14 (ver 3.14.3)
+    Pybind11:                     $HOME/miniforge3/envs/visp-conda-ws/share/cmake/pybind11 (3.0.2)
+\endcode
+
 \subsection py_bindings_known_errors_generation 6.3. When running the generation tool
 
 \subsubsection py_bindings_known_errors_parse 6.3.1. Cannot parse code
@@ -836,16 +1233,17 @@ Successfully installed visp-stubs-3.6.1
   100%|##########| 319/319 [00:13<00:00, 23.91hdr/s]
   Traceback (most recent call last):
     File "<frozen runpy>", line 198, in _run_module_as_main
-  There was an error when processing headerC:\visp-ws\test-pr\visp-SamFlt\visp\modules\robot\include\visp3\robot\vpRobotWireFrameSimulator.h See the text log in the build folder for more information.
+  There was an error when processing headerC:\visp-ws\visp\modules\robot\include\visp3\robot\vpRobotWireFrameSimulator.h See the text log in the build folder for more information.
     File "<frozen runpy>", line 88, in _run_code
-    File "C:\visp-ws\test-pr\visp-SamFlt\venv\Lib\site-packages\visp_python_bindgen\generator.py", line 177, in <module>
+    File "C:\visp-ws\venv\Lib\site-packages\visp_python_bindgen\generator.py", line 177, in <module>
       main()
-    File "C:\visp-ws\test-pr\visp-SamFlt\venv\Lib\site-packages\visp_python_bindgen\generator.py", line 174, in main
+    File "C:\visp-ws\venv\Lib\site-packages\visp_python_bindgen\generator.py", line 174, in main
       generate_module(generation_path_src, config_path)
-    File "C:\visp-ws\test-pr\visp-SamFlt\venv\Lib\site-packages\visp_python_bindgen\generator.py", line 114, in generate_module
+    File "C:\visp-ws\venv\Lib\site-packages\visp_python_bindgen\generator.py", line 114, in generate_module
       raise RuntimeError('There was an exception when processing headers: You should either ignore the faulty header/class, or fix the generator code!')
   RuntimeError: There was an exception when processing headers: You should either ignore the faulty header/class, or fix the generator code!
-C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppCommon.targets(254,5): error MSB8066: la build personnalisée de 'C:\visp-ws\test-pr\visp-SamFlt\visp-build-vc17-bindings\CMakeFi
+C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppCommon.targets(254,5):
+error MSB8066: la build personnalisée de 'C:\visp-ws\visp-build-vc17-bindings\CMakeFi
 \endcode
 
 This means that there is a parsing error when reading the ViSP header files.
@@ -870,8 +1268,10 @@ if(WIN32) # WIN32 only defs
 endif()
 \endcode
 
-If the issue persists, you can ignore the header by going to the relevant configuration file  modules/python/config/module.json, where *module* is the module where parsing fails.
-Here, the failing header was "vpRobotWireFrameSimulator.h" in the robot module, so we can edit the `modules/python/config/robot.json` and add:
+If the issue persists, you can ignore the header by going to the relevant configuration file
+modules/python/config/module.json, where *module* is the module where parsing fails.
+Here, the failing header was "vpRobotWireFrameSimulator.h" in the robot module, so we can edit the
+`modules/python/config/robot.json` and add:
 \code{.json}
 {
   "ignore_headers": ["vpRobotWireFrameSimulator.h"]
@@ -961,17 +1361,17 @@ following errors that have occurred with Visual C++ on Windows, you can check wh
 implemented in a header file.
 
 \code{.sh}
-Création de la bibliothèque C:/visp-ws/test-pr/visp-fspindle/visp-build-bindings/lib/Release/_visp.lib et de l'objet C:/visp-ws/test-pr/visp-fspindle/visp-build-bindings/lib/Release/_visp.exp
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<unsigned int,class std::allocator<unsigned int> > const & __cdecl vpBasicKeyPoint::getMatchedReferencePoints(void)const" (__imp_?getMatchedReferencePoints@vpBasicKeyPoint@@QEBAAEBV?$vector@IV?$allocator@I@std@@@std@@XZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<class vpImagePoint,class std::allocator<class vpImagePoint> > const & __cdecl vpBasicKeyPoint::getCurrentImagePointsList(void)const"(__imp_?getCurrentImagePointsList@vpBasicKeyPoint@@QEBAAEBV?$vector@VvpImagePoint@@V?$allocator@VvpImagePoint@@@std@@@std@@XZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<class vpImagePoint,class std::allocator<class vpImagePoint> > const & __cdecl vpBasicKeyPoint::getReferenceImagePointsList(void)const" (__imp_?getReferenceImagePointsList@vpBasicKeyPoint@@QEBAAEBV?$vector@VvpImagePoint@@V?$allocator@VvpImagePoint@@@std@@@std@@XZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getMatchedPointNumber(void)const " (__imp_?getMatchedPointNumber@vpBasicKeyPoint@@QEBAIXZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getReferencePointNumber(void)const " (__imp_?getReferencePointNumber@vpBasicKeyPoint@@QEBAIXZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getIndexInAllReferencePointList(unsigned int)" (__imp_?getIndexInAllReferencePointList@vpBasicKeyPoint@@QEAAII@Z)[C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __cdecl vpBasicKeyPoint::getMatchedPoints(unsigned int,class vpImagePoint &,class vpImagePoint &)" (__imp_?getMatchedPoints@vpBasicKeyPoint@@QEAAXIAEAVvpImagePoint@@0@Z) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __cdecl vpBasicKeyPoint::getReferencePoint(unsigned int,class vpImagePoint &)" (__imp_?getReferencePoint@vpBasicKeyPoint@@QEAAXIAEAVvpImagePoint@@@Z) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: bool __cdecl vpBasicKeyPoint::referenceBuilt(void)const " (__imp_?referenceBuilt@vpBasicKeyPoint@@QEBA_NXZ) [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
-C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\visp\_visp.cp310-win_amd64.pyd : fatal error LNK1120: 9 externes non résolus [C:\visp-ws\test-pr\visp-fspindle\visp-build-bindings\modules\python\bindings\_visp.
+Création de la bibliothèque C:/visp-ws/visp-build-bindings/lib/Release/_visp.lib et de l'objet C:/visp-ws/visp-build-bindings/lib/Release/_visp.exp
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<unsigned int,class std::allocator<unsigned int> > const & __cdecl vpBasicKeyPoint::getMatchedReferencePoints(void)const" (__imp_?getMatchedReferencePoints@vpBasicKeyPoint@@QEBAAEBV?$vector@IV?$allocator@I@std@@@std@@XZ) [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<class vpImagePoint,class std::allocator<class vpImagePoint> > const & __cdecl vpBasicKeyPoint::getCurrentImagePointsList(void)const"(__imp_?getCurrentImagePointsList@vpBasicKeyPoint@@QEBAAEBV?$vector@VvpImagePoint@@V?$allocator@VvpImagePoint@@@std@@@std@@XZ) [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: class std::vector<class vpImagePoint,class std::allocator<class vpImagePoint> > const & __cdecl vpBasicKeyPoint::getReferenceImagePointsList(void)const" (__imp_?getReferenceImagePointsList@vpBasicKeyPoint@@QEBAAEBV?$vector@VvpImagePoint@@V?$allocator@VvpImagePoint@@@std@@@std@@XZ) [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getMatchedPointNumber(void)const " (__imp_?getMatchedPointNumber@vpBasicKeyPoint@@QEBAIXZ) [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getReferencePointNumber(void)const " (__imp_?getReferencePointNumber@vpBasicKeyPoint@@QEBAIXZ) [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: unsigned int __cdecl vpBasicKeyPoint::getIndexInAllReferencePointList(unsigned int)" (__imp_?getIndexInAllReferencePointList@vpBasicKeyPoint@@QEAAII@Z)[C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __cdecl vpBasicKeyPoint::getMatchedPoints(unsigned int,class vpImagePoint &,class vpImagePoint &)" (__imp_?getMatchedPoints@vpBasicKeyPoint@@QEAAXIAEAVvpImagePoint@@0@Z) [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __cdecl vpBasicKeyPoint::getReferencePoint(unsigned int,class vpImagePoint &)" (__imp_?getReferencePoint@vpBasicKeyPoint@@QEAAXIAEAVvpImagePoint@@@Z) [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+vision.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: bool __cdecl vpBasicKeyPoint::referenceBuilt(void)const " (__imp_?referenceBuilt@vpBasicKeyPoint@@QEBA_NXZ) [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.vcxproj]
+C:\visp-ws\visp-build-bindings\modules\python\bindings\visp\_visp.cp310-win_amd64.pyd : fatal error LNK1120: 9 externes non résolus [C:\visp-ws\visp-build-bindings\modules\python\bindings\_visp.
 vcxproj]
 \endcode
 
@@ -1074,7 +1474,12 @@ already done so, install OpenCV using conda
 \endcode
 and configure again ViSP
 \code{.sh}
-(visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake -G "Visual Studio 17 2022" -A "x64" ../visp -DCMAKE_PREFIX_PATH=%CONDA_PREFIX% -DCMAKE_INSTALL_PREFIX=%CONDA_PREFIX%\Library -DVISP_LIB_INSTALL_PATH="lib" -DVISP_BIN_INSTALL_PATH="bin" -DVISP_CONFIG_INSTALL_PATH="cmake"
+(visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake -G "Visual Studio 17 2022" -A "x64" ../visp \
+                                                      -DCMAKE_PREFIX_PATH=%CONDA_PREFIX% \
+                                                      -DCMAKE_INSTALL_PREFIX=%CONDA_PREFIX%\Library \
+                                                      -DVISP_LIB_INSTALL_PATH="lib" \
+                                                      -DVISP_BIN_INSTALL_PATH="bin" \
+                                                      -DVISP_CONFIG_INSTALL_PATH="cmake"
 \endcode
 At this point you should see that OpenCV is detected in the conda environment
 \code{.sh}
@@ -1122,18 +1527,22 @@ Then close and reopen your `Miniforge Prompt` and relaunch the bindings build pr
 
 \subsubsection py_bindings_known_errors_tracing_missing_dlls 6.4.5. Tracing missing DLLs
 
-To trace the missing DLLs, we can use the *process monitor* tool. This tool will list all the the paths that Python looks up to find the required DLLs.
+To trace the missing DLLs, we can use the *process monitor* tool. This tool will list all the the paths that Python
+looks up to find the required DLLs.
 
 To use this tool:
 
-1. Download it from the microsoft website: <a href="https://learn.microsoft.com/en-us/sysinternals/downloads/procmon">Process monitor page</a>
+1. Download it from the microsoft website:
+   <a href="https://learn.microsoft.com/en-us/sysinternals/downloads/procmon">Process monitor page</a>
 
 2. Extract the archive and run `Procmon64.exe`. A window should appear.
 
-3. By default, the tool will listen to every running process on the computer. To restrict it to the Python look up process, we will create a filter
+3. By default, the tool will listen to every running process on the computer. To restrict it to the Python look up
+   process, we will create a filter
 \image html image/tutorial/python/process-monitor-filter.png
 
-4. Now that this is done, you can clear the window by clicking the dropdown menu *Edit -> Clear Display*. You can now do the following in your Miniprompt interpreter:
+4. Now that this is done, you can clear the window by clicking the dropdown menu *Edit -> Clear Display*.
+   You can now do the following in your Miniprompt interpreter:
 \code{.sh}
 (visp-conda-ws) C:\visp-ws\visp-build-bindings>python
 Python 3.12.6 | packaged by conda-forge | (main, Sep 30 2024, 17:48:58) [MSC v.1941 64 bit (AMD64)] on win32
@@ -1162,12 +1571,14 @@ If you look at the example screenshot below
 You can see that realsense2.dll cannot be loaded. Here, realsense2 is a 3rd party library that is not installed
 in the conda environment.
 
-6. If you're unsure about which libraries ViSP uses, you can use cmake-gui. You can start by looking at the ViSP config options:
+6. If you're unsure about which libraries ViSP uses, you can use cmake-gui. You can start by looking at the ViSP config
+options:
 \image html image/tutorial/python/cmake-gui-used-libs.png
 Here, we can also see that there are other 3rdparties (FlyCapture, Pylon, Realsense2 and Vicon) that are installed
 outside of the conda workspace.
 
-7. To find where the libraries are installed, you can examine the cmake cache using the "advanced" checkbox of the cmake-gui
+7. To find where the libraries are installed, you can examine the cmake cache using the "advanced" checkbox of the
+cmake-gui
 \image html image/tutorial/python/cmake-gui-locating-lib.png
 For instance, the variable REALSENSE2_LIBRARIES indicates the folder containing the `.libs` files. From this path,
 you can find the folder containing the DLLs. Here, the RealSense2 DLLs are located in
@@ -1190,10 +1601,105 @@ Type "help", "copyright", "credits" or "license" for more information.
 \endcode
 \note If this is not the case and you still have the `ImportError`, return to step 4
 
+\subsection py_bindings_known_errors_stubs 6.5. When compiling the stubs
 
-\subsection py_bindings_known_errors_import 6.5. When importing ViSP In Python
+\subsubsection py_bindings_known_errors_stubs_timeout 6.5.1. RuntimeError: Timeout waiting for subprocess
 
-\subsubsection py_bindings_known_errors_same_name 6.5.1. Static and member methods have the same name
+When generating the Python stubs, you may encounter a timeout error:
+\code{.sh}
+(visp-conda-ws) $ cmake --build . --config Release --target visp_python_bindings --parallel 8
+...
+[100%] Linking CXX shared module visp/_visp.cpython-314-darwin.so
+/Users/user/miniforge3/envs/visp-conda-ws/bin/arm64-apple-darwin20.0.0-strip: warning: changes being made to the file will invalidate the code signature in: /Users/user/visp_ws/visp-build-bindings/modules/python/bindings/visp/_visp.cpython-314-darwin.so
+[cctools-port]: generating fake signature for '/Users/user/visp_ws/visp-build-bindings/modules/python/bindings/visp/_visp.cpython-314-darwin.so.strip'
+[100%] Built target _visp
+Processing ./.
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Building wheels for collected packages: visp
+  Building wheel for visp (pyproject.toml) ... done
+  Created wheel for visp: filename=visp-3.7.1-cp314-cp314-macosx_26_0_arm64.whl size=2957260 sha256=0aa5306b12f1014b802feb39116ea596cacfefc6e8d54d342ac0560e6748edd8
+  Stored in directory: /private/var/folders/4z/tvsm23k55kd164g5d73jncfrlzbg6h/T/pip-ephem-wheel-cache-6smlhilq/wheels/cd/2f/2e/f8814a9a173c90d52582c176bf97bfdf14ac1db4b5c97e28b9
+Successfully built visp
+Installing collected packages: visp
+  Attempting uninstall: visp
+    Found existing installation: visp 3.7.1
+    Uninstalling visp-3.7.1:
+      Successfully uninstalled visp-3.7.1
+Successfully installed visp-3.7.1
+[100%] Built target visp_python_bindings_install
+[100%] Generating Python stubs...
+Processing ./.
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... error
+  error: subprocess-exited-with-error
+
+  × Getting requirements to build wheel did not run successfully.
+  │ exit code: 1
+  ╰─> [42 lines of output]
+      Traceback (most recent call last):
+        File "/private/var/folders/4z/tvsm23k55kd164g5d73jncfrlzbg6h/T/pip-build-env-lzlwwriy/overlay/bin/stubgen", line 6, in <module>
+          sys.exit(main())
+                   ~~~~^^
+        File "mypy/stubgen.py", line 2060, in main
+        File "mypy/stubgen.py", line 1847, in generate_stubs
+          py_modules, pyc_modules, c_modules = collect_build_targets(options, mypy_opts)
+        File "mypy/stubgen.py", line 1599, in collect_build_targets
+          py_modules, c_modules = find_module_paths_using_imports(
+        File "mypy/stubgen.py", line 1626, in find_module_paths_using_imports
+          found = list(walk_packages(inspect, packages, verbose))
+        File "mypy/stubutil.py", line 81, in walk_packages
+        File "mypy/moduleinspect.py", line 146, in get_package_properties
+        File "mypy/moduleinspect.py", line 172, in _get_from_queue
+          raise RuntimeError("Timeout waiting for subprocess")
+      RuntimeError: Timeout waiting for subprocess
+      Running stubs generator
+      Traceback (most recent call last):
+        File "/Users/user/miniforge3/envs/visp-conda-ws/lib/python3.14/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 389, in <module>
+          main()
+          ~~~~^^
+        File "/Users/user/miniforge3/envs/visp-conda-ws/lib/python3.14/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 373, in main
+          json_out["return_val"] = hook(**hook_input["kwargs"])
+                                   ~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/Users/user/miniforge3/envs/visp-conda-ws/lib/python3.14/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 143, in get_requires_for_build_wheel
+          return hook(config_settings)
+        File "/private/var/folders/4z/tvsm23k55kd164g5d73jncfrlzbg6h/T/pip-build-env-lzlwwriy/overlay/lib/python3.14/site-packages/setuptools/build_meta.py", line 333, in get_requires_for_build_wheel
+          return self._get_build_requires(config_settings, requirements=[])
+                 ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4z/tvsm23k55kd164g5d73jncfrlzbg6h/T/pip-build-env-lzlwwriy/overlay/lib/python3.14/site-packages/setuptools/build_meta.py", line 301, in _get_build_requires
+          self.run_setup()
+          ~~~~~~~~~~~~~~^^
+        File "/private/var/folders/4z/tvsm23k55kd164g5d73jncfrlzbg6h/T/pip-build-env-lzlwwriy/overlay/lib/python3.14/site-packages/setuptools/build_meta.py", line 317, in run_setup
+          exec(code, locals())  # noqa: S102 # exec is intentional here
+          ~~~~^^^^^^^^^^^^^^^^
+        File "<string>", line 107, in <module>
+        File "<string>", line 54, in run
+        File "<string>", line 62, in generate_stubs
+        File "/Users/user/miniforge3/envs/visp-conda-ws/lib/python3.14/subprocess.py", line 578, in run
+          raise CalledProcessError(retcode, process.args,
+                                   output=stdout, stderr=stderr)
+      subprocess.CalledProcessError: Command '['stubgen', '-o', '/Users/user/visp_ws/visp-build-bindings/modules/python/stubs/gen', '--ignore-errors', '--include-docstrings', '-p', 'visp._visp']' returned non-zero exit status 1.
+      [end of output]
+
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+ERROR: Failed to build 'file:///Users/user/visp_ws/visp-build-bindings/modules/python/stubs' when getting requirements to build wheel
+make[3]: *** [modules/python/stubs/CMakeFiles/visp_python_bindings_stubs.dir/build.make:71: modules/python/stubs/CMakeFiles/visp_python_bindings_stubs] Error 1
+make[2]: *** [CMakeFiles/Makefile2:32828: modules/python/stubs/CMakeFiles/visp_python_bindings_stubs.dir/all] Error 2
+make[1]: *** [CMakeFiles/Makefile2:32721: modules/python/CMakeFiles/visp_python_bindings.dir/rule] Error 2
+make: *** [Makefile:8213: visp_python_bindings] Error 2
+\endcode
+
+The fix consists in running again the build command. The timeout error is due to a subprocess that takes too long
+to run and is killed by the stub generator.
+
+\code{.sh}
+(visp-conda-ws) $ cmake --build . --config Release --target visp_python_bindings --parallel 8
+\endcode
+
+\subsection py_bindings_known_errors_import 6.6. When importing ViSP In Python
+
+\subsubsection py_bindings_known_errors_same_name 6.6.1. Static and member methods have the same name
 
 If, when importing visp in Python, you encounter this message:
 \code{.sh}
@@ -1206,7 +1712,7 @@ You have to rename one or the other by modifying the bindings through JSON confi
 
 This error may also happen when generating the Python stubs (after the bindings compilation and linking step).
 
-\subsubsection py_bindings_known_errors_test 6.5.2. When building the tests
+\subsubsection py_bindings_known_errors_test 6.6.2. When building the tests
 
 The following error may occur when building Python tests on Ubuntu 22.04 when ros-2 humble is installed:
 

@@ -11,7 +11,6 @@
      ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
 #undef VISP_HAVE_V4L2
 #undef VISP_HAVE_DC1394
-#undef VISP_HAVE_CMU1394
 #undef VISP_HAVE_FLYCAPTURE
 #undef VISP_HAVE_REALSENSE2
 // #undef HAVE_OPENCV_HIGHGUI
@@ -20,7 +19,6 @@
 // Use the first grabber that is available. Uncomment/comment the following lines to disable usage of a grabber
 // #undef VISP_HAVE_V4L2
 // #undef VISP_HAVE_DC1394
-// #undef VISP_HAVE_CMU1394
 // #undef VISP_HAVE_FLYCAPTURE
 // #undef VISP_HAVE_REALSENSE2
 #undef HAVE_OPENCV_HIGHGUI
@@ -29,17 +27,16 @@
 //! [Undef grabber]
 
 //! [Ensure that a grabber is available]
-#if (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
+#if (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || \
    defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2) || defined(VISP_HAVE_OPENCV) && \
    (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
     ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))) && \
     ((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
-    ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
+    ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_GEOMETRY) && defined(HAVE_OPENCV_FEATURES)))
 //! [Ensure that a grabber is available]
 
 #ifdef VISP_HAVE_MODULE_SENSOR
 //! [camera headers]
-#include <visp3/sensor/vp1394CMUGrabber.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/sensor/vpFlyCaptureGrabber.h>
 #include <visp3/sensor/vpRealSense2.h>
@@ -70,14 +67,14 @@ int main(int argc, char **argv)
   vpDisplay *display = nullptr;
 #endif
   //! [me default options]
-  int opt_me_range = 10;
+  unsigned int opt_me_range = 10;
   int opt_me_sample_step = 5;
   int opt_me_threshold = 20; // Value in [0 ; 255]
   //! [me default options]
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--me-range" && i + 1 < argc) {
-      opt_me_range = std::atoi(argv[++i]);
+      opt_me_range = static_cast<unsigned int>(std::atoi(argv[++i]));
     }
     else if (std::string(argv[i]) == "--me-sample-step" && i + 1 < argc) {
       opt_me_sample_step = std::atoi(argv[++i]);
@@ -120,11 +117,6 @@ int main(int argc, char **argv)
     std::cout << "Use DC1394 grabber" << std::endl;
     vp1394TwoGrabber g;
     g.open(I);
-#elif defined(VISP_HAVE_CMU1394)
-    (void)opt_device; // To avoid non used warning
-    std::cout << "Use CMU1394 grabber" << std::endl;
-    vp1394CMUGrabber g;
-    g.open(I);
 #elif defined(VISP_HAVE_FLYCAPTURE)
     (void)opt_device; // To avoid non used warning
     std::cout << "Use FlyCapture grabber" << std::endl;
@@ -158,7 +150,7 @@ int main(int argc, char **argv)
 #endif
     //! [grabber container]
     //! [first image acquisition]
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
     g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV) && \
     (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
@@ -205,7 +197,7 @@ int main(int argc, char **argv)
     //! [loop]
     bool quit = false;
     while (!quit) {
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV) && \
     (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \

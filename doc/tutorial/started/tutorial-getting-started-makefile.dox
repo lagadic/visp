@@ -7,13 +7,13 @@
 
 In this tutorial you will learn how to use ViSP without using CMake.
 
-\section started_makefile Using a classical Makefile
+\section started_makefile 1. Using a classical Makefile
 
 There are two ways to integrate ViSP as a 3rd-party in a `Makefile`:
 - either using `pkg-config` over `visp.pc` file that you may find in ViSP installation folder; typically in `/usr/local/lib/pkgconfig` folder,
 - either using `visp-config` shell script file that you may find in ViSP build folder; typically in `$VISP_WS/visp-build/bin` folder.
 
-\subsection started_makefile_pkg_config Using pkg_config
+\subsection started_makefile_pkg_config 1.1. Using pkg_config
 
 - To get compiler flags use:
 \verbatim
@@ -23,14 +23,13 @@ $ pkg-config --cflags visp
 \verbatim
 $ pkg-config --libs visp
 \endverbatim
-
 \note If `visp.pc` file used by `pkg-config` is not found, you may set `PKG_CONFIG_PATH`
 environment variable with the path to access to `visp.pc` using a command similar to:
 \verbatim
 $ export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:<visp install tree>/lib/pkgconfig
 \endverbatim
 
-To build a file named `HelloWorld.cpp`, both command could be used in a `Makefile` which content would be the following:
+- To build a file named `HelloWorld.cpp`, both command could be used in a `Makefile` which content would be the following:
 \verbatim
 CXX            = g++
 VISP_CFLAGS    = `pkg-config --cflags visp`
@@ -43,7 +42,7 @@ clean:
 	rm -f *~ HelloWorld
 \endverbatim
 
-\subsection started_makefile_visp_config Using visp-config
+\subsection started_makefile_visp_config 1.2. Using visp-config
 
 - To get compiler flags use:
 \verbatim
@@ -55,7 +54,7 @@ $ visp-config --cflags visp
 $ visp-config --libs visp
 \endverbatim
 
-To build a file named `HelloWorld.cpp`, both command could be used in a `Makefile` which content would be the following:
+- To build a file named `HelloWorld.cpp`, both command could be used in a `Makefile` which content would be the following:
 \verbatim
 CXX            = g++
 VISP_BUILD_DIR = ${VISP_WS}/visp-build
@@ -70,7 +69,7 @@ clean:
 \endverbatim
 
 
-\section started_makefile_next Next tutorial
+\section started_makefile_next 2. Next tutorial
 
 You are now ready to see the \ref tutorial-image-display.
 There is also the \ref tutorial-contrib-module that could be useful to understand how to introduce new developments in ViSP.

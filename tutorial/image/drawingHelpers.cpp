@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,19 +71,19 @@ VP_ATTRIBUTE_NO_DESTROY vpDisplayD3D drawingHelpers::d_IcannyImgFilter;
 #endif
 
 void drawingHelpers::init(vpImage<unsigned char> &Iinput, vpImage<unsigned char> &IcannyVisp, vpImage<unsigned char> *p_dIx,
-                           vpImage<unsigned char> *p_dIy, vpImage<unsigned char> *p_IcannyimgFilter)
+                          vpImage<unsigned char> *p_dIy, vpImage<unsigned char> *p_IcannyimgFilter)
 {
 #if defined(VISP_HAVE_DISPLAY)
   d_Iinput.init(Iinput, 10, 10);
-  d_IcannyVisp.init(IcannyVisp, 10, Iinput.getHeight() + 10 * 2);
+  d_IcannyVisp.init(IcannyVisp, 10, static_cast<int>(Iinput.getHeight()) + 10 * 2);
   if (p_dIx != nullptr) {
-    d_dIx.init(*p_dIx, Iinput.getWidth() + 2 * 10, 10);
+    d_dIx.init(*p_dIx, static_cast<int>(Iinput.getWidth()) + 2 * 10, 10);
   }
   if (p_dIy != nullptr) {
-    d_dIy.init(*p_dIy, 2 * Iinput.getWidth() + 3 * 10, 10);
+    d_dIy.init(*p_dIy, 2 * static_cast<int>(Iinput.getWidth()) + 3 * 10, 10);
   }
   if (p_IcannyimgFilter != nullptr) {
-    d_IcannyImgFilter.init(*p_IcannyimgFilter, Iinput.getWidth() + 2 * 10, Iinput.getHeight() + 10 * 2);
+    d_IcannyImgFilter.init(*p_IcannyimgFilter, static_cast<int>(Iinput.getWidth()) + 2 * 10, static_cast<int>(Iinput.getHeight()) + 10 * 2);
   }
 #else
   (void)Iinput;

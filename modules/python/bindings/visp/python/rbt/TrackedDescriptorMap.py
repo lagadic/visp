@@ -41,7 +41,7 @@ import time
 from visp.core import CameraParameters, HomogeneousMatrix
 from visp.rbt import RBFeatureTrackerInput, PointMap
 from visp.core import Matrix
-from visp.core import ArrayInt2D, ImageFloat
+from visp.core import ArrayInt2D, ImageFloat, ImageRGBf
 
 class TrackedDescriptorMap():
   """
@@ -72,6 +72,8 @@ class TrackedDescriptorMap():
 
   def reset(self):
     self.descriptors = None
+    self.data_for_update = None
+    self.indices_removal = None
     self.point_map.clear()
 
   def parse_settings(self, d: Dict[str, Any]):
@@ -85,12 +87,14 @@ class TrackedDescriptorMap():
     self.min_dist_new_point = d['minDistNewPoint']
     self.max_depth_error_visible = d['maxDepthErrorVisible']
     self.max_depth_error_candidates = d['maxDepthErrorCandidate']
+    self.max_normal_deg = d.get('maxNormalThresholdVisible', 180)
 
     self.point_map.setOutlierReprojectionErrorThreshold(self.reprojection_threshold)
     self.point_map.setNumMaxPoints(self.num_points)
     self.point_map.setMinDistanceAddNewPoints(self.min_dist_new_point)
     self.point_map.setMaxDepthErrorVisibilityCriterion(self.max_depth_error_visible)
     self.point_map.setMaxDepthErrorCandidate(self.max_depth_error_candidates)
+    self.point_map.setThresholdNormalVisibiltyCriterion(self.max_normal_deg)
 
   def has_points(self) -> bool:
     """Returns whether this map stores any points.
@@ -152,12 +156,16 @@ class TrackedDescriptorMap():
       indices_array = ArrayInt2D.view(indices_points_not_matched_object[..., None])
 
     oX_new = Matrix()
+    oN_new = Matrix()
     cam = frame.cam
+
+    render_normals = frame.renders.normals if render_depth is not None else ImageRGBf()
     if render_depth is None:
       render_depth = ImageFloat()
-    indices_not_matched_to_add = self.point_map.selectValidNewCandidates(cam, cMo, indices_array, Matrix.view(points_to_add_px), render_depth, depth_map, oX_new)
 
-    self.set_points_to_add(oX_new, current_descriptors[indices_not_matched_to_add])
+    indices_not_matched_to_add = self.point_map.selectValidNewCandidates(cam, cMo, indices_array, Matrix.view(points_to_add_px), render_depth, depth_map, render_normals, oX_new, oN_new)
+
+    self.set_points_to_add(oX_new, current_descriptors[indices_not_matched_to_add], oN_new)
     indices_to_remove = self.finalize_update()
 
     return indices_to_remove
@@ -165,11 +173,12 @@ class TrackedDescriptorMap():
   def mark_points_to_remove(self, indices):
     self.indices_removal = indices
 
-  def set_points_to_add(self, X: Matrix, descriptors: torch.tensor):
+  def set_points_to_add(self, X: Matrix, descriptors: torch.tensor, normals: Matrix):
     assert X is not None and descriptors is not None
     assert X.getRows() == descriptors.size(0)
     assert X.getCols() == 3
-    self.data_for_update = (X, None, descriptors)
+
+    self.data_for_update = (X, normals, descriptors)
 
   def finalize_update(self) -> List[int]:
     """Actually remove outliers and add new points to the map.
@@ -183,7 +192,7 @@ class TrackedDescriptorMap():
       outlier_array = ArrayInt2D()
     else:
       outlier_array = ArrayInt2D.view(np.ascontiguousarray(self.indices_removal)[:, None].astype(np.int32))
-    removed_indices, num_added_points = self.point_map.updatePoints(outlier_array, self.data_for_update[0])
+    removed_indices, num_added_points = self.point_map.updatePoints(outlier_array, self.data_for_update[0], self.data_for_update[1])
 
     if len(removed_indices) > 0:
       if len(removed_indices) == len(self.descriptors):

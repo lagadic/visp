@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,7 +166,8 @@ BEGIN_VISP_NAMESPACE
  *   }
  *   {
  *     std::ifstream file(filename);
- *     const nlohmann::json j = nlohmann::json::parse(file);
+ *     // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+ *     const nlohmann::json j = nlohmann::json::parse(file, nullptr, true, true);
  *     vpColVector v;
  *     v = j.get<vpColVector>();
  *     file.close();
@@ -195,24 +196,24 @@ public:
   /*!
    * Basic constructor that creates an empty 0-size column vector.
    */
-  vpColVector() : vpArray2D<double>() { }
+  vpColVector() : vpArray2D<double>() {}
 
   /*!
    * Construct a column vector of size n.
    * \warning Elements are not  initialized. If you want to set an initial value use
    * vpColVector(unsigned int, double).
    */
-  VP_EXPLICIT vpColVector(unsigned int n) : vpArray2D<double>(n, 1) { }
+  VP_EXPLICIT vpColVector(unsigned int n) : vpArray2D<double>(n, 1) {}
 
   /*!
    * Construct a column vector of size n. Each element is set to \e val.
    */
-  vpColVector(unsigned int n, double val) : vpArray2D<double>(n, 1, val) { }
+  vpColVector(unsigned int n, double val) : vpArray2D<double>(n, 1, val) {}
 
   /*!
    * Copy constructor that allows to construct a column vector from an other one.
    */
-  vpColVector(const vpColVector &v) : vpArray2D<double>(v) { }
+  vpColVector(const vpColVector &v) : vpArray2D<double>(v) {}
 
   /*!
    * Construct a column vector from a part of an input column vector \e v.
@@ -698,10 +699,14 @@ public:
    */
   vpColVector &operator=(vpColVector &&v);
 
-  /*!
-   * Set vector elements and size from a list of values.
-   * \param list : List of double. Vector size matches the number of elements.
-   * \return The modified vector.
+  /**
+   * \brief Assigns a list of values to the vector using an initializer list.
+   * This operator allows for easy vector population using the curly brace syntax.
+   * The vector is automatically resized to match the size of the provided list.
+   *
+   * \param[in] list A {value1, value2, ...} list of doubles.
+   * \return A reference to the modified vpColVector (*this).
+   *
    * \code
    * #include <visp3/core/vpColVector.h>
    *
@@ -711,17 +716,17 @@ public:
    *
    * int main()
    * {
-   *   vpColVector c;
-   *   c = { 0, -1, -2 };
-   *   std::cout << "c:\n" << c << std::endl;
+   *   vpColVector v;
+   *   v = { 0.1, -1.1, -2.2 }; // Vector is resized to 3 and filled
+   *   std::cout << "v:\n" << v << std::endl;
    * }
    * \endcode
    * It produces the following printings:
    * \code
-   * c:
-   * 0
-   * -1
-   * -2
+   * v:
+   * 0.1
+   * -1.1
+   * -2.2
    * \endcode
    * \sa operator<<()
    */
@@ -900,27 +905,51 @@ public:
   vpTranslationVector operator+(const vpTranslationVector &t) const;
 
   /*!
-   * Operator that allows to add two column vectors.
+   * In-place addition of a column vector.
+   * If the current vector is empty, it is automatically resized to the dimensions of \e v.
+   *
+   * \param v The vector to add.
+   * \return A reference to the current vector.
+   * \exception vpException::dimensionError If the dimensions do not match and the vector is not empty.
    */
   vpColVector &operator+=(const vpColVector &v);
 
   /*!
-   * Operator that allows to add a 3-dim translation vector to a 3-dim column vector.
+   * In-place addition of a translation vector.
+   * If the current vector is empty, it is automatically resized to the dimensions of \e t.
+   *
+   * \param t The 3-dim translation vector to add.
+   * \return A reference to the current vector.
+   * \exception vpException::dimensionError If the dimensions do not match and the vector is not empty.
    */
   vpColVector &operator+=(const vpTranslationVector &t);
 
   /*!
-   * Operator subtraction of two vectors this = this - v
+   * Subtraction of two vectors: result = this - v.
+   *
+   * \param v The vector to subtract.
+   * \return A new vector containing the result of the subtraction.
+   * \exception vpException::dimensionError If the dimensions do not match.
    */
   vpColVector operator-(const vpColVector &v) const;
 
   /*!
-   * Operator that allows to subtract two column vectors.
+   * In-place subtraction of a column vector.
+   * If the current vector is empty, it is automatically resized to the dimensions of \e v.
+   *
+   * \param v The vector to subtract.
+   * \return A reference to the current vector.
+   * \exception vpException::dimensionError If the dimensions do not match and the vector is not empty.
    */
   vpColVector &operator-=(const vpColVector &v);
 
   /*!
-   * Operator that allows to subtract a 3-dim translation vector to a 3-dim column vector.
+   * In-place subtraction of a translation vector.
+   * If the current vector is empty, it is automatically resized to the dimensions of \e t.
+   *
+   * \param t The 3-dim translation vector to suntract.
+   * \return A reference to the current vector.
+   * \exception vpException::dimensionError If the dimensions do not match and the vector is not empty.
    */
   vpColVector &operator-=(const vpTranslationVector &t);
 
@@ -1463,7 +1492,7 @@ public:
    * \deprecated Provided only for compat with previous releases.
    * This function does nothing.
    */
-  VP_DEPRECATED void init() { }
+  VP_DEPRECATED void init() {}
 
   /*!
    * \deprecated Provided only for compat with previous releases. Use rather

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,24 +37,25 @@
 #
 #############################################################################
 
+set(DL_SEARCH_HINTS
+  ${DL_HOME}
+  $ENV{DL_HOME}
+)
 
-FIND_LIBRARY(DL_LIBRARY
-    NAMES dl
-    PATHS
-    $ENV{DL_HOME}/lib
-    /usr/lib
-    /usr/local/lib
-    )
+find_library(DL_LIBRARY
+  NAMES dl
+  HINTS ${DL_SEARCH_HINTS}
+  PATH_SUFFIXES lib
+)
+#message("DBG DL_LIBRARY=${DL_LIBRARY}")
 
-#MESSAGE("DBG DL_LIBRARY=${DL_LIBRARY}")
+if(DL_LIBRARY)
+  set(DL_LIBRARIES ${DL_LIBRARY})
+  set(DL_FOUND TRUE)
+else()
+  set(DL_FOUND FALSE)
+endif()
 
-IF(DL_LIBRARY)
-    SET(DL_LIBRARIES ${DL_LIBRARY})
-    SET(DL_FOUND TRUE)
-ELSE()
-    SET(DL_FOUND FALSE)
-ENDIF()
-
-MARK_AS_ADVANCED(
-    DL_LIBRARY
-    )
+mark_as_advanced(
+  DL_LIBRARY
+)

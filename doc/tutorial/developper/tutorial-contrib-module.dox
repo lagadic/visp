@@ -3,7 +3,7 @@
 \page tutorial-contrib-module Tutorial: How to extend ViSP creating a new contrib module
 \tableofcontents
 
-\section contrib_intro Introduction
+\section contrib_intro 1. Introduction
 
 ViSP implements a <a href="https://visp.inria.fr/software-architecture/">modular architecture</a> where each module:
 - corresponds to a library (.so, .a, .lib, .dll) prefixed with <b>\c visp_</b>
@@ -20,14 +20,14 @@ In this tutorial you will learn how to extend ViSP architecture introducing new 
 \note We assume here that you are familiar with an \ref tutorial_install_src and that you succeed in creating a first project that uses ViSP by following \ref tutorial-getting-started.
 
 
-\section contrib_model Contribution model
+\section contrib_model 2. Contribution model
 
 
 User may contribute to ViSP creating new modules. The following image shows the introduction of two new modules called <b> \c contrib_1</b> and <b>\c contrib_2</b>. They depend on ViSP existing modules.
 
 \image html img-contrib-module.jpg ViSP architecture extended with new \c contrib_1 and \c contrib_2 modules
 
-\subsection contrib_model_src What about the source tree
+\subsection contrib_model_src 2.1. What about the source tree
 
 Even if it is possible to introduce these new contrib modules in ViSP source code tree, we suggest to separate them in different folders. It will ease ViSP upgrade to future releases avoiding mixing all the source code. In that case, contributions are nothing more than new modules apart from ViSP.
 
@@ -51,7 +51,7 @@ In our previous example, in \c visp_contrib folder we may have the following tre
             └── ...
 \endcode
 
-\subsection contrib_model_build What about the build tree
+\subsection contrib_model_build 2.2. What about the build tree
 
 Even if the source code is located in separate folders, ViSP build mechanism allows to build ViSP and the contrib modules together in a single build tree.
 Once build contrib modules will be part of ViSP; two libraries named <b>\c visp_contrib_1</b> and <b>\c visp_contrib_2</b> will be created near ViSP libraries (<b>\c visp_core</b>, …)
@@ -64,7 +64,7 @@ $ cmake -DVISP_CONTRIB_MODULES_PATH=../visp_contrib/modules ../visp
 \endcode
 
 
-\section contrib_create_module Creating a new contrib module
+\section contrib_create_module 3. Creating a new contrib module
 
 In ViSP source code you will find a python script in \c script/create_module.py that allows to create a new module from scratch. The structure of the module created by the script is the following:
 
@@ -120,11 +120,11 @@ visp_contrib
             └── test-vpContrib.cpp
 \endcode
 
-\section contrib_build_module Building a new contrib module
+\section contrib_build_module 4. Building a new contrib module
 
 Now we are ready to build this new module.
 
-\subsection contrib_build_module_unix On a unix-like platform
+\subsection contrib_build_module_unix 4.1. On a unix-like platform
 
 - create a new folder to host the build and enter in it
 \code
@@ -152,7 +152,7 @@ $ ./modules/contrib/test-vpContrib
 I’m in my first contrib module
 \endcode
 
-\subsection contrib_build_module_win On a windows-like platform
+\subsection contrib_build_module_win 4.2. On a windows-like platform
 
 We consider here that the workspace folder is \c C:/ViSP and that in this folder we have:
 \code
@@ -195,7 +195,7 @@ $ cmake-gui ../visp
 - This ends the CMake configuration stage. Start now Visual Studio and open the \c C:/ViSP/visp_contrib-build/VISP.sln solution file. As described in \ref tutorial-install-win10-msvc14 you have now to build ViSP from source.
 
 
-\section contrib_advanced Advanced contrib module
+\section contrib_advanced 5. Advanced contrib module
 
 We provide here after the link to existing contrib modules that use advanced functionalities:
 - https://github.com/lagadic/visp_contrib contains some toy examples (their content is already in ViSP) with:
@@ -203,7 +203,7 @@ We provide here after the link to existing contrib modules that use advanced fun
   - an other module named <b>imgproc_contrib</b> to see how to implement various image processing algorithms. In this module you will also find the way to introduce tests.
 - https://github.com/lagadic/ustk : a ViSP extension for ultrasound images called UsTK for Ultrasound Toolkit. This extension contains multiple modules. The `modules/CMakeLists.txt` file allows here to detect optional 3rd parties. It allows also to generate a separate doxygen documentation that contains only the classes part or UsTK. Tutorials and tests are also considered in UsTK.
 
-\section contrib_next Next tutorial
+\section contrib_next 6. Next tutorial
 
 You are now ready to see the \ref tutorial-image-display.
 

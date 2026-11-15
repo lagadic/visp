@@ -36,8 +36,8 @@
   \brief class that defines a generic virtual robot
 */
 
-#ifndef vpRobot_H
-#define vpRobot_H
+#ifndef VP_ROBOT_H
+#define VP_ROBOT_H
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpConfig.h>

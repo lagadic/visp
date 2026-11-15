@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -282,7 +282,7 @@ public:
    */
   vpProcessFunctor(const double &w)
     : m_w(w)
-  { }
+  {}
 
   /**
   * \brief Models the effect of the command on the state model.
@@ -326,7 +326,7 @@ public:
    */
   vpBicycleModel(const double &w)
     : m_w(w)
-  { }
+  {}
 
   /**
    * \brief Models the effect of the command on the state model.
@@ -381,7 +381,7 @@ public:
     , m_y(y)
     , m_rngRange(range_std, 0., 4224)
     , m_rngRelativeAngle(rel_angle_std, 0., 2112)
-  { }
+  {}
 
   /**
    * \brief Convert a particle of the Particle Filter into the measurement space.
@@ -616,7 +616,7 @@ struct SoftwareArguments
     , m_ampliMaxTheta(0.1)
     , m_seedPF(4224)
     , m_nbThreads(1)
-  { }
+  {}
 
   int parseArgs(const int argc, const char *argv[])
   {
@@ -624,7 +624,7 @@ struct SoftwareArguments
     while (i < argc) {
       std::string arg(argv[i]);
       if ((arg == "--nb-steps-warmup") && ((i+1) < argc)) {
-        m_nbStepsWarmUp = std::atoi(argv[i + 1]);
+        m_nbStepsWarmUp = static_cast<unsigned int>(std::atoi(argv[i + 1]));
         ++i;
       }
       else if ((arg == "--max-distance-likelihood") && ((i+1) < argc)) {
@@ -632,15 +632,15 @@ struct SoftwareArguments
         ++i;
       }
       else if (((arg == "-N") || (arg == "--nb-particles")) && ((i+1) < argc)) {
-        m_N = std::atoi(argv[i + 1]);
+        m_N = static_cast<unsigned int>(std::atoi(argv[i + 1]));
         ++i;
       }
       else if ((arg == "--seed") && ((i+1) < argc)) {
-        m_seedPF = std::atoi(argv[i + 1]);
+        m_seedPF = static_cast<long>(std::atoi(argv[i + 1]));
         ++i;
       }
       else if ((arg == "--nb-threads") && ((i+1) < argc)) {
-        m_nbThreads = std::atoi(argv[i + 1]);
+        m_nbThreads = static_cast<int>(std::atoi(argv[i + 1]));
         ++i;
       }
       else if ((arg == "--ampli-max-X") && ((i+1) < argc)) {
@@ -658,7 +658,7 @@ struct SoftwareArguments
       else if (arg == "-d") {
         m_useDisplay = false;
       }
-      else if (arg == "-c" ) {
+      else if (arg == "-c") {
         m_useUserInteraction = false;
       }
       else if ((arg == "-h") || (arg == "--help")) {

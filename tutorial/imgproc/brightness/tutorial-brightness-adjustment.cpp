@@ -44,8 +44,8 @@ void display(vpImage<vpRGBa> &I_display, vpImage<vpRGBa> &I_color_res, const vpI
   vpDisplay::display(I_display);
   vpDisplay::displayText(I_display, 20, 20, title, vpColor::red);
   if (!title_2.empty()) {
-    vpDisplay::displayText(I_display, 40, static_cast<unsigned int>(I_color_adjust.getWidth()*0.85),
-      title_2, vpColor::green);
+    vpDisplay::displayText(I_display, 40, static_cast<int>(I_color_adjust.getWidth()*0.85),
+                           title_2, vpColor::green);
   }
   vpDisplay::flush(I_display);
   vpDisplay::getClick(I_display);
@@ -204,10 +204,8 @@ int main(int argc, const char **argv)
       continue;
     }
 
-    vpImage<vpRGBa> I_color_gamma_correction;
     VISP_NAMESPACE_NAME::gammaCorrection(I_color, I_color_gamma_correction, static_cast<float>(gamma), colorHandling,
       gamma_method);
-    vpImage<unsigned char> I_gray_gamma_correction;
     VISP_NAMESPACE_NAME::gammaCorrection(I_gray, I_gray_gamma_correction, static_cast<float>(gamma), gamma_method);
 
     const std::string gamma_name = VISP_NAMESPACE_NAME::vpGammaMethodToString(gamma_method);

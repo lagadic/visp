@@ -3,7 +3,7 @@
 \page tutorial-planar-object-pose Tutorial: Planar object pose estimation using RGB-D data.
 \tableofcontents
 
-\section tutorial-planar-object-pose-intro Introduction
+\section tutorial-planar-object-pose-intro 1. Introduction
 
 Note that all the material (source code and data) described in this tutorial is
 part of ViSP source code (in `tutorial/computer-vision` folder) and could be found in
@@ -57,7 +57,7 @@ Finally, in order to compute the object pose, we need:
 - Some color image point [pixel] matched with 3D model point [meter] **[Step 2]**
 - Compute pose estimation **[Step 3]**
 
-\section tutorial-planar-object-pose-plane-estimation Step 1: Depth-based plane estimation
+\section tutorial-planar-object-pose-plane-estimation 2. Step 1: Depth-based plane estimation
 
 The first step is to estimate the object plane thanks to the depth data. In this tutorial, the user has to delimitate
 this area such as:
@@ -71,20 +71,20 @@ depth-frame-located plane is projected to the color frame.
 \image html img-d435-box-plane-estimation.png
 \snippet tutorial-pose-from-planar-object.cpp Plane_Estimation
 
-\section tutorial-planar-object-pose-matching Step 2: Image point and model point matching
+\section tutorial-planar-object-pose-matching 3. Step 2: Image point and model point matching
 
 \image html img-d435-box-keypoint-selection.png
 
 Here, the user is simulating an automatic corner detection and the detection/model matching.
 
-\section tutorial-planar-object-pose-pose-estimation Step 3: Pose estimation
+\section tutorial-planar-object-pose-pose-estimation 4. Step 3: Pose estimation
 
 \image html img-d435-box-pose-estimation.png
 
 Finally, the object pose (i.e., the relation ship between the object and the color optical frame) is computed thanks to:
 \snippet tutorial-pose-from-planar-object.cpp Pose_Estimation
 
-\section utorial-planar-object-pose-next Next tutorial
+\section utorial-planar-object-pose-next 5. Next tutorial
 
 You can continue with the \ref tutorial-pose-estimation or with the \ref tutorial-homography.
 */

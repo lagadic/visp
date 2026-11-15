@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -529,7 +529,7 @@ int main(int argc, const char **argv)
 
         std::stringstream ss;
         ss << "Num frame: " << reader.getFrameIndex() << "/" << reader.getLastFrameIndex();
-        vpDisplay::displayText(I1, 40, I1.getWidth() - 150, ss.str(), vpColor::red);
+        vpDisplay::displayText(I1, 40, static_cast<int>(I1.getWidth()) - 150, ss.str(), vpColor::red);
       }
 
       // Test to reset the tracker
@@ -615,7 +615,7 @@ int main(int argc, const char **argv)
       }
 
       if (opt_click_allowed && opt_display) {
-        vpDisplay::displayText(I1, 20, I1.getWidth() - 150, std::string("Mode: ") + (opt_step_by_step ? std::string("step-by-step") : std::string("continuous")), vpColor::red);
+        vpDisplay::displayText(I1, 20, static_cast<int>(I1.getWidth()) - 150, std::string("Mode: ") + (opt_step_by_step ? std::string("step-by-step") : std::string("continuous")), vpColor::red);
         vpDisplay::displayText(I1, 20, 10, "Right click to exit", vpColor::red);
         vpDisplay::displayText(I1, 40, 10, "Middle click to change mode", vpColor::red);
         if (opt_step_by_step) {

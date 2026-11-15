@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,8 +60,7 @@ vpMatrix execute(const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &cdMo
 void planeToABC(const vpPlane &pl, double &A, double &B, double &C);
 int test(double x, double y, double z, double alpha);
 
-// Compute a set of parallel positions and check if the matrix is in the right
-// form;
+// Compute a set of parallel positions and check if the matrix is in the right form
 int main()
 {
 #if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
@@ -76,10 +75,14 @@ int main()
         }
       }
     }
-    if (sum < 0)
+    if (sum < 0) {
+      std::cout << "Test failed. Sum is negative: " << sum << std::endl;
       return EXIT_FAILURE;
-    else
+    }
+    else {
+      std::cout << "Test succeeded" << std::endl;
       return EXIT_SUCCESS;
+    }
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,10 +90,12 @@ void vpObjectCentricRenderer::computeBoundingBox3DPoints()
   m_bb3DPoints.clear();
   LPoint3 minP, maxP;
   object.calc_tight_bounds(minP, maxP);
-  const BoundingBox box(minP, maxP);
 
-  for (unsigned int i = 0; i < 8; ++i) {
-    const LPoint3 p = box.get_point(i);
+  // Enumerate the 8 corners of the box in the same order as BoundingBox::get_point(), without instantiating a
+  // BoundingBox. Building a Panda3D bounding volume here would emit TypedReferenceCount typeinfo, which requires
+  // Panda3D to be built with RTTI
+  for (int i = 0; i < 8; ++i) {
+    const LPoint3 p((i & 4) ? maxP[0] : minP[0], (i & 2) ? maxP[1] : minP[1], (i & 1) ? maxP[2] : minP[2]);
     m_bb3DPoints.push_back(vpColVector({ p.get_x(), -p.get_z(), p.get_y(), 1.0 }));
   }
 }

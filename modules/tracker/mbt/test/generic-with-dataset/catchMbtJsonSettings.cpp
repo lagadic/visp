@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,13 @@
 #include VISP_NLOHMANN_JSON(json.hpp)
 using json = nlohmann::json; //! json namespace shortcut
 
+#if defined(VISP_BUILD_CATCH2)
 #include <catch_amalgamated.hpp>
+#else // Since v3.1.1
+#include <catch2/catch_all.hpp>
+#endif
+
+#include <type_traits>
 
 #ifdef ENABLE_VISP_NAMESPACE
 using namespace VISP_NAMESPACE_NAME;
@@ -90,12 +96,30 @@ vpMbGenericTracker baseTrackerConstructor()
   return t;
 }
 
+// 1. Case for floating-point types (double, float)
+template<typename T, typename Obj, typename R>
+typename std::enable_if<std::is_floating_point<R>::value>::type
+checkPropertyEq(const T &t1, const T &t2, R(Obj:: *fn)() const)
+{
+  REQUIRE((t1.*fn)() == Catch::Approx((t2.*fn)()));
+}
+
+// 2. Case for other types (int, unsigned int, etc.)
+template<typename T, typename Obj, typename R>
+typename std::enable_if<!std::is_floating_point<R>::value>::type
+checkPropertyEq(const T &t1, const T &t2, R(Obj:: *fn)() const)
+{
+  REQUIRE((t1.*fn)() == (t2.*fn)());
+}
+
+// 3. The original checkProperties function, which routes to the correct behavior
+//    based on the return type of the member function pointer
 template<typename T, typename C>
 void checkProperties(const T &t1, const T &t2, C fn, const std::string &message)
 {
   THEN(message)
   {
-    REQUIRE((t1.*fn)() == (t2.*fn)());
+    checkPropertyEq(t1, t2, fn);
   }
 }
 
@@ -126,7 +150,8 @@ json loadJson(const std::string &path)
   if (!json_file.good()) {
     throw vpException(vpException::ioError, "Could not open JSON settings file");
   }
-  json j = json::parse(json_file);
+  // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+  json j = json::parse(json_file, nullptr, true, true);
   json_file.close();
   return j;
 }
@@ -333,8 +358,8 @@ SCENARIO("MBT JSON Serialization", "[json]")
           });
           REQUIRE_NOTHROW(t2.loadConfigFile(jsonPath, false));
           REQUIRE(t2.getClipping() == clipping);
-          REQUIRE(t2.getNearClippingDistance() == clipping_near);
-          REQUIRE(t2.getFarClippingDistance() == clipping_far);
+          REQUIRE(t2.getNearClippingDistance() == Catch::Approx(clipping_near));
+          REQUIRE(t2.getFarClippingDistance() == Catch::Approx(clipping_far));
         }
 
         THEN("Each clipping param is optional on its own")
@@ -354,8 +379,8 @@ SCENARIO("MBT JSON Serialization", "[json]")
               }
             });
             t2.loadConfigFile(jsonPath);
-            REQUIRE(t2.getNearClippingDistance() == clipping_near);
-            REQUIRE(t2.getFarClippingDistance() == t1.getFarClippingDistance());
+            REQUIRE(t2.getNearClippingDistance() == Catch::Approx(clipping_near));
+            REQUIRE(t2.getFarClippingDistance() == Catch::Approx(t1.getFarClippingDistance()));
             REQUIRE(t2.getClipping() == t1.getClipping());
           }
           THEN("Far clipping is optional")
@@ -366,8 +391,8 @@ SCENARIO("MBT JSON Serialization", "[json]")
               }
             });
             t2.loadConfigFile(jsonPath);
-            REQUIRE(t2.getNearClippingDistance() == t1.getNearClippingDistance());
-            REQUIRE(t2.getFarClippingDistance() == clipping_far);
+            REQUIRE(t2.getNearClippingDistance() == Catch::Approx(t1.getNearClippingDistance()));
+            REQUIRE(t2.getFarClippingDistance() == Catch::Approx(clipping_far));
             REQUIRE(t2.getClipping() == t1.getClipping());
           }
           THEN("Clipping flags are optional")
@@ -378,9 +403,9 @@ SCENARIO("MBT JSON Serialization", "[json]")
               }
             });
             t2.loadConfigFile(jsonPath);
-            REQUIRE(t2.getNearClippingDistance() == t1.getNearClippingDistance());
-            REQUIRE(t2.getFarClippingDistance() == t1.getFarClippingDistance());
-            REQUIRE(t2.getClipping() & clipping);
+            REQUIRE(t2.getNearClippingDistance() == Catch::Approx(t1.getNearClippingDistance()));
+            REQUIRE(t2.getFarClippingDistance() == Catch::Approx(t1.getFarClippingDistance()));
+            REQUIRE((t2.getClipping() & static_cast<unsigned int>(clipping)) != 0);
           }
         }
       }

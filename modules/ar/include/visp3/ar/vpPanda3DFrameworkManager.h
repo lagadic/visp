@@ -38,16 +38,16 @@
 #include <pandaFramework.h>
 #include <pandaSystem.h>
 
+BEGIN_VISP_NAMESPACE
 class vpPanda3DBaseRenderer;
 
-BEGIN_VISP_NAMESPACE
 /**
  * \ingroup group_ar_renderer_panda3d
  *
  * \brief Base class for a panda3D renderer. This class handles basic functionalities,
  * such as loading object, changing camera parameters.
  *
- * For a subclass to have a novel behaviour (e.g, display something else) These methods should be overriden:
+ * For a subclass to have a novel behaviour (e.g, display something else) These methods should be overridden:
  *
  * - setupScene: This is where you should apply your shaders.
  * - setupCamera: This is where cameras are created and intrinsics parameters are applied

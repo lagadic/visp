@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,12 +62,12 @@ public:
    *
    * @param mappingSize The size of the space that this transformation maps to.
    */
-  vpLuminanceMapping(unsigned int mappingSize) : m_mappingSize(mappingSize) { }
+  vpLuminanceMapping(unsigned int mappingSize) : m_mappingSize(mappingSize) {}
 
   /**
    * Destructor.
    */
-  virtual ~vpLuminanceMapping() { }
+  virtual ~vpLuminanceMapping() {}
 
   /**
    * \brief Map an image \p I to a representation \p s.
@@ -94,8 +94,8 @@ public:
   /**
    * \brief Reconstruct \p I from a representation \p s
    *
-   * @param s the representation
-   * @param I Output lossy reconstruction
+   * @param s The representation.
+   * @param I Output lossy reconstruction.
    */
   virtual void inverse(const vpColVector &s, vpImage<unsigned char> &I) = 0;
 
@@ -117,16 +117,16 @@ public:
    * \brief Set the number of pixels that are removed by the photometric VS computation
    * This function should be called by vpFeatureLuminanceMapping
    *
-   * @param border
+   * @param border The border size where pixels are removed on each side of the image.
    */
-  void setBorder(unsigned border) { m_border = border; }
+  void setBorder(unsigned int border) { m_border = border; }
 
   static void imageAsVector(const vpImage<unsigned char> &I, vpColVector &Ivec, unsigned border);
   static void imageAsMatrix(const vpImage<unsigned char> &I, vpMatrix &Imat, unsigned border);
 
 protected:
-  unsigned m_mappingSize; //! Final vector size
-  unsigned m_border; //! Borders that were removed during raw photometric VS computation
+  unsigned int m_mappingSize; //! Final vector size
+  unsigned int m_border; //! Borders that were removed during raw photometric VS computation
 };
 
 /**
@@ -150,21 +150,22 @@ protected:
 class VISP_EXPORT vpLuminancePCA : public vpLuminanceMapping
 {
 public:
-  vpLuminancePCA() : vpLuminanceMapping(0), m_basis(nullptr), m_mean(nullptr), m_Ivec(0), m_Ih(0), m_Iw(0) { }
+  vpLuminancePCA() : vpLuminanceMapping(0), m_basis(nullptr), m_mean(nullptr), m_Ivec(0), m_Ih(0), m_Iw(0) {}
 
   /**
    * Destructor.
    */
-  virtual ~vpLuminancePCA() { }
+  virtual ~vpLuminancePCA() {}
 
   /**
    * \brief Build a new PCA object
    *
-   * @param basis \f$ \mathbf{U}^\top \f$ a k x dim(I) matrix
-   * @param mean  \f$ vec(\mathbf{\bar I}) \f$ the mean image represented as a vector
-   * @param explainedVariance The explained variance for each of the k vectors.
+   * @param basis Basis matrix \f$ \mathbf{U}^\top \f$ a k x dim(I) matrix.
+   * @param mean Mean image \f$ vec(\mathbf{\bar I}) \f$ represented as a vector.
+   * @param explainedVariance Explained variance vector for each of the k vectors.
    */
-  vpLuminancePCA(const std::shared_ptr<vpMatrix> &basis, const std::shared_ptr<vpColVector> &mean, const vpColVector &explainedVariance);
+  vpLuminancePCA(const std::shared_ptr<vpMatrix> &basis, const std::shared_ptr<vpColVector> &mean,
+                 const vpColVector &explainedVariance);
 
   /**
    * \brief Copy constructor: does not make a deep copy of the basis and mean
@@ -174,12 +175,12 @@ public:
   vpLuminancePCA &operator=(const vpLuminancePCA &other);
 
   /**
-   * \brief Initialize the PCA object with a basis, mean and explained variance vector
+   * \brief Initialize the PCA object with a basis, mean and explained variance vector.
    *
    * \sa vpLuminancePCA()
-   * @param basis
-   * @param mean
-   * @param variance
+   * @param basis Basis matrix \f$ \mathbf{U}^\top \f$ a k x dim(I) matrix.
+   * @param mean Mean image \f$ vec(\mathbf{\bar I}) \f$ represented as a vector.
+   * @param variance Explained variance vector for each of the k vectors.
    */
   void init(const std::shared_ptr<vpMatrix> &basis, const std::shared_ptr<vpColVector> &mean, const vpColVector &variance);
 
@@ -300,7 +301,7 @@ public:
      * @param rows the matrix's number of rows
      * @param cols the matrix's number of cols
      */
-    void init(unsigned rows, unsigned cols);
+    void init(unsigned int rows, unsigned int cols);
     /**
      * \brief Fill the vector s with (end - start) values, according to the zigzag matrix indexing strategy
      *
@@ -330,7 +331,7 @@ public:
   /**
    * \brief Build a new DCT object
    *
-   * @param k the number of components to keep from the DCT matrix and use as servoing features
+   * @param k The number of components to keep from the DCT matrix and use as servoing features
    */
   vpLuminanceDCT(const unsigned int k) : vpLuminanceMapping(k)
   {
@@ -403,10 +404,10 @@ public:
 
   void display(const vpCameraParameters &, const vpImage<unsigned char> &, const vpColor & = vpColor::green,
                unsigned int = 1) const VP_OVERRIDE
-  { }
+  {}
   void display(const vpCameraParameters &, const vpImage<vpRGBa> &, const vpColor & = vpColor::green,
                unsigned int = 1) const VP_OVERRIDE
-  { }
+  {}
 
   vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) VP_OVERRIDE;
   void error(const vpBasicFeature &s_star, vpColVector &e);
@@ -423,7 +424,7 @@ private:
   std::shared_ptr<vpLuminanceMapping> m_mapping;
   vpFeatureLuminance m_featI;
   vpMatrix m_LI; //! Photometric interaction matrix
-  vpImage<unsigned char> I;
+  vpImage<unsigned char> m_I;
 };
 END_VISP_NAMESPACE
 #endif

@@ -22,7 +22,7 @@ jobs:
       head-commit-message: ${{ steps.get_head_commit_message.outputs.headCommitMsg }}
     steps:
       - name: Get repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Print head git commit message
@@ -48,7 +48,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v7
 
     - name: Print system information
       run: lscpu
@@ -64,13 +64,43 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev
         sudo apt-get install -y libopencv-dev nlohmann-json3-dev libcomedi-dev libjpeg-dev libpng-dev libcoin-dev
-        sudo apt-get install -y libfreenect-dev libpcl-dev
+        sudo apt-get install -y libfreenect-dev libpcl-dev libapriltag-dev
+
+    - name: Workaround OpenBLAS 0.3.20 Cooperlake kernel
+      # On recent runners (e.g. Intel Xeon 6973P-C), OpenBLAS 0.3.20 available on Ubuntu 22.04 selects the AVX-512
+      # Cooperlake kernel that produces wrong results: photometricMappingPCAVisualServoing doesn't converge, while it
+      # converges with the Haswell kernel. Force the Haswell kernel (AVX2) for all the next steps
+      run: |
+        OPENBLAS_VERSION=$(dpkg-query -W -f='${Version}' libopenblas0-pthread 2>/dev/null || true)
+        echo "OpenBLAS version: ${OPENBLAS_VERSION}"
+        if [[ "${OPENBLAS_VERSION}" == 0.3.20* ]] && grep -q -w avx2 /proc/cpuinfo; then
+          echo "Force OpenBLAS Haswell kernel"
+          echo "OPENBLAS_CORETYPE=Haswell" >> $GITHUB_ENV
+        fi
 
     - name: Install ur_rtde dependency
+      # ur_rtde usage is disabled by ViSP when building with C++98 (see USE_UR_RTDE in CMakeLists.txt)
+      if: matrix.standard != '98'
+      # Adding the PPA requires the Launchpad API to retrieve the PPA signing key. This API sometimes fails with
+      # "HTTP Error 500: GPGKeyTemporarilyNotFoundError". Retry a few times and, if the PPA remains unreachable,
+      # continue without ur_rtde (ViSP then disables ur_rtde usage) instead of making the whole job fail
       run: |
-        sudo add-apt-repository -y ppa:sdurobotics/ur-rtde
-        sudo apt-get update
-        sudo apt install -y librtde librtde-dev libboost-system-dev libboost-thread-dev libboost-program-options-dev
+        sudo apt-get install -y libboost-system-dev libboost-thread-dev libboost-program-options-dev
+        delay=15
+        for attempt in 1 2 3 4 5; do
+          if sudo add-apt-repository -y ppa:sdurobotics/ur-rtde && sudo apt-get update && sudo apt-get install -y librtde librtde-dev; then
+            exit 0
+          fi
+          echo "Attempt ${attempt} to install ur_rtde from ppa:sdurobotics/ur-rtde failed"
+          if [ ${attempt} -lt 5 ]; then
+            echo "Retrying in ${delay}s..."
+            sleep ${delay}
+            delay=$((delay * 2))
+          fi
+        done
+        # Remove the PPA entry that may have been added without its signing key, otherwise next "apt-get update" fails
+        sudo rm -f /etc/apt/sources.list.d/sdurobotics-ubuntu-ur-rtde-*.list /etc/apt/sources.list.d/sdurobotics-ubuntu-ur-rtde-*.sources
+        echo "::warning title=ur_rtde not installed::Unable to install ur_rtde from ppa:sdurobotics/ur-rtde (Launchpad unavailable). Build continues without ur_rtde."
 
     - name: Install Ogre 1.9
       if: matrix.ogre == 'ogre-1.9' && matrix.standard != '17'
@@ -93,6 +123,18 @@ jobs:
       run: |
         git clone --depth 1 https://github.com/lagadic/visp_sample ${HOME}/visp_sample
 
+    - name: Clone visp_contrib
+      run: |
+        git clone --depth 1 https://github.com/lagadic/visp_contrib ${HOME}/visp_contrib
+
+    - name: Clone camera_localization
+      run: |
+        git clone --depth 1 https://github.com/lagadic/camera_localization ${HOME}/camera_localization
+
+    - name: Clone visp_started
+      run: |
+        git clone --depth 1 https://github.com/lagadic/visp_started ${HOME}/visp_started
+
     - name: Configure CMake
       run: |
         mkdir build
@@ -103,14 +145,50 @@ jobs:
         echo "CC: $CC"
         echo "CXX: $CXX"
         echo "Standard: $CXX_STANDARD"
-        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local \
-          -DCMAKE_VERBOSE_MAKEFILE=ON -DUSE_CXX_STANDARD=$CXX_STANDARD
+        cmake .. -DVISP_CONTRIB_MODULES_PATH=${HOME}/visp_contrib/modules \
+                 -DCMAKE_C_COMPILER="${CC}" \
+                 -DCMAKE_CXX_COMPILER="${CXX}" \
+                 -DCMAKE_BUILD_TYPE=Release \
+                 -DCMAKE_INSTALL_PREFIX=/tmp/usr/local \
+                 -DCMAKE_VERBOSE_MAKEFILE=ON \
+                 -DUSE_CXX_STANDARD=$CXX_STANDARD \
+                 -DACTIVATE_WARNING_SHADOW=ON \
+                 -DACTIVATE_WARNING_FLOAT_EQUAL=ON \
+                 -DACTIVATE_WARNING_SIGN_CONVERSION=ON \
+                 -DACTIVATE_WARNING_STRICT_OVERFLOW=ON
         cat ViSP-third-party.txt
 
     - name: Compile
       working-directory: build
       run: |
-        make -j$(nproc) install
+        set -o pipefail
+        make -j$(nproc) install 2>&1 | tee make_install.log
+        # Filter and group warnings into a separate file
+        # grep exits with status 1 when no match is found: don't let that fail the step
+        # Filter to include .cpp, .c, .hpp and .h since there could be some unexpected warnings coming from 3rdparties
+        # like the following warning:
+        #   linux-gnu/libvtkRende/usr/bin/ld: warning: libtbb.so.2, needed by /usr/lib/x86_64-linux-gnu/libopencv_core.so.4.5.4d, may conflict with libtbb.so.12
+        grep -E "\.(cpp|c|h):[0-9]+:[0-9]+: warning:" make_install.log > warnings.log || true
+        echo "Build output logged to make_install.log"
+        echo "Warnings logged to warnings.log"
+
+    - name: Show build logs
+      if: always()
+      working-directory: build
+      run: |
+        echo "=== Build logs ==="
+        cat make_install.log
+
+    - name: Show warnings
+      if: always()
+      working-directory: build
+      run: |
+        echo "=== WARNINGS ==="
+        if [ -f warnings.log ]; then
+          cat warnings.log
+        else
+          echo "warnings.log not found (build likely failed before it could be generated)"
+        fi
 
     - name: Run unit tests
       working-directory: build
@@ -123,7 +201,10 @@ jobs:
         cd visp_sample-build
         CC=${{ matrix.compiler.CC }}
         CXX=${{ matrix.compiler.CXX }}
-        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DVISP_DIR=/tmp/usr/local/lib/cmake/visp -DCMAKE_VERBOSE_MAKEFILE=ON
+        cmake .. -DCMAKE_C_COMPILER="${CC}" \
+                 -DCMAKE_CXX_COMPILER="${CXX}" \
+                 -DVISP_DIR=/tmp/usr/local/lib/cmake/visp \
+                 -DCMAKE_VERBOSE_MAKEFILE=ON
         make -j$(nproc)
 
     - name: ViSP as 3rdparty with visp.pc and pkg-config
@@ -148,3 +229,39 @@ jobs:
         $VISP_INSTALL_PREFIX/bin/visp-config --libs
         make CXX=${{ matrix.compiler.CXX }} -j$(nproc) -f Makefile.visp-config
         make CXX=${{ matrix.compiler.CXX }} -j$(nproc) -f Makefile.visp-config clean
+
+    - name: Build camera_localization with ViSP as 3rdparty
+      run: |
+        cd ${HOME}/camera_localization
+        mkdir camera_localization-build
+        cd camera_localization-build
+        CC=${{ matrix.compiler.CC }}
+        CXX=${{ matrix.compiler.CXX }}
+        echo "CC: $CC"
+        echo "CXX: $CXX"
+        cmake ../ -DCMAKE_C_COMPILER="${CC}" \
+                  -DCMAKE_CXX_COMPILER="${CXX}" \
+                  -DVISP_DIR=/tmp/usr/local/lib/cmake/visp
+        make -j$(nproc)
+
+    - name: Build visp_started with ViSP as 3rdparty
+      run: |
+        cd ${HOME}/visp_started
+        mkdir visp_started-build
+        cd visp_started-build
+        CC=${{ matrix.compiler.CC }}
+        CXX=${{ matrix.compiler.CXX }}
+        echo "CC: $CC"
+        echo "CXX: $CXX"
+        cmake ../ -DCMAKE_C_COMPILER="${CC}" \
+                  -DCMAKE_CXX_COMPILER="${CXX}" \
+                  -DVISP_DIR=/tmp/usr/local/lib/cmake/visp
+        make -j$(nproc)
+
+    - name: Check ViSP build warnings
+      working-directory: build
+      run: |
+        if [ -s warnings.log ]; then
+          echo "ViSP build has produced warnings."
+          exit 1
+        fi

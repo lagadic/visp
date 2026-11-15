@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ public:
           c.B = b;
           const float pbg = bg.probability(c);
           const float pObject = object.probability(c);
-          if (pbg == 0.f) {
+          if (pbg <= 0.f) { // We suppose that a probability cannot be negative
             m_probas[index] = pObject > 0.f ? 1.f : 0.f;
           }
           else {
@@ -82,7 +82,7 @@ private:
   std::vector<float> m_probas;
 };
 
-vpColorHistogramMask::vpColorHistogramMask() : m_depthErrorTolerance(0.01f), m_objectUpdateRate(0.1f), m_backgroundUpdateRate(0.1f), m_threshold(2.f), m_computeOnBBOnly(false) { }
+vpColorHistogramMask::vpColorHistogramMask() : m_depthErrorTolerance(0.01f), m_objectUpdateRate(0.1f), m_backgroundUpdateRate(0.1f), m_threshold(2.f), m_computeOnBBOnly(false) {}
 
 void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
                                       const vpRBFeatureTrackerInput &previousFrame,
@@ -93,12 +93,14 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
   const vpImage<vpRGBa> &rgb = previousFrame.IRGB.getSize() == 0 ? frame.IRGB : previousFrame.IRGB;
 
   const int height = static_cast<int>(rgb.getHeight()), width = static_cast<int>(rgb.getWidth());
-  m_mask.resize(height, width, false);
+  m_mask.resize(static_cast<unsigned int>(height), static_cast<unsigned int>(width), false);
   const vpRect renderBB = frame.renders.boundingBox;
   const int top = static_cast<int>(renderBB.getTop());
   const int left = static_cast<int>(renderBB.getLeft());
   const int bottom = std::min(height - 1, static_cast<int>(renderBB.getBottom()));
   const int right = std::min(width - 1, static_cast<int>(renderBB.getRight()));
+  const int bottomExcl = bottom + 1;  // Exclusive limit
+  const int rightExcl = right + 1;
 
   const vpImage<float> &renderDepth = frame.renders.depth;
   const vpImage<float> &depth = previousFrame.depth.getSize() == 0 ? frame.depth : previousFrame.depth;
@@ -106,9 +108,11 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (int i = top; i <= bottom; ++i) {
-      for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
-        m_mask[i][j] = renderDepth[i][j] > 0.f && (depth[i][j] > 0.f && fabs(renderDepth[i][j] - depth[i][j]) <= m_depthErrorTolerance);
+    for (int i = top; i < bottomExcl; ++i) {
+      for (int j = left; j < rightExcl; ++j) {
+        unsigned int i_ = static_cast<unsigned int>(i);
+        unsigned int j_ = static_cast<unsigned int>(j);
+        m_mask[i_][j_] = renderDepth[i_][j_] > 0.f && (depth[i_][j_] > 0.f && fabs(renderDepth[i_][j_] - depth[i_][j_]) <= m_depthErrorTolerance);
       }
     }
   }
@@ -116,9 +120,11 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (int i = top; i <= bottom; ++i) {
-      for (unsigned int j = left; j <= static_cast<unsigned int>(right); ++j) {
-        m_mask[i][j] = renderDepth[i][j] > 0.f;
+    for (int i = top; i < bottomExcl; ++i) {
+      for (int j = left; j < rightExcl; ++j) {
+        unsigned int i_ = static_cast<unsigned int>(i);
+        unsigned int j_ = static_cast<unsigned int>(j);
+        m_mask[i_][j_] = renderDepth[i_][j_] > 0.f;
       }
     }
   }
@@ -128,13 +134,15 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
   const float pObject = static_cast<float>(m_histObjectFrame.getNumPixels()) / numPxTotal;
   const float pBackground = static_cast<float>(m_histBackgroundFrame.getNumPixels()) / numPxTotal;
   {
+    // We wish to merge the object’s histogram only if we have detected pixels belonging to that object
+    // (i.e. if the proportion is strictly greater than 0).
     {
-      if (pObject != 0.f) {
+      if (pObject > 0.f) {
         m_histObject.merge(m_histObjectFrame, m_objectUpdateRate);
       }
     }
     {
-      if (pBackground != 0.f) {
+      if (pBackground > 0.f) {
         m_histBackground.merge(m_histBackgroundFrame, m_backgroundUpdateRate);
       }
     }
@@ -142,12 +150,12 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
   vpProbaComputer probas(m_histObject, m_histBackground);
 
   if (m_computeOnBBOnly) {
-    mask.resize(height, width, 0.f);
+    mask.resize(static_cast<unsigned int>(height), static_cast<unsigned int>(width), 0.f);
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (int i = top; i <= bottom; ++i) {
-      for (int j = left; j <= right; ++j) {
+    for (int i = top; i < bottomExcl; ++i) {
+      for (int j = left; j < rightExcl; ++j) {
         unsigned int index = m_histObject.colorToIndex(frame.IRGB[i][j]);
         mask[i][j] = probas(index);
       }
@@ -155,7 +163,7 @@ void vpColorHistogramMask::updateMask(const vpRBFeatureTrackerInput &frame,
 
   }
   else {
-    mask.resize(height, width);
+    mask.resize(static_cast<unsigned int>(height), static_cast<unsigned int>(width));
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif

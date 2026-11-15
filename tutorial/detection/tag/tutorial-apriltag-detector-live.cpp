@@ -10,7 +10,6 @@
     ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO)))
 #undef VISP_HAVE_V4L2
 #undef VISP_HAVE_DC1394
-#undef VISP_HAVE_CMU1394
 #undef VISP_HAVE_FLYCAPTURE
 #undef VISP_HAVE_REALSENSE2
 // #undef HAVE_OPENCV_HIGHGUI
@@ -19,7 +18,6 @@
 // Use the first grabber that is available. Uncomment/comment the following lines to disable usage of a grabber
 // #undef VISP_HAVE_V4L2
 // #undef VISP_HAVE_DC1394
-// #undef VISP_HAVE_CMU1394
 // #undef VISP_HAVE_FLYCAPTURE
 // #undef VISP_HAVE_REALSENSE2
 #undef HAVE_OPENCV_HIGHGUI
@@ -29,7 +27,7 @@
 
 //! [Macro defined]
 #if defined(VISP_HAVE_APRILTAG) && \
-  (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
+  (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || \
     defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2) || defined(VISP_HAVE_OPENCV) && \
     (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
      ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))))
@@ -37,7 +35,6 @@
 //! [Macro defined]
 
 #ifdef VISP_HAVE_MODULE_SENSOR
-#include <visp3/sensor/vp1394CMUGrabber.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/sensor/vpFlyCaptureGrabber.h>
 #include <visp3/sensor/vpRealSense2.h>
@@ -96,33 +93,33 @@ void usage(const char **argv, int error)
     << "  --tag-family <family>" << std::endl
     << "    Apriltag family. Supported values are:" << std::endl
     << "       0: TAG_36h11" << std::endl
-    << "       1: TAG_36h10 (DEPRECATED)" << std::endl
-    << "       2: TAG_36ARTOOLKIT (DEPRECATED)" << std::endl
-    << "       3: TAG_25h9" << std::endl
-    << "       4: TAG_25h7 (DEPRECATED)" << std::endl
-    << "       5: TAG_16h5" << std::endl
-    << "       6: TAG_CIRCLE21h7" << std::endl
-    << "       7: TAG_CIRCLE49h12" << std::endl
-    << "       8: TAG_CUSTOM48h12" << std::endl
-    << "       9: TAG_STANDARD41h12" << std::endl
-    << "      10: TAG_STANDARD52h13" << std::endl
-    << "      11: TAG_ARUCO_4x4_50" << std::endl
-    << "      12: TAG_ARUCO_4x4_100" << std::endl
-    << "      13: TAG_ARUCO_4x4_250" << std::endl
-    << "      14: TAG_ARUCO_4x4_1000" << std::endl
-    << "      15: TAG_ARUCO_5x5_50" << std::endl
-    << "      16: TAG_ARUCO_5x5_100" << std::endl
-    << "      17: TAG_ARUCO_5x5_250" << std::endl
-    << "      18: TAG_ARUCO_5x5_1000" << std::endl
-    << "      19: TAG_ARUCO_6x6_50" << std::endl
-    << "      20: TAG_ARUCO_6x6_100" << std::endl
-    << "      21: TAG_ARUCO_6x6_250" << std::endl
-    << "      22: TAG_ARUCO_6x6_1000" << std::endl
-    << "      23: TAG_ARUCO_7x7_50" << std::endl
-    << "      24: TAG_ARUCO_7x7_100" << std::endl
-    << "      25: TAG_ARUCO_7x7_250" << std::endl
-    << "      26: TAG_ARUCO_7x7_1000" << std::endl
-    << "      27: TAG_ARUCO_MIP_36h12" << std::endl
+    << "       1: TAG_36h10" << std::endl
+    << "       2: TAG_25h9" << std::endl
+    << "       3: TAG_16h5" << std::endl
+    << "       4: TAG_CIRCLE21h7" << std::endl
+    << "       5: TAG_CIRCLE49h12" << std::endl
+    << "       6: TAG_CUSTOM48h12" << std::endl
+    << "       7: TAG_STANDARD41h12" << std::endl
+    << "       8: TAG_STANDARD52h13" << std::endl
+#if defined(VISP_HAVE_APRILTAG_ARUCO)
+    << "       9: TAG_ARUCO_4x4_50" << std::endl
+    << "      10: TAG_ARUCO_4x4_100" << std::endl
+    << "      11: TAG_ARUCO_4x4_250" << std::endl
+    << "      12: TAG_ARUCO_4x4_1000" << std::endl
+    << "      13: TAG_ARUCO_5x5_50" << std::endl
+    << "      14: TAG_ARUCO_5x5_100" << std::endl
+    << "      15: TAG_ARUCO_5x5_250" << std::endl
+    << "      16: TAG_ARUCO_5x5_1000" << std::endl
+    << "      17: TAG_ARUCO_6x6_50" << std::endl
+    << "      18: TAG_ARUCO_6x6_100" << std::endl
+    << "      19: TAG_ARUCO_6x6_250" << std::endl
+    << "      20: TAG_ARUCO_6x6_1000" << std::endl
+    << "      21: TAG_ARUCO_7x7_50" << std::endl
+    << "      22: TAG_ARUCO_7x7_100" << std::endl
+    << "      23: TAG_ARUCO_7x7_250" << std::endl
+    << "      24: TAG_ARUCO_7x7_1000" << std::endl
+    << "      25: TAG_ARUCO_MIP_36h12" << std::endl
+#endif
     << "    Default: 0 (36h11)" << std::endl
     << std::endl
     << "  --tag-decision-margin-threshold <threshold>" << std::endl
@@ -152,13 +149,15 @@ void usage(const char **argv, int error)
     << "  --tag-pose-method <method>" << std::endl
     << "    Algorithm used to compute the tag pose from its 4 corners." << std::endl
     << "    Possible values are:" << std::endl
-    << "       0: HOMOGRAPHY" << std::endl
-    << "       1: HOMOGRAPHY_VIRTUAL_VS" << std::endl
-    << "       2: DEMENTHON_VIRTUAL_VS" << std::endl
-    << "       3: LAGRANGE_VIRTUAL_VS" << std::endl
-    << "       4: BEST_RESIDUAL_VIRTUAL_VS" << std::endl
+    << "       0: DEMENTHON_VIRTUAL_VS" << std::endl
+    << "       1: LAGRANGE_VIRTUAL_VS" << std::endl
+    << "       2: BEST_RESIDUAL_VIRTUAL_VS" << std::endl
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
+    << "       3: HOMOGRAPHY" << std::endl
+    << "       4: HOMOGRAPHY_VIRTUAL_VS" << std::endl
     << "       5: HOMOGRAPHY_ORTHOGONAL_ITERATION" << std::endl
-    << "    Default: 1 (HOMOGRAPHY_VIRTUAL_VS)" << std::endl
+#endif
+    << "    Default: 2 (BEST_RESIDUAL_VIRTUAL_VS)" << std::endl
     << std::endl
 #if defined(VISP_HAVE_PUGIXML)
     << "  --intrinsic <xmlfile>" << std::endl
@@ -215,7 +214,7 @@ int main(int argc, const char **argv)
 
   int opt_device = 0; // For OpenCV and V4l2 grabber to set the camera device
   vpDetectorAprilTag::vpAprilTagFamily opt_tag_family = vpDetectorAprilTag::TAG_36h11;
-  vpDetectorAprilTag::vpPoseEstimationMethod opt_tag_pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+  vpDetectorAprilTag::vpPoseEstimationMethod opt_tag_pose_estimation_method = vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS;
   double opt_tag_size = 0.053;
   float opt_tag_quad_decimate = 1.0;
   float opt_tag_decision_margin_threshold = 50;
@@ -225,7 +224,7 @@ int main(int argc, const char **argv)
   std::string camera_name = "";
   bool opt_display_tag = false;
   int opt_color_id = -1;
-  unsigned int thickness = 2;
+  unsigned int opt_thickness = 2;
   bool opt_tag_z_align_frame = false;
   bool opt_verbose = false;
 
@@ -285,7 +284,7 @@ int main(int argc, const char **argv)
       opt_color_id = atoi(argv[++i]);
     }
     else if (std::string(argv[i]) == "--thickness" && i + 1 < argc) {
-      thickness = static_cast<unsigned int>(atoi(argv[++i]));
+      opt_thickness = static_cast<unsigned int>(atoi(argv[++i]));
     }
 #endif
     else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
@@ -329,11 +328,6 @@ int main(int argc, const char **argv)
     (void)opt_device; // To avoid non used warning
     std::cout << "Use DC1394 grabber" << std::endl;
     vp1394TwoGrabber g;
-    g.open(I);
-#elif defined(VISP_HAVE_CMU1394)
-    (void)opt_device; // To avoid non used warning
-    std::cout << "Use CMU1394 grabber" << std::endl;
-    vp1394CMUGrabber g;
     g.open(I);
 #elif defined(VISP_HAVE_FLYCAPTURE)
     (void)opt_device; // To avoid non used warning
@@ -395,7 +389,7 @@ int main(int argc, const char **argv)
     detector.setAprilTagQuadDecimate(opt_tag_quad_decimate);
     detector.setAprilTagPoseEstimationMethod(opt_tag_pose_estimation_method);
     detector.setAprilTagNbThreads(opt_tag_nThreads);
-    detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(opt_color_id), thickness);
+    detector.setDisplayTag(opt_display_tag, opt_color_id < 0 ? vpColor::none : vpColor::getColor(static_cast<unsigned int>(opt_color_id)), static_cast<unsigned int>(opt_thickness));
     detector.setZAlignedWithCameraAxis(opt_tag_z_align_frame);
     detector.setAprilTagDecisionMarginThreshold(opt_tag_decision_margin_threshold);
     detector.setAprilTagHammingDistanceThreshold(opt_tag_hamming_distance_threshold);
@@ -405,8 +399,7 @@ int main(int argc, const char **argv)
     bool quit = false;
     while (!quit) {
       //! [Acquisition]
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) ||                              \
-    defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV) && \
     (((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || \
@@ -447,9 +440,9 @@ int main(int argc, const char **argv)
       //! [Display id for each tag]
       std::vector<int> tags_id = detector.getTagsId();
       for (size_t i = 0; i < tags_id.size(); ++i) {
-        std::stringstream ss;
-        ss << "id=" << tags_id[i];
-        vpDisplay::displayText(I, detector.getCog(i) + vpImagePoint(-10, 10), ss.str(), vpColor::blue);
+        std::stringstream sss;
+        sss << "id=" << tags_id[i];
+        vpDisplay::displayText(I, detector.getCog(i) + vpImagePoint(-10, 10), sss.str(), vpColor::blue);
       }
       //! [Display id for each tag]
       vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);
@@ -463,12 +456,12 @@ int main(int argc, const char **argv)
         std::vector<int> tag_hamming_distances = detector.getTagsHammingDistance();
         for (size_t i = 0; i < tags_id.size(); ++i) {
           std::string message = detector.getMessage(i);
-          std::stringstream ss;
-          ss << "Found " << message << std::endl
+          std::stringstream sss;
+          sss << "Found " << message << std::endl
             << "- with decision margin: " << tag_decision_margins[i]
             << " and hamming distance: " << tag_hamming_distances[i] << std::endl
             << "- and cMo:\n" << cMo_vec[i] << std::endl;
-          std::cout << ss.str() << std::endl;
+          std::cout << sss.str() << std::endl;
         }
       }
     }

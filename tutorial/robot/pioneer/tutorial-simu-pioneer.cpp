@@ -96,7 +96,10 @@ int main()
     graph.setLegend(2, 0, "Z");
 #endif
 
+#ifdef VISP_HAVE_DISPLAY
     int iter = 0;
+#endif
+
     for (;;) {
       robot.getPosition(wMc);
       cMo = wMc.inverse() * wMo;
@@ -120,9 +123,8 @@ int main()
       graph.plot(0, iter, v);               // plot velocities applied to the robot
       graph.plot(1, iter, task.getError()); // plot error vector
       graph.plot(2, 0, iter, Z);            // plot the depth
-#endif
-
       iter++;
+#endif
 
       if (task.getError().sumSquare() < 0.0001) {
         std::cout << "Reached a small error. We stop the loop... " << std::endl;

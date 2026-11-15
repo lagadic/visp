@@ -66,9 +66,6 @@
 
 namespace VISP_NAMESPACE_NAME
 {
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(ENABLE_VISP_NAMESPACE)
-using namespace VISP_NAMESPACE_NAME;
-#endif
 
 std::string vpGammaMethodList(const std::string &pref, const std::string &sep, const std::string &suf)
 {

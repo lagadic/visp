@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -497,21 +497,21 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
 #else
   {
     vpMatrix U;
-    unsigned int nc = getCols();
-    unsigned int nr = getRows();
+    integer nc = static_cast<integer>(getCols());
+    integer nr = static_cast<integer>(getRows());
 
     if (rowNum < colNum) {
       U = this->transpose();
-      nc = getRows();
-      nr = getCols();
+      nc = static_cast<integer>(getRows());
+      nr = static_cast<integer>(getCols());
     }
     else {
-      nc = getCols();
-      nr = getRows();
+      nc = static_cast<integer>(getCols());
+      nr = static_cast<integer>(getRows());
     }
 
-    w.resize(nc);
-    V.resize(nc, nc);
+    w.resize(static_cast<unsigned int>(nc));
+    V.resize(static_cast<unsigned int>(nc), static_cast<unsigned int>(nc));
 
     double *a = new double[static_cast<unsigned int>(nr * nc)];
     if (rowNum < colNum) {
@@ -521,8 +521,8 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
       memcpy(a, this->data, this->getRows() * this->getCols() * sizeof(double));
     }
 
-    integer m = (integer)(nc);
-    integer n = (integer)(nr);
+    integer m = static_cast<integer>(nc);
+    integer n = static_cast<integer>(nr);
     integer lda = nc;
     integer ldu = nc;
     integer ldvt = std::min<integer>(nr, nc);
@@ -531,7 +531,7 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
     double wkopt;
     double *work;
 
-    integer *iwork = new integer[8 * static_cast<integer>(std::min<integer>(nr, nc))];
+    integer *iwork = new integer[static_cast<std::size_t>(8 * static_cast<integer>(std::min<integer>(nr, nc)))];
 
     double *s = w.data;
     double *u = V.data;

@@ -124,13 +124,13 @@ Set the program options.
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, bool &display)
 {
-  const char *optarg;
+  const char *optarg_;
   int c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'i':
-      ipath = optarg;
+      ipath = optarg_;
       break;
     case 'd':
       display = false;
@@ -140,7 +140,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &display)
       return false;
 
     default:
-      usage(argv[0], optarg, ipath);
+      usage(argv[0], optarg_, ipath);
       return false;
     }
   }
@@ -149,7 +149,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &display)
     // standalone param or error
     usage(argv[0], nullptr, ipath);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

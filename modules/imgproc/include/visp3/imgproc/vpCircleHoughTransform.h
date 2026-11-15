@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@
 #include VISP_NLOHMANN_JSON(json.hpp)
 #endif
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
 #include <optional>
 #endif
 
@@ -194,7 +194,7 @@ public:
       , m_recordVotingPoints(recordVotingPoints)
       , m_centerMinDist(centerMinDistThresh)
       , m_mergingRadiusDiffThresh(mergingRadiusDiffThresh)
-    { }
+    {}
 
     /**
      * \brief Get the size of the Gaussian filter kernel used to smooth the input image.
@@ -462,7 +462,8 @@ public:
       }
       json j;
       try {
-        j = json::parse(file);
+        // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+        j = json::parse(file, nullptr, true, true);
       }
       catch (json::parse_error &e) {
         std::stringstream msg;
@@ -585,32 +586,31 @@ public:
       std::pair<float, float> radiusLimits = { params.m_minRadius, params.m_maxRadius };
 
       j = nlohmann::json {
-          {"filteringAndGradientType", vpImageFilter::vpCannyFiltAndGradTypeToStr(params.m_filteringAndGradientType)},
-          {"gaussianKernelSize", params.m_gaussianKernelSize},
-          {"gaussianStdev", params.m_gaussianStdev},
-          {"gradientFilterKernelSize", params.m_gradientFilterKernelSize},
-          {"cannyBackendType", vpImageFilter::vpCannyBackendTypeToString(params.m_cannyBackendType)},
-          {"lowerCannyThresh", params.m_lowerCannyThresh},
-          {"lowerThresholdRatio", params.m_lowerCannyThreshRatio},
-          {"upperCannyThresh", params.m_upperCannyThresh},
-          {"upperThresholdRatio", params.m_upperCannyThreshRatio},
-          {"edgeMapFilteringNbIter", params.m_edgeMapFilteringNbIter},
-          {"centerXlimits", params.m_centerXlimits},
-          {"centerYlimits", params.m_centerYlimits},
-          {"radiusLimits", radiusLimits},
-          {"dilatationKernelSize", params.m_dilatationKernelSize},
-          {"averagingWindowSize", params.m_averagingWindowSize},
-          {"centerThresh", params.m_centerMinThresh},
-          {"expectedNbCenters", params.m_expectedNbCenters},
-          {"circleProbabilityThreshold", params.m_circleProbaThresh},
-          {"circleVisibilityRatioThreshold", params.m_circleVisibilityRatioThresh},
-          {"circlePerfectnessThreshold", params.m_circlePerfectness},
-          {"recordVotingPoints", params.m_recordVotingPoints},
-          {"centerMinDistance", params.m_centerMinDist},
-          {"mergingRadiusDiffThresh", params.m_mergingRadiusDiffThresh} };
+          { "filteringAndGradientType", vpImageFilter::vpCannyFiltAndGradTypeToStr(params.m_filteringAndGradientType) },
+          { "gaussianKernelSize", params.m_gaussianKernelSize },
+          { "gaussianStdev", params.m_gaussianStdev },
+          { "gradientFilterKernelSize", params.m_gradientFilterKernelSize },
+          { "cannyBackendType", vpImageFilter::vpCannyBackendTypeToString(params.m_cannyBackendType) },
+          { "lowerCannyThresh", params.m_lowerCannyThresh },
+          { "lowerThresholdRatio", params.m_lowerCannyThreshRatio },
+          { "upperCannyThresh", params.m_upperCannyThresh },
+          { "upperThresholdRatio", params.m_upperCannyThreshRatio },
+          { "edgeMapFilteringNbIter", params.m_edgeMapFilteringNbIter },
+          { "centerXlimits", params.m_centerXlimits },
+          { "centerYlimits", params.m_centerYlimits },
+          { "radiusLimits", radiusLimits },
+          { "dilatationKernelSize", params.m_dilatationKernelSize },
+          { "averagingWindowSize", params.m_averagingWindowSize },
+          { "centerThresh", params.m_centerMinThresh },
+          { "expectedNbCenters", params.m_expectedNbCenters },
+          { "circleProbabilityThreshold", params.m_circleProbaThresh },
+          { "circleVisibilityRatioThreshold", params.m_circleVisibilityRatioThresh },
+          { "circlePerfectnessThreshold", params.m_circlePerfectness },
+          { "recordVotingPoints", params.m_recordVotingPoints },
+          { "centerMinDistance", params.m_centerMinDist },
+          { "mergingRadiusDiffThresh", params.m_mergingRadiusDiffThresh } };
     }
 #endif
-    friend VISP_EXPORT bool operator==(const vpImageCircle &a, const vpImageCircle &b);
 
   private:
     // // Filtering + gradient operators to use
@@ -744,16 +744,79 @@ public:
    * \param[out] mask Optional mask where pixels to exclude have a value set to false.
    * \param[out] opt_votingPoints Optional vector of pairs of pixel coordinates that voted for the \b detections.
    */
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
-  void computeVotingMask(const vpImage<unsigned char> &I, const std::vector<vpImageCircle> &detections,
-                         std::optional< vpImage<bool> > &mask, std::optional<std::vector<std::vector<std::pair<unsigned int, unsigned int>>>> &opt_votingPoints) const;
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
+  inline void computeVotingMask(const vpImage<unsigned char> &I, const std::vector<vpImageCircle> &detections,
+                                std::optional< vpImage<bool> > &mask,
+                                std::optional<std::vector<std::vector<std::pair<unsigned int, unsigned int>>>> &opt_votingPoints) const
 #else
-  void computeVotingMask(const vpImage<unsigned char> &I, const std::vector<vpImageCircle> &detections,
-                         vpImage<bool> **mask, std::vector<std::vector<std::pair<unsigned int, unsigned int> > > **opt_votingPoints) const;
+  inline void computeVotingMask(const vpImage<unsigned char> &I, const std::vector<vpImageCircle> &detections,
+                                vpImage<bool> **mask,
+                                std::vector<std::vector<std::pair<unsigned int, unsigned int> > > **opt_votingPoints) const
+#endif
+  {
+    if (!m_algoParams.m_recordVotingPoints) {
+      // We weren't asked to remember the voting points
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
+      mask = std::nullopt;
+      opt_votingPoints = std::nullopt;
+#else
+      *mask = nullptr;
+      *opt_votingPoints = nullptr;
+#endif
+      return;
+    }
+
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
+    mask = vpImage<bool>(I.getHeight(), I.getWidth(), false);
+    opt_votingPoints = std::vector<std::vector<std::pair<unsigned int, unsigned int>>>();
+#else
+    *mask = new vpImage<bool>(I.getHeight(), I.getWidth(), false);
+    *opt_votingPoints = new std::vector<std::vector<std::pair<unsigned int, unsigned int> > >();
 #endif
 
-/** @name  Configuration from files */
-//@{
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
+    for (const auto &detection : detections)
+#else
+    const size_t nbDetections = detections.size();
+    for (size_t i = 0; i < nbDetections; ++i)
+#endif
+    {
+      bool hasFoundSimilarCircle = false;
+      unsigned int nbPreviouslyDetected = static_cast<unsigned int>(m_finalCircles.size());
+      unsigned int id = 0;
+      // Looking for a circle that was detected and is similar to the one given to the function
+      while ((id < nbPreviouslyDetected) && (!hasFoundSimilarCircle)) {
+        const vpImageCircle previouslyDetected = m_finalCircles[id];
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
+        if (previouslyDetected == detection)
+#else
+        if (previouslyDetected == detections[i])
+#endif
+        {
+          hasFoundSimilarCircle = true;
+          // We found a circle that is similar to the one given to the function => updating the mask
+          const unsigned int nbVotingPoints = static_cast<unsigned int>(m_finalCirclesVotingPoints[id].size());
+          for (unsigned int idPoint = 0; idPoint < nbVotingPoints; ++idPoint) {
+            const std::pair<unsigned int, unsigned int> &votingPoint = m_finalCirclesVotingPoints[id][idPoint];
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
+            (*mask)[votingPoint.first][votingPoint.second] = true;
+#else
+            (**mask)[votingPoint.first][votingPoint.second] = true;
+#endif
+          }
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
+          opt_votingPoints->push_back(m_finalCirclesVotingPoints[id]);
+#else
+          (**opt_votingPoints).push_back(m_finalCirclesVotingPoints[id]);
+#endif
+        }
+        ++id;
+      }
+    }
+  }
+
+  /** @name  Configuration from files */
+  //@{
 #ifdef VISP_HAVE_NLOHMANN_JSON
   /**
    * \brief Construct a new vpCircleHoughTransform object configured according to
@@ -840,7 +903,10 @@ public:
     m_algoParams.m_gaussianStdev = stdev;
 
     const unsigned int checkEvenModulo = 2;
-    if ((m_algoParams.m_gaussianKernelSize % checkEvenModulo) != 1) {
+    if ((static_cast<unsigned int>(m_algoParams.m_gaussianKernelSize) % checkEvenModulo) != 1) {
+      throw vpException(vpException::badValue, "Gaussian Kernel size should be odd.");
+    }
+    if ((static_cast<unsigned int>(m_algoParams.m_gaussianKernelSize) % checkEvenModulo) != 1) {
       throw vpException(vpException::badValue, "Gaussian Kernel size should be odd.");
     }
 
@@ -858,10 +924,10 @@ public:
    */
   inline void setGradientFilterAperture(const unsigned int &apertureSize)
   {
-    m_algoParams.m_gradientFilterKernelSize = apertureSize;
+    m_algoParams.m_gradientFilterKernelSize = static_cast<int>(apertureSize);
 
     const unsigned int checkEvenModulo = 2;
-    if ((m_algoParams.m_gradientFilterKernelSize % checkEvenModulo) != 1) {
+    if ((static_cast<unsigned int>(m_algoParams.m_gradientFilterKernelSize) % checkEvenModulo) != 1) {
       throw vpException(vpException::badValue, "Gradient filter (Sobel or Scharr) Kernel size should be odd.");
     }
 
@@ -1001,7 +1067,7 @@ public:
     if (m_algoParams.m_dilatationKernelSize < minDilatationKernel) {
       throw vpException(vpException::badValue, "Dilatation kernel size for center detection must be greater or equal to 3.");
     }
-    else if ((m_algoParams.m_dilatationKernelSize % checkEvenModulo) == 0) {
+    else if ((static_cast<unsigned int>(m_algoParams.m_dilatationKernelSize) % checkEvenModulo) == 0) {
       throw vpException(vpException::badValue, "Dilatation kernel size for center detection must be odd.");
     }
 
@@ -1009,7 +1075,7 @@ public:
       throw vpException(vpException::badValue, "Votes thresholds for center detection must be positive.");
     }
 
-    if ((m_algoParams.m_averagingWindowSize <= 0) || ((m_algoParams.m_averagingWindowSize % checkEvenModulo) == 0)) {
+    if ((m_algoParams.m_averagingWindowSize <= 0) || ((static_cast<unsigned int>(m_algoParams.m_averagingWindowSize) % checkEvenModulo) == 0)) {
       throw vpException(vpException::badValue, "Averaging window size must be positive and odd.");
     }
   }

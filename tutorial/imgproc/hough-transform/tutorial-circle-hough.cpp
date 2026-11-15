@@ -214,8 +214,8 @@ int main(int argc, char **argv)
       i++;
     }
     else if (argName == "--radius-limits" && i + 2 < argc) {
-      opt_minRadius = atoi(argv[i + 1]);
-      opt_maxRadius = atoi(argv[i + 2]);
+      opt_minRadius = static_cast<unsigned int>(std::atoi(argv[i + 1]));
+      opt_maxRadius = static_cast<unsigned int>(std::atoi(argv[i + 2]));
       i += 2;
     }
     else if (argName == "--center-thresh" && i + 1 < argc) {
@@ -519,13 +519,13 @@ int main(int argc, char **argv)
     std::shared_ptr<vpDisplay> dColor = vpDisplayFactory::createDisplay(I_disp, -1, -1, "Input image");
     std::shared_ptr<vpDisplay> dCanny(nullptr);
     if (opt_displayCanny) {
-      dCanny = vpDisplayFactory::createDisplay(I_dispCanny, I_src.getWidth() + 40, -1, "Edge-map");
+      dCanny = vpDisplayFactory::createDisplay(I_dispCanny, static_cast<int>(I_src.getWidth()) + 40, -1, "Edge-map");
     }
 #else
     vpDisplay *dColor = vpDisplayFactory::allocateDisplay(I_disp, -1, -1, "Input image");
     vpDisplay *dCanny(nullptr);
     if (opt_displayCanny) {
-      dCanny = vpDisplayFactory::allocateDisplay(I_dispCanny, I_src.getWidth() + 40, -1, "Edge-map");
+      dCanny = vpDisplayFactory::allocateDisplay(I_dispCanny, static_cast<int>(I_src.getWidth()) + 40, -1, "Edge-map");
     }
 #endif
     //! [Display init]
@@ -560,13 +560,13 @@ int main(int argc, char **argv)
     std::shared_ptr<vpDisplay> dColor = vpDisplayFactory::createDisplay(I_disp, -1, -1, "Input image");
     std::shared_ptr<vpDisplay> dCanny(nullptr);
     if (opt_displayCanny) {
-      dCanny = vpDisplayFactory::createDisplay(I_dispCanny, I_src.getWidth() + 40, -1, "Edge-map");
+      dCanny = vpDisplayFactory::createDisplay(I_dispCanny, static_cast<int>(I_src.getWidth()) + 40, -1, "Edge-map");
     }
 #else
     vpDisplay *dColor = vpDisplayFactory::allocateDisplay(I_disp, -1, -1, "Input image");
     vpDisplay *dCanny(nullptr);
     if (opt_displayCanny) {
-      dCanny = vpDisplayFactory::allocateDisplay(I_dispCanny, I_src.getWidth() + 40, -1, "Edge-map");
+      dCanny = vpDisplayFactory::allocateDisplay(I_dispCanny, static_cast<int>(I_src.getWidth()) + 40, -1, "Edge-map");
     }
 #endif
 

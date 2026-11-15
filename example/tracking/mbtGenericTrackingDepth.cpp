@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -763,11 +763,11 @@ int main(int argc, const char **argv)
           ss << "nb features: " << tracker->getError().getRows();
           vpDisplay::displayText(I_depth, 80, 20, ss.str(), vpColor::red);
           {
-            std::stringstream ss;
-            ss << "Features: edges " << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesEdge() << ", klt "
+            std::stringstream sss;
+            sss << "Features: edges " << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesEdge() << ", klt "
               << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesKlt() << ", depth "
               << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesDepthDense();
-            vpDisplay::displayText(I, I.getHeight() - 30, 20, ss.str(), vpColor::red);
+            vpDisplay::displayText(I, static_cast<int>(static_cast<int>(I.getHeight()) - 30), 20, sss.str(), vpColor::red);
           }
         }
       }

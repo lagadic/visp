@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,10 +125,11 @@ int main(int argc, const char *argv[])
   double convergence_threshold_t = 0.0005; // Value in [m]
   double convergence_threshold_tu = 0.5;   // Value in [deg]
 
-  unsigned width = 640, height = 480;
+  int width = 640, height = 480;
   std::string megaposeAddress = "127.0.0.1";
   unsigned megaposePort = 5555;
-  int refinerIterations = 1, coarseNumSamples = 1024;
+  int refinerIterations = 1;
+  unsigned int coarseNumSamples = 1024;
   std::string objectName = "";
 
   std::string desiredPosFile = "desired.pos";
@@ -204,7 +205,7 @@ int main(int argc, const char *argv[])
     }
     std::future<vpMegaPoseEstimate> trackerFuture;
 
-    vpImage<vpRGBa> I(height, width);
+    vpImage<vpRGBa> I(static_cast<unsigned int>(height), static_cast<unsigned int>(width));
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     display = vpDisplayFactory::createDisplay(I, 10, 10, "Color image");

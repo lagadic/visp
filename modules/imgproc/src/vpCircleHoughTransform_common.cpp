@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ vpCircleHoughTransform::init(const vpCircleHoughTransformParams &algoParams)
 }
 
 vpCircleHoughTransform::~vpCircleHoughTransform()
-{ }
+{}
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 using json = nlohmann::json;
@@ -107,7 +107,8 @@ vpCircleHoughTransform::initFromJSON(const std::string &jsonPath)
   }
   json j;
   try {
-    j = json::parse(file);
+    // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+    j = json::parse(file, nullptr, true, true);
   }
   catch (json::parse_error &e) {
     std::stringstream msg;
@@ -134,8 +135,8 @@ void
 vpCircleHoughTransform::initGaussianFilters()
 {
   const int filterHalfSize = (m_algoParams.m_gaussianKernelSize + 1) / 2;
-  m_fg.resize(1, filterHalfSize);
-  vpImageFilter::getGaussianKernel(m_fg.data, m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev, true);
+  m_fg.resize(1, static_cast<unsigned int>(filterHalfSize));
+  vpImageFilter::getGaussianKernel(m_fg.data, static_cast<unsigned int>(m_algoParams.m_gaussianKernelSize), m_algoParams.m_gaussianStdev, true);
   m_cannyVisp.setGaussianFilterParameters(m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev);
 }
 
@@ -159,13 +160,13 @@ vpCircleHoughTransform::initGradientFilters()
   if ((m_algoParams.m_gradientFilterKernelSize % moduloCheckForOddity) != 1) {
     throw vpException(vpException::badValue, "Gradient filters Kernel size should be odd.");
   }
-  m_gradientFilterX.resize(m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gradientFilterKernelSize);
-  m_gradientFilterY.resize(m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gradientFilterKernelSize);
-  m_cannyVisp.setGradientFilterAperture(m_algoParams.m_gradientFilterKernelSize);
+  m_gradientFilterX.resize(static_cast<unsigned int>(m_algoParams.m_gradientFilterKernelSize), static_cast<unsigned int>(m_algoParams.m_gradientFilterKernelSize));
+  m_gradientFilterY.resize(static_cast<unsigned int>(m_algoParams.m_gradientFilterKernelSize), static_cast<unsigned int>(m_algoParams.m_gradientFilterKernelSize));
+  m_cannyVisp.setGradientFilterAperture(static_cast<unsigned int>(m_algoParams.m_gradientFilterKernelSize));
 
   float scaleX = 1.f;
   float scaleY = 1.f;
-  unsigned int filterHalfSize = (m_algoParams.m_gradientFilterKernelSize - 1) / 2;
+  unsigned int filterHalfSize = (static_cast<unsigned int>(m_algoParams.m_gradientFilterKernelSize) - 1) / 2;
 
   if (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
     // Compute the Sobel filters
@@ -325,85 +326,6 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I)
   mergeCircleCandidates();
 
   return m_finalCircles;
-}
-
-VISP_EXPORT bool operator==(const vpImageCircle &a, const vpImageCircle &b)
-{
-  vpImagePoint aCenter = a.getCenter();
-  vpImagePoint bCenter = b.getCenter();
-  bool haveSameCenter = (std::abs(aCenter.get_u() - bCenter.get_u())
-                         + std::abs(aCenter.get_v() - bCenter.get_v())) <= (2. * std::numeric_limits<double>::epsilon());
-  bool haveSameRadius = std::abs(a.getRadius() - b.getRadius()) <= (2.f * std::numeric_limits<float>::epsilon());
-  return (haveSameCenter && haveSameRadius);
-}
-
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
-void vpCircleHoughTransform::computeVotingMask(const vpImage<unsigned char> &I, const std::vector<vpImageCircle> &detections,
-                         std::optional< vpImage<bool> > &mask, std::optional<std::vector<std::vector<std::pair<unsigned int, unsigned int>>>> &opt_votingPoints) const
-#else
-void vpCircleHoughTransform::computeVotingMask(const vpImage<unsigned char> &I, const std::vector<vpImageCircle> &detections,
-                         vpImage<bool> **mask, std::vector<std::vector<std::pair<unsigned int, unsigned int> > > **opt_votingPoints) const
-#endif
-{
-  if (!m_algoParams.m_recordVotingPoints) {
-    // We weren't asked to remember the voting points
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
-    mask = std::nullopt;
-    opt_votingPoints = std::nullopt;
-#else
-    *mask = nullptr;
-    *opt_votingPoints = nullptr;
-#endif
-    return;
-  }
-
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
-  mask = vpImage<bool>(I.getHeight(), I.getWidth(), false);
-  opt_votingPoints = std::vector<std::vector<std::pair<unsigned int, unsigned int>>>();
-#else
-  *mask = new vpImage<bool>(I.getHeight(), I.getWidth(), false);
-  *opt_votingPoints = new std::vector<std::vector<std::pair<unsigned int, unsigned int> > >();
-#endif
-
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-  for (const auto &detection : detections)
-#else
-  const size_t nbDetections = detections.size();
-  for (size_t i = 0; i < nbDetections; ++i)
-#endif
-  {
-    bool hasFoundSimilarCircle = false;
-    unsigned int nbPreviouslyDetected = static_cast<unsigned int>(m_finalCircles.size());
-    unsigned int id = 0;
-    // Looking for a circle that was detected and is similar to the one given to the function
-    while ((id < nbPreviouslyDetected) && (!hasFoundSimilarCircle)) {
-      vpImageCircle previouslyDetected = m_finalCircles[id];
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-      if (previouslyDetected == detection)
-#else
-      if (previouslyDetected == detections[i])
-#endif
-      {
-        hasFoundSimilarCircle = true;
-        // We found a circle that is similar to the one given to the function => updating the mask
-        const unsigned int nbVotingPoints = static_cast<unsigned int>(m_finalCirclesVotingPoints[id].size());
-        for (unsigned int idPoint = 0; idPoint < nbVotingPoints; ++idPoint) {
-          const std::pair<unsigned int, unsigned int> &votingPoint = m_finalCirclesVotingPoints[id][idPoint];
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
-          (*mask)[votingPoint.first][votingPoint.second] = true;
-#else
-          (**mask)[votingPoint.first][votingPoint.second] = true;
-#endif
-        }
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
-        opt_votingPoints->push_back(m_finalCirclesVotingPoints[id]);
-#else
-        (**opt_votingPoints).push_back(m_finalCirclesVotingPoints[id]);
-#endif
-      }
-      ++id;
-    }
-  }
 }
 
 std::string

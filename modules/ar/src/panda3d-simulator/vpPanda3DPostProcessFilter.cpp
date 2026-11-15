@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ void vpPanda3DPostProcessFilter::setupRenderTarget()
   }
   FrameBufferProperties fbp = getBufferProperties();
   WindowProperties win_prop;
-  win_prop.set_size(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight());
+  win_prop.set_size(static_cast<int>(m_renderParameters.getImageWidth()), static_cast<int>(m_renderParameters.getImageHeight()));
 
   // Don't open a window - force it to be an offscreen buffer.
   int flags = GraphicsPipe::BF_refuse_window | GraphicsPipe::BF_resizeable;
@@ -145,13 +145,13 @@ void vpPanda3DPostProcessFilter::setRenderParameters(const vpPanda3DRenderParame
   }
   if (resize) {
     for (GraphicsOutput *buffer: m_buffers) {
-      //buffer->get_type().is_derived_from()
-      GraphicsBuffer *buf = dynamic_cast<GraphicsBuffer *>(buffer);
-      if (buf == nullptr) {
+      // Use Panda3D type system rather than dynamic_cast, since Panda3D may be built without RTTI
+      if ((buffer == nullptr) || (!buffer->is_of_type(GraphicsBuffer::get_class_type()))) {
         throw vpException(vpException::fatalError, "Panda3D: could not cast to GraphicsBuffer when rendering.");
       }
       else {
-        buf->set_size(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight());
+        GraphicsBuffer *buf = static_cast<GraphicsBuffer *>(buffer);
+        buf->set_size(static_cast<int>(m_renderParameters.getImageWidth()), static_cast<int>(m_renderParameters.getImageHeight()));
       }
     }
   }
@@ -164,8 +164,8 @@ void vpPanda3DPostProcessFilter::getRenderBasic(vpImage<unsigned char> &I) const
   }
 
   I.resize(m_renderParameters.getImageHeight(), m_renderParameters.getImageWidth());
-  const unsigned numComponents = m_texture->get_num_components();
-  int rowIncrement = I.getWidth() * numComponents; // we ask for only 8 bits image, but we may get an rgb image
+  const unsigned numComponents = static_cast<unsigned int>(m_texture->get_num_components());
+  unsigned int rowIncrement = I.getWidth() * numComponents; // we ask for only 8 bits image, but we may get an rgb image
   unsigned char *data = (unsigned char *)(&(m_texture->get_ram_image().front()));
   // Panda3D stores data upside down
   data += rowIncrement * (I.getHeight() - 1);
@@ -187,8 +187,8 @@ void vpPanda3DPostProcessFilter::getRenderBasic(vpImage<vpRGBf> &I) const
   }
 
   I.resize(m_renderParameters.getImageHeight(), m_renderParameters.getImageWidth());
-  const unsigned numComponents = m_texture->get_num_components();
-  int rowIncrement = I.getWidth() * numComponents; // we ask for only 8 bits image, but we may get an rgb image
+  const unsigned int numComponents = static_cast<unsigned int>(m_texture->get_num_components());
+  unsigned int rowIncrement = I.getWidth() * numComponents; // we ask for only 8 bits image, but we may get an rgb image
   float *data = (float *)(&(m_texture->get_ram_image().front()));
   // Panda3D stores data upside down
   data += rowIncrement * (I.getHeight() - 1);
@@ -209,6 +209,6 @@ END_VISP_NAMESPACE
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_ar.a(vpPanda3DPostProcessFilter.cpp.o) has no symbols
-void dummy_vpPanda3DPostProcessFilter() { }
+void dummy_vpPanda3DPostProcessFilter() {}
 
 #endif

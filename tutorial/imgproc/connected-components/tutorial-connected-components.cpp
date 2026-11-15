@@ -74,9 +74,9 @@ int main(int argc, const char **argv)
   }
   //! [Draw connected components]
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  std::shared_ptr<vpDisplay> display2 = vpDisplayFactory::createDisplay(I_conn, I.getWidth(), 10, "Connected components");
+  std::shared_ptr<vpDisplay> display2 = vpDisplayFactory::createDisplay(I_conn, static_cast<int>(I.getWidth()), 10, "Connected components");
 #else
-  vpDisplay *display2 = vpDisplayFactory::allocateDisplay(I_conn, I.getWidth(), 10, "Connected components");
+  vpDisplay *display2 = vpDisplayFactory::allocateDisplay(I_conn, static_cast<int>(I.getWidth()), 10, "Connected components");
 #endif
 
   vpDisplay::display(I);

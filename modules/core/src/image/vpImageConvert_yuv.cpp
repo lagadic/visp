@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -601,10 +601,10 @@ void vpImageConvert::YUV420ToRGBa(unsigned char *yuv, unsigned char *rgba, unsig
     for (unsigned int j = 0; j < halfWidth; ++j) {
       U = static_cast<int>(((*iU) - val_128) * 0.354);
       ++iU;
-      U5 = val_5 * U;
+      U5 = static_cast<int>(val_5) * U;
       V = static_cast<int>(((*iV) - val_128) * 0.707);
       ++iV;
-      V2 = val_2 * V;
+      V2 = static_cast<int>(val_2) * V;
       UV = -U - V;
       Y0 = *yuv;
       ++yuv;
@@ -711,10 +711,10 @@ void vpImageConvert::YUV420ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
     for (unsigned int j = 0; j < halfWidth; ++j) {
       U = static_cast<int>(((*iU) - val_128) * 0.354);
       ++iU;
-      U5 = val_5 * U;
+      U5 = static_cast<int>(val_5) * U;
       V = static_cast<int>(((*iV) - val_128) * 0.707);
       ++iV;
-      V2 = val_2 * V;
+      V2 = static_cast<int>(val_2) * V;
       UV = -U - V;
       Y0 = *yuv;
       ++yuv;
@@ -931,10 +931,10 @@ void vpImageConvert::YV12ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigne
     for (unsigned int j = 0; j < halfWidth; ++j) {
       U = static_cast<int>(((*iU) - val_128) * 0.354);
       ++iU;
-      U5 = val_5 * U;
+      U5 = static_cast<int>(val_5) * U;
       V = static_cast<int>(((*iV) - val_128) * 0.707);
       ++iV;
-      V2 = val_2 * V;
+      V2 = static_cast<int>(val_2) * V;
       UV = -U - V;
       Y0 = *yuv;
       ++yuv;
@@ -1041,10 +1041,10 @@ void vpImageConvert::YV12ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned 
     for (unsigned int j = 0; j < halfWidth; ++j) {
       U = static_cast<int>(((*iU) - val_128) * 0.354);
       ++iU;
-      U5 = val_5 * U;
+      U5 = static_cast<int>(val_5) * U;
       V = static_cast<int>(((*iV) - val_128) * 0.707);
       ++iV;
-      V2 = val_2 * V;
+      V2 = static_cast<int>(val_2) * V;
       UV = -U - V;
       Y0 = *yuv;
       ++yuv;
@@ -1176,10 +1176,10 @@ void vpImageConvert::YVU9ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigne
     for (unsigned int j = 0; j < quarterWidth; ++j) {
       U = static_cast<int>(((*iU) - val_128) * 0.354);
       ++iU;
-      U5 = val_5 * U;
+      U5 = static_cast<int>(val_5) * U;
       V = static_cast<int>(((*iV) - val_128) * 0.707);
       ++iV;
-      V2 = val_2 * V;
+      V2 = static_cast<int>(val_2) * V;
       UV = -U - V;
       Y0 = *yuv;
       ++yuv;
@@ -1370,10 +1370,10 @@ void vpImageConvert::YVU9ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned 
     for (unsigned int j = 0; j < quarterWidth; ++j) {
       U = static_cast<int>((*iU - val_128) * 0.354);
       ++iU;
-      U5 = val_5 * U;
+      U5 = static_cast<int>(val_5) * U;
       V = static_cast<int>((*iV - val_128) * 0.707);
       ++iV;
-      V2 = val_2 * V;
+      V2 = static_cast<int>(val_2) * V;
       UV = -U - V;
       Y0 = *yuv;
       ++yuv;

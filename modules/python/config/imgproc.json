@@ -1,7 +1,10 @@
 {
   "ignored_headers": [],
   "ignored_classes": [],
-  "user_defined_headers": [],
+  "user_defined_headers": [
+    "imgproc.hpp"
+  ],
+  "additional_bindings": "bindings_imgproc",
   "classes": {},
   "functions": [
     {

@@ -899,7 +899,7 @@ inline void to_json(nlohmann::json &j, const vpMbGenericTracker::TrackerWrapper 
   };
   j = nlohmann::json {
     {"camera", t.m_cam},
-    {"type", flagsToJSON(t.m_trackerType, trackerTypes)},
+    {"type", flagsToJSON(static_cast<unsigned int>(t.m_trackerType), trackerTypes)},
     {"angleAppear", vpMath::deg(t.getAngleAppear())},
     {"angleDisappear", vpMath::deg(t.getAngleDisappear())},
     {"lod", {
@@ -995,7 +995,7 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
     t.setNearClippingDistance(clipping.value("near", t.getNearClippingDistance()));
     t.setFarClippingDistance(clipping.value("far", t.getFarClippingDistance()));
     if (clipping.contains("flags")) {
-      t.setClipping(flagsFromJSON<vpPolygon3D::vpPolygon3DClippingType>(clipping.at("flags")));
+      t.setClipping(static_cast<unsigned int>(flagsFromJSON<vpPolygon3D::vpPolygon3DClippingType>(clipping.at("flags"))));
     }
   }
   if (j.contains("lod")) {
@@ -1064,7 +1064,7 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
       t.setDepthDenseSamplingStep(sampling.at("x"), sampling.at("y"));
     }
   }
-  }
+}
 
 #endif
 

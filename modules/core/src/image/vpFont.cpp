@@ -102,7 +102,7 @@ public:
     case TRUETYPE_FILE: {
       std::vector<std::string> ttfs = vpIoTools::splitChain(ttfFilename, ";");
       std::string ttf_file = "";
-      for (size_t i = 0; i < ttfs.size(); i++) {
+      for (size_t i = 0; i < ttfs.size(); ++i) {
         if (vpIoTools::checkFilename(ttfs[i])) {
           ttf_file = ttfs[i];
           break;
@@ -158,11 +158,11 @@ public:
       _currentIndent.y = static_cast<int>(height) * _originalIndent.y / _originalSize.y;
 
       size_t level = 0;
-      for (; (height << (level + 1)) < static_cast<size_t>(_originalSize.y); level++)
+      for (; (height << (level + 1)) < static_cast<size_t>(_originalSize.y); ++level)
         ;
 
       _currentSymbols.resize(_originalSymbols.size());
-      for (size_t i = 0; i < _originalSymbols.size(); i++) {
+      for (size_t i = 0; i < _originalSymbols.size(); ++i) {
         _currentSymbols[i].value = _originalSymbols[i].value;
         _currentSymbols[i].image.resize(static_cast<unsigned int>(_currentSize.y),
                                         static_cast<unsigned int>(_currentSize.x));
@@ -202,7 +202,7 @@ public:
     switch (_ttfFamily) {
     case GENERIC_MONOSPACE: {
       Point size, curr;
-      for (size_t i = 0; i < text.size(); i++) {
+      for (size_t i = 0; i < text.size(); ++i) {
         if (text[i] >= _symbolMin && text[i] <= _symbolMax) {
           curr.x += _currentSize.x;
           size.x = std::max<int>(size.x, curr.x);
@@ -229,7 +229,7 @@ public:
 
       int bottom = 0;
       // https://github.com/justinmeiners/stb-truetype-example/blob/master/main.c
-      for (int i = 0, x = 0; i < wordUTF32_size; i++) {
+      for (int i = 0, x = 0; i < wordUTF32_size; ++i) {
         /* how wide is this character */
         int ax = 0;
         int lsb = 0;
@@ -311,9 +311,9 @@ public:
                   _alpha, canvasRect, alphaRect);
 
       if (_alpha.getSize()) {
-        for (int i = 0; i < alphaRect.Height(); i++) {
+        for (int i = 0; i < alphaRect.Height(); ++i) {
           int dstY = (canvasRect.Top() + i) % canvas.getHeight();
-          for (int j = 0; j < alphaRect.Width(); j++) {
+          for (int j = 0; j < alphaRect.Width(); ++j) {
             unsigned int dstX = static_cast<unsigned int>(canvasRect.Left() + j) % canvas.getWidth();
 
             // dst[x, y, c] = (pixel[c]*_alpha[x, y] + dst[x, y, c]*(255 - _alpha[x, y]))/255;
@@ -335,7 +335,7 @@ public:
 
       int wordUTF32_size = static_cast<int>(_wordUTF32.size());
 
-      for (int i = 0, x = 0; i < wordUTF32_size; i++) {
+      for (int i = 0, x = 0; i < wordUTF32_size; ++i) {
         /* render character (stride and offset is important here) */
         int byteOffset = x + vpMath::round(_lsb_vec[i] * _fontScale) + (_y_vec[i] * _fontBuffer.getWidth());
         stbtt_MakeCodepointBitmap(&_info, _fontBuffer.bitmap + byteOffset, static_cast<int>(_bb_vec[i].getWidth()),
@@ -347,15 +347,15 @@ public:
         int d_w = static_cast<int>(_bb_vec[i].getWidth());
         int d_h = static_cast<int>(_bb_vec[i].getHeight());
 
-        for (int y = d_y; y < d_y + d_h; y++) {
+        for (int y = d_y; y < d_y + d_h; ++y) {
           int dstY = static_cast<int>(position.get_v() + y - _bb.getTop()) % canvas.getHeight();
 
-          for (int x = d_x; x < d_x + d_w; x++) {
-            unsigned int dstX = static_cast<unsigned int>(position.get_u() + x - _bb.getLeft()) % canvas.getWidth();
+          for (int px = d_x; px < d_x + d_w; ++px) {
+            unsigned int dstX = static_cast<unsigned int>(position.get_u() + px - _bb.getLeft()) % canvas.getWidth();
 
-            int coeff = 255 - _fontBuffer[y][x];
+            int coeff = 255 - _fontBuffer[y][px];
             unsigned char gray =
-              static_cast<unsigned char>((color * _fontBuffer[y][x] + coeff * canvas[dstY][dstX]) / 255);
+              static_cast<unsigned char>((color * _fontBuffer[y][px] + coeff * canvas[dstY][dstX]) / 255);
             canvas[dstY][dstX] = gray;
           }
         }
@@ -395,8 +395,8 @@ public:
             unsigned char background)
   {
     Rect canvasRect = Rect(Measure(text)).Shifted(position.get_u(), position.get_v());
-    for (int i = canvasRect.Top(); i < canvasRect.Bottom(); i++) {
-      for (int j = canvasRect.Left(); j < canvasRect.Right(); j++) {
+    for (int i = canvasRect.Top(); i < canvasRect.Bottom(); ++i) {
+      for (int j = canvasRect.Left(); j < canvasRect.Right(); ++j) {
         canvas[i][j] = background;
       }
     }
@@ -422,9 +422,9 @@ public:
                   _alpha, canvasRect, alphaRect);
 
       if (_alpha.getSize()) {
-        for (int i = 0; i < alphaRect.Height(); i++) {
+        for (int i = 0; i < alphaRect.Height(); ++i) {
           int dstY = (canvasRect.Top() + i) % canvas.getHeight();
-          for (int j = 0; j < alphaRect.Width(); j++) {
+          for (int j = 0; j < alphaRect.Width(); ++j) {
             unsigned int dstX = static_cast<unsigned int>(canvasRect.Left() + j) % canvas.getWidth();
 
             // dst[x, y, c] = (pixel[c]*_alpha[x, y] + dst[x, y, c]*(255 - _alpha[x, y]))/255;
@@ -449,7 +449,7 @@ public:
 
       int wordUTF32_size = static_cast<int>(_wordUTF32.size());
 
-      for (int i = 0, x = 0; i < wordUTF32_size; i++) {
+      for (int i = 0, x = 0; i < wordUTF32_size; ++i) {
         /* render character (stride and offset is important here) */
         int byteOffset = x + vpMath::round(_lsb_vec[i] * _fontScale) + (_y_vec[i] * _fontBuffer.getWidth());
         stbtt_MakeCodepointBitmap(&_info, _fontBuffer.bitmap + byteOffset, static_cast<int>(_bb_vec[i].getWidth()),
@@ -461,16 +461,16 @@ public:
         int d_w = static_cast<int>(_bb_vec[i].getWidth());
         int d_h = static_cast<int>(_bb_vec[i].getHeight());
 
-        for (int y = d_y; y < d_y + d_h; y++) {
+        for (int y = d_y; y < d_y + d_h; ++y) {
           int dstY = static_cast<int>(position.get_v() + y - _bb.getTop()) % canvas.getHeight();
 
-          for (int x = d_x; x < d_x + d_w; x++) {
-            unsigned int dstX = static_cast<unsigned int>(position.get_u() + x - _bb.getLeft()) % canvas.getWidth();
+          for (int px = d_x; px < d_x + d_w; ++px) {
+            unsigned int dstX = static_cast<unsigned int>(position.get_u() + px - _bb.getLeft()) % canvas.getWidth();
 
-            int coeff = 255 - _fontBuffer[y][x];
-            int R = (color.R * _fontBuffer[y][x] + coeff * canvas[dstY][dstX].R) / 255;
-            int G = (color.G * _fontBuffer[y][x] + coeff * canvas[dstY][dstX].G) / 255;
-            int B = (color.B * _fontBuffer[y][x] + coeff * canvas[dstY][dstX].B) / 255;
+            int coeff = 255 - _fontBuffer[y][px];
+            int R = (color.R * _fontBuffer[y][px] + coeff * canvas[dstY][dstX].R) / 255;
+            int G = (color.G * _fontBuffer[y][px] + coeff * canvas[dstY][dstX].G) / 255;
+            int B = (color.B * _fontBuffer[y][px] + coeff * canvas[dstY][dstX].B) / 255;
             canvas[dstY][dstX] =
               vpRGBa(static_cast<unsigned char>(R), static_cast<unsigned char>(G), static_cast<unsigned char>(B));
           }
@@ -511,8 +511,8 @@ public:
             const vpColor &background)
   {
     Rect canvasRect = Rect(Measure(text)).Shifted(position.get_u(), position.get_v());
-    for (int i = canvasRect.Top(); i < canvasRect.Bottom(); i++) {
-      for (int j = canvasRect.Left(); j < canvasRect.Right(); j++) {
+    for (int i = canvasRect.Top(); i < canvasRect.Bottom(); ++i) {
+      for (int j = canvasRect.Left(); j < canvasRect.Right(); ++j) {
         canvas[i][j] = background;
       }
     }
@@ -556,7 +556,7 @@ private:
     String symbols;
     symbols.reserve(text.size());
     Point curr;
-    for (size_t i = 0; i < text.size(); i++) {
+    for (size_t i = 0; i < text.size(); ++i) {
       char value = text[i];
       if (value >= _symbolMin && value <= _symbolMax) {
         Rect current(curr, curr + _currentSize);
@@ -576,7 +576,7 @@ private:
     }
 
     alpha.resize(static_cast<unsigned int>(alphaRect.Size().y), static_cast<unsigned int>(alphaRect.Size().x), 0);
-    for (size_t i = 0; i < symbols.size(); i++) {
+    for (size_t i = 0; i < symbols.size(); ++i) {
       Rect r = rects[i].Shifted(-alphaRect.TopLeft());
       alpha.insert(_currentSymbols[static_cast<size_t>(symbols[i] - _symbolMin)].image,
                    vpImagePoint(r.Top(), r.Left()));
@@ -609,7 +609,7 @@ private:
       _originalIndent.x = LoadValue(data, size);
       _originalIndent.y = LoadValue(data, size);
       _originalSymbols.resize(static_cast<size_t>(_symbolMax - _symbolMin));
-      for (char s = _symbolMin; s < _symbolMax; s++) {
+      for (char s = _symbolMin; s < _symbolMax; ++s) {
         Symbol &symbol = _originalSymbols[static_cast<size_t>(s - _symbolMin)];
         symbol.value = static_cast<char>(LoadValue(data, size));
         if (symbol.value != s) {
@@ -619,9 +619,9 @@ private:
         symbol.image.resize(static_cast<unsigned int>(_originalSize.y), static_cast<unsigned int>(_originalSize.x), 0);
         size_t top = LoadValue(data, size);
         size_t bottom = LoadValue(data, size);
-        for (size_t r = top; r < bottom; r++) {
+        for (size_t r = top; r < bottom; ++r) {
           size_t count = LoadValue(data, size);
-          for (size_t l = 0; l < count; l++) {
+          for (size_t l = 0; l < count; ++l) {
             size_t left = LoadValue(data, size);
             size_t right = LoadValue(data, size);
             assert(left < right);
@@ -2568,7 +2568,7 @@ private:
   {
     // convert UTF8 to UTF32
     utf32.clear();
-    for (size_t i = 0; i < str.size(); i++) {
+    for (size_t i = 0; i < str.size(); ++i) {
       unsigned char ch = (unsigned char)str[i];
       unsigned int charcode;
       if (ch <= 127) {
@@ -2576,7 +2576,7 @@ private:
       }
       else if (ch <= 223 && i + 1 < str.size() && (str[i + 1] & 0xc0) == 0x80) {
         charcode = ((ch & 31) << 6) | (str[i + 1] & 63);
-        i++;
+        ++i;
       }
       else if (ch <= 239 && i + 2 < str.size() && (str[i + 1] & 0xc0) == 0x80 && (str[i + 2] & 0xc0) == 0x80) {
         charcode = ((ch & 15) << 12) | ((str[i + 1] & 63) << 6) | (str[i + 2] & 63);
@@ -2594,7 +2594,7 @@ private:
       else {
         charcode = 65533;
         while (i + 1 < str.size() && (str[i + 1] & 0xc0) == 0x80) {
-          i++;
+          ++i;
         }
       }
       utf32.push_back(charcode);

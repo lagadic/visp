@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -346,12 +346,12 @@ vpMatrix vpMatrix::inverseByLULapack() const
       throw(vpException(vpException::fatalError, "Cannot inverse a non square matrix (%ux%u) by LU", rowNum, colNum));
     }
 
-    integer dim = (integer)rowNum;
+    integer dim = static_cast<integer>(rowNum);
     integer lda = dim;
     integer info;
     integer lwork = dim * dim;
-    integer *ipiv = new integer[dim + 1];
-    double *work = new double[lwork];
+    integer *ipiv = new integer[static_cast<std::size_t>(dim + 1)];
+    double *work = new double[static_cast<std::size_t>(lwork)];
 
     vpMatrix A = *this;
 
@@ -441,10 +441,10 @@ double vpMatrix::detByLULapack() const
                         rowNum, colNum));
     }
 
-    integer dim = (integer)rowNum;
+    integer dim = static_cast<integer>(rowNum);
     integer lda = dim;
     integer info;
-    integer *ipiv = new integer[dim + 1];
+    integer *ipiv = new integer[static_cast<std::size_t>(dim + 1)];
 
     vpMatrix A = *this;
 
@@ -516,7 +516,7 @@ vpMatrix vpMatrix::inverseByLUOpenCV() const
     throw(vpException(vpException::fatalError, "Cannot inverse a non square matrix (%ux%u) by LU", rowNum, colNum));
   }
 
-  cv::Mat M(rowNum, colNum, CV_64F, this->data);
+  cv::Mat M(static_cast<int>(rowNum), static_cast<int>(colNum), CV_64F, this->data);
 
   cv::Mat Minv = M.inv(cv::DECOMP_LU);
 
@@ -564,7 +564,7 @@ double vpMatrix::detByLUOpenCV() const
                       rowNum, colNum));
   }
 
-  cv::Mat M(rowNum, colNum, CV_64F, this->data);
+  cv::Mat M(static_cast<int>(rowNum), static_cast<int>(colNum), CV_64F, this->data);
   det = cv::determinant(M);
 
   return (det);

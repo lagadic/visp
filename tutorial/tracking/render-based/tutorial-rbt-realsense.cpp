@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ int main()
 struct CmdArguments
 {
   CmdArguments() : height(480), width(848), fps(60)
-  { }
+  {}
 
   void registerArguments(vpJsonArgumentParser &parser)
   {
@@ -68,7 +68,8 @@ struct CmdArguments
       .addArgument("--width", width, false, "Realsense requested image width")
       .addArgument("--fps", fps, false, "Realsense requested framerate");
   }
-  unsigned int height, width, fps;
+  unsigned int height, width;
+  int fps;
 };
 #endif
 
@@ -136,13 +137,13 @@ int main(int argc, const char **argv)
 
   //! [Realsense opening]
   const unsigned int width = realsenseArgs.width, height = realsenseArgs.height;
-  const unsigned fps = realsenseArgs.fps;
+  const int fps = realsenseArgs.fps;
 
   vpRealSense2 realsense;
   std::cout << "Opening realsense with settings: " << width << "x" << height << " @ " << fps << "fps" << std::endl;
   rs2::config config;
-  config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
-  config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
+  config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_RGBA8, fps);
+  config.enable_stream(RS2_STREAM_DEPTH, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_Z16, fps);
   rs2::align align_to(RS2_STREAM_COLOR);
   try {
     realsense.open(config);
@@ -323,7 +324,7 @@ int main(int argc, const char **argv)
       if (driftDetector) {
         std::stringstream ss;
         ss << "Confidence score: " << std::setprecision(2) << driftDetector->getScore() << std::endl;
-        vpDisplay::displayText(Id, Id.getHeight() - 40, 5, ss.str(), vpColor::red);
+        vpDisplay::displayText(Id, static_cast<int>(Id.getHeight()) - 40, 5, ss.str(), vpColor::red);
       }
       vpMouseButton::vpMouseButtonType button;
       if (vpDisplay::getClick(Id, button, false)) {

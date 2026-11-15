@@ -32,6 +32,7 @@
  */
 
 #include <visp3/core/vpColor.h>
+#include <visp3/core/vpIoTools.h>
 
 BEGIN_VISP_NAMESPACE
 // FS: Sould be improved to avoid the #if preprocessor line. Not a good idea
@@ -116,6 +117,99 @@ vpColor const vpColor::allColors[vpColor::nbColors] = { vpColor::blue,       // 
                                                        vpColor::black,      // 0
                                                        vpColor::white };     // 17
 #endif
+
+std::string vpColor::colorToString(const vpColor &color)
+{
+  std::string name;
+  switch (color.id) {
+  case id_black:
+    name = "black";
+    break;
+  case id_white:
+    name = "white";
+    break;
+  case id_lightGray:
+    name = "light-gray";
+    break;
+  case id_gray:
+    name = "gray";
+    break;
+  case id_darkGray:
+    name = "dark-gray";
+    break;
+  case id_lightRed:
+    name = "light-red";
+    break;
+  case id_red:
+    name = "red";
+    break;
+  case id_darkRed:
+    name = "dark-red";
+    break;
+  case id_lightGreen:
+    name = "light-green";
+    break;
+  case id_green:
+    name = "green";
+    break;
+  case id_darkGreen:
+    name = "dark-green";
+    break;
+  case id_lightBlue:
+    name = "light-blue";
+    break;
+  case id_blue:
+    name = "blue";
+    break;
+  case id_darkBlue:
+    name = "dark-blue";
+    break;
+  case id_yellow:
+    name = "yellow";
+    break;
+  case id_cyan:
+    name = "cyan";
+    break;
+  case id_orange:
+    name = "orange";
+    break;
+  case id_purple:
+    name = "purple";
+    break;
+  case id_unknown:
+  default:
+    name = "user-defined";
+    break;
+  }
+
+  return name;
+}
+
+vpColor vpColor::colorFromString(const std::string &name)
+{
+  vpColor color = vpColor::none;
+  bool notFound = true;
+  unsigned int i = 0;
+  while ((i < vpColor::nbColors) && notFound) {
+    vpColor candidate = vpColor::allColors[i];
+    if (vpIoTools::toLowerCase(name) == colorToString(candidate)) {
+      color = candidate;
+      notFound = false;
+    }
+    ++i;
+  }
+  return color;
+}
+
+std::string vpColor::getColorsNames(const std::string &prefix, const std::string &sep, const std::string &suffix)
+{
+  std::string list = prefix;
+  for (unsigned int i = 0; i < vpColor::nbColors - 1; ++i) {
+    list += colorToString(vpColor::allColors[i]) + sep;
+  }
+  list += colorToString(vpColor::allColors[vpColor::nbColors - 1]) + suffix;
+  return list;
+}
 
 /*!
   Compare two colors.

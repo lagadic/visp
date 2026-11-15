@@ -368,7 +368,7 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
         u_direction = u_direction_candidate;
       }
       else if (std::abs(abs_u_candidate - abs_u_val) < std::numeric_limits<double>::epsilon()) {
-        if (std::abs(u_direction - u_direction_candidate) > 0) {
+        if (u_direction != u_direction_candidate) {
           // The norm are equal => we always take the positive direction
           u_direction = +1;
         }
@@ -382,7 +382,7 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
         v_direction = v_direction_candidate;
       }
       else if (std::abs(abs_v_candidate - abs_v_val) < std::numeric_limits<double>::epsilon()) {
-        if (std::abs(v_direction - v_direction_candidate) > 0) {
+        if (v_direction != v_direction_candidate) {
           // The norm are equal => we always take the positive direction
           v_direction = +1;
         }

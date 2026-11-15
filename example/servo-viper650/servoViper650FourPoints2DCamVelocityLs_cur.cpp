@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ void compute_pose(std::vector<vpPoint> &point, std::vector<vpDot2> &dot, vpCamer
 {
   vpPose pose;
 
-  for (size_t i = 0; i < point.size(); i++) {
+  for (size_t i = 0; i < point.size(); ++i) {
 
     double x = 0, y = 0;
     vpImagePoint cog = dot[i].getCog();
@@ -193,7 +193,7 @@ int main()
 
     std::cout << "Click on the 4 dots clockwise starting from upper/left dot..." << std::endl;
 
-    for (size_t i = 0; i < dot.size(); i++) {
+    for (size_t i = 0; i < dot.size(); ++i) {
       dot[i].setGraphics(true);
       dot[i].initTracking(I);
       vpImagePoint cog = dot[i].getCog();
@@ -209,7 +209,7 @@ int main()
 
     // Sets the current position of the visual feature
     vpFeaturePoint p[4];
-    for (size_t i = 0; i < dot.size(); i++)
+    for (size_t i = 0; i < dot.size(); ++i)
       vpFeatureBuilder::create(p[i], cam, dot[i]); // retrieve x,y  of the vpFeaturePoint structure
 
     // Set the position of the square target in a frame which origin is
@@ -232,19 +232,20 @@ int main()
     // Sets the desired position of the 2D visual feature
     vpFeaturePoint pd[4];
     // Compute the desired position of the features from the desired pose
-    for (int i = 0; i < 4; i++) {
-      vpColVector cP, p;
+    for (unsigned int i = 0; i < 4; ++i) {
+      vpColVector cP, pp;
       point[i].changeFrame(cMo_d, cP);
-      point[i].projection(cP, p);
+      point[i].projection(cP, pp);
 
-      pd[i].set_x(p[0]);
-      pd[i].set_y(p[1]);
+      pd[i].set_x(pp[0]);
+      pd[i].set_y(pp[1]);
       pd[i].set_Z(cP[2]);
     }
 
     // We want to see a point on a point
-    for (size_t i = 0; i < dot.size(); i++)
+    for (size_t i = 0; i < dot.size(); ++i) {
       task.addFeature(p[i], pd[i]);
+    }
 
     // Set the proportional gain
     task.setLambda(0.3);
@@ -269,7 +270,7 @@ int main()
 
       try {
         // For each point...
-        for (size_t i = 0; i < dot.size(); i++) {
+        for (size_t i = 0; i < dot.size(); ++i) {
           // Achieve the tracking of the dot in the image
           dot[i].track(I);
           // Display a green cross at the center of gravity position in the
@@ -288,7 +289,7 @@ int main()
       // computed at the previous iteration.
       compute_pose(point, dot, cam, cMo, false);
 
-      for (size_t i = 0; i < dot.size(); i++) {
+      for (size_t i = 0; i < dot.size(); ++i) {
         // Update the point feature from the dot location
         vpFeatureBuilder::create(p[i], cam, dot[i]);
         // Set the feature Z coordinate from the pose

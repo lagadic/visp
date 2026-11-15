@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -272,24 +272,24 @@ vpLuminancePCA vpLuminancePCA::learn(const vpMatrix &images, const unsigned int 
 //vpMatrixZigZagIndex
 vpLuminanceDCT::vpMatrixZigZagIndex::vpMatrixZigZagIndex() { }
 
-void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned rows, unsigned cols)
+void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned int rows, unsigned int cols)
 {
   // Adapted from  https://www.geeksforgeeks.org/print-matrix-in-zig-zag-fashion/
   m_colIndex.resize(rows * cols);
   m_rowIndex.resize(rows * cols);
   m_rows = rows;
   m_cols = cols;
-  int rowCount = static_cast<int>(rows);
-  int colCount = static_cast<int>(cols);
+  unsigned int rowCount = rows;
+  unsigned int colCount = cols;
 
   unsigned int index = 0;
-  int row = 0, col = 0;
+  unsigned int row = 0, col = 0;
+  bool row_inc = false;
 
-  bool row_inc = 0;
+  unsigned int mindim = std::min(rows, cols);
 
-  int mindim = std::min(rowCount, colCount);
-  for (int len = 1; len <= mindim; ++len) {
-    for (int i = 0; i < len; ++i) {
+  for (unsigned int len = 1; len <= mindim; ++len) {
+    for (unsigned int i = 0; i < len; ++i) {
       m_rowIndex[index] = row;
       m_colIndex[index] = col;
       ++index;
@@ -338,8 +338,8 @@ void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned rows, unsigned cols)
   }
 
   // Print the next half zig-zag pattern
-  int maxdim = std::max(rowCount, rowCount) - 1;
-  for (int len, diag = maxdim; diag > 0; --diag) {
+  unsigned int maxdim = std::max(rowCount, colCount) - 1;
+  for (unsigned int len, diag = maxdim; diag > 0; --diag) {
 
     if (diag > mindim) {
       len = mindim;
@@ -348,7 +348,7 @@ void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned rows, unsigned cols)
       len = diag;
     }
 
-    for (int i = 0; i < len; ++i) {
+    for (unsigned int i = 0; i < len; ++i) {
       m_rowIndex[index] = row;
       m_colIndex[index] = col;
       ++index;
@@ -590,7 +590,7 @@ void vpFeatureLuminanceMapping::interaction(vpMatrix &L)
 {
   L.resize(dim_s, 6, false, false);
   m_featI.interaction(m_LI);
-  m_mapping->interaction(I, m_LI, s, L);
+  m_mapping->interaction(m_I, m_LI, s, L);
 }
 
 void vpFeatureLuminanceMapping::print(unsigned int /*select*/) const

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,8 +120,13 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool fli
   else if (src.type() == CV_8UC3) {
 #if defined(VISP_HAVE_SIMDLIB)
     if (src.isContinuous() && (!flip)) {
-      SimdRgbToBgra(src.data, src.cols, src.rows, src.step[0], reinterpret_cast<uint8_t *>(dest.bitmap),
-                    dest.getWidth() * sizeof(vpRGBa), vpRGBa::alpha_default);
+      SimdRgbToBgra(src.data,
+                    static_cast<std::size_t>(src.cols),
+                    static_cast<std::size_t>(src.rows),
+                    static_cast<std::size_t>(src.step[0]),
+                    reinterpret_cast<uint8_t *>(dest.bitmap),
+                    dest.getWidth() * sizeof(vpRGBa),
+                    vpRGBa::alpha_default);
     }
     else {
 #endif
@@ -148,7 +153,11 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool fli
   else if (src.type() == CV_8UC1) {
 #if defined(VISP_HAVE_SIMDLIB)
     if (src.isContinuous() && (!flip)) {
-      SimdGrayToBgra(src.data, src.cols, src.rows, src.step[0], reinterpret_cast<uint8_t *>(dest.bitmap),
+      SimdGrayToBgra(src.data,
+                     static_cast<std::size_t>(src.cols),
+                     static_cast<std::size_t>(src.rows),
+                     static_cast<std::size_t>(src.step[0]),
+                     reinterpret_cast<uint8_t *>(dest.bitmap),
                      dest.getWidth() * sizeof(vpRGBa), vpRGBa::alpha_default);
     }
     else {

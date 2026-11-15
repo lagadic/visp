@@ -40,7 +40,7 @@ set(opt_incs "")
 set(opt_system_incs "")
 set(opt_libs "")
 
-# camera devices: v4l, dc1394, cmu1394, directshow ?, freenect,
+# camera devices: v4l, dc1394, cmu1394, freenect,
 # flycapture, pylon
 if(USE_V4L2)
   list(APPEND opt_system_incs ${V4L2_INCLUDE_DIRS})
@@ -49,14 +49,6 @@ endif()
 if(USE_DC1394)
   list(APPEND opt_system_incs ${DC1394_INCLUDE_DIRS})
   list(APPEND opt_libs ${DC1394_LIBRARY})
-endif()
-if(USE_CMU1394)
-  list(APPEND opt_system_incs ${CMU1394_INCLUDE_DIRS})
-  list(APPEND opt_libs ${CMU1394_LIBRARIES})
-endif()
-if(USE_DIRECTSHOW)
-  list(APPEND opt_system_incs ${DIRECTSHOW_INCLUDE_DIRS})
-  list(APPEND opt_libs ${DIRECTSHOW_LIBRARIES})
 endif()
 if(USE_LIBFREENECT)
   list(APPEND opt_system_incs ${LIBFREENECT_INCLUDE_DIRS})

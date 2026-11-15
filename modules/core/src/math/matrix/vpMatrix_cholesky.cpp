@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,8 +190,8 @@ vpMatrix vpMatrix::inverseByCholeskyLapack() const
                               rowNum, colNum));
     }
 
-    integer rowNum_ = (integer)this->getRows();
-    integer lda = (integer)rowNum_; // lda is the number of rows because we don't use a submatrix
+    integer rowNum_ = static_cast<integer>(this->getRows());
+    integer lda = static_cast<integer>(rowNum_); // lda is the number of rows because we don't use a submatrix
     integer info;
 
     vpMatrix A = *this;
@@ -248,8 +248,8 @@ vpMatrix vpMatrix::choleskyByLapack()const
                             rowNum, colNum));
   }
 
-  integer rowNum_ = (integer)this->getRows();
-  integer lda = (integer)rowNum_; // lda is the number of rows because we don't use a submatrix
+  integer rowNum_ = static_cast<integer>(this->getRows());
+  integer lda = static_cast<integer>(rowNum_); // lda is the number of rows because we don't use a submatrix
   integer info;
   dpotrf_((char *)"L", &rowNum_, L.data, &lda, &info);
   L = L.transpose(); // For an unknown reason, dpotrf seems to return the transpose of L
@@ -324,7 +324,7 @@ vpMatrix vpMatrix::inverseByCholeskyOpenCV() const
         vpException(vpException::fatalError, "Cannot inverse a non square matrix (%ux%u) by Cholesky", rowNum, colNum));
   }
 
-  cv::Mat M(rowNum, colNum, CV_64F, this->data);
+  cv::Mat M(static_cast<int>(rowNum), static_cast<int>(colNum), CV_64F, this->data);
   cv::Mat Minv = M.inv(cv::DECOMP_CHOLESKY);
 
   vpMatrix A(rowNum, colNum);
@@ -341,10 +341,10 @@ vpMatrix vpMatrix::inverseByCholeskyOpenCV() const
  */
 vpMatrix vpMatrix::choleskyByOpenCV() const
 {
-  cv::Mat M(rowNum, colNum, CV_64F);
+  cv::Mat M(static_cast<int>(rowNum), static_cast<int>(colNum), CV_64F);
   memcpy(M.data, this->data, static_cast<size_t>(8 * M.rows * M.cols));
   std::size_t bytes_per_row = sizeof(double)*rowNum;
-  bool result = cv::Cholesky(M.ptr<double>(), bytes_per_row, rowNum, nullptr, bytes_per_row, rowNum);
+  bool result = cv::Cholesky(M.ptr<double>(), bytes_per_row, static_cast<int>(rowNum), nullptr, bytes_per_row, static_cast<int>(rowNum));
   if (!result) {
     throw(vpMatrixException(vpMatrixException::fatalError, "Could not compute the Cholesky's decomposition of the input matrix."));
   }

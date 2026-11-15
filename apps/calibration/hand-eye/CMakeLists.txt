@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,26 +37,33 @@ cmake_minimum_required(VERSION 3.10)
 
 project(apps-calibration-hand-eye)
 
-find_package(VISP REQUIRED visp_vision visp_io OPTIONAL_COMPONENTS visp_gui visp_robot visp_sensor)
+find_package(VISP REQUIRED visp_vision visp_io OPTIONAL_COMPONENTS visp_detection visp_gui visp_robot visp_sensor)
 
 set(apps_cpp
-  visp-compute-apriltag-poses.cpp
   visp-compute-chessboard-poses.cpp
   visp-compute-eye-in-hand-calibration.cpp
   visp-compute-eye-to-hand-calibration.cpp
 )
 
-if(VISP_HAVE_FRANKA)
+if(VISP_HAVE_REALSENSE2 AND VISP_HAVE_FRANKA)
   list(APPEND apps_cpp visp-acquire-franka-calib-data.cpp)
 endif()
 
-if(VISP_HAVE_UR_RTDE)
+if(VISP_HAVE_REALSENSE2 AND VISP_HAVE_UR_RTDE)
   list(APPEND apps_cpp visp-acquire-universal-robots-calib-data.cpp)
+endif()
+
+if(VISP_HAVE_REALSENSE2)
+  list(APPEND apps_cpp visp-acquire-mocap-calib-data.cpp)
 endif()
 
 foreach(cpp ${apps_cpp})
   visp_add_app(${cpp})
 endforeach()
+
+if(VISP_DETECTION_FOUND)
+  visp_add_app(visp-compute-apriltag-poses.cpp)
+endif()
 
 # Copy the data folder to the same location than the target
 visp_copy_dir(visp-compute-eye-in-hand-calibration.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data-eye-in-hand)

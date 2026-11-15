@@ -195,9 +195,9 @@ enum DetectionMethod
 #endif
 
 NLOHMANN_JSON_SERIALIZE_ENUM(DetectionMethod, {
-  {UNKNOWN, nullptr}, // Default value if the json string is not in "current", "desired" or "mean"
-  {CLICK, "click"},
-  {DNN, "dnn"} }
+  { UNKNOWN, nullptr }, // Default value if the json string is not in "current", "desired" or "mean"
+  { CLICK, "click" },
+  { DNN, "dnn" } }
   );
 
 #if defined(__clang__)
@@ -211,7 +211,8 @@ int main(int argc, const char *argv[])
   std::string videoDevice = "0";
   std::string megaposeAddress = "127.0.0.1";
   unsigned megaposePort = 5555;
-  int refinerIterations = 1, coarseNumSamples = 576;
+  int refinerIterations = 1;
+  unsigned int coarseNumSamples = 576;
   double reinitThreshold = 0.2;
 
   DetectionMethod detectionMethod = DetectionMethod::UNKNOWN;
@@ -248,7 +249,7 @@ int main(int argc, const char *argv[])
     .addArgument("detector/labels", labels, true, "Detection class labels")
     .addArgument("detector/mean/red", detectorMeanR, false, "Detector mean red component. Used to normalize image")
     .addArgument("detector/mean/green", detectorMeanG, false, "Detector mean green component. Used to normalize image")
-    .addArgument("detector/mean/blue", detectorMeanB, false, "Detector mean red component. Used to normalize image")
+    .addArgument("detector/mean/blue", detectorMeanB, false, "Detector mean blue component. Used to normalize image")
     .addArgument("detector/confidenceThreshold", detectorConfidenceThreshold, false, "Detector confidence threshold. "
       "When a detection with a confidence below this threshold, it is ignored")
     .addArgument("detector/nmsThreshold", detectorNmsThreshold, false, "Detector non maximal suppression threshold.")
@@ -295,7 +296,7 @@ int main(int argc, const char *argv[])
   vpDetectorDNNOpenCV::DNNResultsParsingType detectorType =
     vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(detectorTypeString);
   vpDetectorDNNOpenCV::NetConfig netConfig(detectorConfidenceThreshold, detectorNmsThreshold, labels,
-    cv::Size(width, height), detectorFilterThreshold);
+                                           cv::Size(static_cast<int>(width), static_cast<int>(height)), detectorFilterThreshold);
   vpDetectorDNNOpenCV dnn(netConfig, detectorType);
   if (detectionMethod == DetectionMethod::DNN) {
     dnn.readNet(detectorModelPath, detectorConfig, detectorFramework);

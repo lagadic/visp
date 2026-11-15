@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ int main()
 
     vpRealSense2 rs;
     rs2::config config;
-    unsigned int width = 640, height = 480, fps = 60;
+    int width = 640, height = 480, fps = 60;
     config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
     config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
     config.enable_stream(RS2_STREAM_INFRARED, width, height, RS2_FORMAT_Y8, fps);
@@ -113,12 +113,12 @@ int main()
     std::cout << " task : servo a point " << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
 
-    int nbPoint = 7;
+    unsigned int nbPoint = 7;
 
-    vpDot dot[nbPoint];
+    std::vector<vpDot> dot(nbPoint);
     vpImagePoint cog;
 
-    for (int i = 0; i < nbPoint; ++i) {
+    for (unsigned int i = 0; i < nbPoint; ++i) {
       dot[i].initTracking(I);
       dot[i].setGraphics(true);
       dot[i].track(I);
@@ -127,7 +127,7 @@ int main()
     }
 
     // Compute the pose 3D model
-    vpPoint point[nbPoint];
+    std::vector<vpPoint> point(nbPoint);
     point[0].setWorldCoordinates(-2 * L, D, -3 * L);
     point[1].setWorldCoordinates(0, D, -3 * L);
     point[2].setWorldCoordinates(2 * L, D, -3 * L);
@@ -147,7 +147,7 @@ int main()
     vpHomogeneousMatrix c_M_o, cd_M_o;
     vpPose pose;
     pose.clearPoint();
-    for (int i = 0; i < nbPoint; ++i) {
+    for (unsigned int i = 0; i < nbPoint; ++i) {
       cog = dot[i].getCog();
       double x = 0, y = 0;
       vpPixelMeterConversion::convertPoint(cam, cog, x, y);
@@ -182,7 +182,7 @@ int main()
     vpFeaturePoint s[nbPoint], s_d[nbPoint];
 
     // Set the desired position of the point by forward projection using the pose cd_M_o
-    for (int i = 0; i < nbPoint; ++i) {
+    for (unsigned int i = 0; i < nbPoint; ++i) {
       vpColVector cP, p;
       point[i].changeFrame(cd_M_o, cP);
       point[i].projection(cP, p);
@@ -199,7 +199,7 @@ int main()
     task.setInteractionMatrixType(vpServo::CURRENT);
 
     // - we want to see a point on a point
-    for (int i = 0; i < nbPoint; ++i) {
+    for (unsigned int i = 0; i < nbPoint; ++i) {
       task.addFeature(s[i], s_d[i]);
     }
 
@@ -216,7 +216,7 @@ int main()
     vpHomogeneousMatrix o_M_camrobot;
     o_M_camrobot[0][3] = -0.05;
 
-    int it = 0;
+    unsigned int it = 0;
 
     std::list<vpImagePoint> Lcog;
     bool quit = false;
@@ -227,7 +227,7 @@ int main()
       vpDisplay::display(I);
 
       try {
-        for (int i = 0; i < nbPoint; ++i) {
+        for (unsigned int i = 0; i < nbPoint; ++i) {
           dot[i].track(I);
           Lcog.push_back(dot[i].getCog());
         }
@@ -241,7 +241,7 @@ int main()
       // compute the initial pose using  a non linear minimization method
       pose.clearPoint();
 
-      for (int i = 0; i < nbPoint; ++i) {
+      for (unsigned int i = 0; i < nbPoint; ++i) {
         double x = 0, y = 0;
         cog = dot[i].getCog();
         vpPixelMeterConversion::convertPoint(cam, cog, x, y);
@@ -304,7 +304,7 @@ int main()
       if ((SAVE == 1) && (iter % 3 == 0)) {
         vpImage<vpRGBa> Ic;
         vpDisplay::getImage(I, Ic);
-        std::string filename = vpIoTools::formatString(logdirname + "/image.%04d.png", it++);
+        filename = vpIoTools::formatString(logdirname + "/image.%04d.png", it++);
         vpImageIo::write(Ic, filename);
       }
 

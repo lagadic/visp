@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,9 +89,9 @@ int main(int argc, char *argv[])
   vpDisplayGDI d1, d2, d3, d4;
 #endif
   d1.init(color, 0, 0, "Color");
-  d2.init(depth_color, color.getWidth(), 0, "Depth");
-  d3.init(infrared1, 0, color.getHeight() + 100, "Infrared left");
-  d4.init(infrared2, color.getWidth(), color.getHeight() + 100, "Infrared right");
+  d2.init(depth_color, static_cast<int>(color.getWidth()), 0, "Depth");
+  d3.init(infrared1, 0, static_cast<int>(color.getHeight()) + 100, "Infrared left");
+  d4.init(infrared2, static_cast<int>(color.getWidth()), static_cast<int>(color.getHeight()) + 100, "Infrared right");
 
   std::vector<vpColVector> pointcloud_colvector;
 
@@ -153,8 +153,8 @@ int main(int argc, char *argv[])
   infrared1.init(static_cast<unsigned int>(height), static_cast<unsigned int>(width));
 
   d1.init(color, 0, 0, "Color");
-  d2.init(depth_color, color.getWidth(), 0, "Depth");
-  d3.init(infrared1, 0, color.getHeight() + 100, "Infrared");
+  d2.init(depth_color, static_cast<int>(color.getWidth()), 0, "Depth");
+  d3.init(infrared1, 0, static_cast<int>(color.getHeight()) + 100, "Infrared");
 
   time_vector.clear();
   t_begin = vpTime::measureTimeMs();

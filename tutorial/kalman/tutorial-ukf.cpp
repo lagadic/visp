@@ -93,7 +93,7 @@ public:
     , m_w(w)
     , m_phi(phi)
     , m_wZ(wZ)
-  { }
+  {}
 
   /**
    * \brief Move the object to its new position, expressed in the world frame.
@@ -136,13 +136,13 @@ public:
    * \param[in] seed The seed for the noise generator
    */
   vpMarkersMeasurements(const vpCameraParameters &cam, const vpHomogeneousMatrix &cMw, const vpRotationMatrix &wRo,
-                        const std::vector<vpColVector> &markers, const double &noise_stdev, const long &seed)
+                        const std::vector<vpColVector> &markers, const double &noise_stdev, const uint64_t &seed)
     : m_cam(cam)
     , m_cMw(cMw)
     , m_wRo(wRo)
     , m_markers(markers)
     , m_rng(noise_stdev, 0., seed)
-  { }
+  {}
 
   //! [Measurement_function]
   /**
@@ -272,7 +272,7 @@ int main(/*const int argc, const char *argv[]*/)
     markersAsVpPoint.push_back(vpPoint(marker[0], marker[1], marker[2]));
   }
 
-  const long seed = 42; // Seed for the random generator
+  const uint64_t seed = 42; // Seed for the random generator
   vpHomogeneousMatrix cMw; // Pose of the world frame with regard to the camera frame
   cMw[0][0] = 1.; cMw[0][1] = 0.; cMw[0][2] = 0.; cMw[0][3] = 0.2;
   cMw[1][0] = 0.; cMw[1][1] = -1.; cMw[1][2] = 0.; cMw[1][3] = 0.3;

@@ -97,6 +97,8 @@ public:
 
   bool isFastAndApproximateRendering() const { return m_fast; }
 
+  vpRenderType getRenderType() const { return m_renderType; }
+
 protected:
   void setupScene() VP_OVERRIDE;
   void setupRenderTarget() VP_OVERRIDE;

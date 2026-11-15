@@ -178,7 +178,8 @@ class vpRowVector;
     }
     {
       std::ifstream file(filename);
-      const nlohmann::json j = nlohmann::json::parse(file);
+      // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+      const nlohmann::json j = nlohmann::json::parse(file, nullptr, true, true);
       vpPoseVector pose;
       pose = j;
       file.close();
@@ -325,7 +326,7 @@ private:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
   */
-  VP_DEPRECATED void init() { }
+  VP_DEPRECATED void init() {}
   //@}
 #endif
 };

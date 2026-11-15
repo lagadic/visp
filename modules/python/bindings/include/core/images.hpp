@@ -34,6 +34,7 @@
 #ifndef VISP_PYTHON_CORE_IMAGES_HPP
 #define VISP_PYTHON_CORE_IMAGES_HPP
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpHSV.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBf.h>
 #include <pybind11/pybind11.h>
@@ -53,52 +54,88 @@ const char *numpy_fn_doc_image = R"doc(
  * Image 2D indexing
  */
 template<typename T, typename NpRep>
-void define_get_item_2d_image(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>> &pyClass)
+void define_get_item_2d_image(py::class_<VISP_NAMESPACE_ADDRESSING vpImage<T>, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImage<T>>> &pyClass)
 {
-  pyClass.def("__getitem__", [](const vpImage<T> &self, std::pair<int, int> pair) -> T {
-    int i = pair.first, j = pair.second;
-    const int rows = (int)self.getRows(), cols = (int)self.getCols();
-    if (i >= rows || j >= cols || i < -rows || j < -cols) {
-      std::stringstream ss;
-      ss << "Invalid indexing into a 2D image: got indices " << shape_to_string({ i, j })
-        << " but image has dimensions " << shape_to_string({ rows, cols });
-      throw std::runtime_error(ss.str());
-    }
-    if (i < 0) {
-      i = rows + i;
-    }
-    if (j < 0) {
-      j = cols + j;
-    }
-    return self[i][j];
-  });
-  pyClass.def("__getitem__", [](const vpImage<T> &self, int i) -> np_array_cf<NpRep> {
-    const int rows = (int)self.getRows();
-    if (i >= rows || i < -rows) {
-      std::stringstream ss;
-      ss << "Invalid indexing into a 2D image: got row index " << shape_to_string({ i })
-        << " but array has " << rows << " rows";
-      throw std::runtime_error(ss.str());
-    }
-    if (i < 0) {
-      i = rows + i;
-    }
-    return (py::cast(self).template cast<np_array_cf<NpRep> >())[py::cast(i)].template cast<np_array_cf<NpRep>>();
-  });
-  pyClass.def("__getitem__", [](const vpImage<T> &self, py::slice slice) -> py::array_t<NpRep> {
-    return (py::cast(self).template cast<np_array_cf<NpRep> >())[slice].template cast<py::array_t<NpRep>>();
-  }, py::keep_alive<0, 1>());
-  pyClass.def("__getitem__", [](const vpImage<T> &self, py::tuple tuple) {
-    return (py::cast(self).template cast<np_array_cf<NpRep> >())[tuple].template cast<py::array_t<NpRep>>();
-  }, py::keep_alive<0, 1>());
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
+  pyClass.def("__getitem__",
+    [](const vpImage<T> &self, py::object index) -> py::object {
+      py::object result;
+      if (py::isinstance<py::slice>(index)) {
+        // slice handling
+        py::slice slice = index.cast<py::slice>();
+        result = (py::cast(self).template cast<np_array_cf<NpRep> >())[slice];
+      }
+      else if (py::isinstance<py::int_>(index)) {
+          // row handling
+        int i = index.cast<int>();
+        const int rows = (int)self.getRows();
+        if (i >= rows || i < -rows) {
+          std::stringstream ss;
+          ss << "Invalid indexing into a 2D array: got row index " << shape_to_string({ i })
+            << " but array has " << rows << " rows";
+          throw std::runtime_error(ss.str());
+        }
+        if (i < 0) {
+          i = rows + i;
+        }
+        result = (py::cast(self).template cast<np_array_cf<NpRep> >())[py::cast(i)];
+      }
+      else if (py::isinstance<py::tuple>(index)) {
+        py::tuple tuple = index.cast<py::tuple>();
+        size_t it = 0, nb_of_items = tuple.size();
+        bool is_pair_of_int = (nb_of_items == 2);
+        while (is_pair_of_int && (it < nb_of_items)) {
+          is_pair_of_int = !(py::isinstance<py::slice>(tuple[it]));
+          ++it;
+        }
+        if (is_pair_of_int) {
+          int i = tuple[0].cast<int>();
+          int j = tuple[1].cast<int>();
+          int rows = static_cast<int>(self.getRows()), cols = static_cast<int>(self.getCols());
+          if (i >= rows || i < -rows) {
+            std::stringstream ss;
+            ss << "Invalid indexing into a 2D image: got row index " << shape_to_string({ i })
+              << " but array has " << rows << " rows";
+            throw std::runtime_error(ss.str());
+          }
+          else if (j >= cols || j < -cols) {
+            std::stringstream ss;
+            ss << "Invalid indexing into a 2D image: got cil index " << j
+              << " but array has " << cols << " cols";
+            throw std::runtime_error(ss.str());
+          }
+          if (i < 0) {
+            i = rows + i;
+          }
+          if (j < 0) {
+            j = cols + j;
+          }
+          return py::cast(self[i][j]);;
+        }
+        result = (py::cast(self).template cast<np_array_cf<NpRep> >())[tuple];
+      }
+      else {
+        throw py::type_error("Invalid index");
+      }
+      if (py::isinstance<py::array>(result)) {
+        py::detail::keep_alive_impl(result, py::cast(self));
+      }
+      return result;
+    });
 }
 
 /*
  * Image 2D indexing
  */
 template<typename T, typename NpRep>
-void define_set_item_2d_image(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>> &pyClass, unsigned int componentsPerPixel)
+void define_set_item_2d_image(py::class_<VISP_NAMESPACE_ADDRESSING vpImage<T>, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImage<T>>> &pyClass, unsigned int componentsPerPixel)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   pyClass.def("__setitem__", [](vpImage<T> &self, std::pair<int, int> pair, const T &value) {
     int i = pair.first, j = pair.second;
     const int rows = (int)self.getRows(), cols = (int)self.getCols();
@@ -260,8 +297,11 @@ void define_set_item_2d_image(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>
    */
 template<typename T>
 typename std::enable_if<std::is_fundamental<T>::value, void>::type
-bindings_vpImage(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>> &pyImage)
+bindings_vpImage(py::class_<VISP_NAMESPACE_ADDRESSING vpImage<T>, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImage<T>>> &pyImage)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   pyImage.def_buffer([](vpImage<T> &image) -> py::buffer_info {
     return make_array_buffer<T, 2>(image.bitmap, { image.getHeight(), image.getWidth() }, false);
   });
@@ -300,9 +340,12 @@ Construct an image by **copying** a 2D numpy array.
 }
 
 template<typename T>
-typename std::enable_if<std::is_same<vpRGBa, T>::value, void>::type
-bindings_vpImage(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>> &pyImage)
+typename std::enable_if<std::is_same<VISP_NAMESPACE_ADDRESSING vpRGBa, T>::value, void>::type
+bindings_vpImage(py::class_<VISP_NAMESPACE_ADDRESSING vpImage<T>, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImage<T>>> &pyImage)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   using NpRep = unsigned char;
   static_assert(sizeof(T) == 4 * sizeof(NpRep));
   pyImage.def_buffer([](vpImage<T> &image) -> py::buffer_info {
@@ -346,9 +389,12 @@ where the 4 denotes the red, green, blue and alpha components of the image.
 
 }
 template<typename T>
-typename std::enable_if<std::is_same<vpRGBf, T>::value, void>::type
-bindings_vpImage(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>> &pyImage)
+typename std::enable_if<std::is_same<VISP_NAMESPACE_ADDRESSING vpRGBf, T>::value, void>::type
+bindings_vpImage(py::class_<VISP_NAMESPACE_ADDRESSING vpImage<T>, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImage<T>>> &pyImage)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
   using NpRep = float;
   static_assert(sizeof(T) == 3 * sizeof(NpRep));
   pyImage.def_buffer([](vpImage<T> &image) -> py::buffer_info {
@@ -360,7 +406,7 @@ bindings_vpImage(py::class_<vpImage<T>, std::shared_ptr<vpImage<T>>> &pyImage)
   }, numpy_fn_doc_image, py::keep_alive<0, 1>());
 
   pyImage.def(py::init([](np_array_cf<NpRep> &np_array) {
-    verify_array_shape_and_dims(np_array, 3, "ViSP RGBa image");
+    verify_array_shape_and_dims(np_array, 3, "ViSP RGBf image");
     const std::vector<py::ssize_t> shape = np_array.request().shape;
     if (shape[2] != 3) {
       throw std::runtime_error("Tried to copy a 3D numpy array that does not have 3 elements per pixel into a ViSP RGBf image");
@@ -392,4 +438,153 @@ where the 3 denotes the red, green and blue components of the image.
   }, R"doc(Get the full ViSP image string representation.)doc");
 }
 
+template<typename T>
+typename std::enable_if<std::is_same<VISP_NAMESPACE_ADDRESSING vpHSV<unsigned char, false>, T>::value, void>::type
+bindings_vpImage(py::class_<VISP_NAMESPACE_ADDRESSING vpImage<T>, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImage<T>>> &pyImage)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  using NpRep = unsigned char;
+  static_assert(sizeof(T) == 3 * sizeof(NpRep));
+  pyImage.def_buffer([](vpImage<T> &image) -> py::buffer_info {
+    return make_array_buffer<NpRep, 3>(reinterpret_cast<NpRep *>(image.bitmap), { image.getHeight(), image.getWidth(), 3 }, false);
+  });
+
+  pyImage.def("numpy", [](vpImage<T> &self) -> np_array_cf<NpRep> {
+    return py::cast(self).template cast<np_array_cf<NpRep>>();
+  }, numpy_fn_doc_image, py::keep_alive<0, 1>());
+
+  pyImage.def(py::init([](np_array_cf<NpRep> &np_array) {
+    verify_array_shape_and_dims(np_array, 3, "ViSP vpHSV<uchar, reduced_scale> image");
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
+    if (shape[2] != 3) {
+      throw std::runtime_error("Tried to copy a 3D numpy array that does not have 3 elements per pixel into a ViSP RGBf image");
+    }
+    vpImage<T> result(static_cast<unsigned int>(shape[0]), static_cast<unsigned int>(shape[1]));
+    copy_data_from_np(np_array, (NpRep *)result.bitmap);
+    return result;
+                       }), R"doc(
+Construct an image by **copying** a 3D numpy array. this numpy array should be of the form :math:`H \times W \times 3`
+where the 3 denotes the red, green and blue components of the image.
+
+:param np_array: The numpy array to copy.
+
+)doc", py::arg("np_array"));
+
+  define_get_item_2d_image<T, NpRep>(pyImage);
+  define_set_item_2d_image<T, NpRep>(pyImage, sizeof(T) / sizeof(NpRep));
+
+  pyImage.def("__repr__", [](const vpImage<T> &self) -> std::string {
+    std::stringstream ss;
+    ss << "<vpHSV<uchar, reduced_scale> Image (" << self.getHeight() << ", " << self.getWidth() << ")>";
+    return ss.str();
+  });
+
+  pyImage.def("_visp_repr", [](const vpImage<T> &self) -> std::string {
+    std::stringstream ss;
+    ss << self;
+    return ss.str();
+  }, R"doc(Get the full ViSP image string representation.)doc");
+}
+
+template<typename T>
+typename std::enable_if<std::is_same<VISP_NAMESPACE_ADDRESSING vpHSV<unsigned char, true>, T>::value, void>::type
+bindings_vpImage(py::class_<VISP_NAMESPACE_ADDRESSING vpImage<T>, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImage<T>>> &pyImage)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  using NpRep = unsigned char;
+  static_assert(sizeof(T) == 3 * sizeof(NpRep));
+  pyImage.def_buffer([](vpImage<T> &image) -> py::buffer_info {
+    return make_array_buffer<NpRep, 3>(reinterpret_cast<NpRep *>(image.bitmap), { image.getHeight(), image.getWidth(), 3 }, false);
+  });
+
+  pyImage.def("numpy", [](vpImage<T> &self) -> np_array_cf<NpRep> {
+    return py::cast(self).template cast<np_array_cf<NpRep>>();
+  }, numpy_fn_doc_image, py::keep_alive<0, 1>());
+
+  pyImage.def(py::init([](np_array_cf<NpRep> &np_array) {
+    verify_array_shape_and_dims(np_array, 3, "ViSP vpHSV<uchar, full_scale> image");
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
+    if (shape[2] != 3) {
+      throw std::runtime_error("Tried to copy a 3D numpy array that does not have 3 elements per pixel into a ViSP RGBf image");
+    }
+    vpImage<T> result(static_cast<unsigned int>(shape[0]), static_cast<unsigned int>(shape[1]));
+    copy_data_from_np(np_array, (NpRep *)result.bitmap);
+    return result;
+                       }), R"doc(
+Construct an image by **copying** a 3D numpy array. this numpy array should be of the form :math:`H \times W \times 3`
+where the 3 denotes the red, green and blue components of the image.
+
+:param np_array: The numpy array to copy.
+
+)doc", py::arg("np_array"));
+
+  define_get_item_2d_image<T, NpRep>(pyImage);
+  define_set_item_2d_image<T, NpRep>(pyImage, sizeof(T) / sizeof(NpRep));
+
+  pyImage.def("__repr__", [](const vpImage<T> &self) -> std::string {
+    std::stringstream ss;
+    ss << "<vpHSV<uchar, full_scale> Image (" << self.getHeight() << ", " << self.getWidth() << ")>";
+    return ss.str();
+  });
+
+  pyImage.def("_visp_repr", [](const vpImage<T> &self) -> std::string {
+    std::stringstream ss;
+    ss << self;
+    return ss.str();
+  }, R"doc(Get the full ViSP image string representation.)doc");
+}
+
+template<typename T>
+typename std::enable_if<std::is_same<VISP_NAMESPACE_ADDRESSING vpHSV<double, true>, T>::value, void>::type
+bindings_vpImage(py::class_<VISP_NAMESPACE_ADDRESSING vpImage<T>, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpImage<T>>> &pyImage)
+{
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+  using NpRep = double;
+  static_assert(sizeof(T) == 3 * sizeof(NpRep));
+  pyImage.def_buffer([](vpImage<T> &image) -> py::buffer_info {
+    return make_array_buffer<NpRep, 3>(reinterpret_cast<NpRep *>(image.bitmap), { image.getHeight(), image.getWidth(), 3 }, false);
+  });
+
+  pyImage.def("numpy", [](vpImage<T> &self) -> np_array_cf<NpRep> {
+    return py::cast(self).template cast<np_array_cf<NpRep>>();
+  }, numpy_fn_doc_image, py::keep_alive<0, 1>());
+
+  pyImage.def(py::init([](np_array_cf<NpRep> &np_array) {
+    verify_array_shape_and_dims(np_array, 3, "ViSP vpHSV<double> image");
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
+    if (shape[2] != 3) {
+      throw std::runtime_error("Tried to copy a 3D numpy array that does not have 3 elements per pixel into a ViSP RGBf image");
+    }
+    vpImage<T> result(static_cast<unsigned int>(shape[0]), static_cast<unsigned int>(shape[1]));
+    copy_data_from_np(np_array, (NpRep *)result.bitmap);
+    return result;
+                       }), R"doc(
+Construct an image by **copying** a 3D numpy array. this numpy array should be of the form :math:`H \times W \times 3`
+where the 3 denotes the red, green and blue components of the image.
+
+:param np_array: The numpy array to copy.
+
+)doc", py::arg("np_array"));
+
+  define_get_item_2d_image<T, NpRep>(pyImage);
+  define_set_item_2d_image<T, NpRep>(pyImage, sizeof(T) / sizeof(NpRep));
+
+  pyImage.def("__repr__", [](const vpImage<T> &self) -> std::string {
+    std::stringstream ss;
+    ss << "<vpHSV<double> Image (" << self.getHeight() << ", " << self.getWidth() << ")>";
+    return ss.str();
+  });
+
+  pyImage.def("_visp_repr", [](const vpImage<T> &self) -> std::string {
+    std::stringstream ss;
+    ss << self;
+    return ss.str();
+  }, R"doc(Get the full ViSP image string representation.)doc");
+}
 #endif

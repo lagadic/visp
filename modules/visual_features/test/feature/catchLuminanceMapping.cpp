@@ -1,7 +1,7 @@
 
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,11 @@
 
 #if defined(VISP_HAVE_CATCH2)
 
+#if defined(VISP_BUILD_CATCH2)
 #include <catch_amalgamated.hpp>
+#else // Since v3.1.1
+#include <catch2/catch_all.hpp>
+#endif
 
 #include <visp3/core/vpSubMatrix.h>
 #include <visp3/core/vpUniRand.h>
@@ -243,7 +247,7 @@ SCENARIO("Using PCA features", "[visual_features]")
         {
           const vpColVector var = pca.getExplainedVariance();
           REQUIRE(var.sum() < 1.0);
-          for (int i = 1; i < static_cast<int>(var.getRows()) - 1; ++i) {
+          for (unsigned int i = 1; i < var.getRows() - 1; ++i) {
             REQUIRE(var[i] >= var[i + 1]);
           }
         }

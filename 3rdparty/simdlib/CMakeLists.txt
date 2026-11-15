@@ -297,3 +297,22 @@ if(NOT BUILD_SHARED_LIBS)
 endif()
 
 vp_parse_header3(SIMD "${CMAKE_CURRENT_SOURCE_DIR}/Simd/SimdVersion.h" "SIMD_VERSION" SIMD_VERSION PARENT_SCOPE)
+
+set_target_properties(${SIMD_LIBRARY} PROPERTIES
+  CXX_VISIBILITY_PRESET hidden
+  VISIBILITY_INLINES_HIDDEN ON
+)
+
+#
+# Check if we can hide internal template symbols using hidden
+#
+check_c_source_compiles(
+    "#define VISIBILITY_HIDDEN __attribute__((visibility (\"hidden\")))
+    int VISIBILITY_HIDDEN foo;
+    int main() {
+        return 0;
+    }"
+    HAVE_ATTRIBUTE_VISIBILITY_HIDDEN)
+if(HAVE_ATTRIBUTE_VISIBILITY_HIDDEN)
+    add_definitions(-DHAVE_VISIBILITY_HIDDEN)
+endif()

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@
  * Modelization of the ADEPT Viper 650 robot.
  */
 
-#ifndef vpViper650_h
-#define vpViper650_h
+#ifndef VP_VIPER_650_H
+#define VP_VIPER_650_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpViper.h>
@@ -85,7 +85,7 @@ BEGIN_VISP_NAMESPACE
  *   two tool changers, with \f$^f{\bf M}_e = 0{\bf M}_7 \f$
  *
  * - \f$ {\cal F}_c \f$: the camera or tool frame, with \f$^f{\bf M}_c = ^f{\bf
- *   M}_e \; ^e{\bf M}_c \f$ where \f$ ^e{\bf M}_c \f$ is the result of
+ *   M}_e \; ^{\mathrm{ee}}\mathbf{M}_{\mathrm{c}} \f$ where \f$ ^{\mathrm{ee}}\mathbf{M}_{\mathrm{c}} \f$ is the result of
  *   a calibration stage. We can also consider a custom tool TOOL_CUSTOM and
  *   set this tool during robot initialisation or using set_eMc().
  *
@@ -141,7 +141,7 @@ public:
   void init(vpViper650::vpToolType tool, const vpHomogeneousMatrix &eMc_);
 
   //! Get the current camera model projection type
-  vpCameraParameters::vpCameraParametersProjType getCameraParametersProjType() const { return projModel; }
+  vpCameraParameters::vpCameraParametersProjType getCameraParametersProjType() const { return m_projModel; }
 
   void getCameraParameters(vpCameraParameters &cam, const unsigned int &image_width,
                            const unsigned int &image_height) const;
@@ -165,7 +165,7 @@ protected:
   //! Current tool in use
   vpToolType tool_current;
   // Used projection model
-  vpCameraParameters::vpCameraParametersProjType projModel;
+  vpCameraParameters::vpCameraParametersProjType m_projModel;
 };
 END_VISP_NAMESPACE
 #endif

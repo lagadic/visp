@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -318,7 +318,7 @@ unsigned int vpPclViewer::addSurface(const pcl::PointCloud<pcl::PointXYZRGB>::Pt
 
   if (mp_viewer) {
     // The viewer is on => we add the legend on the screen
-    mp_viewer->addText(newLegend.m_text, newLegend.m_posU, newLegend.m_posV, newLegend.m_rRatio, newLegend.m_gRatio, newLegend.m_bRatio);
+    mp_viewer->addText(newLegend.m_text, static_cast<int>(newLegend.m_posU), static_cast<int>(newLegend.m_posV), newLegend.m_rRatio, newLegend.m_gRatio, newLegend.m_bRatio);
   }
 
   return id;
@@ -338,7 +338,7 @@ void vpPclViewer::display(const bool &blocking)
 
     for (unsigned int id = 0; id < m_vPointClouds.size(); id++) {
       mp_viewer->addPointCloud(m_vPointClouds[id], m_vmeshid[id]);
-      mp_viewer->addText(m_vlegends[id].m_text, m_vlegends[id].m_posU, m_vlegends[id].m_posV, m_vlegends[id].m_rRatio, m_vlegends[id].m_gRatio, m_vlegends[id].m_bRatio);
+      mp_viewer->addText(m_vlegends[id].m_text, static_cast<int>(m_vlegends[id].m_posU), static_cast<int>(m_vlegends[id].m_posV), m_vlegends[id].m_rRatio, m_vlegends[id].m_gRatio, m_vlegends[id].m_bRatio);
     }
   }
   if (blocking) {
@@ -418,7 +418,7 @@ void vpPclViewer::loopThread()
       if (!mp_viewer->updatePointCloud(m_vPointClouds[id], m_vmeshid[id])) {
         // Add the pcl to the list of pcl known by the viewer + the according legend
         mp_viewer->addPointCloud(m_vPointClouds[id], m_vmeshid[id]);
-        mp_viewer->addText(m_vlegends[id].m_text, m_vlegends[id].m_posU, m_vlegends[id].m_posV, m_vlegends[id].m_rRatio, m_vlegends[id].m_gRatio, m_vlegends[id].m_bRatio);
+        mp_viewer->addText(m_vlegends[id].m_text, static_cast<int>(m_vlegends[id].m_posU), static_cast<int>(m_vlegends[id].m_posV), m_vlegends[id].m_rRatio, m_vlegends[id].m_gRatio, m_vlegends[id].m_bRatio);
       }
 
       // If the pcl is not empty and the \b vpPclViewer is asked to save the pcls,
@@ -485,6 +485,6 @@ void vpPclViewer::threadUpdateSurfaceOriginalColor(const pcl::PointCloud<pcl::Po
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpD3DRenderer.cpp.o) has no symbols
-void dummy_vpPCLPointCLoudVisualization() { }
+void dummy_vpPCLPointCLoudVisualization() {}
 #endif
 #endif

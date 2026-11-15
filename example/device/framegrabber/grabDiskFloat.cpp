@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <visp3/core/vpConfig.h>
+
 #if defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpImage.h>
@@ -199,7 +200,7 @@ void convertDepthImageToDisplayImage(const vpImage<float> &Idepth, vpImage<unsig
   Idisp.resize(Idepth.getHeight(), Idepth.getWidth());
   float a = 255.f / (min - max);
   float b = 255.f - a * min;
-  int size = Idepth.getSize();
+  int size = static_cast<int>(Idepth.getSize());
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
@@ -222,9 +223,6 @@ void convertDepthImageToDisplayImage(const vpImage<float> &Idepth, vpImage<unsig
 */
 int main(int argc, const char **argv)
 {
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  vpDisplay *display = nullptr;
-#endif
   try {
     std::string env_ipath;
     std::string opt_ipath;
@@ -355,11 +353,6 @@ int main(int argc, const char **argv)
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-    if (display != nullptr) {
-      delete display;
-    }
-#endif
     return EXIT_FAILURE;
   }
 }

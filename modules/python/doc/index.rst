@@ -9,6 +9,7 @@ ViSP Python Documentation
 
     rst/coming_from_cpp.rst
     rst/python_api/python_api.rst
+    rst/examples/examples.rst
     rst/tutorials/tutorials.rst
     rst/dev/dev.rst
     api.rst

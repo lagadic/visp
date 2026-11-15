@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ BEGIN_VISP_NAMESPACE
     two tool changers, with \f$^f{\bf M}_e = 0{\bf M}_7 \f$
 
   - \f$ {\cal F}_c \f$: the camera or tool frame, with \f$^f{\bf M}_c = ^f{\bf
-    M}_e \; ^e{\bf M}_c \f$ where \f$ ^e{\bf M}_c \f$ is the result of
+    M}_e \; ^{\mathrm{ee}}\mathbf{M}_{\mathrm{c}} \f$ where \f$ ^{\mathrm{ee}}\mathbf{M}_{\mathrm{c}} \f$ is the result of
     a calibration stage. We can also consider a custom tool TOOL_CUSTOM and
   set this during robot initialisation or using set_eMc().
 
@@ -112,7 +112,7 @@ class VISP_EXPORT vpViper
 public:
   vpViper();
   vpViper(const vpViper &viper);
-  virtual ~vpViper() { }
+  virtual ~vpViper() {}
   vpViper &operator=(const vpViper &viper);
 
   /** @name Inherited functionalities from vpViper */

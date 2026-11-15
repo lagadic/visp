@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,10 +63,10 @@ typedef MKL_INT integer;
 
 integer allocate_work(double **work)
 {
-  integer dimWork = (integer)((*work)[0]);
+  integer dimWork = static_cast<integer>((*work)[0]);
   delete[] * work;
   *work = new double[dimWork];
-  return (integer)dimWork;
+  return static_cast<integer>(dimWork);
 }
 #elif !defined(VISP_HAVE_GSL)
 #ifdef VISP_HAVE_LAPACK_BUILT_IN
@@ -87,9 +87,9 @@ int allocate_work(double **work);
 
 int allocate_work(double **work)
 {
-  unsigned int dimWork = static_cast<unsigned int>((*work)[0]);
+  integer dimWork = static_cast<integer>((*work)[0]);
   delete[] * work;
-  *work = new double[dimWork];
+  *work = new double[static_cast<size_t>(dimWork)];
   return static_cast<int>(dimWork);
 }
 #endif
@@ -218,12 +218,12 @@ vpMatrix vpMatrix::inverseByQRLapack() const
                               rowNum, colNum));
     }
 
-    integer rowNum_ = (integer)this->getRows();
-    integer colNum_ = (integer)this->getCols();
-    integer lda = (integer)rowNum_; // lda is the number of rows because we don't use a submatrix
+    integer rowNum_ = static_cast<integer>(this->getRows());
+    integer colNum_ = static_cast<integer>(this->getCols());
+    integer lda = static_cast<integer>(rowNum_); // lda is the number of rows because we don't use a submatrix
     integer dimTau = std::min<integer>(rowNum_, colNum_);
     integer dimWork = -1;
-    double *tau = new double[dimTau];
+    double *tau = new double[static_cast<std::size_t>(dimTau)];
     double *work = new double[1];
     integer info;
     vpMatrix C;
@@ -512,10 +512,10 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
     //    std::cout << "gsl_R:\n "; display_gsl(gsl_R);
 
     unsigned int Qtda = static_cast<unsigned int>(gsl_Q->tda);
-    size_t len = sizeof(double) * Q.colNum;
+    size_t Clen = sizeof(double) * Q.colNum;
     for (unsigned int i = 0; i < Q.rowNum; ++i) {
       unsigned int k = i * Qtda;
-      memcpy(Q[i], &gsl_Q->data[k], len);
+      memcpy(Q[i], &gsl_Q->data[k], Clen);
       //      for(unsigned int j = 0; j < Q.colNum; ++j) {
       //        Q[i][j] = gsl_Q->data[k + j];
       //      }
@@ -542,8 +542,8 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 
   return r;
 #else
-  integer m = (integer)rowNum; // also rows of Q
-  integer n = (integer)colNum; // also columns of R
+  integer m = static_cast<integer>(rowNum); // also rows of Q
+  integer n = static_cast<integer>(colNum); // also columns of R
   integer r = std::min<integer>(n, m);  // a priori non-null rows of R = rank of R
   integer q = r;               // columns of Q and rows of R
   integer na = n;              // columns of A
@@ -564,17 +564,19 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
     return 0;
 
   integer dimWork = -1;
-  double *qrdata = new double[m * na];
-  double *tau = new double[std::min<integer>(m, q)];
+  double *qrdata = new double[static_cast<std::size_t>(m * na)];
+  double *tau = new double[static_cast<std::size_t>(std::min<integer>(m, q))];
   double *work = new double[1];
   integer info;
 
   // copy this to qrdata in Lapack convention
   for (integer i = 0; i < m; ++i) {
-    for (integer j = 0; j < n; ++j)
+    for (integer j = 0; j < n; ++j) {
       qrdata[i + m * j] = data[j + n * i];
-    for (integer j = n; j < na; ++j)
+    }
+    for (integer j = n; j < na; ++j) {
       qrdata[i + m * j] = 0;
+    }
   }
 
   //   work = new double[1];
@@ -619,19 +621,23 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
   // copy useful part of R from Q and update rank
   na = std::min<integer>(m, n);
   if (squareR) {
-    for (int i = 0; i < na; ++i) {
-      for (int j = i; j < na; ++j)
-        R[i][j] = qrdata[i + m * j];
-      if (std::abs(qrdata[i + m * i]) < tol)
+    for (integer i = 0; i < na; ++i) {
+      for (integer j = i; j < na; ++j) {
+        R[static_cast<unsigned int>(i)][j] = qrdata[i + m * j];
+      }
+      if (std::abs(qrdata[i + m * i]) < tol) {
         r--;
+      }
     }
   }
   else {
-    for (int i = 0; i < na; ++i) {
-      for (int j = i; j < n; ++j)
-        R[i][j] = qrdata[i + m * j];
-      if (std::abs(qrdata[i + m * i]) < tol)
+    for (integer i = 0; i < na; ++i) {
+      for (integer j = i; j < n; ++j) {
+        R[static_cast<unsigned int>(i)][j] = qrdata[i + m * j];
+      }
+      if (std::abs(qrdata[i + m * i]) < tol) {
         r--;
+      }
     }
   }
 
@@ -647,9 +653,11 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
   );
 
   // write qrdata into Q
-  for (int i = 0; i < m; ++i)
-    for (int j = 0; j < q; ++j)
-      Q[i][j] = qrdata[i + m * j];
+  for (integer i = 0; i < m; ++i) {
+    for (integer j = 0; j < q; ++j) {
+      Q[static_cast<unsigned int>(i)][j] = qrdata[i + m * j];
+    }
+  }
 
   delete[] qrdata;
   delete[] work;
@@ -764,10 +772,10 @@ unsigned int vpMatrix::qrPivotLapack(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool
 
   integer dimWork = -1;
   integer min_q_m = std::min<integer>(q, m);
-  double *qrdata = new double[m * na];
-  double *tau = new double[min_q_m];
+  double *qrdata = new double[static_cast<std::size_t>(m * na)];
+  double *tau = new double[static_cast<std::size_t>(min_q_m)];
   double *work = new double[1];
-  integer *p = new integer[na];
+  integer *p = new integer[static_cast<std::size_t>(na)];
   for (int i = 0; i < na; ++i) {
     p[i] = 0;
   }
@@ -838,30 +846,30 @@ unsigned int vpMatrix::qrPivotLapack(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool
   if (squareR) // R r x r
   {
     R.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(r));
-    for (int i = 0; i < r; ++i) {
-      for (int j = i; j < r; ++j) {
-        R[i][j] = qrdata[i + m * j];
+    for (integer i = 0; i < r; ++i) {
+      for (integer j = i; j < r; ++j) {
+        R[static_cast<unsigned int>(i)][j] = qrdata[i + m * j];
       }
     }
 
     // write P
     P.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(n));
-    for (int i = 0; i < r; ++i) {
-      P[i][p[i] - 1] = 1;
+    for (integer i = 0; i < r; ++i) {
+      P[static_cast<unsigned int>(i)][p[i] - 1] = 1;
     }
   }
   else // R is min(m,n) x n of rank r
   {
     R.resize(static_cast<unsigned int>(na), static_cast<unsigned int>(n));
-    for (int i = 0; i < na; ++i) {
-      for (int j = i; j < n; ++j) {
-        R[i][j] = qrdata[i + m * j];
+    for (integer i = 0; i < na; ++i) {
+      for (integer j = i; j < n; ++j) {
+        R[static_cast<unsigned int>(i)][j] = qrdata[i + m * j];
       }
     }
     // write P
     P.resize(static_cast<unsigned int>(n), static_cast<unsigned int>(n));
-    for (int i = 0; i < n; ++i) {
-      P[i][p[i] - 1] = 1;
+    for (integer i = 0; i < n; ++i) {
+      P[static_cast<unsigned int>(i)][p[i] - 1] = 1;
     }
   }
 
@@ -875,9 +883,9 @@ unsigned int vpMatrix::qrPivotLapack(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool
   dorgqr_(&m, &q, &q, qrdata, &m, tau, work, &dimWork, &info);
 
   // write qrdata into Q
-  for (int i = 0; i < m; ++i) {
-    for (int j = 0; j < q; ++j) {
-      Q[i][j] = qrdata[i + m * j];
+  for (integer i = 0; i < m; ++i) {
+    for (integer j = 0; j < q; ++j) {
+      Q[static_cast<unsigned int>(i)][j] = qrdata[i + m * j];
     }
   }
 
@@ -1241,7 +1249,7 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
 
   return inv;
 #else
-  integer n = (integer)rowNum; // lda is the number of rows because we don't use a submatrix
+  integer n = static_cast<integer>(rowNum); // lda is the number of rows because we don't use a submatrix
 
   vpMatrix R = *this;
   integer info;

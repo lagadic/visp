@@ -1,9 +1,23 @@
+// Configuration of vpMbGenericTracker used by tutorial-mb-generic-tracker-rgbd-realsense-json to track the cube
+// with only the color camera of a RealSense device (edge and KLT features, no depth):
+//   ./tutorial-mb-generic-tracker-rgbd-realsense-json --config model/cube/realsense-color-only.json \
+//     --model model/cube/cube.cao
+// Any missing setting keeps the value already set in the tracker.
+// See "Tutorial: Loading a model-based generic tracker from JSON" for the full list of settings.
 {
+    // Name of the reference camera, i.e. one of the keys of "trackers". The estimated pose cMo is
+    // expressed in the frame of this camera.
     "referenceCameraName": "Color",
+    // One tracker per camera: each key is a camera name, associated to the settings of its tracker.
     "trackers": {
+        // Tracker of the color camera, based on visual features.
         "Color": {
+            // Angle (in degrees) at which a face of the model is considered as appearing.
             "angleAppear": 65.0,
-            "angleDisappear": 75.00000000000001,
+            // Angle (in degrees) at which a face of the model is considered as disappearing.
+            "angleDisappear": 75.0,
+            // Transformation cTref between this camera and the reference camera, as a row-major 4x4 vpHomogeneousMatrix.
+            // Identity since the color camera is the reference camera.
             "camTref": {
                 "cols": 4,
                 "data": [
@@ -27,6 +41,8 @@
                 "rows": 4,
                 "type": "vpHomogeneousMatrix"
             },
+            // Camera intrinsics in pixels (see vpCameraParameters).
+            // Overwritten by tutorial-mb-generic-tracker-rgbd-realsense-json with the values given by the RealSense SDK.
             "camera": {
                 "model": "perspectiveWithoutDistortion",
                 "px": 605.146728515625,
@@ -34,6 +50,8 @@
                 "u0": 325.53253173828125,
                 "v0": 244.95083618164063
             },
+            // Clipping of the model faces. "flags" combines values among "none", "all", "fov", "left", "right",
+            // "top", "down", "near" and "far". "near" and "far" are the clipping distances in meters.
             "clipping": {
                 "far": 0.9,
                 "flags": [
@@ -41,56 +59,91 @@
                 ],
                 "near": 0.1
             },
+            // Whether vpMbGenericTracker::display() shows the tracked features and the projection error.
             "display": {
                 "features": true,
                 "projectionError": true
             },
+            // Moving-edges settings (see vpMe), used by the "edge" features.
             "edge": {
+                // Sign of the convolution masks.
                 "maskSign": 0,
+                // Size of the convolution masks used to detect the edges.
                 "maskSize": 5,
+                // Lower bound (in pixels) of the sample step.
                 "minSampleStep": 4.0,
+                // [mu1, mu2]: minimum and maximum image contrast allowed to detect a contour.
                 "mu": [
                     0.5,
                     0.5
                 ],
+                // Number of convolution masks, i.e. precision of the edge normal (180 masks = 2 degrees).
                 "nMask": 180,
+                // Number of discretized points used to track the feature.
                 "ntotalSample": 0,
+                // Number of points to track. Only used by vpMeNurbsTracker.
                 "pointsToTrack": 500,
+                // Search range (in pixels) on both sides of each sample, along the edge normal.
                 "range": 7,
+                // Distance (in pixels) between two samples along an edge.
                 "sampleStep": 4.0,
+                // Number of pixels ignored around the image borders.
                 "strip": 2,
+                // Likelihood threshold type: "old" (threshold depends on the mask size) or "normalized" (recommended,
+                // threshold is the minimal luminance contrast in [0, 255]).
                 "thresholdType": "old",
+                // Likelihood threshold used to accept a moving-edge point.
                 "threshold": 5000.0
             },
+            // KLT keypoints settings (see vpKltOpencv), used by the "klt" features.
             "klt": {
+                // Size of the averaging block used to compute the derivatives.
                 "blockSize": 3,
+                // Free parameter of the Harris detector.
                 "harris": 0.01,
+                // Erosion (in pixels) of the mask of the model faces in which the keypoints are detected.
                 "maskBorder": 5,
+                // Maximum number of detected keypoints.
                 "maxFeatures": 300,
+                // Minimum distance (in pixels) between detected keypoints.
                 "minDistance": 5.0,
+                // Maximum pyramid level (0 = no pyramid).
                 "pyramidLevels": 3,
+                // Minimal accepted quality of a keypoint, as a fraction of the best keypoint quality.
                 "quality": 0.01,
+                // Size of the search window used to refine the keypoint locations.
                 "windowSize": 5
             },
+            // Level of detail: when "useLod" is true, the lines shorter than minLineLengthThresholdGeneral and the faces
+            // smaller than minPolygonAreaThresholdGeneral are not considered as visible.
             "lod": {
                 "minLineLengthThresholdGeneral": 50.0,
                 "minPolygonAreaThresholdGeneral": 2500.0,
                 "useLod": false
             },
+            // Features used by this tracker: "edge" (moving edges) and/or "klt" (KLT keypoints) for a color camera,
+            // "depthDense" and/or "depthNormal" for a depth camera.
             "type": [
                 "edge",
                 "klt"
             ],
+            // Visibility test of the model faces: scanline rendering and/or Ogre (Ogre must be installed,
+            // otherwise it is ignored).
             "visibilityTest": {
                 "ogre": false,
                 "scanline": true
             }
         }
     },
+    // Settings of the virtual visual servoing used to estimate the pose, common to all the trackers.
     "vvs" :{
+      // Gain of the virtual visual servoing.
       "lambda": 1.0,
+      // Maximum number of iterations.
       "maxIter": 30,
+      // Initial mu of the Levenberg-Marquardt optimization.
       "initialMu": 0.01
     },
+    // Version of the JSON format of vpMbGenericTracker.
     "version": "1.0"
 }

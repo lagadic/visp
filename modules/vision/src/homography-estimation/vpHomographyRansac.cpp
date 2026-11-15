@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -358,7 +358,7 @@ bool vpHomography::ransac(const std::vector<double> &xb, const std::vector<doubl
     throw(vpException(vpException::fatalError, "There must be at least 4 matched points"));
   }
 
-  vpUniRand random(static_cast<long>(time(nullptr)));
+  vpUniRand random(static_cast<uint64_t>(time(nullptr)));
 
   std::vector<unsigned int> best_consensus;
   std::vector<unsigned int> cur_consensus;

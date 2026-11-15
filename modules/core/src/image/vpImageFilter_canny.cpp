@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -520,7 +520,8 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
     else if (lowerCannyThresh < 0.f) {
       lowerCannyThresh = upperCannyThresh / 3.f;
     }
-    vpCannyEdgeDetection edgeDetector(gaussianFilterSize, gaussianStdev, apertureGradient, lowerCannyThresh, upperCannyThresh,
+    vpCannyEdgeDetection edgeDetector(static_cast<int>(gaussianFilterSize), gaussianStdev, apertureGradient,
+                                      lowerCannyThresh, upperCannyThresh,
                                       lowerThresholdRatio, upperThresholdRatio, cannyFilteringSteps);
     edgeDetector.setGradients(dIx, dIy);
     edgeDetector.setMask(p_mask);

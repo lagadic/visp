@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,8 +137,8 @@ int main()
       vpMeterPixelConversion::convertPoint(cam, cextMc[0][3] / cextMc[2][3], cextMc[1][3] / cextMc[2][3], frame_origin);
       frame_origins.push_back(std::make_pair(confidence, frame_origin));
 
-      vpDisplay::displayText(I_left, 15 * display_scale, 15 * display_scale, "Click to quit", vpColor::red);
-      vpDisplay::displayText(I_right, 15 * display_scale, 15 * display_scale, "Click to quit", vpColor::red);
+      vpDisplay::displayText(I_left, 15 * static_cast<int>(display_scale), 15 * static_cast<int>(display_scale), "Click to quit", vpColor::red);
+      vpDisplay::displayText(I_right, 15 * static_cast<int>(display_scale), 15 * static_cast<int>(display_scale), "Click to quit", vpColor::red);
       vpDisplay::displayText(I_pose, 15, 15, "Click to quit", vpColor::red);
 
       vpDisplay::displayFrame(I_pose, cextMc_0, cam, 0.1, vpColor::none, 2); // First frame

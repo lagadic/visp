@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -230,8 +230,9 @@ int main(int argc, const char **argv)
     cylinder.print();
 
     vpFeatureLine ld[2];
-    for (unsigned int i = 0; i < 2; i++)
-      vpFeatureBuilder::create(ld[i], cylinder, i);
+    for (unsigned int i = 0; i < 2; ++i) {
+      vpFeatureBuilder::create(ld[i], cylinder, static_cast<int>(i));
+    }
 
     // computes  the cylinder coordinates in the camera frame and its 2D
     // coordinates sets the current position of the visual feature
@@ -239,8 +240,8 @@ int main(int argc, const char **argv)
     cylinder.print();
 
     vpFeatureLine l[2];
-    for (unsigned int i = 0; i < 2; i++) {
-      vpFeatureBuilder::create(l[i], cylinder, i);
+    for (unsigned int i = 0; i < 2; ++i) {
+      vpFeatureBuilder::create(l[i], cylinder, static_cast<int>(i));
       l[i].print();
     }
 
@@ -293,8 +294,8 @@ int main(int argc, const char **argv)
       // retrieve x,y and Z of the vpLine structure
       cylinder.track(cMo);
       //    cylinder.print() ;
-      for (unsigned int i = 0; i < 2; i++) {
-        vpFeatureBuilder::create(l[i], cylinder, i);
+      for (unsigned int i = 0; i < 2; ++i) {
+        vpFeatureBuilder::create(l[i], cylinder, static_cast<int>(i));
         //   l[i].print() ;
       }
 

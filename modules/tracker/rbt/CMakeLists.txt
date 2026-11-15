@@ -63,10 +63,19 @@ vp_create_module(${opt_libs})
 set(opt_test_incs "")
 set(opt_test_libs "")
 
-if(WITH_CATCH2)
-  # catch2 is private
-  list(APPEND opt_test_incs ${CATCH2_INCLUDE_DIRS})
-  list(APPEND opt_test_libs ${CATCH2_LIBRARIES})
+# Catch2 for testing
+if(USE_CATCH2)
+  if(BUILD_CATCH2)
+    list(APPEND opt_test_incs ${CATCH2_INCLUDE_DIRS})
+    list(APPEND opt_test_libs ${CATCH2_LIBRARIES})
+  else()
+    set(_inc_dirs "")
+    set(_lnk_libs "")
+    vp_get_interface_include_dirs(CATCH2_LIBRARIES _inc_dirs)
+    vp_get_interface_link_libraries(CATCH2_LIBRARIES _lnk_libs)
+    list(APPEND opt_test_incs ${_inc_dirs})
+    list(APPEND opt_test_libs ${_lnk_libs})
+  endif()
 endif()
 
 vp_add_tests(DEPENDS_ON visp_core visp_gui visp_io PRIVATE_INCLUDE_DIRS ${opt_test_incs} PRIVATE_LIBRARIES ${opt_test_libs})

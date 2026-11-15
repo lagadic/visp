@@ -1,10 +1,22 @@
+// Configuration of tutorial-megapose-live-single-object-tracking to track the cube with MegaPose:
+//   ./tutorial-megapose-live-single-object-tracking --config data/megapose_cube.json \
+//     megapose/address 127.0.0.1 megapose/port 5555 video-device data/cube_video.mp4
+// Arguments given on the command line (e.g. megapose/port 5555) override the values of this file.
 {
+  // Image size in pixels.
   "height": 480,
   "width": 640,
+  // Source of the images: a camera index ("0", "1", ...) for a live feed, or the path to a video file.
   "video-device": "0",
+  // Name of the object to track. Must match an object in the meshes directory of the MegaPose server.
   "object": "cube",
+  // How to get the bounding box of the object needed to (re)initialize MegaPose:
+  // "click" for user labelling, "dnn" to use the detector configured below.
   "detectionMethod": "click",
+  // If the MegaPose score falls below this threshold in [0, 1], a reinitialization is required.
   "reinitThreshold": 0.5,
+  // Camera intrinsics in pixels (see vpCameraParameters). Must be a perspective projection model without distortion.
+  // Here, the intrinsics of the Intel RealSense D435 used to record the video, given by the RealSense SDK.
   "camera": {
     "model": "perspectiveWithoutDistortion",
     "px": 605.146728515625,
@@ -12,32 +24,54 @@
     "u0": 325.53253173828125,
     "v0": 244.95083618164063
   },
+  // Settings of the object detector (vpDetectorDNNOpenCV), only used when "detectionMethod" is "dnn".
+  // Here, a YoloV7-tiny trained to detect only the cube.
   "detector": {
+    // Path to the network model. To be changed to the location of your own model.
     "model-path": "/path/to/cube/cube_detector.onnx",
+    // Path to the model configuration file. Set to "none" if it is not required.
     "config": "none",
+    // Network type, used to parse its output: "yolov3", "yolov4", "yolov5", "yolov7", "yolov8", "yolov11",
+    // "yolov12", "faster-rcnn", "ssd-mobilenet", "resnet-10" or "user-specified".
     "type": "yolov7",
+    // Framework the model comes from.
     "framework": "onnx",
+    // Labels of the detection classes.
     "labels": [
       "cube"
     ],
-    "mean":{
+    // Mean value subtracted to each color channel of the image to normalize it.
+    "mean": {
       "red": 0,
       "blue": 0,
       "green": 0
     },
+    // Detections with a confidence below this threshold are ignored.
     "confidenceThreshold": 0.65,
+    // Non-maximum suppression threshold.
     "nmsThreshold": 0.5,
+    // Size ratio r of the filter removing the detections whose bounding box area is not in
+    // [mean_area * r ; mean_area / r]. A value <= 0 disables this filter.
     "filterThreshold": -0.25,
+    // Factor applied to the pixel intensities. 1/255 rescales them in [0, 1].
     "scaleFactor": 0.003921569,
+    // Whether to swap the red and blue channels before feeding the image to the detector.
     "swapRedAndBlue": false
   },
-
+  // Connection to the MegaPose server and pose estimation settings.
   "megapose": {
+    // IP address of the MegaPose server.
     "address": "127.0.0.1",
+    // Port on which the MegaPose server listens for connections.
     "port": 5555,
+    // Number of iterations of the refiner model, for both (re)initialization and tracking.
+    // Values above 1 may be too slow for tracking.
     "refinerIterations": 1,
+    // Number of renderings (random poses) used for the initial pose estimation.
     "initialisationNumSamples": 576
   },
+  // Association between the MegaPose object names and the detector classes.
+  // Note: this entry is currently not read by tutorial-megapose-live-single-object-tracking.
   "megaposeObjectToDetectorClass": {
     "cube": "cube"
   }

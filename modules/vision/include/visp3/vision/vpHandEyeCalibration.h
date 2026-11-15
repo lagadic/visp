@@ -55,16 +55,16 @@ BEGIN_VISP_NAMESPACE
  * This class is able to consider eye-in-hand and eye-to-hand configurations.
  *
  * Let us consider:
- * - \f$^r{\bf M}_e\f$ the homogeneous transformation between the robot reference frame and the
+ * - \f$^{\mathrm{w}}\mathbf{M}_{\mathrm{ee}}\f$ the homogeneous transformation between the robot reference frame and the
  *   robot end-effector,
- * - \f$^c{\bf M}_o\f$ the homogeneous transformation between the camera frame and an object frame attached to the
+ * - \f$^{\mathrm{c}}\mathbf{M}_{\mathrm{o}}\f$ the homogeneous transformation between the camera frame and an object frame attached to the
  *   robot end-effector,
- * - \f$^r{\bf M}_c\f$ the homogeneous transformation between the robot reference frame and the camera frame,
- * - \f$^e{\bf M}_o\f$ the homogeneous transformation between the robot end-effector frame and the object frame
+ * - \f$^{\mathrm{w}}\mathbf{M}_{\mathrm{c}}\f$ the homogeneous transformation between the robot reference frame and the camera frame,
+ * - \f$^{\mathrm{ee}}\mathbf{M}_{\mathrm{o}}\f$ the homogeneous transformation between the robot end-effector frame and the object frame
  *   attached to the end-effector.
  *
  * The hand-eye calibration process implemented in this class allows from the basket of
- * \f$\{^r{\bf M}_e, ^c{\bf M}_o\}_i\f$ corresponding to couple of poses \f$ i \f$ to estimate:
+ * \f$\{^{\mathrm{w}}\mathbf{M}_{\mathrm{ee}}, ^{\mathrm{c}}\mathbf{M}_{\mathrm{o}}\}_i\f$ corresponding to couple of poses \f$ i \f$ to estimate:
  * - in an eye-in-hand configuration \f$ {^r}{\bf M}_o \f$ and \f$ {^e}{\bf M}_c \f$ constant homogeneous extrinsic
  *   transformations (see \ref tutorial-calibration-extrinsic-eye-in-hand),
  * - in an eye-to-hand configuration \f$ {^r}{\bf M}_c \f$ and \f$ {^e}{\bf M}_o \f$ constant homogeneous extrinsic

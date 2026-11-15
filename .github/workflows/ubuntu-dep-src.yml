@@ -15,7 +15,7 @@ concurrency:
 
 env:
   # Function to get the most recent tag of a remote repository without having to clone it, excluding tag with 'pr' as in Pre Release
-  FUNCTION_GET_LATEST: 'git -c "versionsort.suffix=-" ls-remote --exit-code --refs --sort="version:refname" --tags ${GIT_ADDRESS} "*.*.*" | cut --delimiter="/" --fields=3 | grep -v -e pr | tail --lines=1'
+  FUNCTION_GET_LATEST: 'git -c "versionsort.suffix=-" ls-remote --exit-code --refs --sort="version:refname" --tags ${GIT_ADDRESS} "*.*.*" | cut --delimiter="/" --fields=3 | grep -v -e pr -e rc | tail --lines=1'
 
 jobs:
   # https://github.com/orgs/community/discussions/28474#discussioncomment-3350256
@@ -26,7 +26,7 @@ jobs:
       head-commit-message: ${{ steps.get_head_commit_message.outputs.headCommitMsg }}
     steps:
       - name: Get repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Print head git commit message
@@ -51,7 +51,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v7
 
     # https://github.com/hendrikmuhs/ccache-action
     - name: ccache
@@ -130,6 +130,7 @@ jobs:
         make -j$(nproc) install
         echo "VTK_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $VTK_DIR
+        echo "VTK_REL=$LATEST_TAG" >> $GITHUB_ENV
 
     - name: Build OpenCV from source
       run: |
@@ -167,7 +168,17 @@ jobs:
         GIT_ADDRESS="https://github.com/PointCloudLibrary/pcl.git"
         LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
         echo "Newest tag is ${LATEST_TAG}"
-        git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/pcl
+        # pcl-1.15.1 does not build with VTK >= 9.7 (e.g. vtkRenderer::RemoveActor2D was removed)
+        VTK_MIN_INCOMPATIBLE="v9.7.0"
+        VTK_LOWEST=`printf "%s\n%s\n" "${VTK_MIN_INCOMPATIBLE}" "${VTK_REL}" | sort -V | head -n 1`
+        if [[ "${LATEST_TAG}" == "pcl-1.15.1" && "${VTK_LOWEST}" == "${VTK_MIN_INCOMPATIBLE}" ]]
+        then
+          BRANCH=master
+          echo "Because it is not compatible with vtk ${VTK_REL} we will use the branch ${BRANCH} instead"
+        else
+          BRANCH=${LATEST_TAG}
+        fi
+        git clone --depth 1 --branch ${BRANCH} ${GIT_ADDRESS} ${HOME}/pcl
         cd ${HOME}/pcl
         mkdir build && cd build && mkdir install
         # By default PCL is built with march=native
@@ -220,10 +231,10 @@ jobs:
     - name: Build Cerebellum Afma and Viper robots SDK from source
       run: |
         pwd
-        git clone https://gitlab.inria.fr/adept_robots/cerebellum.git ${HOME}/cerebellum
-        git clone https://gitlab.inria.fr/adept_robots/afma6 ${HOME}/afma6
-        git clone https://gitlab.inria.fr/adept_robots/viper650 ${HOME}/viper650
-        git clone https://gitlab.inria.fr/adept_robots/viper850 ${HOME}/viper850
+        git clone https://gitlab.inria.fr/rainbow/platforms/adept_robots/cerebellum.git ${HOME}/cerebellum
+        git clone https://gitlab.inria.fr/rainbow/platforms/adept_robots/afma6 ${HOME}/afma6
+        git clone https://gitlab.inria.fr/rainbow/platforms/adept_robots/viper650 ${HOME}/viper650
+        git clone https://gitlab.inria.fr/rainbow/platforms/adept_robots/viper850 ${HOME}/viper850
         cd ${HOME}/cerebellum/CALinux
         make -j$(nproc)
         sudo make install
@@ -246,7 +257,17 @@ jobs:
         GIT_ADDRESS="https://gitlab.com/sdurobotics/ur_rtde.git"
         LATEST_TAG=`eval ${FUNCTION_GET_LATEST}`
         echo "Newest tag is ${LATEST_TAG}"
-        git clone --depth 1 --branch ${LATEST_TAG} ${GIT_ADDRESS} ${HOME}/ur_rtde
+        # ur_rtde v1.6.0 doesn't build with Boost >= 1.87 (e.g. Boost 1.90 on Ubuntu 26.04) since it uses
+        # boost/asio/io_service.hpp that was removed, and requests boost_system component that no longer
+        # exists since Boost 1.89. Both are fixed in master branch.
+        if [[ "${LATEST_TAG}" == "v1.6.0" && ! -f /usr/include/boost/asio/io_service.hpp ]]
+        then
+          BRANCH=master
+          echo "Because it is not compatible with Boost installed version we will use the branch ${BRANCH} instead"
+        else
+          BRANCH=${LATEST_TAG}
+        fi
+        git clone --depth 1 --branch ${BRANCH} ${GIT_ADDRESS} ${HOME}/ur_rtde
         cd ${HOME}/ur_rtde
         mkdir build && cd build && mkdir install
         cmake .. -DCMAKE_BUILD_TYPE=Release -DPYTHON_BINDINGS=OFF -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
@@ -268,7 +289,11 @@ jobs:
       run: |
         pwd
         mkdir build && cd build && mkdir install
-        cmake .. -DCMAKE_INSTALL_PREFIX=$(pwd)/install
+        cmake .. -DCMAKE_INSTALL_PREFIX=$(pwd)/install \
+                 -DACTIVATE_WARNING_SHADOW=ON \
+                 -DACTIVATE_WARNING_FLOAT_EQUAL=ON \
+                 -DACTIVATE_WARNING_SIGN_CONVERSION=ON \
+                 -DACTIVATE_WARNING_STRICT_OVERFLOW=ON
         cat ViSP-third-party.txt
 
     - name: Build visp-config script
@@ -283,9 +308,33 @@ jobs:
         LD_LIBRARY_PATH: /opt/openrobots/lib
       working-directory: build
       run: |
-        make -j$(nproc) install
+        set -o pipefail
+        make -j$(nproc) install 2>&1 | tee make_install.log
         echo "VISP_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $VISP_DIR
+        # Filter and group warnings into a separate file
+        # grep exits with status 1 when no match is found: don't let that fail the step
+        grep -i "warning: " make_install.log > warnings.log || true
+        echo "Build output logged to make_install.log"
+        echo "Warnings logged to warnings.log"
+
+    - name: Show build logs
+      if: always()
+      working-directory: build
+      run: |
+        echo "=== Build logs ==="
+        cat make_install.log
+
+    - name: Show warnings
+      if: always()
+      working-directory: build
+      run: |
+        echo "=== WARNINGS ==="
+        if [ -f warnings.log ]; then
+          cat warnings.log
+        else
+          echo "warnings.log not found (build likely failed before it could be generated)"
+        fi
 
     - name: Run unit tests
       env:
@@ -320,3 +369,11 @@ jobs:
         cd visp_started-build
         cmake ..
         make -j$(nproc)
+
+    - name: Check ViSP build warnings
+      working-directory: build
+      run: |
+        if [ -s warnings.log ]; then
+          echo "ViSP build has produced warnings."
+          exit 1
+        fi

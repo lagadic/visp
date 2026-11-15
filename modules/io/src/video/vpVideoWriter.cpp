@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ vpVideoWriter::vpVideoWriter()
 /*!
   Basic destructor.
 */
-vpVideoWriter::~vpVideoWriter() { }
+vpVideoWriter::~vpVideoWriter() {}
 
 /*!
   It enables to set the path and the name of the video or sequence of images
@@ -207,7 +207,7 @@ void vpVideoWriter::saveFrame(vpImage<vpRGBa> &I)
 
   if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG ||
       m_formatType == FORMAT_PNG) {
-    m_frameName = vpIoTools::formatString(m_videoName, m_frameCount);
+    m_frameName = vpIoTools::formatString(m_videoName, static_cast<unsigned int>(m_frameCount));
     vpImageIo::write(I, m_frameName);
   }
   else {
@@ -240,7 +240,7 @@ void vpVideoWriter::saveFrame(vpImage<unsigned char> &I)
 
   if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG ||
       m_formatType == FORMAT_PNG) {
-    m_frameName = vpIoTools::formatString(m_videoName, m_frameCount);
+    m_frameName = vpIoTools::formatString(m_videoName, static_cast<unsigned int>(m_frameCount));
     vpImageIo::write(I, m_frameName);
   }
   else {

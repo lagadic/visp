@@ -112,9 +112,6 @@ endif()
 if(POLICY CMP0075)
   cmake_policy(SET CMP0075 NEW) # For check_include_file and cmake 3.12.0
 endif()
-if(POLICY CMP0146)
-  cmake_policy(SET CMP0146 OLD) # The ``FindCUDA`` module deprecated since CMake 3.10
-endif()
 
 if(APPLE)
   # Fix following errors for libpng and libjpeg detection:
@@ -135,7 +132,7 @@ include(cmake/VISPDetectCXXStandard.cmake) # Set cxx standard to 17 by default
 #-----------------------------------------------------------------------------
 # VISP version number.  An even minor number corresponds to releases.
 set(VISP_VERSION_MAJOR "3")
-set(VISP_VERSION_MINOR "6")
+set(VISP_VERSION_MINOR "7")
 set(VISP_VERSION_PATCH "1")
 set(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PATCH}")
 set(VISP_SOVERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}")
@@ -200,6 +197,7 @@ if(ANDROID)
   vp_update(VISP_INC_INSTALL_PATH         "sdk/native/jni/include")
   vp_update(VISP_SAMPLES_SRC_INSTALL_PATH "samples/native")
   vp_update(VISP_INSTALL_DATAROOTDIR      "sdk/etc")
+  vp_update(VISP_OGRE_DATA_INSTALL_PATH   "${VISP_INSTALL_DATAROOTDIR}")
 
 elseif(WIN32 AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
   # Where to build modules
@@ -225,6 +223,7 @@ elseif(WIN32 AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
   vp_update(VISP_INC_INSTALL_PATH         "${CMAKE_INSTALL_INCLUDEDIR}")
   vp_update(VISP_BIN_INSTALL_PATH         "${VISP_INSTALL_BINARIES_PREFIX}bin")
   vp_update(VISP_INSTALL_DATAROOTDIR      "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
+  vp_update(VISP_OGRE_DATA_INSTALL_PATH   "${VISP_INSTALL_DATAROOTDIR}")
   vp_update(VISP_CONFIG_INSTALL_PATH      ".")
 
 else() # UNIX
@@ -240,18 +239,20 @@ else() # UNIX
   #----------------------------------------------------------------------
   VP_OPTION(ENABLE_MULTIARCH  "" "" "Enable multi-arch support"  "" OFF IF (NOT APPLE))
 
+  vp_update(VISP_INSTALL_DATAROOTDIR      "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
   # The location where includes and libraries will be installed
   if(ENABLE_MULTIARCH)
     # The 2 following lines should be used to enable multi-arch support.
-    vp_update(VISP_INC_INSTALL_PATH       "${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LIBRARY_ARCHITECTURE}")
+    vp_update(VISP_INC_INSTALL_PATH       "${CMAKE_INSTALL_INCLUDEDIR}") # Headers are arch independant
     vp_update(VISP_LIB_INSTALL_PATH       "${CMAKE_INSTALL_LIBDIR}/${CMAKE_LIBRARY_ARCHITECTURE}")
+    vp_update(VISP_OGRE_DATA_INSTALL_PATH "${CMAKE_INSTALL_LIBDIR}/${CMAKE_LIBRARY_ARCHITECTURE}/visp-${VISP_VERSION}")
   else()
     # catkin doesn't support multi-arch; use rather the next 2 lines
     vp_update(VISP_INC_INSTALL_PATH       "${CMAKE_INSTALL_INCLUDEDIR}")
     vp_update(VISP_LIB_INSTALL_PATH       "${CMAKE_INSTALL_LIBDIR}")
+    vp_update(VISP_OGRE_DATA_INSTALL_PATH "${VISP_INSTALL_DATAROOTDIR}")
   endif()
   vp_update(VISP_BIN_INSTALL_PATH         "${CMAKE_INSTALL_BINDIR}")
-  vp_update(VISP_INSTALL_DATAROOTDIR      "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
   vp_update(VISP_3P_LIB_INSTALL_PATH      "${VISP_LIB_INSTALL_PATH}/visp/3rdparty")
   vp_update(VISP_SAMPLES_SRC_INSTALL_PATH "${VISP_INSTALL_DATAROOTDIR}/samples")
   vp_update(VISP_JAR_INSTALL_PATH         "${VISP_INSTALL_DATAROOTDIR}/java")
@@ -275,7 +276,7 @@ else()
 endif()
 
 # --- Python Support ---
-if(NOT IOS)
+if(NOT IOS AND NOT VISP_PYTHON_SKIP_DETECTION)
   # Make sure to refresh the python interpreter every time we rerun cmake
   # If we don't do this, we may use an old or invalid python when installing the bindings
   # that was cached by a previous attempt at building
@@ -490,7 +491,7 @@ VP_OPTION(BUILD_TESTS  "" "" "Build ViSP tests" "" ON)
 VP_OPTION(BUILD_COVERAGE "" "" "Enables test coverage" "" OFF IF (BUILD_TESTS AND (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGCXX)))
 
 # Build java as an option
-VP_OPTION(BUILD_JAVA  "" "" "Enable Java support" "" (ANDROID OR NOT CMAKE_CROSSCOMPILING)  IF (ANDROID OR (NOT APPLE_FRAMEWORK AND NOT WINRT)) )
+VP_OPTION(BUILD_JAVA  "" "" "Enable Java support" "" (ANDROID OR NOT CMAKE_CROSSCOMPILING)  IF (ANDROID OR ((NOT APPLE_FRAMEWORK AND NOT WINRT)) AND NOT (VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_11)) )
 VP_OPTION(BUILD_FAT_JAVA_LIB  "" "" "Create Java wrapper exporting all functions of ViSP library (requires static build of ViSP modules)" "" ANDROID IF NOT BUILD_SHARED_LIBS)
 VP_OPTION(BUILD_ANDROID_SERVICE   "" "" "Build ViSP Manager for Google Play"          "" OFF IF ANDROID )
 VP_OPTION(BUILD_ANDROID_PROJECTS  "" "" "Build Android projects providing .apk files" "" ON  IF ANDROID )
@@ -500,6 +501,7 @@ VP_OPTION(INSTALL_ANDROID_EXAMPLES "" "" "Install Android examples"  ""         
 # Build python bindings as an option
 VP_OPTION(BUILD_PYTHON_BINDINGS  "" "" "Build Python bindings" "" ON IF (PYTHON3INTERP_FOUND AND USE_PYBIND11 AND NOT CMAKE_NOT_OK_FOR_BINDINGS AND VISP_PYTHON_INTERPRETER_ALLOWED AND NOT PYTHON3_NOT_OK_FOR_BINDINGS AND NOT CXX_STANDARD_NOT_OK_FOR_BINDINGS) )
 VP_OPTION(BUILD_PYTHON_BINDINGS_DOC  "" "" "Build the documentation for the Python bindings" "" ON IF BUILD_PYTHON_BINDINGS )
+VP_OPTION(GENERATE_PYTHON_STUBS  "" "" "Generate Python stubs" "" ON IF BUILD_PYTHON_BINDINGS )
 
 
 # Build demos as an option.
@@ -534,6 +536,8 @@ VP_OPTION(BUILD_WITH_STATIC_CRT  "" "" "Enables use of staticaly linked CRT for 
 # ----------------------------------------------------------------------------
 # Build options
 # ----------------------------------------------------------------------------
+VISP_OPTION(ENABLE_CONFIG_VERIFICATION "Fail build if actual configuration doesn't match requested (WITH_XXX != HAVE_XXX)" OFF)
+VISP_OPTION(ENABLE_BUILD_INFO "Embed build environment details (compiler, flags, timestamps) in vpIoTools::getBuildInformation(). Note: Breaks build reproducibility" OFF)
 VP_OPTION(ENABLE_SOLUTION_FOLDERS "" "" "Solution folder in Visual Studio or in other IDEs" "" (MSVC_IDE OR CMAKE_GENERATOR MATCHES Xcode))
 # Note that it is better to set ENABLE_MOMENTS_COMBINE_MATRICES to OFF
 VP_OPTION(ENABLE_MOMENTS_COMBINE_MATRICES  "" "" "Use linear combination of matrices instead of linear combination of moments to compute interaction matrices." "" OFF)
@@ -541,7 +545,7 @@ VP_OPTION(ENABLE_TEST_WITHOUT_DISPLAY      "" "" "Don't use display feature when
 VP_OPTION(ENABLE_FULL_DOC      "" "" "Build doc with internal classes that are by default not part of the doc" "" OFF)
 
 # Allow introduction of "visp" namespace. By default disabled to keep compat with previous versions
-VP_OPTION(ENABLE_VISP_NAMESPACE "" "" "Enable visp namespace" "" OFF)
+VP_OPTION(ENABLE_VISP_NAMESPACE "" "" "Enable visp namespace" "" ON)
 # Allow introduction of "explicit" keyword. By default disabled to keep compat with previous versions
 VP_OPTION(ENABLE_EXPLICIT_KEYWORD "" "" "Enable c++ explicit keyword" "" OFF)
 # Enable the vpImageTools::warp() methods
@@ -566,7 +570,18 @@ VP_CHECK_PACKAGE(IRISA)
 # check for linux/parport.h
 VP_CHECK_PACKAGE(PARPORT)
 # OpenGL
-VP_CHECK_PACKAGE(OpenGL)
+if(APPLE)
+  # Since CMAKE_FIND_FRAMEWORK is set to LAST, XQuartz libGL (/opt/X11 or /usr/X11R6) would be preferred over the
+  # native OpenGL.framework. Linking with XQuartz libGL makes Panda3D crash at runtime when it resolves GL functions
+  # like glGetStringi(). Here we ensure that OpenGL.framework is found first.
+  set(CMAKE_FIND_FRAMEWORK_SAVE ${CMAKE_FIND_FRAMEWORK})
+  set(CMAKE_FIND_FRAMEWORK FIRST)
+  VP_CHECK_PACKAGE(OpenGL)
+  set(CMAKE_FIND_FRAMEWORK ${CMAKE_FIND_FRAMEWORK_SAVE})
+  unset(CMAKE_FIND_FRAMEWORK_SAVE)
+else()
+  VP_CHECK_PACKAGE(OpenGL)
+endif()
 # for pioneer
 VP_CHECK_PACKAGE(RT)
 VP_CHECK_PACKAGE(DL)
@@ -599,7 +614,7 @@ VP_CHECK_PACKAGE(C99)
 VP_OPTION(USE_AFMA6       ""          ""    "Include Afma6 robot support"      "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
 VP_OPTION(USE_VIPER650    ""          ""    "Include Viper s650 robot support" "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
 VP_OPTION(USE_VIPER850    ""          ""    "Include Viper s850 robot support" "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
-VP_OPTION(USE_UR_RTDE     ur_rtde     QUIET "Include Universal Robot RTDE C++ interface support for UR robots" "" ON IF NOT WINRT AND NOT IOS)
+VP_OPTION(USE_UR_RTDE     ur_rtde     QUIET "Include Universal Robot RTDE C++ interface support for UR robots" "" ON IF NOT WINRT AND NOT IOS AND NOT (USE_CXX_STANDARD STREQUAL "98"))
 VP_OPTION(USE_VIRTUOSE    Virtuose    ""    "Include Virtuose SDK support for Haption devices" "" ON IF NOT WINRT)
 VP_OPTION(USE_ARSDK       ARSDK       QUIET "Include Parrot ARSDK support"     "" ON IF NOT WINRT AND NOT IOS)
 if(USE_ARSDK)
@@ -620,17 +635,21 @@ VP_OPTION(USE_FTIITSDK    FTIITSDK    ""    "Include IIT force-torque SDK suppor
 VP_OPTION(USE_BICLOPS     BICLOPS     ""    "Include biclops support"          "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_PTU46       PTU46       ""    "Include ptu-46 support"           "" ON IF UNIX AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_FLIRPTUSDK  FlirPtuSDK  ""    "Include Flir PTU SDK support"     "" ON IF NOT WINRT AND NOT IOS)
-VP_OPTION(USE_CMU1394     CMU1394     ""    "Include cmu1494 support"          "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_QUALISYS    Qualisys    ""    "Include Qualisys SDK support"     "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_VICON       Vicon       ""    "Include Vicon SDK support"        "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_GDI         GDI         ""    "Include gdi support"              "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
-#VP_OPTION(USE_DIRECT3D    DIRECT3D    ""    "Include d3d support"             "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
-VP_OPTION(USE_DIRECTSHOW  DIRECTSHOW  ""    "Include dshow support"            "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
+VP_OPTION(USE_DIRECT3D    DIRECT3D    ""    "Include d3d support"             "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
 
 VP_OPTION(USE_OPENMP      OpenMP      ""    "Include openmp support"           "" ON)
 VP_OPTION(USE_EIGEN3      Eigen3      QUIET "Include eigen3 support"           "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_COIN3D      Coin3D      ""    "Include coin3d support"           "" ON IF OPENGL_FOUND AND NOT WINRT AND NOT IOS)
-VP_OPTION(USE_PANDA3D     "MyPanda3D" ""    "Include Panda3D support"          "" ON IF NOT IOS)
+# When Panda3D is built with makepanda, there is no Panda3DConfig.cmake file. In that case find_package(Panda3D) in
+# config mode resets Panda3D_DIR to Panda3D_DIR-NOTFOUND. Keep the value set by the user as a hint for
+# FindMyPanda3D.cmake
+if(Panda3D_DIR)
+  set(Panda3D_DIR_HINT "${Panda3D_DIR}")
+endif()
+VP_OPTION(USE_PANDA3D     "Panda3D;MyPanda3D;COMPONENTS;Core;Contrib;Direct;Egg;Framework;TinyDisplay" QUIET "Include Panda3D support"          "" ON IF NOT IOS)
 VP_OPTION(USE_YARP        YARP        QUIET "Include yarp support"             "YARP_DIR" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_OGRE        OGRE        QUIET "Include Ogre3D support"           "OGRE_DIR" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_OIS         OIS         QUIET "Include Ogre3D/ois support"       "OIS_DIR"  ON IF USE_OGRE AND NOT WINRT AND NOT IOS)
@@ -701,6 +720,30 @@ if(USE_PCL)
   # it is not a good practice to use PCL_DEFINITIONS and PCL_COMPILE_OPTIONS. The following macro
   # gets rather compile options from interfaces.
   vp_find_pcl(PCL_LIBRARIES PCL_DEPS_INCLUDE_DIRS PCL_DEPS_LIBRARIES PCL_DEPS_COMPILE_OPTIONS)
+  # When PCL is built with AVX (e.g. Ubuntu 26.04 amd64v3 packages), Eigen used by PCL has a 32 bytes alignment
+  # while PCL doesn't export AVX compile options. ViSP has then to be built with AVX to have the same Eigen
+  # alignment, otherwise pcl/memory.h warns about "Potential runtime error due to aligned malloc mismatch!"
+  # The AVX compile option is also added to PCL_DEPS_COMPILE_OPTIONS to be propagated to projects using ViSP
+  # as 3rd party (VISPConfig.cmake, visp.pc and visp-config) that include PCL headers through ViSP headers.
+  if(X86_64)
+    vp_get_pcl_uses_eigen_handmade_aligned_malloc(PCL_INCLUDE_DIRS PCL_USES_EIGEN_HANDMADE_ALIGNED_MALLOC)
+    if(PCL_USES_EIGEN_HANDMADE_ALIGNED_MALLOC)
+      if(NOT ENABLE_AVX)
+        message(WARNING "PCL ${PCL_VERSION} was built with AVX (PCL_USES_EIGEN_HANDMADE_ALIGNED_MALLOC=${PCL_USES_EIGEN_HANDMADE_ALIGNED_MALLOC} in pcl_config.h). To get the same Eigen memory alignment as PCL, we enable AVX usage turning ENABLE_AVX=ON.")
+        unset(ENABLE_AVX)
+        set(ENABLE_AVX ON CACHE BOOL "Enable AVX instructions" FORCE)
+      endif()
+      if(MSVC)
+        set(PCL_AVX_COMPILE_OPTION "/arch:AVX")
+      else()
+        set(PCL_AVX_COMPILE_OPTION "-mavx")
+      endif()
+      if(NOT PCL_AVX_COMPILE_OPTION IN_LIST PCL_DEPS_COMPILE_OPTIONS)
+        list(APPEND PCL_DEPS_COMPILE_OPTIONS ${PCL_AVX_COMPILE_OPTION})
+      endif()
+      unset(PCL_AVX_COMPILE_OPTION)
+    endif()
+  endif()
   set(PCL_REQUIRED_COMPONENTS "common;filters;io;visualization;segmentation")
   # Create cmake vars corresponding to pcl components used by ViSP like VISP_HAVE_PCL_COMMON...
   vp_detect_required_pcl_components(PCL_REQUIRED_COMPONENTS)
@@ -821,6 +864,11 @@ if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_11)
     unset(USE_XML2)
     set(USE_XML2 OFF CACHE BOOL "Include libxml2 support" FORCE)
   endif()
+  if(USE_VICON)
+    message(WARNING "Vicon SDK 3rd party was detected and needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable vicon usage turning USE_VICON=OFF.")
+    unset(USE_VICON)
+    set(USE_VICON OFF CACHE BOOL "Include Vicon SDK support" FORCE)
+  endif()
   if(USE_QUALISYS)
     message(WARNING "Qualisys SDK 3rd party was detected and needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable qualisys usage turning USE_QUALISYS=OFF.")
     unset(USE_QUALISYS)
@@ -871,16 +919,22 @@ endif()
 # ----------------------------------------------------------------------------
 # Build-in 3rd parties. Should be after c++ standard potential modification
 # ----------------------------------------------------------------------------
-# Since C99 is not supported by MSVC 2010 or prior, we disable apriltag if MSVC < 2012
-VP_OPTION(WITH_APRILTAG   ""           ""    "Use AprilTag as built-in library"  "" ON IF (USE_THREADS OR USE_PTHREAD) AND (NOT WINRT) AND (NOT MSVC_VERSION LESS 1700))
-VP_OPTION(WITH_APRILTAG_BIG_FAMILY ""  ""    "Use AprilTag big family (41h12, 48h12, 49h12, 52h13)" "" OFF IF WITH_APRILTAG)
+VISP_OPTION(BUILD_APRILTAG "Build apriltag from source" ON
+  VISIBLE_IF NOT WINRT AND NOT MINGW)
+VISP_OPTION(USE_APRILTAG "Include apriltag support" ON
+  VISIBLE_IF TRUE
+  VERIFY VISP_HAVE_APRILTAG)
+VISP_OPTION(BUILD_CATCH2 "Build Catch2 from source" VISP_FORCE_3RDPARTY_BUILD)
+VISP_OPTION(USE_CATCH2 "Include Catch2 support" ON
+  VISIBLE_IF TRUE
+  VERIFY VISP_HAVE_CATCH2)
+
 VP_OPTION(WITH_MINIZ      ""           ""    "Use npz related I/O as built-in functions"   "" ON)
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Use atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Use clipper as built-in library"   "" ON IF USE_OPENCV)
 VP_OPTION(WITH_LAPACK     ""           ""    "Use lapack as built-in library"    "" ON IF NOT USE_LAPACK)
 VP_OPTION(WITH_QBDEVICE   ""           ""    "Use qbdevice-api as built-in library" "" ON IF (NOT WINRT) AND (NOT IOS))
 VP_OPTION(WITH_TAKKTILE2  ""           ""    "Use Right Hand takktile2 driver as built-in library"   "" ON IF (NOT WIN32) AND (NOT WINRT) AND (NOT IOS) AND (NOT ANDROID))
-VP_OPTION(WITH_CATCH2     ""           ""    "Use catch2 built-in library" "" ON)
 VP_OPTION(WITH_POLOLU     ""           ""    "Use rapa pololu as built-in library" "" ON IF (NOT WINRT) AND (NOT IOS) AND (NOT ANDROID))
 VP_OPTION(WITH_PUGIXML    ""           ""    "Use pugixml built-in third-party" "" ON)
 VP_OPTION(WITH_SIMDLIB    ""           ""    "Use simdlib built-in third-party" "" ON)
@@ -906,10 +960,10 @@ if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_11)
 endif()
 
 if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14)
-  if(WITH_CATCH2)
-    message(WARNING "catch2 3rd party needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable catch2 usage turning WITH_CATCH2=OFF.")
-    unset(WITH_CATCH2)
-    set(WITH_CATCH2 OFF CACHE BOOL "Use catch2 built-in library" FORCE)
+  if(USE_CATCH2)
+    message(WARNING "Catch2 3rd party needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable Catch2 usage turning USE_CATCH2=OFF.")
+    unset(USE_CATCH2)
+    set(USE_CATCH2 OFF CACHE BOOL "Use Catch2 library" FORCE)
   endif()
 endif()
 
@@ -998,6 +1052,11 @@ if(DOXYGEN_FOUND)
   if(DOXYGEN_AWESOME_DIR)
     set(DOXYGEN_HTML_EXTRA_STYLESHEET "${DOXYGEN_AWESOME_DIR}/doxygen-awesome.css ${VISP_SOURCE_DIR}/doc/doxygen-awesome.custom.css")
   endif()
+
+  set(DOXY_HEADER_RAW   ${CMAKE_BINARY_DIR}/doxygen_header_raw.html)
+  set(DOXY_FOOTER_RAW   ${CMAKE_BINARY_DIR}/doxygen_footer_raw.html)
+  set(DOXY_CSS_RAW      ${CMAKE_BINARY_DIR}/doxygen_stylesheet_raw.css)
+  set(DOXY_HEADER_FINAL ${CMAKE_BINARY_DIR}/doxygen_header.html)
 
   # HTML version of the doc
   set(DOXYGEN_GENERATE_HTML "YES")
@@ -1115,6 +1174,15 @@ endif()
 # Add 3rd-party libraries
 #----------------------------------------------------------------------
 include(cmake/VISP3rdParty.cmake)
+
+# Conditional options depending on 3rd parties version
+if(USE_APRILTAG)
+  if (APRILTAG_VERSION VERSION_LESS_EQUAL "3.4.5")
+    VISP_OPTION(USE_APRILTAG_BIG_FAMILY "Include apriltag big family (41h12, 48h12, 49h12, 52h13) support" OFF)
+  else()
+    set(USE_APRILTAG_BIG_FAMILY ON)
+  endif()
+endif()
 
 # --- Java Support ---
 if(BUILD_JAVA)
@@ -1234,8 +1302,6 @@ VP_SET(VISP_HAVE_COIN3D      TRUE IF (BUILD_MODULE_visp_robot AND USE_COIN3D))
 
 VP_SET(VISP_HAVE_V4L2        TRUE IF (BUILD_MODULE_visp_sensor AND USE_V4L2))
 VP_SET(VISP_HAVE_DC1394      TRUE IF (BUILD_MODULE_visp_sensor AND USE_DC1394))
-VP_SET(VISP_HAVE_CMU1394     TRUE IF (BUILD_MODULE_visp_sensor AND USE_CMU1394))
-VP_SET(VISP_HAVE_DIRECTSHOW  TRUE IF (BUILD_MODULE_visp_sensor AND USE_DIRECTSHOW))
 VP_SET(VISP_HAVE_LIBFREENECT TRUE IF (BUILD_MODULE_visp_sensor AND USE_LIBFREENECT))
 VP_SET(VISP_HAVE_LIBUSB_1    TRUE IF (BUILD_MODULE_visp_sensor AND USE_LIBUSB_1))
 VP_SET(VISP_HAVE_REALSENSE2  TRUE IF (BUILD_MODULE_visp_sensor AND USE_REALSENSE2))
@@ -1247,8 +1313,7 @@ VP_SET(VISP_HAVE_COMEDI      TRUE IF (BUILD_MODULE_visp_sensor AND USE_COMEDI))
 VP_SET(VISP_HAVE_ATIDAQ      TRUE IF (BUILD_MODULE_visp_sensor AND WITH_ATIDAQ))
 VP_SET(VISP_HAVE_FT_IIT_SDK  TRUE IF (BUILD_MODULE_visp_sensor AND USE_FTIITSDK))
 VP_SET(VISP_HAVE_CLIPPER     TRUE IF (BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_klt AND WITH_CLIPPER))
-VP_SET(VISP_HAVE_APRILTAG    TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG))
-VP_SET(VISP_HAVE_APRILTAG_BIG_FAMILY TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG AND WITH_APRILTAG_BIG_FAMILY))
+VP_SET(VISP_HAVE_APRILTAG_BIG_FAMILY TRUE IF (USE_APRILTAG AND USE_APRILTAG_BIG_FAMILY))
 VP_SET(VISP_HAVE_QBDEVICE    TRUE IF (BUILD_MODULE_visp_robot AND WITH_QBDEVICE))
 VP_SET(VISP_HAVE_TAKKTILE2   TRUE IF (BUILD_MODULE_visp_robot AND WITH_TAKKTILE2))
 VP_SET(VISP_HAVE_POLOLU      TRUE IF (BUILD_MODULE_visp_robot AND WITH_POLOLU))
@@ -1808,7 +1873,11 @@ status("    Version:"                USE_OPENCV         THEN "${OpenCV_VERSION}"
 if(USE_OPENCV)
   vp_list_replace_string(OpenCV_LIB_COMPONENTS OpenCV_LIB_COMPONENTS_FILTERED "^opencv_+" "")
   status("    Modules:"    "${OpenCV_LIB_COMPONENTS_FILTERED}")
-  status("    OpenCV dir:" "${OpenCV_DIR}")
+  if(APPLE_FRAMEWORK)
+    status("    OpenCV dir:" "${OpenCV_FRAMEWORK_DIR}")
+  else()
+    status("    OpenCV dir:" "${OpenCV_DIR}")
+  endif()
 endif()
 status("")
 status("  YARP: ")
@@ -1897,9 +1966,7 @@ status("    Use Direct3D:"           USE_DIRECT3D     THEN "yes" ELSE "no")
 status("")
 status("  Cameras: ")
 status("    Use DC1394-2.x:"         USE_DC1394       THEN "yes (ver ${DC1394_VERSION})" ELSE "no")
-status("    Use CMU 1394:"           USE_CMU1394      THEN "yes" ELSE "no")
 status("    Use V4L2:"               USE_V4L2         THEN "yes (ver ${V4L2_VERSION})" ELSE "no")
-status("    Use directshow:"         USE_DIRECTSHOW   THEN "yes" ELSE "no")
 status("    Use OpenCV:"             USE_OPENCV       THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
 status("    Use FLIR Flycapture:"    USE_FLYCAPTURE   THEN "yes" ELSE "no")
 status("    Use Basler Pylon:"       USE_PYLON        THEN "yes (ver ${PYLON_VERSION})" ELSE "no")
@@ -1927,8 +1994,18 @@ status("")
 status("  Detection: ")
 status("    Use zbar:"                    USE_ZBAR                  THEN "yes (ver ${ZBAR_VERSION})" ELSE "no")
 status("    Use dmtx:"                    USE_DMTX                  THEN "yes (ver ${DMTX_VERSION})" ELSE "no")
-status("    Use AprilTag (built-in):"     WITH_APRILTAG             THEN "yes (ver ${APRILTAG_VERSION})" ELSE "no")
-status("    \\- Use AprilTag big family:" WITH_APRILTAG_BIG_FAMILY  THEN "yes" ELSE "no")
+
+if(VISP_HAVE_APRILTAG)
+  status("    Use AprilTag:"     (apriltag_FOUND OR MyApriltag_FOUND)
+    THEN "yes (ver ${APRILTAG_VERSION})"
+    ELSE "build (ver ${APRILTAG_VERSION})")
+  status("    \\- Use big family:"   USE_APRILTAG_BIG_FAMILY         THEN "yes" ELSE "no")
+  status("    \\- Use copy fct:"     VISP_HAVE_APRILTAG_COPY_FCT THEN "yes" ELSE "no")
+  status("    \\- Use pose fct:"     VISP_HAVE_APRILTAG_POSE_FCT THEN "yes" ELSE "no")
+  status("    \\- Use aruco:"        VISP_HAVE_APRILTAG_ARUCO        THEN "yes" ELSE "no")
+else()
+  status("    Use AprilTag:" "no")
+endif()
 status("")
 status("  Misc: ")
 status("    Use Clipper (built-in):"  WITH_CLIPPER     THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
@@ -1967,7 +2044,9 @@ endif()
 # ========================== samples and tests ==========================
 status("")
 status("  Tests and samples:")
-status("    Use catch2 (built-in):"  WITH_CATCH2        THEN "yes (ver ${CATCH2_VERSION})" ELSE "no")
+status("    Use Catch2:"     Catch2_FOUND
+  THEN "yes (ver ${CATCH2_VERSION})"
+  ELSE "build (ver ${CATCH2_VERSION})")
 status("    Tests:"                  BUILD_TESTS        THEN "yes" ELSE "no")
 status("    Apps:"                   BUILD_APPS         THEN "yes" ELSE "no")
 status("    Demos:"                  BUILD_DEMOS        THEN "yes" ELSE "no")
@@ -1991,7 +2070,11 @@ if(USE_OPENBLAS)
   status("    OpenBLAS include dir:" "${OpenBLAS_INCLUDE_DIR}")
 endif()
 if(USE_OPENCV)
-  status("    OpenCV dir:" "${OpenCV_DIR}")
+  if(APPLE_FRAMEWORK)
+    status("    OpenCV dir:" "${OpenCV_FRAMEWORK_DIR}")
+  else()
+    status("    OpenCV dir:" "${OpenCV_DIR}")
+  endif()
 endif()
 if(USE_PCL)
   status("    PCL dir:" "${PCL_DIR}")
@@ -1999,7 +2082,7 @@ endif()
 if(USE_PANDA3D)
   if(Panda3D_DIR)
     status("    Panda3D dir:" "${Panda3D_DIR}")
-  elseif($ENV{Panda3D_DIR})
+  elseif(DEFINED ENV{Panda3D_DIR})
     status("    Panda3D dir:" "$ENV{Panda3D_DIR}")
   else()
     file(REAL_PATH "${Panda3D_INCLUDE_DIRS}/../.." Panda3D_DIR)
@@ -2027,3 +2110,7 @@ status("")
 status("==========================================================")
 
 vp_finalize_status()
+
+if(ENABLE_CONFIG_VERIFICATION)
+  vp_verify_config()
+endif()

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,7 +38,6 @@
 #############################################################################
 
 find_path(PARPORT_INCLUDE_DIRS linux/parport.h
-  /usr/include
   /usr/src/linux/include
 )
 

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@
  */
 
 #include <visp3/rbt/vpTemporalWeighting.h>
+
+#include <cmath>
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include VISP_NLOHMANN_JSON(json.hpp)
@@ -62,7 +64,8 @@ std::shared_ptr<vpTemporalWeighting> vpTemporalWeighting::parseTemporalWeighting
 }
 std::shared_ptr<vpTemporalWeighting> vpTemporalWeighting::parseTemporalWeightingRawJson(const std::string &s)
 {
-  nlohmann::json j = nlohmann::json::parse(s);
+  // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+  nlohmann::json j = nlohmann::json::parse(s, nullptr, true, true);
   return parseTemporalWeighting(j);
 }
 
@@ -76,7 +79,7 @@ double vpFixedTemporalWeighting::weight(const double /*progress*/) const
 double vpSigmoidTemporalWeighting::weight(const double progress) const
 {
   double w = 1.0;
-  if (progress == 0.0 || m_location == 1.0) {
+  if (progress <= 0.0 || m_location >= 1.0) { // equivalent to progress = 0.0 or m_location = 1.0)
     if (m_power > 0.0) {
       w = 0.0;
     }

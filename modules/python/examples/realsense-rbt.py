@@ -39,6 +39,7 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 import numpy as np
 import time
+from os import path
 import faulthandler
 faulthandler.enable()
 
@@ -67,7 +68,7 @@ class PyBaseFeatureTracker(RBFeatureTracker):
   def requiresSilhouetteCandidates(self) -> bool:
     return False
 
-  def onTrackingIterStart(self, cMo: HomogeneousMatrix):
+  def onTrackingIterStart(self, frame: RBFeatureTrackerInput, cMo: HomogeneousMatrix):
     self.cov.resize(6, 6)
     self.LTL.resize(6, 6)
     self.LTR.resize(6)
@@ -155,6 +156,10 @@ if __name__ == '__main__':
   extensions.parse_python_extensions(tracker, Path(tracker_path))
   if model_path is not None:
     tracker.setModelPath(model_path)
+    model_basename, model_extension = path.splitext(model_path)
+    initfile_path = model_path.replace(model_extension, '.init')
+  else:
+    initfile_path = tracker_path.replace(".json", '.init')
 
   custom_feature = PyBaseFeatureTracker()
   tracker.addTracker(custom_feature)
@@ -195,7 +200,7 @@ if __name__ == '__main__':
     if event:
       break
   tracker.startTracking()
-  tracker.initClick(I, tracker_path.replace('.json', '.init'), True)
+  tracker.initClick(I, initfile_path, True)
   start_time =  time.time()
   for frame_data in data_generator:
     if frame_data.I_depth is not None:
@@ -215,7 +220,7 @@ if __name__ == '__main__':
     tracker.track(I=frame.I, IRGB=frame_data.IRGB, depth=frame_data.I_depth)
     tracking_time = np.round((time.time() - t1) * 1000.0, 2)
 
-    Display.displayText(I, 60, 0, f'Tracking time: {tracking_time}', Color.red)
+    Display.displayText(I, 60, 0, f'Tracking time: {tracking_time}ms', Color.red)
     cMo = HomogeneousMatrix()
     tracker.getPose(cMo)
 
@@ -231,3 +236,5 @@ if __name__ == '__main__':
       break
   end_time = time.time()
   print(f'total time = {end_time - start_time}s')
+  from visp.ar import Panda3DFrameworkManager
+  Panda3DFrameworkManager.getInstance().exit()

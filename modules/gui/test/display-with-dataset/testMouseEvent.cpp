@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -569,6 +569,10 @@ int main(int argc, const char **argv)
   delete display;
 }
 #else
-int main() { vpERROR_TRACE("You do not have X11 or GTK display functionalities..."); }
+
+int main()
+{
+  std::cout << "You do not have X11 or GTK display functionalities..." << std::endl;
+}
 
 #endif

@@ -44,7 +44,7 @@ std::vector<vpImagePoint> track(vpImage<unsigned char> &I, std::vector<vpDot2> &
         std::stringstream ss;
         ss << "Click on point " << i + 1;
         vpDisplay::displayText(I, 20, 20, "Status: initialize blob tracker", vpColor::red);
-        vpDisplay::displayText(I, 40 + i * 20, 20, ss.str(), vpColor::red);
+        vpDisplay::displayText(I, 40 + static_cast<int>(i) * 20, 20, ss.str(), vpColor::red);
         vpDisplay::flush(I);
         dot[i].initTracking(I);
         vpDisplay::flush(I);
@@ -73,6 +73,6 @@ std::vector<vpImagePoint> track(vpImage<unsigned char> &I, std::vector<vpDot2> &
   catch (...) {
     std::cout << "Traking lost" << std::endl;
     throw(vpException(vpException::fatalError, "Tracking lost"));
-}
+  }
 }
 #endif

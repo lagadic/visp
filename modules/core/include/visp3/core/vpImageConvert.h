@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,13 +164,18 @@ public:
   template <typename T, typename U, bool useFullScale1, bool useFullScale2>
   static typename std::enable_if<!std::is_same<T, U>::value, void>::type convert(const vpImage<vpHSV<T, useFullScale1>> &src, vpImage<vpHSV<U, useFullScale2>> &dest)
   {
-    const int height = src.getHeight(), width = src.getWidth();
-    const int size = height * width;
+    const unsigned int height = src.getHeight();
+    const unsigned int width = src.getWidth();
+
+    const std::size_t size = static_cast<std::size_t>(height) * static_cast<std::size_t>(width);
+
     dest.resize(height, width);
+
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-    for (int i = 0; i < size; ++i) {
+    // 3. La variable d'itération i doit rester 'int' pour OpenMP
+    for (int i = 0; i < static_cast<int>(size); ++i) {
       dest.bitmap[i].buildFrom(src.bitmap[i]);
     }
   }
@@ -222,6 +227,7 @@ public:
     int size = static_cast<int>(depth_raw.getSize());
     unsigned int width = depth_raw.getWidth();
     unsigned int height = depth_raw.getHeight();
+    const int int_width = static_cast<int>(width);
     int pcl_size = 0;
     const unsigned int index_0 = 0;
     const unsigned int index_1 = 1;
@@ -246,8 +252,8 @@ public:
             if (Z < Z_max) {
               double x = 0;
               double y = 0;
-              unsigned int j = p % width;
-              unsigned int i = (p - j) / width;
+              int j = p % int_width;
+              int i = (p - j) / int_width;
               vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
               vpColVector point_3D({ x * Z, y * Z, Z });
               if (point_3D[index_2] > Z_min) {
@@ -280,8 +286,8 @@ public:
           if (Z < Z_max) {
             double x = 0;
             double y = 0;
-            unsigned int j = p % width;
-            unsigned int i = (p - j) / width;
+            int j = p % int_width;
+            int i = (p - j) / int_width;
             vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
             vpColVector point_3D({ x * Z, y * Z, Z, 1 });
             if (point_3D[index_2] >= 0.1) {
@@ -336,6 +342,7 @@ public:
     int size = static_cast<int>(depth_raw.getSize());
     unsigned int width = depth_raw.getWidth();
     unsigned int height = depth_raw.getHeight();
+    const int int_width = static_cast<int>(width);
     int pcl_size = 0;
     const unsigned int index_0 = 0;
     const unsigned int index_1 = 1;
@@ -360,8 +367,8 @@ public:
             if (Z < Z_max) {
               double x = 0;
               double y = 0;
-              unsigned int j = p % width;
-              unsigned int i = (p - j) / width;
+              int j = p % int_width;
+              int i = (p - j) / int_width;
               vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
               vpColVector point_3D({ x * Z, y * Z, Z });
               if (point_3D[index_2] > Z_min) {
@@ -403,8 +410,8 @@ public:
           if (Z < Z_max) {
             double x = 0;
             double y = 0;
-            unsigned int j = p % width;
-            unsigned int i = (p - j) / width;
+            int j = p % int_width;
+            int i = (p - j) / int_width;
             vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
             vpColVector point_3D({ x * Z, y * Z, Z, 1 });
             if (point_3D[index_2] >= 0.1) {
@@ -621,13 +628,20 @@ private:
 template <typename T, bool useFullScale>
 void vpImageConvert::convert(const vpImage<vpRGBa> &src, vpImage<vpHSV<T, useFullScale>> &dest)
 {
-  const int height = src.getHeight(), width = src.getWidth();
-  const int size = height * width;
-  dest.resize(height, width);
+  // 1. Déclarer en unsigned int pour correspondre à src.getHeight()/getWidth() et dest.resize()
+  const unsigned int height = src.getHeight();
+  const unsigned int width = src.getWidth();
+
+  // 2. Calculer la taille totale en size_t (standard pour les index)
+  const std::size_t size = static_cast<std::size_t>(height) * static_cast<std::size_t>(width);
+
+  dest.resize(height, width); // Plus de warning ici
+
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (int i = 0; i < size; ++i) {
+  // 3. Transtypage explicite pour OpenMP
+  for (int i = 0; i < static_cast<int>(size); ++i) {
     dest.bitmap[i].buildFrom(src.bitmap[i]);
   }
 }
@@ -643,13 +657,17 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, vpImage<vpHSV<T, useFul
 template <typename T, bool useFullScale>
 void vpImageConvert::convert(const vpImage<vpHSV<T, useFullScale>> &src, vpImage<vpRGBa> &dest)
 {
-  const int height = src.getHeight(), width = src.getWidth();
-  const int size = height * width;
+  const unsigned int height = src.getHeight();
+  const unsigned int width = src.getWidth();
+
+  const std::size_t size = static_cast<std::size_t>(height) * static_cast<std::size_t>(width);
+
   dest.resize(height, width);
+
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (int i = 0; i < size; ++i) {
+  for (int i = 0; i < static_cast<int>(size); ++i) {
     dest.bitmap[i].buildFrom(src.bitmap[i]);
   }
 }

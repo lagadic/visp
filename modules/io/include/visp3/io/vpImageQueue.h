@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ template <class Type> class vpImageQueue
 {
 public:
   struct vpCancelled_t
-  { };
+  {};
 
   /*!
    * Queue (FIFO) constructor. By default the max queue size is set to 1024*8.
@@ -195,31 +195,31 @@ public:
         if (!disable_left_click) {
           if (!m_recording_mode) { // continuous
             if (m_start_recording) {
-              vpDisplay::displayText(I, 20 * vpDisplay::getDownScalingFactor(I),
-                                     10 * vpDisplay::getDownScalingFactor(I), "Left  click: stop recording",
+              vpDisplay::displayText(I, 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
+                                     10 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), "Left  click: stop recording",
                                      vpColor::red);
             }
             else {
-              vpDisplay::displayText(I, 20 * vpDisplay::getDownScalingFactor(I),
-                                     10 * vpDisplay::getDownScalingFactor(I), "Left  click: start recording",
+              vpDisplay::displayText(I, 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
+                                     10 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), "Left  click: start recording",
                                      vpColor::red);
             }
           }
           else {
-            vpDisplay::displayText(I, 20 * vpDisplay::getDownScalingFactor(I), 10 * vpDisplay::getDownScalingFactor(I),
+            vpDisplay::displayText(I, 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 10 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                    "Left  click: record image", vpColor::red);
           }
         }
-        vpDisplay::displayText(I, 40 * vpDisplay::getDownScalingFactor(I), 10 * vpDisplay::getDownScalingFactor(I),
+        vpDisplay::displayText(I, 40 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 10 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                "Right click: quit", vpColor::red);
       }
       else {
-        vpDisplay::displayText(I, 20 * vpDisplay::getDownScalingFactor(I), 10 * vpDisplay::getDownScalingFactor(I),
+        vpDisplay::displayText(I, 20 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 10 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                "Click to quit", vpColor::red);
       }
 
       if (!m_seqname.empty()) {
-        vpDisplay::displayText(I, 60 * vpDisplay::getDownScalingFactor(I), 10 * vpDisplay::getDownScalingFactor(I),
+        vpDisplay::displayText(I, 60 * static_cast<int>(vpDisplay::getDownScalingFactor(I)), 10 * static_cast<int>(vpDisplay::getDownScalingFactor(I)),
                                m_text_record_mode, vpColor::red);
       }
       vpMouseButton::vpMouseButtonType button;

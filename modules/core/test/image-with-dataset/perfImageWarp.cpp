@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,11 @@
 
 #if defined(VISP_HAVE_CATCH2)
 
+#if defined(VISP_BUILD_CATCH2)
 #include <catch_amalgamated.hpp>
+#else // Since v3.1.1
+#include <catch2/catch_all.hpp>
+#endif
 
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpIoTools.h>
@@ -106,7 +110,7 @@ TEST_CASE("Benchmark affine warp on grayscale image", "[benchmark]")
   cv::Mat M_cv(2, 3, CV_64FC1);
   for (unsigned int i = 0; i < M.getRows(); i++) {
     for (unsigned int j = 0; j < M.getCols(); j++) {
-      M_cv.at<double>(i, j) = M[i][j];
+      M_cv.at<double>(static_cast<int>(i), static_cast<int>(j)) = M[i][j];
     }
   }
 
@@ -177,7 +181,7 @@ TEST_CASE("Benchmark affine warp on color image", "[benchmark]")
   cv::Mat M_cv(2, 3, CV_64FC1);
   for (unsigned int i = 0; i < M.getRows(); i++) {
     for (unsigned int j = 0; j < M.getCols(); j++) {
-      M_cv.at<double>(i, j) = M[i][j];
+      M_cv.at<double>(static_cast<int>(i), static_cast<int>(j)) = M[i][j];
     }
   }
 
@@ -248,7 +252,7 @@ TEST_CASE("Benchmark perspective warp on grayscale image", "[benchmark]")
   cv::Mat M_cv(3, 3, CV_64FC1);
   for (unsigned int i = 0; i < M.getRows(); i++) {
     for (unsigned int j = 0; j < M.getCols(); j++) {
-      M_cv.at<double>(i, j) = M[i][j];
+      M_cv.at<double>(static_cast<int>(i), static_cast<int>(j)) = M[i][j];
     }
   }
 
@@ -319,7 +323,7 @@ TEST_CASE("Benchmark perspective warp on color image", "[benchmark]")
   cv::Mat M_cv(3, 3, CV_64FC1);
   for (unsigned int i = 0; i < M.getRows(); i++) {
     for (unsigned int j = 0; j < M.getCols(); j++) {
-      M_cv.at<double>(i, j) = M[i][j];
+      M_cv.at<double>(static_cast<int>(i), static_cast<int>(j)) = M[i][j];
     }
   }
 

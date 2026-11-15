@@ -23,7 +23,7 @@ jobs:
       head-commit-message: ${{ steps.get_head_commit_message.outputs.headCommitMsg }}
     steps:
       - name: Get repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Print head git commit message
@@ -57,10 +57,10 @@ jobs:
           # - arch: aarch64
           #   distro: ubuntu:latest
           #   endianness: (Little Endian)
-          - arch: riscv64
-            distro: ubuntu:latest
-            target: RISC-V
-            endianness: (Little Endian)
+          #- arch: riscv64
+          #  distro: ubuntu:latest
+          #  target: RISC-V
+          #  endianness: (Little Endian)
           - arch: ppc64le
             distro: ubuntu:latest
             target: POWER8
@@ -72,7 +72,14 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v7
+
+    # Ajout de Swap pour éviter l'erreur "Cannot allocate memory" lors du linking sur RISC-V
+    - name: Set up Swap Space
+      uses: actionhippie/swap-space@v1
+      with:
+        path: /swapfile
+        swap-size-gb: 4
 
     - name: Run on arch
       uses: uraimo/run-on-arch-action@v3
@@ -97,7 +104,7 @@ jobs:
           pwd
           mkdir build && cd build
           cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_JAVA=OFF \
-                   -DUSE_JPEG=OFF -DUSE_PNG=OFF -DUSE_X11=OFF -DUSE_XML2=OFF -DBUILD_JAVA=OFF -DUSE_BLAS/LAPACK=OFF
+                   -DUSE_JPEG=OFF -DUSE_PNG=OFF -DUSE_X11=OFF -DUSE_XML2=OFF -DBUILD_JAVA=OFF -DUSE_BLAS/LAPACK=OFF -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-keep-memory"
           cat ViSP-third-party.txt
 
           ARCHI=`uname -m`

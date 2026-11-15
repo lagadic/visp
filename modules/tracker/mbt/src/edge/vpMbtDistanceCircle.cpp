@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ vpMbtDistanceCircle::vpMbtDistanceCircle()
   : name(), index(0), cam(), me(nullptr), wmean(1), featureEllipse(), isTrackedCircle(true), meEllipse(nullptr), circle(nullptr),
   radius(0.), p1(nullptr), p2(nullptr), p3(nullptr), L(), error(), nbFeature(0), Reinit(false), hiddenface(nullptr),
   index_polygon(-1), isvisible(false)
-{ }
+{}
 
 /*!
   Basic destructor useful to deallocate the memory.
@@ -165,12 +165,12 @@ bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const 
     }
 
     // Create the moving edges containers
-    unsigned int initRange_;
+    int initRange_;
     if (initRange < 0) {
       initRange_ = defaultRange;
     }
     else {
-      initRange_ = static_cast<unsigned int>(initRange);
+      initRange_ = initRange;
     }
 
     meEllipse = new vpMbtMeEllipse;

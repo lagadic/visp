@@ -49,6 +49,22 @@ endif()
 # Doxygen documentation target, for "make visp_doc" and "make html-doc" (to keep compat with previous versions)
 # ----------------------------------------------------------------------------
 if(DOXYGEN_FOUND)
+  # 1. Ask Doxygen itself to dump its current default templates
+  execute_process(
+    COMMAND ${DOXYGEN_EXECUTABLE} -w html
+            ${DOXY_HEADER_RAW} ${DOXY_FOOTER_RAW} ${DOXY_CSS_RAW}
+  )
+
+  # 2. Patch the header: inject the <script> tag right before </head>
+  file(READ ${DOXY_HEADER_RAW} DOXY_HEADER_CONTENT)
+  string(REPLACE
+    "</head>"
+    "<script type=\"text/javascript\" src=\"$relpath^tabs-content.js\"></script>\n</head>"
+    DOXY_HEADER_CONTENT
+    "${DOXY_HEADER_CONTENT}"
+  )
+  file(WRITE ${DOXY_HEADER_FINAL} "${DOXY_HEADER_CONTENT}")
+
   add_custom_target(html-doc
     COMMAND "${DOXYGEN_EXECUTABLE}" "${VISP_DOC_DIR}/config-doxygen"
     DEPENDS "${VISP_DOC_DIR}/config-doxygen"

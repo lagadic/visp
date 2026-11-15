@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,16 +116,16 @@ int main(int argc, char *argv[])
   vpDisplayGDI d1, d2, d3, d4;
 #endif
   d1.init(color, 0, 0, "Color");
-  d2.init(depth_color, color.getWidth() + 80, 0, "Depth");
-  d3.init(infrared1, 0, color.getHeight() + 70, "Infrared left");
+  d2.init(depth_color, static_cast<int>(color.getWidth()) + 80, 0, "Depth");
+  d3.init(infrared1, 0, static_cast<int>(color.getHeight()) + 70, "Infrared left");
   if (opt_show_infrared2) {
-    d4.init(infrared2, color.getWidth(), color.getHeight() + 100, "Infrared right");
+    d4.init(infrared2, static_cast<int>(color.getWidth()), static_cast<int>(color.getHeight()) + 100, "Infrared right");
   }
 
   std::mutex mutex;
   pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
-  vpDisplayPCL pcl_viewer(color.getWidth() + 80, color.getHeight() + 70, "3D viewer " + vpTime::getDateTime());
+  vpDisplayPCL pcl_viewer(static_cast<int>(color.getWidth()) + 80, static_cast<int>(color.getHeight()) + 70, "3D viewer " + vpTime::getDateTime());
   if (opt_pcl_color) {
     pcl_viewer.startThread(std::ref(mutex), pointcloud_color);
   }

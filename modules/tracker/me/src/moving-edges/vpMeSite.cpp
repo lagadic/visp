@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,19 +51,22 @@ BEGIN_VISP_NAMESPACE
 
 struct vpMeSiteHypothesis
 {
-  vpMeSiteHypothesis(vpMeSite *site, double l, double c) : site(site), likelihood(l), contrast(c)
-  { }
+  vpMeSiteHypothesis(vpMeSite *site, double l, double c) : m_site(site), m_likelihood(l), m_contrast(c)
+  {}
 
-  vpMeSite *site;
-  double likelihood;
-  double contrast;
+  vpMeSite *m_site;
+  double m_likelihood;
+  double m_contrast;
 };
 
 static bool outsideImage(int i, int j, int half, int rows, int cols)
 {
-  int half_1 = half + 1;
-  int half_3 = half + 3;
-  return ((0 < (half_1 - i)) || (((i - rows) + half_3) > 0) || (0 < (half_1 - j)) || (((j - cols) + half_3) > 0));
+  const int min_boundary = half + 1;
+  const int max_row_boundary = rows - half - 3;
+  const int max_col_boundary = cols - half - 3;
+
+  return (i < min_boundary || i > max_row_boundary ||
+          j < min_boundary || j > max_col_boundary);
 }
 #endif
 
@@ -95,7 +98,7 @@ void vpMeSite::init()
 vpMeSite::vpMeSite()
   : m_i(0), m_j(0), m_ifloat(0), m_jfloat(0), m_mask_sign(1), m_alpha(0.), m_convlt(0.), m_normGradient(0),
   m_weight(1), m_contrastThreshold(10000.0), m_selectDisplay(NONE), m_state(NO_SUPPRESSION), m_index_prev(90)
-{ }
+{}
 
 vpMeSite::vpMeSite(const double &ip, const double &jp)
   : m_i(0), m_j(0), m_ifloat(0), m_jfloat(0), m_mask_sign(1), m_alpha(0.), m_convlt(0.), m_normGradient(0),
@@ -245,11 +248,11 @@ unsigned int vpMeSite::computeMaskIndex(const double alpha, const vpMe &me)
   while (theta > M_PI) {
     theta -= M_PI;
   }
-  // Convert radians to degrees
+  // Convert radians to degrees. Since theta is in [0, M_PI], theta_deg is in [0, 180]
   int theta_deg = vpMath::round(vpMath::deg(theta));
 
   const int flatAngle = 180;
-  if (abs(theta_deg) == flatAngle) {
+  if (theta_deg == flatAngle) {
     theta_deg = 0;
   }
   unsigned int mask_index = static_cast<unsigned int>(theta_deg / static_cast<double>(me.getAngleStep()));
@@ -492,10 +495,10 @@ void vpMeSite::trackMultipleHypotheses(const vpImage<unsigned char> &I, const vp
   std::multimap<double, vpMeSiteHypothesis>::iterator it = candidates.begin();
   if (test_contrast) {
     for (unsigned int i = 0; i < numCandidates; ++i, ++it) {
-      outputHypotheses[i] = *(it->second.site);
+      outputHypotheses[i] = *(it->second.m_site);
       outputHypotheses[i].m_normGradient = vpMath::sqr(outputHypotheses[i].m_convlt);
-      const double likelihood = it->second.likelihood;
-      const double contrast = it->second.contrast;
+      const double likelihood = it->second.m_likelihood;
+      const double contrast = it->second.m_contrast;
 
       if (likelihood > threshold) {
         if (contrast <= contrast_min || contrast >= contrast_max) {
@@ -512,8 +515,8 @@ void vpMeSite::trackMultipleHypotheses(const vpImage<unsigned char> &I, const vp
   }
   else {
     for (unsigned int i = 0; i < numCandidates; ++i, ++it) {
-      outputHypotheses[i] = *(it->second.site);
-      const double likelihood = it->second.likelihood;
+      outputHypotheses[i] = *(it->second.m_site);
+      const double likelihood = it->second.m_likelihood;
       if (likelihood > threshold) {
         outputHypotheses[i].m_state = NO_SUPPRESSION;
       }

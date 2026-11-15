@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ using namespace VISP_NAMESPACE_NAME;
 struct CmdArguments
 {
   CmdArguments() : startFrame(-1), frameStep(1), stepByStep(false)
-  { }
+  {}
 
   void registerArguments(vpJsonArgumentParser &parser)
   {
@@ -133,8 +133,8 @@ int main(int argc, const char **argv)
     std::cout << "  First frame: " << readerRGB.getFirstFrameIndex() << std::endl;
   }
 
-  const int width = readerRGB.getWidth();
-  const int height = readerRGB.getHeight();
+  const unsigned int width = readerRGB.getWidth();
+  const unsigned int height = readerRGB.getHeight();
 
   std::cout << "  Image size : " << width << " x " << height << std::endl;
 
@@ -200,7 +200,7 @@ int main(int argc, const char **argv)
       readerRGB.acquire(Icol);
       vpImageConvert::convert(Icol, Id);
       if (!sequenceArgs.depthFolder.empty()) {
-        std::string depthName = vpIoTools::formatString(sequenceArgs.depthFolder + "/%06d.npy", im);
+        std::string depthName = vpIoTools::formatString(sequenceArgs.depthFolder + "/%06d.npy", static_cast<unsigned int>(im));
         visp::cnpy::NpyArray npz_data = visp::cnpy::npy_load(depthName);
         vpImage<uint16_t> dataArray(npz_data.data<uint16_t>(), npz_data.shape[0], npz_data.shape[1], false);
         float scale = 9.999999747378752e-05;

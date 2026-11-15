@@ -158,5 +158,22 @@ private:
   vpImagePoint m_center;
   float m_radius;
 };
+
+/**
+ * \brief Overloaded equality operator to compare two vpImageCircle objects.
+ * \param a First vpImageCircle object.
+ * \param b Second vpImageCircle object.
+ * \return true if both circles have the same center and radius, false otherwise.
+ */
+VISP_EXPORT bool operator==(const vpImageCircle &a, const vpImageCircle &b);
+
+/**
+ * \brief Overloaded inequality operator to compare two vpImageCircle objects.
+ * \param a First vpImageCircle object.
+ * \param b Second vpImageCircle object.
+ * \return true if both circles are different in center or radius, false otherwise.
+ */
+VISP_EXPORT bool operator!=(const vpImageCircle &a, const vpImageCircle &b);
+
 END_VISP_NAMESPACE
 #endif

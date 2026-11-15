@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,24 +54,27 @@ void performSegmentationHSV(vpTutoCommonData &data)
 
 std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeleton(vpTutoCommonData &data)
 {
-  const int height = data.m_mask.getHeight();
-  const int width = data.m_mask.getWidth();
+  const unsigned int height = data.m_mask.getHeight();
+  const unsigned int width = data.m_mask.getWidth();
   data.m_Iskeleton.resize(height, width, 0);
   std::vector<vpImagePoint> points;
+  const unsigned int widthStop = width - 1;
+  const unsigned int heightStop = height - 1;
   // Edge thinning along the horizontal direction
-  for (int y = 0; y < height; ++y) {
+  for (unsigned int y = 0; y < height; ++y) {
     int left = -1;
-    for (int x = 0; x < width - 1; ++x) {
+    for (unsigned int x = 0; x < widthStop; ++x) {
+      int xi = static_cast<int>(x);
       if ((data.m_mask[y][x] > 0) && (data.m_mask[y][x + 1] > 0)) {
         if (left < 0) {
-          left = x;
+          left = xi;
         }
       }
       else if (data.m_mask[y][x] > 0) {
-        int cx = x; // Case 1 pix wide
+        int cx = xi; // Case 1 pix wide
         if (left >= 0) {
           // Case more than 1 pix wide
-          cx = static_cast<int>(((left + x) - 1) * 0.5f);
+          cx = (left + xi - 1) / 2;
         }
         vpImagePoint pt(y, cx);
         points.push_back(pt);
@@ -82,18 +85,19 @@ std::vector< VISP_NAMESPACE_ADDRESSING vpImagePoint > extractSkeleton(vpTutoComm
   }
 
   // Edge thinning along the vertical direction
-  for (int x = 0; x < width; ++x) {
+  for (unsigned int x = 0; x < width; ++x) {
     int top = -1;
-    for (int y = 0; y < height - 1; ++y) {
+    for (unsigned int y = 0; y < heightStop; ++y) {
+      int yi = static_cast<int>(y);
       if ((data.m_mask[y][x] > 0) && (data.m_mask[y + 1][x] > 0)) {
         if (top < 0) {
-          top = y;
+          top = yi;
         }
       }
       else if (data.m_mask[y][x] > 0) {
-        int cy = y; // Case 1 pix wide
+        int cy = yi; // Case 1 pix wide
         if (top >= 0) {
-          cy = static_cast<int>(((top + y) - 1) * 0.5f);  // Case more than 1 pix wide
+          cy = (top + yi - 1) / 2;  // Case more than 1 pix wide
         }
         if (data.m_Iskeleton[cy][x] == 0) {
           vpImagePoint pt(cy, x);
@@ -114,8 +118,8 @@ std::vector< vpImagePoint > addSaltAndPepperNoise(const std::vector< vpImagePoin
   const double width = data.m_Iskeleton.getWidth();
   const double height = data.m_Iskeleton.getHeight();
   data.m_IskeletonNoisy = data.m_Iskeleton;
-  vpGaussRand rngX(0.1666, 0.5, static_cast<long>(vpTime::measureTimeMicros()));
-  vpGaussRand rngY(0.1666, 0.5, static_cast<long>(vpTime::measureTimeMicros() + 4224));
+  vpGaussRand rngX(0.1666, 0.5, static_cast<uint64_t>(vpTime::measureTimeMicros()));
+  vpGaussRand rngY(0.1666, 0.5, static_cast<uint64_t>(vpTime::measureTimeMicros() + 4224));
   std::vector<vpImagePoint> noisyPts = noisefreePts;
   for (unsigned int i = 0; i < nbPtsToAdd + 1; ++i) {
     double uNormalized = rngX();
@@ -138,5 +142,5 @@ std::vector< vpImagePoint > addSaltAndPepperNoise(const std::vector< vpImagePoin
 }
 #endif
 #else
-void dummy_vpTutoSegmentation() { }
+void dummy_vpTutoSegmentation() {}
 #endif

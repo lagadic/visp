@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -596,7 +596,7 @@ int main(int argc, const char *argv[])
       cv::Mat matImg, matImg_blur;
       vpImageConvert::convert(I, matImg);
       t = vpTime::measureTimeMs();
-      cv::GaussianBlur(matImg, matImg_blur, cv::Size(gaussian_filter_size, gaussian_filter_size), sigma, 0);
+      cv::GaussianBlur(matImg, matImg_blur, cv::Size(static_cast<int>(gaussian_filter_size), static_cast<int>(gaussian_filter_size)), sigma, 0);
       t = vpTime::measureTimeMs() - t;
       std::cout << "Time to do OpenCV Gaussian Blur on grayscale images: " << t << " ms" << std::endl;
 
@@ -640,7 +640,7 @@ int main(int argc, const char *argv[])
       cv::Mat matImg_rgb, matImg_rgb_blur;
       vpImageConvert::convert(I_rgb, matImg_rgb);
       t = vpTime::measureTimeMs();
-      cv::GaussianBlur(matImg_rgb, matImg_rgb_blur, cv::Size(gaussian_filter_size, gaussian_filter_size), sigma, 0);
+      cv::GaussianBlur(matImg_rgb, matImg_rgb_blur, cv::Size(static_cast<int>(gaussian_filter_size), static_cast<int>(gaussian_filter_size)), sigma, 0);
       t = vpTime::measureTimeMs() - t;
       std::cout << "Time to do OpenCV Gaussian Blur on color images: " << t << " ms" << std::endl;
 

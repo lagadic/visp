@@ -12,7 +12,7 @@ using namespace VISP_NAMESPACE_NAME;
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(VISP_HAVE_DISPLAY) && \
   (((VISP_HAVE_OPENCV_VERSION < 0x050000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
-   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
+   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_GEOMETRY) && defined(HAVE_OPENCV_FEATURES)))
 
 void learnCube(const vpImage<unsigned char> &I, vpMbEdgeTracker &tracker, vpKeyPoint &keypoint_learning, int id);
 

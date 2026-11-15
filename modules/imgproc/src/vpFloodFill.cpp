@@ -89,64 +89,72 @@ void floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, const u
 
     unsigned int x = static_cast<unsigned int>(current_seed.get_j());
     unsigned int y = static_cast<unsigned int>(current_seed.get_i());
-    int x1 = static_cast<int>(x);
 
     // Find most left pixel
-    while ((x1 >= 0) && (I[y][x1] == oldValue)) {
-      --x1;
+    bool doScan = true;
+    while (doScan && (I[y][x] == oldValue)) {
+      if (x > 0) {
+        --x;
+      }
+      else {
+        doScan = false;
+      }
     }
-    ++x1;
+    if (doScan) {
+      // The most left pixel was found, starting after it
+      ++x;
+    }
 
     bool spanAbove = false, spanBelow = false;
 
-    while ((x1 < static_cast<int>(I.getWidth())) && (I[y][x1] == oldValue)) {
-      I[y][x1] = newValue;
+    while ((x < I.getWidth()) && (I[y][x] == oldValue)) {
+      I[y][x] = newValue;
 
       if ((!spanAbove) && (y > 0)) {
-        if (I[y - 1][x1] == oldValue) {
+        if (I[y - 1][x] == oldValue) {
           // North
           spanAbove = true;
-          seed_queue.push(vpImagePoint(y - 1, x1));
+          seed_queue.push(vpImagePoint(y - 1, x));
         }
 
         if (connexity != vpImageMorphology::CONNEXITY_4) {
-          if ((x1 > 0) && (I[y - 1][x1 - 1] == oldValue)) {
+          if ((x > 0) && (I[y - 1U][x - 1] == oldValue)) {
             // North west
             spanAbove = true;
-            seed_queue.push(vpImagePoint(y - 1, x1 - 1));
+            seed_queue.push(vpImagePoint(y - 1, x - 1));
           }
-          if ((x1 < (static_cast<int>(I.getWidth()) - 1)) && (I[y - 1][x1 + 1] == oldValue)) {
+          if (((x + 1U) < I.getWidth()) && (I[y - 1][x + 1] == oldValue)) {
             // North east
             spanAbove = true;
-            seed_queue.push(vpImagePoint(y - 1, x1 + 1));
+            seed_queue.push(vpImagePoint(y - 1, x + 1));
           }
         }
       }
-      else if (spanAbove && (y > 0) && (I[y - 1][x1] != oldValue)) {
+      else if (spanAbove && (I[y - 1][x] != oldValue)) {
         spanAbove = false;
       }
 
-      if ((!spanBelow) && (y < (I.getHeight() - 1))) {
-        if (I[y + 1][x1] == oldValue) {
+      if ((!spanBelow) && (y < (I.getHeight() - 1U))) {
+        if (I[y + 1][x] == oldValue) {
           // South
-          seed_queue.push(vpImagePoint(y + 1, x1));
+          seed_queue.push(vpImagePoint(y + 1, x));
           spanBelow = true;
         }
 
         if (connexity != vpImageMorphology::CONNEXITY_4) {
-          if ((x1 > 0) && (I[y + 1][x1 - 1] == oldValue)) {
+          if ((x > 0) && (I[y + 1][x - 1] == oldValue)) {
             // South west
-            seed_queue.push(vpImagePoint(y + 1, x1 - 1));
+            seed_queue.push(vpImagePoint(y + 1, x - 1));
             spanBelow = true;
           }
-          if ((x1 < (static_cast<int>(I.getWidth()) - 1)) && (I[y + 1][x1 + 1] == oldValue)) {
+          if ((x < (I.getWidth()) - 1U) && (I[y + 1][x + 1] == oldValue)) {
             // South east
-            seed_queue.push(vpImagePoint(y + 1, x1 + 1));
+            seed_queue.push(vpImagePoint(y + 1, x + 1));
             spanBelow = true;
           }
         }
       }
-      else if (spanBelow && (y < (I.getHeight() - 1)) && (I[y + 1][x1] != oldValue)) {
+      else if (spanBelow && (y < (I.getHeight() - 1U)) && (I[y + 1][x] != oldValue)) {
         spanBelow = false;
       }
 
@@ -156,7 +164,7 @@ void floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, const u
         spanAbove = false;
       }
 
-      ++x1;
+      ++x;
     }
   }
 }

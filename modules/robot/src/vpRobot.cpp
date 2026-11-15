@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ vpRobot::vpRobot(void)
   maxTranslationVelocity(maxTranslationVelocityDefault), maxRotationVelocity(maxRotationVelocityDefault), nDof(0),
   eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false), qmin(nullptr), qmax(nullptr),
   verbose_(true)
-{ }
+{}
 
 vpRobot::vpRobot(const vpRobot &robot)
   : stateRobot(vpRobot::STATE_STOP), frameRobot(vpRobot::CAMERA_FRAME),
@@ -90,9 +90,9 @@ vpRobot &vpRobot::operator=(const vpRobot &robot)
   fJe = robot.fJe;
   fJeAvailable = robot.fJeAvailable;
   areJointLimitsAvailable = robot.areJointLimitsAvailable;
-  qmin = new double[nDof];
-  qmax = new double[nDof];
-  for (int i = 0; i < nDof; i++) {
+  qmin = new double[static_cast<unsigned int>(nDof)];
+  qmax = new double[static_cast<unsigned int>(nDof)];
+  for (unsigned int i = 0; i < static_cast<unsigned int>(nDof); i++) {
     qmin[i] = robot.qmin[i];
     qmax[i] = robot.qmax[i];
   }
@@ -143,9 +143,9 @@ velocity skew vector.
 
     // Set the maximal allowed velocities
     vpColVector v_max(6);
-    for (int i=0; i<3; i++)
+    for (unsigned int i=0; i<3; i++)
       v_max[i] = 0.3;             // in translation (m/s)
-    for (int i=3; i<6; i++)
+    for (unsigned int i=3; i<6; i++)
       v_max[i] = vpMath::rad(10); // in rotation (rad/s)
 
     // Compute the saturated velocity skew vector

@@ -143,7 +143,7 @@ int main(int argc, char **argv)
       {
         std::stringstream ss;
         ss << "Time: " << vpTime::measureTimeMs() - t_begin << " ms";
-        vpDisplay::displayText(I, 20, I.getWidth() - 100, ss.str(), vpColor::red);
+        vpDisplay::displayText(I, 20, static_cast<int>(I.getWidth()) - 100, ss.str(), vpColor::red);
       }
       vpDisplay::flush(I);
     }

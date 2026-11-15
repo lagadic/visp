@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@
   Example of sequential calls to QP solver with constant equality constraint
 */
 
+#include <cstdlib>
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
@@ -67,6 +68,8 @@ int main(int argc, char **argv)
   bool opt_click_allowed = true;
 #endif
 
+  unsigned int seed = static_cast<unsigned int>(static_cast<unsigned long long>(vpTime::measureTimeMs()));
+
   for (int i = 1; i < argc; i++) {
 #ifdef VISP_HAVE_DISPLAY
     if (std::string(argv[i]) == "-d") {
@@ -77,8 +80,11 @@ int main(int argc, char **argv)
     }
     else
 #endif
-      if (std::string(argv[i]) == "-h") {
-        std::cout << "\nUsage: " << argv[0] << " [-d] [-c] [-h] [--help]" << std::endl;
+      if (std::string(argv[i]) == "--seed" && i + 1 < argc) {
+        seed = static_cast<unsigned int>(std::strtoul(argv[++i], nullptr, 10));
+      }
+      else if (std::string(argv[i]) == "-h" || std::string(argv[i]) == "--help") {
+        std::cout << "\nUsage: " << argv[0] << " [-d] [-c] [--seed <n>] [-h] [--help]" << std::endl;
         std::cout << "\nOptions: \n"
 #ifdef VISP_HAVE_DISPLAY
           "  -d \n"
@@ -91,6 +97,10 @@ int main(int argc, char **argv)
           "     execution of this program without human intervention.\n"
           "\n"
 #endif
+          "  --seed <n>\n"
+          "     Seed used to generate the random QP problems. \n"
+          "     By default the seed is set from the current time.\n"
+          "\n"
           "  -h, --help\n"
           "     Print the help.\n"
           << std::endl;
@@ -98,7 +108,8 @@ int main(int argc, char **argv)
         return EXIT_SUCCESS;
       }
   }
-  std::srand((long)vpTime::measureTimeMs());
+  std::cout << "Random seed: " << seed << " (use --seed " << seed << " to reproduce)" << std::endl;
+  std::srand(seed);
 
   vpMatrix A, Q, C;
   vpColVector b, d, r;
@@ -113,8 +124,9 @@ int main(int argc, char **argv)
 
   vpColVector x = A.solveBySVD(b);
   d = C * x;
-  for (int i = 0; i < p; ++i)
+  for (unsigned int i = 0; i < static_cast<unsigned int>(p); ++i) {
     d[i] += (5. * rand()) / RAND_MAX;
+  }
 
   // solver with stored equality and warm start
   vpQuadProg qp_WS;

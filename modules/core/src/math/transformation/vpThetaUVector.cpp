@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ const double vpThetaUVector::minimum = 0.0001;
 const unsigned int vpThetaUVector::constr_val_3 = 3;
 
 /*! Default constructor that initialize all the 3 angles to zero. */
-vpThetaUVector::vpThetaUVector() : vpRotationVector(constr_val_3) { }
+vpThetaUVector::vpThetaUVector() : vpRotationVector(constr_val_3) {}
 /*! Copy constructor from a 3-dimension vector. */
 vpThetaUVector::vpThetaUVector(const vpColVector &tu) : vpRotationVector(constr_val_3) { buildFrom(tu); }
 /*!
@@ -385,7 +385,7 @@ vpThetaUVector &vpThetaUVector::operator=(const vpColVector &tu)
   Extract the rotation angle \f$ \theta \f$ and the unit vector
   \f$\bf u \f$ from the \f$ \theta {\bf u} \f$ representation.
 
-  \param theta : Rotation angle \f$ \theta \f$ in rad.
+  \param theta : Rotation angle \f$ \theta \f$ in rad. Values are in 0, \f$2\pi\f$.
 
   \param u : 3-dim unit vector \f${\bf u} = (u_{x},u_{y},u_{z})^{\top} \f$
   representing the rotation axis.
@@ -433,7 +433,7 @@ void vpThetaUVector::extract(double &theta, vpColVector &u) const
   Get the rotation angle \f$ \theta \f$ from the \f$ \theta {\bf u} \f$
   representation.
 
-  \return Rotation angle \f$ \theta \f$ in rad.
+  \return Rotation angle \f$ \theta \f$ in rad. Values are in 0, \f$2\pi\f$.
 
   The following example shows how to use this function:
   \code

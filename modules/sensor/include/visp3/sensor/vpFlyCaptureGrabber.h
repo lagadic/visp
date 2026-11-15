@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@
   PointGrey cameras.
 */
 
-#ifndef _vpFlyCaptureGrabber_h_
-#define _vpFlyCaptureGrabber_h_
+#ifndef VP_FLY_CAPTURE_GRABBER_H
+#define VP_FLY_CAPTURE_GRABBER_H
 
 #include <ostream>
 #include <visp3/core/vpConfig.h>

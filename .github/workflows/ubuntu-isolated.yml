@@ -1,4 +1,5 @@
 # Isolated = build without 3rdparty and visp-images
+# Use built-in Lapack: - Use Lapack (built-in):    yes (ver 3.2.1)
 name: Ubuntu-isolated
 
 # https://www.jeffgeerling.com/blog/2020/running-github-actions-workflow-on-schedule-and-other-events
@@ -32,7 +33,7 @@ jobs:
         sudo apt-get install libomp-dev
 
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v7
 
     - name: Print system information
       run: lscpu
@@ -42,6 +43,15 @@ jobs:
 
     - name: Print compiler information
       run: dpkg --list | grep compiler
+
+    - name: Clone visp-images
+      env:
+        BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+      # https://remarkablemark.org/blog/2022/09/25/check-git-branch-exists-in-remote-repository/
+      run: |
+        git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
+        echo "VISP_INPUT_IMAGE_PATH=$HOME/visp-images" >> $GITHUB_ENV
+        echo ${VISP_INPUT_IMAGE_PATH}
 
     - name: Configure CMake
       run: |

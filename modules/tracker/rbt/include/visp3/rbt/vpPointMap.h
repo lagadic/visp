@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ public:
     m_maxDepthErrorVisible = maxDepthErrorVisibility;
     m_maxDepthErrorCandidate = maxDepthErrorCandidate;
     m_outlierThreshold = outlierThreshold;
+    m_normalThresholdVisible = 0.0;
   }
   /**
    * \name Settings
@@ -69,6 +70,9 @@ public:
 
   double getMaxDepthErrorVisibilityCriterion() const { return m_maxDepthErrorVisible; }
   void setMaxDepthErrorVisibilityCriterion(double depthError) { m_maxDepthErrorVisible = depthError; }
+
+  double getThresholdNormalVisibiltyCriterion() const { return m_normalThresholdVisible; }
+  void setThresholdNormalVisibiltyCriterion(double normalDegThreshold) { m_normalThresholdVisible = normalDegThreshold; }
 
   double getMaxDepthErrorCandidate() const { return m_maxDepthErrorCandidate; }
   void setMaxDepthErrorCandidate(double depthError) { m_maxDepthErrorCandidate = depthError; }
@@ -99,10 +103,10 @@ public:
 
   void selectValidNewCandidates(const vpCameraParameters &cam, const vpHomogeneousMatrix &cTw,
    const vpArray2D<int> &originalIndices, const vpMatrix &uvs,
-   const vpImage<float> &modelDepth, const vpImage<float> &depth,
-   vpMatrix &oXs, std::vector<int> &validCandidateIndices);
+   const vpImage<float> &modelDepth, const vpImage<float> &depth, const vpImage<vpRGBf> &normals,
+   vpMatrix &oXs, vpMatrix &oNs, std::vector<int> &validCandidateIndices);
 
-  void updatePoints(const vpArray2D<int> &indicesToRemove, const vpMatrix &pointsToAdd, std::vector<int> &removedIndices, unsigned int &numAddedPoints);
+  void updatePoints(const vpArray2D<int> &indicesToRemove, const vpMatrix &pointsToAdd, const vpMatrix &normalsToAdd, std::vector<int> &removedIndices, unsigned int &numAddedPoints);
   void updatePoint(unsigned int index, double X, double Y, double Z)
   {
     m_X[index][0] = X;
@@ -121,7 +125,7 @@ public:
     const vpRotationMatrix cRw = cTw.getRotationMatrix();
     const vpTranslationVector t = cTw.getTranslationVector();
     for (unsigned int i = 0; i < indices.getRows(); ++i) {
-      const unsigned int pointIndex = indices[i][0];
+      const unsigned int pointIndex = static_cast<unsigned int>(indices[i][0]);
       const double *p = m_X[pointIndex];
       wX[0] = p[0]; wX[1] = p[1]; wX[2] = p[2];
       cX = cRw * wX;
@@ -151,7 +155,7 @@ public:
     const vpRotationMatrix cRw = cTw.getRotationMatrix();
     const vpTranslationVector t = cTw.getTranslationVector();
     for (unsigned int i = 0; i < indices.getRows(); ++i) {
-      const unsigned int pointIndex = indices[i][0];
+      const unsigned int pointIndex = static_cast<unsigned int>(indices[i][0]);
       const double *p = m_X[pointIndex];
       wX[0] = p[0]; wX[1] = p[1]; wX[2] = p[2];
       cX = cRw * wX;
@@ -180,11 +184,15 @@ public:
 
 private:
   vpMatrix m_X; // N x 3, points expressed in world frame
+  vpMatrix m_normals; // N x 3, points expressed in world frame
+
   unsigned m_maxPoints;
   double m_minDistNewPoint;
   double m_maxDepthErrorVisible;
+  double m_normalThresholdVisible;
   double m_maxDepthErrorCandidate;
   double m_outlierThreshold;
+
 };
 
 END_VISP_NAMESPACE

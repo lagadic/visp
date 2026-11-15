@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,8 @@ uint16_t swap16bits(uint16_t val)
   const unsigned int magic_8 = 8;
   const unsigned int magic_0x00FF = 0x00FF;
   const unsigned int magic_0xFF00 = 0xFF00;
-  return (((val >> magic_8) & magic_0x00FF) | ((val << magic_8) & magic_0xFF00));
+  return ((static_cast<unsigned int>(val) >> magic_8) & magic_0x00FF) |
+    ((static_cast<unsigned int>(val) << magic_8) & magic_0xFF00);
 }
 
 /*!

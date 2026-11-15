@@ -131,6 +131,10 @@ namespace vp = VISP_NAMESPACE_NAME;
 // Defined if the warp() methods of vpImageTools are enabled
 #cmakedefine ENABLE_IMAGE_TOOLS_WARP
 
+// Embed build environment details (compiler, flags, timestamps) in vpIoTools::getBuildInformation().
+// Note: Breaks build reproducibility when defined
+#cmakedefine ENABLE_BUILD_INFO
+
 // Enable debug and trace printings
 #cmakedefine VP_TRACE
 #cmakedefine VP_DEBUG
@@ -149,12 +153,19 @@ namespace vp = VISP_NAMESPACE_NAME;
 // Defined if Clipper is build and available.
 #cmakedefine VISP_HAVE_CLIPPER
 
-// Defined if AprilTag is build and available.
+// Defined if AprilTag is available.
 #cmakedefine VISP_HAVE_APRILTAG
 
+// Apriltag version, extended api, Aruco, big family
+#ifdef VISP_HAVE_APRILTAG
+#  define VISP_HAVE_APRILTAG_VERSION ${VISP_HAVE_APRILTAG_VERSION}
+#  cmakedefine VISP_HAVE_APRILTAG_COPY_FCT
+#  cmakedefine VISP_HAVE_APRILTAG_POSE_FCT
+#  cmakedefine VISP_HAVE_APRILTAG_ARUCO
 // Defined if AprilTag big family (41h12, 48h12, 49h12, 52h13) known to produce long build time issue
 // with gcc < 5.5 in RelWithDebInfo and Visual Studio 12 2013 in Release are available
-#cmakedefine VISP_HAVE_APRILTAG_BIG_FAMILY
+#  cmakedefine VISP_HAVE_APRILTAG_BIG_FAMILY
+#endif
 
 // Defined if X11 library available.
 #cmakedefine VISP_HAVE_X11
@@ -214,6 +225,9 @@ namespace vp = VISP_NAMESPACE_NAME;
 
 // Defined if Catch2 library available
 #cmakedefine VISP_HAVE_CATCH2
+#ifdef VISP_HAVE_CATCH2
+#  define VISP_HAVE_CATCH2_VERSION ${VISP_HAVE_CATCH2_VERSION}
+#endif
 
 // Defined if simdlib library available
 #cmakedefine VISP_HAVE_SIMDLIB
@@ -386,14 +400,8 @@ namespace vp = VISP_NAMESPACE_NAME;
 #  define VISP_HAVE_DC1394_2_FIND_CAMERAS
 #endif
 
-// Defined if CMU 1394 Digital Camera SDK available.
-#cmakedefine VISP_HAVE_CMU1394
-
 // Defined if Video For Linux Two available.
 #cmakedefine VISP_HAVE_V4L2
-
-// Defined if DirectShow library is available (only under Windows).
-#cmakedefine VISP_HAVE_DIRECTSHOW
 
 // Defined if FLIR FlyCapture SDK available.
 #cmakedefine VISP_HAVE_FLYCAPTURE
@@ -755,5 +763,20 @@ namespace vp = VISP_NAMESPACE_NAME;
 #  endif
 #endif
 
+// Macro to be able to add [[nodiscard]] keyword
+#ifndef VP_NODISCARD
+#  if defined(__cplusplus) && __cplusplus >= 201703L
+#    define VP_NODISCARD [[nodiscard]]
+#  elif defined(_MSVC_LANG) && _MSVC_LANG >= 201703L
+#    define VP_NODISCARD [[nodiscard]]
+#  elif defined(__cplusplus) && __cplusplus >= 201103L && \
+        defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard)
+#    define VP_NODISCARD [[nodiscard]]
+#  elif defined(__GNUC__) || defined(__clang__)
+#    define VP_NODISCARD __attribute__((warn_unused_result))
+#  else
+#    define VP_NODISCARD
+#  endif
+#endif
 
 #endif

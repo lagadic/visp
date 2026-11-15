@@ -503,7 +503,8 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b, const v
   \param x : in: feasible point if any, out: solution (dimension n)
   \param tol : tolerance to test the ranks
 
-  \return True if the solution was found.
+  \return True if the solution was found, false if the problem is not feasible or if the maximum number of
+  iterations is reached (degenerate problem).
 
   \warning This function is only available if c++11 or higher is activated during build.
   Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
@@ -589,7 +590,10 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
         AD[i][j] = A[i][j];
     }
     // solve to get feasibility
-    vpLinProg::simplex(cz, AD, b, x, tol);
+    if (!vpLinProg::simplex(cz, AD, b, x, tol)) {
+      x.resize(n);
+      return false;
+    }
     if (!allLesser(x.extract(n, m), tol)) // no feasible starting point found
     {
       std::cout << "vpLinProg::simplex: constraints not feasible" << std::endl;
@@ -688,9 +692,17 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
   std::vector<std::pair<double, unsigned int> > a;
   a.reserve(n);
 
+  // limit the number of pivots to avoid an infinite loop if the simplex cycles on a degenerate problem
+  const unsigned int max_iter = 100 * n;
+  unsigned int iter = 0;
+
   vpColVector R(n - m), db(m);
 
   while (true) {
+    if (++iter > max_iter) {
+      std::cout << "vpLinProg::simplex: maximum number of iterations reached, problem may be degenerate" << std::endl;
+      return false;
+    }
     Abi = Ab.inverseByQR();
     // find negative residual
     R = cn - An.t() * Abi.t() * cb;

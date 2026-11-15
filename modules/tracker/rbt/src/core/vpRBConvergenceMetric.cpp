@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,13 +33,14 @@
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include VISP_NLOHMANN_JSON(json_fwd.hpp)
 
+BEGIN_VISP_NAMESPACE
 std::shared_ptr<vpRBConvergenceMetric> vpRBConvergenceMetric::loadFromJSON(const nlohmann::json &j)
 {
   const std::string key = j.at("type");
   double renderThreshold = j.value("renderThreshold", 0.0);
   double convergenceThreshold = j.value("convergenceThreshold", 0.0);
-  unsigned int numPoints = j.value("samples", 0);
-  unsigned int seed = j.value("seed", 42);
+  unsigned int numPoints = static_cast<unsigned int>(j.value("samples", 0));
+  unsigned int seed = static_cast<unsigned int>(j.value("seed", 42));
 
   if (key == "reprojection") {
     return std::make_shared<vpRBConvergenceReprojectionMetric>(renderThreshold, convergenceThreshold, numPoints, seed);
@@ -51,6 +52,8 @@ std::shared_ptr<vpRBConvergenceMetric> vpRBConvergenceMetric::loadFromJSON(const
   throw vpException(vpException::badValue, "Tried to parse an incorrect convergence metric type: %s", key.c_str());
 
 }
+#else
+BEGIN_VISP_NAMESPACE
 #endif
 
 
@@ -60,7 +63,7 @@ vpRBConvergenceMetric::vpRBConvergenceMetric(double renderThreshold, double conv
 {
   m_indices.resize(numPoints, 1);
   for (unsigned int i = 0; i < numPoints; ++i) {
-    m_indices[i][0] = i;
+    m_indices[i][0] = static_cast<int>(i);
   }
 }
 
@@ -79,17 +82,18 @@ void vpRBConvergenceMetric::sampleObject(vpObjectCentricRenderer &renderer)
   vpArray2D<int> empty;
   std::vector<int> removed;
   unsigned int added;
-  m_map.updatePoints(empty, oX, removed, added);
+  vpMatrix normals;
+  m_map.updatePoints(empty, oX, normals, removed, added);
   if (added != m_map.getNumMaxPoints()) {
     throw vpException(vpException::dimensionError, "Something went wrong when inserting bb points into the map");
   }
 }
 
 vpRBConvergenceADDMetric::vpRBConvergenceADDMetric(double renderThreshold, double convergedThreshold, unsigned int numPoints, unsigned int seed) : vpRBConvergenceMetric(renderThreshold, convergedThreshold, numPoints, seed)
-{ }
+{}
 
 vpRBConvergenceReprojectionMetric::vpRBConvergenceReprojectionMetric(double renderThreshold, double convergedThreshold, unsigned int numPoints, unsigned int seed) : vpRBConvergenceMetric(renderThreshold, convergedThreshold, numPoints, seed)
-{ }
+{}
 
 double vpRBConvergenceADDMetric::operator()(const vpCameraParameters & /*cam*/, const vpHomogeneousMatrix &cTo1, const vpHomogeneousMatrix &cTo2)
 {
@@ -131,3 +135,4 @@ double vpRBConvergenceReprojectionMetric::operator()(const vpCameraParameters &c
   }
   return error / static_cast<double>(uv1.getRows());
 }
+END_VISP_NAMESPACE

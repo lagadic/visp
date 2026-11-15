@@ -149,6 +149,7 @@ class Submodule():
     bindings = module_bindings.get_definitions()
     declarations = module_bindings.get_declarations()
     user_defined_headers = '\n'.join(self.get_user_defined_headers())
+    module_additional_bindings = self.get_module_additional_bindings()
 
     includes_set = set(includes)
     includes_strs = [f'#include {include}' for include in includes_set]
@@ -174,6 +175,9 @@ class Submodule():
 {includes_str}
 
 namespace py = pybind11;
+#ifdef ENABLE_VISP_NAMESPACE
+using namespace VISP_NAMESPACE_NAME;
+#endif
 
 {publicists}
 
@@ -197,6 +201,11 @@ options.disable_enum_members_docstring();
  * Bindings for methods and enum values
  */
 {bindings}
+
+/*
+ * User-defined module-level bindings (e.g. free functions)
+ */
+{module_additional_bindings}
 }}
 '''
     with open(self.submodule_file_path, 'w', encoding='utf-8') as submodule_file:
@@ -212,7 +221,10 @@ options.disable_enum_members_docstring();
   def class_should_be_ignored(self, class_name: str) -> bool:
     if 'ignored_classes' not in self.config:
       return False
-    return class_name in self.config['ignored_classes']
+
+    is_ignored = class_name in self.config['ignored_classes']
+    logging.info(f'{class_name} is ignored: {is_ignored}')
+    return is_ignored
 
   def header_should_be_ignored(self, header_name: str) -> bool:
     if 'ignored_headers' not in self.config:
@@ -224,6 +236,12 @@ options.disable_enum_members_docstring();
       header_names = self.config['user_defined_headers']
       return [f'#include "{header_name}"' for header_name in header_names]
     return []
+
+  def get_module_additional_bindings(self) -> str:
+    fn_name = self.config.get('additional_bindings')
+    if fn_name is None:
+      return ''
+    return f'{fn_name}(submodule);'
 
   def get_required_headers(self) -> List[str]:
     if 'required_headers' in self.config:

@@ -263,15 +263,15 @@ int main(int argc, const char *argv[])
 #elif ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI)) || ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_VIDEOIO))
   cv::Mat frame;
   cv::VideoCapture cap;
-  cap.open(opt_device);
+  cap.open(static_cast<int>(opt_device));
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  int width = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_WIDTH));
-  int height = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
+  unsigned int width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
+  unsigned int height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
   cap.set(cv::CAP_PROP_FRAME_WIDTH, width / opt_scale);
   cap.set(cv::CAP_PROP_FRAME_HEIGHT, height / opt_scale);
 #else
-  int width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
-  int height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
+  unsigned int width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
+  unsigned int height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
   cap.set(CV_CAP_PROP_FRAME_WIDTH, width / opt_scale);
   cap.set(CV_CAP_PROP_FRAME_HEIGHT, height / opt_scale);
 #endif

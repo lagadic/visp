@@ -43,11 +43,13 @@
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && \
   (((VISP_HAVE_OPENCV_VERSION < 0x050000)  && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_FEATURES2D)) || \
-   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_3D) && defined(HAVE_OPENCV_FEATURES)))
+   ((VISP_HAVE_OPENCV_VERSION >= 0x050000) && defined(HAVE_OPENCV_GEOMETRY) && defined(HAVE_OPENCV_FEATURES)))
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
+#if defined(VISP_HAVE_MODULE_GUI)
 #include <visp3/gui/vpDisplayFactory.h>
+#endif
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpVideoReader.h>
@@ -178,7 +180,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   vpDisplay *display = nullptr;
 
   if (opt_display) {
-#ifdef VISP_HAVE_DISPLAY
+#if defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_MODULE_GUI)
     display = vpDisplayFactory::allocateDisplay(Imatch, 0, 0, "ORB keypoints matching");
     display->setDownScalingFactor(vpDisplay::SCALE_AUTO);
 #else

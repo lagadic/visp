@@ -40,7 +40,9 @@ else(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
   string(REGEX REPLACE "\n" ";" files "${files}")
   foreach(file ${files})
     message(STATUS "Uninstalling \"${file}\"")
-    if(EXISTS "${file}")
+    # IS_SYMLINK is needed for library symlinks (libvisp_*.dylib, libvisp_*.so) that become dangling
+    # once the real library file they point to has been removed: EXISTS follows the link and returns false
+    if(EXISTS "${file}" OR IS_SYMLINK "${file}")
       execute_process(
         COMMAND "@CMAKE_COMMAND@" -E remove "$ENV{DESTDIR}${file}"
         OUTPUT_VARIABLE rm_out
@@ -53,4 +55,39 @@ else(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
       message(STATUS "File \"${file}\" does not exist.")
     endif()
   endforeach(file)
+
+  # Python generates bytecode files (__pycache__/<module>.*.pyc) next to the installed .py files.
+  # They are not part of the install manifest, so remove them explicitly.
+  set(_visp_uninstall_dirs "")
+  foreach(file ${files})
+    get_filename_component(_dir "${file}" DIRECTORY)
+    list(APPEND _visp_uninstall_dirs "${_dir}")
+    if(file MATCHES "\\.py$")
+      get_filename_component(_stem "${file}" NAME_WE)
+      file(GLOB _pyc_files "${_dir}/__pycache__/${_stem}.*.pyc")
+      if(_pyc_files)
+        file(REMOVE ${_pyc_files})
+      endif()
+      list(APPEND _visp_uninstall_dirs "${_dir}/__pycache__")
+    endif()
+  endforeach()
+  list(REMOVE_DUPLICATES _visp_uninstall_dirs)
+
+  # Remove the directories that are left empty, up to (and excluding) the install prefix
+  set(_prefix "$ENV{DESTDIR}@CMAKE_INSTALL_PREFIX@")
+  foreach(_dir ${_visp_uninstall_dirs})
+    while(IS_DIRECTORY "${_dir}" AND NOT _dir STREQUAL _prefix)
+      string(FIND "${_dir}/" "${_prefix}/" _pos)
+      if(NOT _pos EQUAL 0)
+        break()
+      endif()
+      file(GLOB _children LIST_DIRECTORIES true "${_dir}/*")
+      if(_children)
+        break()
+      endif()
+      message(STATUS "Removing empty directory \"${_dir}\"")
+      file(REMOVE_RECURSE "${_dir}")
+      get_filename_component(_dir "${_dir}" DIRECTORY)
+    endwhile()
+  endforeach()
 endif()

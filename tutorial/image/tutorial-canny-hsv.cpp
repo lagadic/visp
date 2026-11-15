@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +109,7 @@ typedef struct SoftwareArguments
 #endif
     , m_useMask(false)
     , m_nbThread(-1)
-  { }
+  {}
 }SoftwareArguments;
 
 void usage(const std::string &softName, const SoftwareArguments &options)
@@ -259,10 +259,10 @@ int main(int argc, const char *argv[])
   }
 
   vpImage<bool> mask(Iload.getRows(), Iload.getCols(), false);
-  int height = Iload.getRows()/4;
-  int width = Iload.getCols()/4;
-  int midHeight = Iload.getRows()/2;
-  int midWidth = Iload.getCols()/2;
+  int height = static_cast<int>(Iload.getRows())/4;
+  int width = static_cast<int>(Iload.getCols())/4;
+  int midHeight = static_cast<int>(Iload.getRows())/2;
+  int midWidth = static_cast<int>(Iload.getCols())/2;
   for (int r = 0; r < height; ++r) {
     for (int c = 0; c < width; ++c) {
       mask[midHeight - r][midWidth - c] = true;
@@ -306,7 +306,7 @@ int main(int argc, const char *argv[])
   vpImage<FilterType> GIx, GIy, GI;
   vpImage<vpHSV<unsigned char, true>> Iblur_hsvuc;
   double tStartBlurHSVUC = vpTime::measureTimeMicros();
-  vpImageFilter::gaussianBlur(Iin_hsvuc, Iblur_hsvuc, options.m_gaussianKernelSize, options.m_gaussianStdev, true, p_mask);
+  vpImageFilter::gaussianBlur(Iin_hsvuc, Iblur_hsvuc, static_cast<unsigned int>(options.m_gaussianKernelSize), static_cast<float>(options.m_gaussianStdev), true, p_mask);
   double tEndBlurHSVUC = vpTime::measureTimeMicros();
 
   double tStartGradientHSVUC = vpTime::measureTimeMicros();
@@ -318,7 +318,7 @@ int main(int argc, const char *argv[])
 
   vpImage<vpHSV<unsigned char, true>> Iblur_hsvd;
   double tStartBlurHSVd = vpTime::measureTimeMicros();
-  vpImageFilter::gaussianBlur(Iin_hsvd, Iblur_hsvd, options.m_gaussianKernelSize, options.m_gaussianStdev, true, p_mask);
+  vpImageFilter::gaussianBlur(Iin_hsvd, Iblur_hsvd, static_cast<unsigned int>(options.m_gaussianKernelSize), static_cast<float>(options.m_gaussianStdev), true, p_mask);
   double tEndBlurHSVd = vpTime::measureTimeMicros();
   double tStartGradientHSVd = vpTime::measureTimeMicros();
   vpImageFilter::gradientFilter(Iblur_hsvd, GIx, GIy, options.m_nbThread, p_mask, options.m_filteringType);
@@ -328,7 +328,7 @@ int main(int argc, const char *argv[])
 
   vpImage<FilterType> IblurUC, GIx_uc, GIy_uc, GI_uc;
   double tStartBlurUC = vpTime::measureTimeMicros();
-  vpImageFilter::gaussianBlur(Iin_convert, IblurUC, options.m_gaussianKernelSize, (FilterType)options.m_gaussianStdev, true, p_mask);
+  vpImageFilter::gaussianBlur(Iin_convert, IblurUC, static_cast<unsigned int>(options.m_gaussianKernelSize), static_cast<float>(options.m_gaussianStdev), true, p_mask);
   double tEndBlurUC = vpTime::measureTimeMicros();
   vpArray2D<FilterType> derFilterX(3, 3), derFilterY(3, 3);
   FilterType scaleX, scaleY;
@@ -379,8 +379,8 @@ int main(int argc, const char *argv[])
 #ifdef VISP_HAVE_DISPLAY
   if (options.m_useDisplay) {
     std::shared_ptr<vpDisplay> disp_input = vpDisplayFactory::createDisplay(Iload, -1, -1, "Input color image", vpDisplay::SCALE_AUTO);
-    int posX = disp_input->getWidth() + 20;
-    int posY = disp_input->getHeight() + 20;
+    int posX = static_cast<int>(disp_input->getWidth()) + 20;
+    int posY = static_cast<int>(disp_input->getHeight()) + 20;
     std::shared_ptr<vpDisplay> disp_canny = vpDisplayFactory::createDisplay(I_canny_hsvuc, posX, -1, "HSV UC Canny", vpDisplay::SCALE_AUTO);
     std::shared_ptr<vpDisplay> disp_input_uc = vpDisplayFactory::createDisplay(Iin_convert, -1, posY, "Input converted image", vpDisplay::SCALE_AUTO);
     std::shared_ptr<vpDisplay> disp_canny_uc = vpDisplayFactory::createDisplay(I_canny_uc, posX, posY, "UC Canny", vpDisplay::SCALE_AUTO);

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,21 +74,22 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
   omp_set_num_threads(num_procs);
 #endif
 
-  auto compute_centroid = [=](const std::vector<double> &point_cloud, const vpColVector &weights) {
+  auto compute_centroid = [=](const std::vector<double> &pc, const vpColVector &w) {
     double cent_x { 0. }, cent_y { 0. }, cent_z { 0. }, total_w { 0. };
 
-    int i = 0;
+    int w_size = static_cast<int>(w.size()); // Needed because currently OpenMP on Windows does not support unsigned
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs) reduction(+ : total_w, cent_x, cent_y, cent_z)
 #endif
-    for (i = 0; i < static_cast<int>(weights.size()); i++) {
+    for (int i = 0; i < w_size; ++i) {
       const auto pt_cloud_start_idx = 3 * i;
+      const unsigned int i_ = static_cast<unsigned int>(i);
 
-      cent_x += weights[i] * point_cloud[pt_cloud_start_idx + 0];
-      cent_y += weights[i] * point_cloud[pt_cloud_start_idx + 1];
-      cent_z += weights[i] * point_cloud[pt_cloud_start_idx + 2];
+      cent_x += w[i_] * pc[static_cast<size_t>(pt_cloud_start_idx + 0)];
+      cent_y += w[i_] * pc[static_cast<size_t>(pt_cloud_start_idx + 1)];
+      cent_z += w[i_] * pc[static_cast<size_t>(pt_cloud_start_idx + 2)];
 
-      total_w += weights[i];
+      total_w += w[i_];
     }
 
     return std::make_tuple(vpColVector { cent_x, cent_y, cent_z }, total_w);
@@ -126,16 +127,17 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
     centroid /= total_w;
 
     // Minimization
-    int i = 0;
+    int nbPoints = static_cast<int>(nPoints); // Needed because currently OpenMP on Windows does not support unsigned
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs)
 #endif
-    for (i = 0; i < static_cast<int>(nPoints); i++) {
-      const auto pt_cloud_start_idx = 3 * i;
+    for (int i = 0; i < nbPoints; ++i) {
+      const unsigned int i_ = static_cast<unsigned int>(i);
+      const unsigned int pt_cloud_start_idx = 3 * i_;
 
-      M[i][0] = weights[i] * (point_cloud[pt_cloud_start_idx + 0] - centroid[0]);
-      M[i][1] = weights[i] * (point_cloud[pt_cloud_start_idx + 1] - centroid[1]);
-      M[i][2] = weights[i] * (point_cloud[pt_cloud_start_idx + 2] - centroid[2]);
+      M[i_][0] = weights[i_] * (point_cloud[pt_cloud_start_idx + 0] - centroid[0]);
+      M[i_][1] = weights[i_] * (point_cloud[pt_cloud_start_idx + 1] - centroid[1]);
+      M[i_][2] = weights[i_] * (point_cloud[pt_cloud_start_idx + 2] - centroid[2]);
     }
 
     vpColVector W {};
@@ -145,10 +147,10 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
 
     auto smallestSv = W[0];
     auto indexSmallestSv = 0u;
-    for (auto i = 1u; i < W.size(); i++) {
-      if (W[i] < smallestSv) {
-        smallestSv = W[i];
-        indexSmallestSv = i;
+    for (auto ii = 1u; ii < W.size(); ++ii) {
+      if (W[ii] < smallestSv) {
+        smallestSv = W[ii];
+        indexSmallestSv = ii;
       }
     }
 
@@ -166,14 +168,15 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs) reduction(+ : error)
 #endif
-    for (i = 0; i < static_cast<int>(nPoints); i++) {
-      const auto pt_cloud_start_idx = 3 * i;
+    for (int i = 0; i < nbPoints; ++i) {
+      const unsigned int i_ = static_cast<unsigned int>(i);
+      const unsigned int pt_cloud_start_idx = 3 * i_;
 
-      residues[i] = std::fabs(A * point_cloud[pt_cloud_start_idx + 0] + B * point_cloud[pt_cloud_start_idx + 1] +
-                              C * point_cloud[pt_cloud_start_idx + 2] + D) /
+      residues[i_] = std::fabs(A * point_cloud[pt_cloud_start_idx + 0] + B * point_cloud[pt_cloud_start_idx + 1] +
+                               C * point_cloud[pt_cloud_start_idx + 2] + D) /
         smth;
 
-      error += weights[i] * residues[i];
+      error += weights[i_] * residues[i_];
     }
 
     error /= total_w;
@@ -219,7 +222,7 @@ void getHelpers(const vpPolygon &roi, const unsigned int &height, const unsigned
                            static_cast<double>(height) };
     for (const auto &roi_corner : roi.getCorners()) {
       if (img_bound.isInside(roi_corner)) {
-        isInside = [](const vpImagePoint &ip, const vpPolygon &roi) { return roi.isInside(ip); };
+        isInside = [](const vpImagePoint &ip, const vpPolygon &roi_) { return roi_.isInside(ip); };
         break;
       }
     }
@@ -232,7 +235,7 @@ void getHelpers(const vpPolygon &roi, const unsigned int &height, const unsigned
          !roi.isInside(img_bound.getBottomRight()))
     // clang-format on
     {
-      isInside = [](const vpImagePoint &ip, const vpPolygon &roi) { return roi.isInside(ip); };
+      isInside = [](const vpImagePoint &ip, const vpPolygon &roi_) { return roi_.isInside(ip); };
     }
   }
 
@@ -245,7 +248,7 @@ void getHelpers(const vpPolygon &roi, const unsigned int &height, const unsigned
 
   // Reduce computation time by using subsample factor
   subsample_factor =
-    static_cast<int>(sqrt(((roi_right - roi_left) * (roi_bottom - roi_top)) / avg_nb_of_pts_to_estimate));
+    static_cast<unsigned int>(sqrt(static_cast<unsigned int>((roi_right - roi_left) * (roi_bottom - roi_top)) / avg_nb_of_pts_to_estimate));
   subsample_factor = vpMath::clamp(subsample_factor, 1u, MaxSubSampFactorToEstimatePlane);
 }
 
@@ -264,7 +267,7 @@ std::optional<vpPlane> estimatePlaneEquation(const std::vector<double> &pt_cloud
 
     heat_map->get() = vpImage<vpRGBa> { height, width, vpColor::black };
 
-    for (auto i = 0u; i < weights.size(); i++) {
+    for (auto i = 0u; i < weights.size(); ++i) {
       const auto X { pt_cloud[3 * i + 0] }, Y { pt_cloud[3 * i + 1] }, Z { pt_cloud[3 * i + 2] };
 
       vpImagePoint ip {};
@@ -331,8 +334,8 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
 #pragma omp declare reduction (merge : std::vector<double> : omp_out.insert( end( omp_out ), std::make_move_iterator( begin( omp_in ) ), std::make_move_iterator( end( omp_in ) ) ))
 #pragma omp parallel for num_threads(num_procs) collapse(2) reduction(merge : pt_cloud)
 #endif
-  for (int i = roi_top; i < roi_bottom; i = i + subsample_factor) {
-    for (int j = roi_left; j < roi_right; j = j + subsample_factor) {
+  for (int i = roi_top; i < roi_bottom; i = i + static_cast<int>(subsample_factor)) {
+    for (int j = roi_left; j < roi_right; j = j + static_cast<int>(subsample_factor)) {
       const auto pixel = vpImagePoint { static_cast<double>(i), static_cast<double>(j) };
       if ((I_depth_raw[i][j] != 0) && isInside(pixel, roi) && isValid(pixel)) {
         double x { 0. }, y { 0. };
@@ -386,10 +389,10 @@ std::optional<vpPlane> vpPlaneEstimation::estimatePlane(const vpImage<float> &I_
 #pragma omp declare reduction (merge : std::vector<double> : omp_out.insert( end( omp_out ), std::make_move_iterator( begin( omp_in ) ), std::make_move_iterator( end( omp_in ) ) ))
 #pragma omp parallel for num_threads(num_procs) collapse(2) reduction(merge : pt_cloud)
 #endif
-  for (int i = roi_top; i < roi_bottom; i = i + subsample_factor) {
-    for (int j = roi_left; j < roi_right; j = j + subsample_factor) {
+  for (int i = roi_top; i < roi_bottom; i = i + static_cast<int>(subsample_factor)) {
+    for (int j = roi_left; j < roi_right; j = j + static_cast<int>(subsample_factor)) {
       const auto pixel = vpImagePoint { static_cast<double>(i), static_cast<double>(j) };
-      if ((I_depth[i][j] != 0) && isInside(pixel, roi) && isValid(pixel)) {
+      if ((I_depth[i][j] > 0.0f) && isInside(pixel, roi) && isValid(pixel)) {
         double x { 0. }, y { 0. };
         vpPixelMeterConversion::convertPoint(depth_intrinsics, pixel, x, y);
         const double Z = I_depth[i][j];

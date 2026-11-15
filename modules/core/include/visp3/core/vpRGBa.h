@@ -164,10 +164,9 @@ public:
   /**
    * \brief Build a vpRGBa object from a vpHSV<unsigned char> object.
    *
-   * \tparam T The type of the channels of the vpHSV pixels.
+   * \tparam T The type of the channels of the vpHSV pixels. Enable the method only if T is `unsigned char`.
    * \tparam useFullScale True if vpHSV uses unsigned char and the full range [0; 255], false if vpHSV uses unsigned
    * char and the limited range [0; 180].
-   * \tparam type Enable the method only if T is unsigned char.
    * \param[in] other The vpHSV from which we want to build our object.
    * \return vpRGBa& The current object after conversion.
    */
@@ -183,12 +182,10 @@ public:
   /**
    * \brief Build a vpRGBa object from a vpHSV<double> or vpHSV<float> object.
    *
-   * \tparam T The type of the channels of the vpHSV pixels.
+   * \tparam T The type of the channels of the vpHSV pixels. Enable the method only if T is a floating
+   * point number.
    * \tparam useFullScale True if vpHSV uses unsigned char and the full range [0; 255], false if vpHSV uses
    * unsigned char and the limited range [0; 180].
-   * \tparam std::enable_if<std::is_floating_point<T>::value, int>::type Enable the method only if T is a floating
-   * point number. The "int" is here because we cannot use a floating point type,
-   * otherwise we get "{float/double} is not a valid type for a template non-type parameter".
    * \param[in] hsv The vpHSV from which we want to build our object.
    * \return vpRGBa& The current object after conversion.
    */

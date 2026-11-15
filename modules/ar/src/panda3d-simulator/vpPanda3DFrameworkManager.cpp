@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,9 +80,9 @@ void vpPanda3DFrameworkManager::disableAllOtherRenderers(PointerTo<WindowFramewo
   for (int i = 0; i < m_framework.get_num_windows(); ++i) {
     PointerTo<WindowFramework> fi = m_framework.get_window(i);
     GraphicsStateGuardian *g = fi->get_graphics_output()->get_gsg();
-    bool active = (g == activeGsg);
-    g->set_active(active);
-    fi->get_graphics_output()->set_active(active);
+    bool is_active = (g == activeGsg);
+    g->set_active(is_active);
+    fi->get_graphics_output()->set_active(is_active);
   }
 }
 

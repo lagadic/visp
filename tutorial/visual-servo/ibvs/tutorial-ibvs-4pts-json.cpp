@@ -35,10 +35,10 @@ enum vpInteractionMatrixTypeSubset
 
 //! [Enum conversion]
 NLOHMANN_JSON_SERIALIZE_ENUM(vpInteractionMatrixTypeSubset, {
-  {UNKNOWN, nullptr}, // Default value if the json string is not in "current", "desired" or "mean"
-  {CURRENT, "current"},
-  {DESIRED, "desired"},
-  {MEAN, "mean"} }
+  { UNKNOWN, nullptr }, // Default value if the json string is not in "current", "desired" or "mean"
+  { CURRENT, "current" },
+  { DESIRED, "desired" },
+  { MEAN, "mean" } }
   );
 //! [Enum conversion]
 
@@ -55,7 +55,7 @@ public:
     lambda(0.5), cdMo(0, 0, 0.75, 0, 0, 0),
     cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50)),
     samplingTime(0.04), errorThreshold(0.0001), interactionMatrixType(CURRENT)
-  { }
+  {}
 
   vpServo::vpServoIteractionMatrixType getInteractionMatrixType() const
   {
@@ -119,12 +119,12 @@ void to_json(json &j, const Arguments &a)
   using VISP_NAMESPACE_ADDRESSING to_json;
 #endif
   j = json {
-    {"lambda", a.lambda},
-    {"cMo", a.cMo},
-    {"cdMo", a.cdMo},
-    {"errorThreshold", a.errorThreshold},
-    {"samplingTime", a.samplingTime} ,
-    {"interactionMatrix", a.interactionMatrixType}
+    { "lambda", a.lambda },
+    { "cMo", a.cMo },
+    { "cdMo", a.cdMo },
+    { "errorThreshold", a.errorThreshold },
+    { "samplingTime", a.samplingTime } ,
+    { "interactionMatrix", a.interactionMatrixType }
   };
 }
 //! [Arguments conversion]
@@ -143,7 +143,8 @@ Arguments readArguments(const std::string &path)
     }
     json j;
     try {
-      j = json::parse(file);
+      // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+      j = json::parse(file, nullptr, true, true);
     }
     catch (json::parse_error &e) {
       std::stringstream msg;
@@ -172,9 +173,9 @@ namespace VISP_NAMESPACE_NAME
 void to_json(json &j, const vpFeaturePoint &p)
 {
   j = json {
-    {"x", p.get_x()},
-    {"y", p.get_y()},
-    {"z", p.get_Z()}
+    { "x", p.get_x() },
+    { "y", p.get_y() },
+    { "z", p.get_Z() }
   };
 }
 END_VISP_NAMESPACE
@@ -187,7 +188,7 @@ class ServoingExperimentData
 public:
   ServoingExperimentData(const Arguments &arguments, const std::vector<vpFeaturePoint> &desiredFeatures) :
     m_arguments(arguments), m_desiredFeatures(desiredFeatures)
-  { }
+  {}
 
   void onIter(const vpHomogeneousMatrix &cMo, const double errorNorm, const std::vector<vpFeaturePoint> &points,
     const vpColVector &velocity, const vpMatrix &interactionMatrix)
@@ -217,13 +218,13 @@ void to_json(json &j, const ServoingExperimentData &res)
   using VISP_NAMESPACE_ADDRESSING to_json;
 #endif
   j = json {
-    {"parameters", res.m_arguments},
-    {"trajectory", res.m_trajectory},
-    {"errorNorm", res.m_errorNorms},
-    {"features", res.m_points3D},
-    {"desiredFeatures", res.m_desiredFeatures},
-    {"velocities", res.m_velocities},
-    {"interactionMatrices", res.m_interactionMatrices}
+    { "parameters", res.m_arguments },
+    { "trajectory", res.m_trajectory },
+    { "errorNorm", res.m_errorNorms },
+    { "features", res.m_points3D },
+    { "desiredFeatures", res.m_desiredFeatures },
+    { "velocities", res.m_velocities },
+    { "interactionMatrices", res.m_interactionMatrices }
   };
 }
 //! [Result structure]

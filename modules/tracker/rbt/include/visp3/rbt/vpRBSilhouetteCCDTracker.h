@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ public:
     alpha(1.3), beta(0.06), kappa(0.5),
     covarianceIterDecreaseFactor(0.25),
     h(40), delta_h(1), min_h(4), start_h(40), start_delta_h(1), iters_since_scale_change(0), min_iters_before_scale_change(2), phi_dim(6)
-  { }
+  {}
 
   ~vpCCDParameters() = default;
   /**
@@ -179,7 +179,7 @@ public:
   vpMatrix nv; //! Normal vector
   vpMatrix imgPoints; //! Img pixels
 
-  void reinit(int resolution, unsigned normalPointsNumber)
+  void reinit(unsigned int resolution, unsigned normalPointsNumber)
   {
     nv.resize(resolution, 2, false, false);
     mean_vic.resize(resolution, 6, false, false);
@@ -299,8 +299,8 @@ public:
    * @}
    */
 
-  void onTrackingIterStart(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE;
-  void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
+  void onTrackingIterStart(const vpRBFeatureTrackerInput & /*frame*/, const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE;
+  void onTrackingIterEnd(const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE {}
   void reset() VP_OVERRIDE
   {
     m_stats.zero();
@@ -322,7 +322,7 @@ public:
   }
 
   void extractFeatures(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
-  void trackFeatures(const vpRBFeatureTrackerInput & /*frame*/, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE { }
+  void trackFeatures(const vpRBFeatureTrackerInput & /*frame*/, const vpRBFeatureTrackerInput & /*previousFrame*/, const vpHomogeneousMatrix & /*cMo*/) VP_OVERRIDE {}
 
   void initVVS(const vpRBFeatureTrackerInput &frame, const vpRBFeatureTrackerInput &previousFrame, const vpHomogeneousMatrix &cMo) VP_OVERRIDE;
   void computeVVSIter(const vpRBFeatureTrackerInput &frame, const vpHomogeneousMatrix &cMo, unsigned int iteration) VP_OVERRIDE;
@@ -330,7 +330,16 @@ public:
   {
     m_cov = m_sigma;
   }
-
+  /**
+   * \brief Update the gradient and hessian storage views.
+   * Reserve new memory if required and ensure that gradients and hessians point on correct memory.
+   * \param normalsPerPoint The size of the normal vector (one side).
+   * \param clear Whether to clear the data.
+   */
+  void buildGradientAndHessianStorageViews(unsigned int normalsPerPoint, bool clear);
+  /**
+   * \brief To be called when the scale of the normal vectors is changed
+   */
   void changeScale();
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpImage<vpRGBa> &IRGB, const vpImage<unsigned char> &depth) const VP_OVERRIDE;
@@ -375,7 +384,7 @@ protected:
   void updateCCDPoints(const vpHomogeneousMatrix &cMo);
   void computeLocalStatistics(const vpImage<vpRGBa> &I, vpCCDStatistics &stats);
   template<bool hasTemporalSmoothing>
-  void computeErrorAndInteractionMatrix();
+  void computeErrorAndInteractionMatrix(const vpHomogeneousMatrix &cMo);
 
   vpCCDParameters m_ccdParameters;
 

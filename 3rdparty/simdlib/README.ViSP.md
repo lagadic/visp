@@ -1,5 +1,10 @@
 Here we give the list of the main changes introduced in Simdlib for ViSP
 
+
+- 2026.01.31 (see PR #1895)
+
+  - Modification in Simd/SimdBaseReduce.cpp to make template hidden adding VISIBILITY_HIDDEN macro
+
 - 2023.09.12 (see PR #1230)
   - Fix compatibility with Debian GNU/Hurd defining PATH_MAX macro
 

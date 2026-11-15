@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 202% by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,7 +168,7 @@ int main(int argc, const char **argv)
     display[i] = vpDisplayFactory::allocateDisplay();
   }
 #endif
-  unsigned int exit_status = EXIT_SUCCESS;
+  int exit_status = EXIT_SUCCESS;
   try {
     bool opt_display = true;
     bool opt_plot = true;

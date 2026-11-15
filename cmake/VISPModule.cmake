@@ -781,7 +781,8 @@ macro(vp_create_global_module_header module)
   endif()
 
   foreach(h ${VISP_MODULE_${module}_HEADERS})
-    string(REGEX REPLACE "^.*/include/visp3" "visp3" h "${h}")
+    # Keep only part of the header starting from visp3/...
+    string(REGEX REPLACE "^.*(visp3/.*)" "\\1" h "${h}")
     set(VISP_HEADER_CONTENT_CONFIGMAKE "${VISP_HEADER_CONTENT_CONFIGMAKE}\n#include <${h}>")
   endforeach()
 
@@ -902,7 +903,8 @@ macro(_vp_create_module)
     if(VISP_MODULE_${m}_HEADERS AND ";${VISP_MODULES_PUBLIC};" MATCHES ";${m};")
       foreach(hdr ${VISP_MODULE_${m}_HEADERS})
         string(REGEX REPLACE "^.*visp3/" "visp3/" hdr2 "${hdr}")
-        if(NOT hdr2 MATCHES "visp3/${m}/private.*" AND hdr2 MATCHES "^(visp3/?.*)/[^/]+.h(..)?$" )
+        # Exclude here vpConfig.h from installation. Done in VISPGenerateHeaders.cmake where multi-arch is handled
+        if((NOT hdr2 MATCHES "visp3/${m}/private.*") AND (NOT hdr2 MATCHES "visp3/core/vpConfig.h") AND (hdr2 MATCHES "^(visp3/?.*)/[^/]+.h(..)?$"))
           install(FILES ${hdr} OPTIONAL DESTINATION "${VISP_INC_INSTALL_PATH}/${CMAKE_MATCH_1}" COMPONENT dev)
         endif()
       endforeach()
@@ -1186,7 +1188,9 @@ macro(vp_add_config_file)
   endif()
 
   foreach(h ${VISP_MODULE_${the_module}_HEADERS})
-    string(REGEX REPLACE "^.*/include/visp3" "visp3" h "${h}")
+    # Keep only part of the header starting from visp3/...
+    string(REGEX REPLACE "^.*(visp3/.*)" "\\1" h "${h}")
+    set(h "toto")
     set(__header_content "${__header_content}\n#include <${h}>")
   endforeach()
 

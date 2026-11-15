@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,10 +60,10 @@ vpCircleHoughTransform::computeGradients(const vpImage<unsigned char> &I)
       || (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING)) {
     // Computing the Gaussian blurr
     vpImage<float> Iblur, GIx;
-    vpImageFilter::filterX(I, GIx, m_fg.data, m_algoParams.m_gaussianKernelSize, mp_mask);
-    vpImageFilter::filterY(GIx, Iblur, m_fg.data, m_algoParams.m_gaussianKernelSize, mp_mask);
+    vpImageFilter::filterX(I, GIx, m_fg.data, static_cast<unsigned int>(m_algoParams.m_gaussianKernelSize), mp_mask);
+    vpImageFilter::filterY(GIx, Iblur, m_fg.data, static_cast<unsigned int>(m_algoParams.m_gaussianKernelSize), mp_mask);
 
-    // Computing the gradients
+        // Computing the gradients
     vpImageFilter::filter(Iblur, m_dIx, m_gradientFilterX, true, mp_mask);
     vpImageFilter::filter(Iblur, m_dIy, m_gradientFilterY, true, mp_mask);
   }
@@ -105,14 +105,18 @@ vpCircleHoughTransform::edgeDetection(const vpImage<unsigned char> &I)
 
       // We will have to recompute the gradient in the desired backend format anyway so we let
       // the vpImageFilter::canny method take care of it
-      vpImageFilter::canny(I_masked, m_edgeMap, m_algoParams.m_gaussianKernelSize, m_algoParams.m_lowerCannyThresh,
-                           m_algoParams.m_upperCannyThresh, m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gaussianStdev,
+      vpImageFilter::canny(I_masked, m_edgeMap, static_cast<unsigned int>(m_algoParams.m_gaussianKernelSize),
+                           m_algoParams.m_lowerCannyThresh, m_algoParams.m_upperCannyThresh,
+                           static_cast<unsigned int>(m_algoParams.m_gradientFilterKernelSize),
+                           m_algoParams.m_gaussianStdev,
                            m_algoParams.m_lowerCannyThreshRatio, m_algoParams.m_upperCannyThreshRatio, true,
                            m_algoParams.m_cannyBackendType, m_algoParams.m_filteringAndGradientType);
     }
     else {
-      vpImageFilter::canny(I, m_edgeMap, m_algoParams.m_gaussianKernelSize, m_algoParams.m_lowerCannyThresh,
-                           m_algoParams.m_upperCannyThresh, m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gaussianStdev,
+      vpImageFilter::canny(I, m_edgeMap, static_cast<unsigned int>(m_algoParams.m_gaussianKernelSize),
+                           m_algoParams.m_lowerCannyThresh, m_algoParams.m_upperCannyThresh,
+                           static_cast<unsigned int>(m_algoParams.m_gradientFilterKernelSize),
+                           m_algoParams.m_gaussianStdev,
                            m_algoParams.m_lowerCannyThreshRatio, m_algoParams.m_upperCannyThreshRatio, true,
                            m_algoParams.m_cannyBackendType, m_algoParams.m_filteringAndGradientType);
     }
@@ -177,13 +181,13 @@ vpCircleHoughTransform::computeCenterCandidates()
   int minimumXposition = std::max<int>(m_algoParams.m_centerXlimits.first, -1 * static_cast<int>(m_algoParams.m_maxRadius));
   int maximumXposition = std::min<int>(m_algoParams.m_centerXlimits.second, static_cast<int>(m_algoParams.m_maxRadius + nbCols));
   minimumXposition = std::min<int>(minimumXposition, maximumXposition - 1);
+  if (maximumXposition < minimumXposition) {
+    throw(vpException(vpException::dimensionError, "[vpCircleHoughTransform::computeCenterCandidates] Accumulator width <= 0!"));
+  }
   float minimumXpositionFloat = static_cast<float>(minimumXposition);
   float maximumXpositionFloat = static_cast<float>(maximumXposition);
   int offsetX = minimumXposition;
   int accumulatorWidth = (maximumXposition - minimumXposition) + 1;
-  if (accumulatorWidth <= 0) {
-    throw(vpException(vpException::dimensionError, "[vpCircleHoughTransform::computeCenterCandidates] Accumulator width <= 0!"));
-  }
 
   // Computing the minimum and maximum vertical position of the center candidates
   // The miminum vertical position of the center is at worst -maxRadius outside the image
@@ -192,15 +196,17 @@ vpCircleHoughTransform::computeCenterCandidates()
   int minimumYposition = std::max<int>(m_algoParams.m_centerYlimits.first, -1 * static_cast<int>(m_algoParams.m_maxRadius));
   int maximumYposition = std::min<int>(m_algoParams.m_centerYlimits.second, static_cast<int>(m_algoParams.m_maxRadius + nbRows));
   minimumYposition = std::min<int>(minimumYposition, maximumYposition - 1);
+  if (maximumYposition < minimumYposition) {
+    throw(vpException(vpException::dimensionError, "[vpCircleHoughTransform::computeCenterCandidates] Accumulator height <= 0!"));
+  }
   float minimumYpositionFloat = static_cast<float>(minimumYposition);
   float maximumYpositionFloat = static_cast<float>(maximumYposition);
   int offsetY = minimumYposition;
   int accumulatorHeight = (maximumYposition - minimumYposition) + 1;
-  if (accumulatorHeight <= 0) {
-    throw(vpException(vpException::dimensionError, "[vpCircleHoughTransform::computeCenterCandidates] Accumulator height <= 0!"));
-  }
 
-  vpImage<float> centersAccum(accumulatorHeight, accumulatorWidth + 1, 0.); /*!< Votes for the center candidates.*/
+  /*!< Votes for the center candidates.*/
+  vpImage<float> centersAccum(static_cast<unsigned int>(accumulatorHeight),
+                              static_cast<unsigned int>(accumulatorWidth + 1), 0.);
   vpDataForAccumLoop data;
   data.accumulatorHeight = accumulatorHeight;
   data.accumulatorWidth = accumulatorWidth;
@@ -244,8 +250,8 @@ vpCircleHoughTransform::computeCenterCandidates()
   // Look for the image points that correspond to the accumulator maxima
   // These points will become the center candidates
   // find the possible circle centers
-  int nbColsAccum = centersAccum.getCols();
-  int nbRowsAccum = centersAccum.getRows();
+  int nbColsAccum = static_cast<int>(centersAccum.getCols());
+  int nbRowsAccum = static_cast<int>(centersAccum.getRows());
   int nbVotes = -1;
   std::vector<vpCenterVotes> peak_positions_votes;
 
@@ -262,13 +268,15 @@ vpCircleHoughTransform::computeCenterCandidates()
         nbVotes = std::max<int>(nbVotes, static_cast<int>(centersAccum[y][x]));
       }
       else if (left >= 0) {
-        int cx = static_cast<int>(((left + x) - 1) * 0.5f);
+        int cx = (left + x - 1) / 2;
         float sumVotes = 0., x_avg = 0., y_avg = 0.;
         int averagingWindowHalfSize = m_algoParams.m_averagingWindowSize / 2;
         int startingRow = std::max<int>(0, y - averagingWindowHalfSize);
         int startingCol = std::max<int>(0, cx - averagingWindowHalfSize);
-        int endRow = std::min<int>(accumulatorHeight, y + averagingWindowHalfSize + 1);
-        int endCol = std::min<int>(accumulatorWidth, cx + averagingWindowHalfSize + 1);
+        const int rowUpperBound = y + averagingWindowHalfSize + 1;
+        const int colUpperBound = cx + averagingWindowHalfSize + 1;
+        int endRow = std::min<int>(accumulatorHeight, rowUpperBound);
+        int endCol = std::min<int>(accumulatorWidth, colUpperBound);
         for (int r = startingRow; r < endRow; ++r) {
           for (int c = startingCol; c < endCol; ++c) {
             sumVotes += centersAccum[r][c];
@@ -482,8 +490,8 @@ vpCircleHoughTransform::filterCenterCandidates(const std::vector<vpCenterVotes> 
     int nbPeaksToKeep = (m_algoParams.m_expectedNbCenters > 0 ? m_algoParams.m_expectedNbCenters : static_cast<int>(nbPeaks));
     nbPeaksToKeep = std::min<int>(nbPeaksToKeep, static_cast<int>(nbPeaks));
     for (int i = 0; i < nbPeaksToKeep; ++i) {
-      m_centerCandidatesList.push_back(merged_peaks_position_votes[i].m_position);
-      m_centerVotes.push_back(static_cast<int>(merged_peaks_position_votes[i].m_votes));
+      m_centerCandidatesList.push_back(merged_peaks_position_votes[static_cast<std::size_t>(i)].m_position);
+      m_centerVotes.push_back(static_cast<int>(merged_peaks_position_votes[static_cast<std::size_t>(i)].m_votes));
     }
   }
 }

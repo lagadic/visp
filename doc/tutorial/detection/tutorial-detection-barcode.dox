@@ -3,7 +3,7 @@
 \page tutorial-detection-barcode Tutorial: Bar code detection
 \tableofcontents
 
-\section intro_barcode Introduction
+\section intro_barcode 1. Introduction
 
 This tutorial shows how to detect one or more barcodes with ViSP. To this end we provide two classes that are wrapper
 over 3rd party libraries:
@@ -22,24 +22,24 @@ from a camera connected to your computer.
 Note that all the material (source code and image) described in this tutorial is part of ViSP source code
 (in `tutorial/detection/barcode` folder) and could be found in https://github.com/lagadic/visp/tree/master/tutorial/detection/barcode.
 
-\subsection barcode_detection_generator_qrcode Print your QR code
+\subsection barcode_detection_generator_qrcode 1.1. Print your QR code
 
 To generate and print your own QR code compatible with vpDetectorQRCode use a QR code generator like:
 https://www.qr-code-generator.com/. Download the corresponding image and use your favorite tool like Gimp to rescale
 the image without interpolation if needed.
 
-\subsection barcode_detection_generator_datamatrix Print your DataMatrix code
+\subsection barcode_detection_generator_datamatrix 1.2. Print your DataMatrix code
 
 To generate and print your own DataMatrix code compatible with vpDetectorDataMatrixCode use a DataMatrix code generator
 like: http://datamatrix.kaywa.com/. Save the corresponding image and use your favorite tool like Gimp to rescale the
 image without interpolation if needed.
 
-\section barcode_detection_basic Bar code detection (single image)
+\section barcode_detection_basic 2. Bar code detection (single image)
 
 The following example also available in tutorial-barcode-detector.cpp allows to detect either a QR code or Data Matrix
 on a single image. The user can select with `--code-type` option which code to detect.
 
-\subsection barcode_detection_basic_src Source code explained
+\subsection barcode_detection_basic_src 2.1. Source code explained
 
 Below you will find tutorial-barcode-detector.cpp source code.
 
@@ -84,7 +84,7 @@ And finally, if it exists, we are also able to get the message that is coded in 
 
 \snippet tutorial-barcode-detector.cpp Get message
 
-\subsection barcode_detection_basic_run Run binary
+\subsection barcode_detection_basic_run 2.2. Run binary
 
 To detect a QR code just run:
 \code
@@ -102,12 +102,12 @@ You will get the following result:
 
 \image html img-detection-datamatrix.png
 
-\section barcode_detection_live Bar code detection (live camera)
+\section barcode_detection_live 3. Bar code detection (live camera)
 
 This other example also available in tutorial-barcode-detector-live.cpp shows how to couple the bar code detector to
 an image grabber in order to detect bar codes on each new image acquired by a camera connected to your computer.
 
-\subsection barcode_detection_live_src Source code explained
+\subsection barcode_detection_live_src 3.1. Source code explained
 
 Below you will find tutorial-barcode-detector-live.cpp source code.
 
@@ -127,7 +127,7 @@ Then in the while loop, at each iteration we acquire a new image
 
 This new image is then given as input to the bar code detector.
 
-\subsection barcode_detection_live_run Run binary
+\subsection barcode_detection_live_run 3.2. Run binary
 
 The usage of this example is similar to the previous one:
 - with option `--code-type` you select if you want to detect a QR code (use `--code-type 0`) or a Data Matrix
@@ -140,7 +140,7 @@ To detect QR codes on images acquired by a second camera connected to your compu
 $ ./tutorial-barcode-detector-live --code-type 0 --device 1
 \endcode
 
-\section barcode_detection_next Next tutorial
+\section barcode_detection_next 4. Next tutorial
 
 Now you can follow \ref tutorial-pose-estimation that explains how to compute a 3D pose from points. This tutorial
 could be useful if you want to compute the pose of a QR code from it’s 4 corner coordinates in the image that could be

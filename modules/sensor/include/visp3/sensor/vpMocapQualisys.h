@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +30,13 @@
  * Description:
  * Motion capture using Qualisys device.
  */
-#ifndef vpMocapQualisys_h
-#define vpMocapQualisys_h
+#ifndef VP_MOCAP_QUALISYS_H
+#define VP_MOCAP_QUALISYS_H
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/sensor/vpMocap.h>
 
 #ifdef VISP_HAVE_QUALISYS
-
-#include <visp3/sensor/vpMocap.h>
 
 BEGIN_VISP_NAMESPACE
 /*!
@@ -56,6 +55,9 @@ public:
 
   bool getBodiesPose(std::map<std::string, vpHomogeneousMatrix> &bodies_pose, bool all_bodies = false);
   bool getSpecificBodyPose(const std::string &body_name, vpHomogeneousMatrix &body_pose);
+  void setBasePort(unsigned short port);
+  void setBigEndian(bool big_endian);
+  void setUDPPort(unsigned short port);
   void setServerAddress(const std::string &serverAddr);
   void setVerbose(bool verbose);
 

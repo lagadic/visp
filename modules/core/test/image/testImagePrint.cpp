@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ int main()
   for (unsigned int i = 0, cpt = 0; i < size; i++) {
     for (unsigned int j = 0; j < size; j++, cpt++) {
       I_int[i][j] = static_cast<int>(cpt);
-      I_uchar[i][j] = static_cast<char>(cpt);
+      I_uchar[i][j] = static_cast<unsigned char>(cpt);
       I_char[i][j] = static_cast<char>(cpt);
     }
   }

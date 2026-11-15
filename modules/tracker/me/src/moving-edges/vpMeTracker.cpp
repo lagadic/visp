@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,7 +185,7 @@ void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
 
   // Must set range to 0
   unsigned int range_tmp = m_me->getRange();
-  m_me->setRange(m_me->getInitRange());
+  m_me->setRange(static_cast<unsigned int>(m_me->getInitRange()));
 
   m_nGoodElement = 0;
 
@@ -233,7 +233,7 @@ void vpMeTracker::track(const vpImage<unsigned char> &I)
       s.track(I, m_me, true);
 
 
-      if (vpMeTracker::inRoiMask(m_mask, s.get_i(), s.get_j())) {
+      if (vpMeTracker::inRoiMask(m_mask, static_cast<unsigned int>(s.get_i()), static_cast<unsigned int>(s.get_j()))) {
         if (s.getState() == vpMeSite::NO_SUPPRESSION) {
           ++m_nGoodElement;
         }

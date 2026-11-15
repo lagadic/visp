@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ BEGIN_VISP_NAMESPACE
  */
   vpForceTorqueAtiSensor::vpForceTorqueAtiSensor()
   : m_calibfile(""), m_index(1), m_num_axes(6), m_num_channels(6), m_sample_bias()
-{ }
+{}
 
 /*!
  * Open the connection to the device.
@@ -253,7 +253,8 @@ std::ostream &operator<<(std::ostream &os, const vpForceTorqueAtiSensor &ati)
 
   // print maximum loads of axes
   os << "\nRated Loads:" << std::endl;
-  for (unsigned short i = 0; i < s_calibinfo->rt.NumAxes; i++) {
+  size_t naxes = static_cast<size_t>(s_calibinfo->rt.NumAxes);
+  for (size_t i = 0; i < naxes; i++) {
     char *units;
     if ((s_calibinfo->AxisNames[i])[0] == 'F') {
       units = s_calibinfo->ForceUnits;
@@ -265,13 +266,14 @@ std::ostream &operator<<(std::ostream &os, const vpForceTorqueAtiSensor &ati)
 
   // print temperature compensation information, if available
   if (s_calibinfo->TempCompAvailable) {
+    size_t nchannels = static_cast<size_t>(s_calibinfo->rt.NumChannels);
     os << "\nTemperature Compensation Information:" << std::endl;
     os << "BS: ";
-    for (unsigned short i = 0; i < s_calibinfo->rt.NumChannels - 1; i++) {
+    for (size_t i = 0; i < nchannels - 1; ++i) {
       os << s_calibinfo->rt.bias_slopes[i] << " ";
     }
     os << "\nGS: ";
-    for (unsigned short i = 0; i < s_calibinfo->rt.NumChannels - 1; i++) {
+    for (size_t i = 0; i < nchannels - 1; ++i) {
       os << s_calibinfo->rt.gain_slopes[i] << " ";
     }
     os << "\nTherm: " << s_calibinfo->rt.thermistor << std::endl;
@@ -283,5 +285,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_sensor.a(vpForceTorqueAtiSensor.cpp.o) has no symbols
-void dummy_vpForceTorqueAtiSensor() { }
+void dummy_vpForceTorqueAtiSensor() {}
 #endif

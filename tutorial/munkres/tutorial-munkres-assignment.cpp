@@ -31,7 +31,7 @@ int main()
   vpUniRand rand {};
   std::vector<vpImagePoint> rand_ips {};
   while (rand_ips.size() < 10) {
-    rand_ips.emplace_back(rand.uniform(10, I.getHeight() - 10), rand.uniform(10, I.getWidth() - 10));
+    rand_ips.emplace_back(rand.uniform(10, static_cast<int>(I.getHeight()) - 10), rand.uniform(10, static_cast<int>(I.getWidth()) - 10));
   }
   //! [Rand_Img_Pts]
 

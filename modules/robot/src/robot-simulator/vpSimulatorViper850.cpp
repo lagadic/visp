@@ -224,7 +224,7 @@ void vpSimulatorViper850::initDisplay()
 */
 void vpSimulatorViper850::init(vpViper850::vpToolType tool, vpCameraParameters::vpCameraParametersProjType proj_model)
 {
-  this->projModel = proj_model;
+  m_projModel = proj_model;
 
   // Use here default values of the robot constant parameters.
   switch (tool) {
@@ -2386,5 +2386,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpSimulatorViper850.cpp.o)
 // has no symbols
-void dummy_vpSimulatorViper850() { }
+void dummy_vpSimulatorViper850() {}
 #endif

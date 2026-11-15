@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ int main()
 
     robot.getPosition(vpRobot::REFERENCE_FRAME, robot_cart_position_init);
     vpColVector min(3), max(3);
-    for (unsigned int i = 0; i < 3; i++) {
+    for (unsigned int i = 0; i < 3; ++i) {
       min[i] = robot_cart_position_init[i] - cube_size / 2;
       max[i] = robot_cart_position_init[i] + cube_size / 2;
     }
@@ -104,7 +104,7 @@ int main()
 
       robot.getPosition(vpRobot::REFERENCE_FRAME, robot_cart_position);
 
-      for (int i = 0; i < 3; i++) {
+      for (unsigned int i = 0; i < 3; ++i) {
         if (robot_cart_position[i] >= max[i]) {
           force_feedback_robot[i] = (max[i] - robot_cart_position[i]) * force_increase_rate;
           if (force_feedback_robot[i] <= -force_limit)

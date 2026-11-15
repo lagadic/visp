@@ -1127,4 +1127,17 @@ void vpMatrix::conv2(const vpMatrix &M, const vpMatrix &kernel, vpMatrix &res, c
     }
   }
 }
+
+double vpMatrix::trace()const
+{
+  double trace = 0;
+  const unsigned int nbRows = getRows(), nbCols = getCols(), size = this->size();
+  if (nbRows != nbCols) {
+    throw(vpException(vpException::dimensionError, "The trace of a matrix is defined only for a square matrix"));
+  }
+  for (unsigned int idx = 0; idx < size; idx += nbCols + 1) {
+    trace += this->data[idx];
+  }
+  return trace;
+}
 END_VISP_NAMESPACE

@@ -49,7 +49,7 @@
 #include <list>
 #include <math.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
 #include <optional>
 #endif
 
@@ -278,29 +278,86 @@ public:
    * last points specify the extremities of the arc (clockwise).
    * When false track the complete ellipse/circle.
    */
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
-  void initTracking(const vpImage<unsigned char> &I, std::optional<std::vector<vpImagePoint>> &opt_ips, bool trackCircle = false, bool trackArc = false);
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
+  inline void initTracking(const vpImage<unsigned char> &I, std::optional<std::vector<vpImagePoint>> &opt_ips,
+                           bool trackCircle = false, bool trackArc = false)
 #else
-  void initTracking(const vpImage<unsigned char> &I, std::vector<vpImagePoint> *opt_ips, bool trackCircle = false, bool trackArc = false);
+  inline void initTracking(const vpImage<unsigned char> &I, std::vector<vpImagePoint> *opt_ips,
+                           bool trackCircle = false, bool trackArc = false)
 #endif
+  {
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) // Check if cxx17 or higher
+    if (!opt_ips.has_value())
+#else
+    if (opt_ips == nullptr)
+#endif
+    {
+      initTracking(I, trackCircle, trackArc);
+      return;
+    }
 
-/*!
- * Initialize the tracking of an ellipse/circle or an arc of an ellipse/circle when \e trackArc is set to true.
- * The ellipse/circle is defined thanks to a vector of image points.
- *
- * \warning It is mandatory to use at least five image points to estimate the
- * ellipse parameters while three points are needed to estimate the circle parameters.
- * \warning The image points should be selected as far as possible from each other.
- * When an arc of an ellipse/circle is tracked, it is recommended to select the 5/3 points clockwise.
- *
- * \param I : Image in which the ellipse/circle appears.
- * \param iP : A vector of image points belonging to the ellipse/circle edge used to
- * initialize the tracking.
- * \param trackCircle : When true, track a circle, when false track an ellipse.
- * \param trackArc : When true track an arc of the ellipse/circle. In that case, first and
- * last points specify the extremities of the arc (clockwise).
- * When false track the complete ellipse/circle.
- */
+    if (opt_ips->size() != 0) {
+      initTracking(I, *opt_ips, trackCircle, trackArc);
+      return;
+    }
+
+    unsigned int n = 5; // by default, 5 points for an ellipse
+    const unsigned int nForCircle = 3;
+    m_trackCircle = trackCircle;
+    if (trackCircle) {
+      n = nForCircle;
+    }
+    opt_ips->resize(n);
+    m_trackArc = trackArc;
+
+    vpDisplay::flush(I);
+
+    if (m_trackCircle) {
+      if (m_trackArc) {
+        std::cout << "First and third points specify the extremities of the arc of circle (clockwise)" << std::endl;
+      }
+      for (unsigned int k = 0; k < n; ++k) {
+        std::cout << "Click point " << (k + 1) << "/" << n << " on the circle " << std::endl;
+        vpDisplay::getClick(I, (*opt_ips)[k], true);
+        const unsigned int crossSize = 10;
+        vpDisplay::displayCross(I, (*opt_ips)[k], crossSize, vpColor::red);
+        vpDisplay::flush(I);
+        std::cout << (*opt_ips)[k] << std::endl;
+      }
+    }
+    else {
+      if (m_trackArc) {
+        std::cout << "First and fifth points specify the extremities of the arc of ellipse (clockwise)" << std::endl;
+      }
+      for (unsigned int k = 0; k < n; ++k) {
+        std::cout << "Click point " << (k + 1) << "/" << n << " on the ellipse " << std::endl;
+        vpDisplay::getClick(I, (*opt_ips)[k], true);
+        const unsigned int crossSize = 10;
+        vpDisplay::displayCross(I, (*opt_ips)[k], crossSize, vpColor::red);
+        vpDisplay::flush(I);
+        std::cout << (*opt_ips)[k] << std::endl;
+      }
+    }
+    initTracking(I, *opt_ips, trackCircle, trackArc);
+  }
+
+  /*!
+   * Initialize the tracking of an ellipse/circle or an arc of an ellipse/circle when \e trackArc is set to true.
+   * The ellipse/circle is defined thanks to a vector of image points.
+   *
+   * \warning It is mandatory to use at least five image points to estimate the
+   * ellipse parameters while three points are needed to estimate the circle parameters.
+   * \warning The image points should be selected as far as possible from each other.
+   * When an arc of an ellipse/circle is tracked, it is recommended to select the 5/3 points clockwise.
+   *
+   * \param I : Image in which the ellipse/circle appears.
+   * \param iP : A vector of image points belonging to the ellipse/circle edge used to
+   * initialize the tracking.
+   * \param trackCircle : When true, track a circle, when false track an ellipse.
+   * \param trackArc : When true track an arc of the ellipse/circle. In that case, first and
+   * last points specify the extremities of the arc (clockwise).
+   * When false track the complete ellipse/circle.
+   */
   void initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP, bool trackCircle = false,
                     bool trackArc = false);
 

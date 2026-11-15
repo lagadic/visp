@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -141,13 +141,6 @@ endif()
 # Video 4 linux 2 (V4L2)
 if(VISP_HAVE_V4L2)
   set(BUILDNAME "${BUILDNAME}-v4l2")
-endif()
-# Directshow
-if(VISP_HAVE_DIRECTSHOW)
-  set(BUILDNAME "${BUILDNAME}-dshow")
-endif()
-if(VISP_HAVE_CMU1394)
-  set(BUILDNAME "${BUILDNAME}-CMU1394")
 endif()
 if(VISP_HAVE_LIBFREENECT)
   set(BUILDNAME "${BUILDNAME}-freenect")

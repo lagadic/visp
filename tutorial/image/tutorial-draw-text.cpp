@@ -19,10 +19,10 @@ int main()
 #endif
 
   vpDisplay::display(I);
-  vpDisplay::displayRectangle(I, I.getHeight() / 4, I.getWidth() / 4, I.getWidth() / 2, I.getHeight() / 2,
-                              vpColor::red, true);
+  vpDisplay::displayRectangle(I, static_cast<int>(I.getHeight()) / 4, static_cast<int>(I.getWidth()) / 4,
+                              I.getWidth() / 2, I.getHeight() / 2, vpColor::red, true);
   //! [text]
-  vpDisplay::displayText(I, I.getHeight() / 2, I.getWidth() / 2, "Hello World!", vpColor::yellow);
+  vpDisplay::displayText(I, static_cast<int>(I.getHeight()) / 2, static_cast<int>(I.getWidth()) / 2, "Hello World!", vpColor::yellow);
   //! [text]
   vpDisplay::flush(I);
   std::cout << "A click to quit..." << std::endl;

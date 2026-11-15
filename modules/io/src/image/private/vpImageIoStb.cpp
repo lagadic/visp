@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +154,7 @@ void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<unsigne
   unsigned char *buffer_read = stbi_load_from_memory(buffer.data(), static_cast<int>(buffer.size()), &x, &y, &comp, req_channels);
   assert(comp == req_channels);
 
-  I.init(buffer_read, y, x, true);
+  I.init(buffer_read, static_cast<unsigned int>(y), static_cast<unsigned int>(x), true);
   STBI_FREE(buffer_read);
 }
 
@@ -171,12 +171,12 @@ void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<vpRGBa>
 
   if (comp == 4) {
     const bool copyData = true;
-    I_color.init(reinterpret_cast<vpRGBa *>(buffer_read), y, x, copyData);
+    I_color.init(reinterpret_cast<vpRGBa *>(buffer_read), static_cast<unsigned int>(y), static_cast<unsigned int>(x), copyData);
   }
   else if (comp == 3) {
-    I_color.init(y, x);
+    I_color.init(static_cast<unsigned int>(y), static_cast<unsigned int>(x));
     const bool flip = false;
-    vpImageConvert::RGBToRGBa(buffer_read, reinterpret_cast<unsigned char *>(I_color.bitmap), x, y, flip);
+    vpImageConvert::RGBToRGBa(buffer_read, reinterpret_cast<unsigned char *>(I_color.bitmap), static_cast<unsigned int>(x), static_cast<unsigned int>(y), flip);
   }
   else {
     STBI_FREE(buffer_read);
@@ -200,20 +200,20 @@ void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<vpRGBa>
 */
 void writePNGtoMemStb(const vpImage<unsigned char> &I, std::vector<unsigned char> &buffer)
 {
-  const int height = I.getRows();
-  const int width = I.getCols();
+  const int height = static_cast<int>(I.getRows());
+  const int width = static_cast<int>(I.getCols());
   const int channels = 1;
 
   custom_stbi_mem_context context;
   context.last_pos = 0;
-  buffer.resize(I.getHeight() * I.getWidth());
+  buffer.resize(static_cast<size_t>(I.getHeight()) * static_cast<size_t>(I.getWidth()));
   context.context = (void *)buffer.data();
 
   const int stride_bytes = 0;
   int result = stbi_write_png_to_func(custom_stbi_write_mem, &context, width, height, channels, I.bitmap, stride_bytes);
 
   if (result) {
-    buffer.resize(context.last_pos);
+    buffer.resize(static_cast<size_t>(context.last_pos));
   }
   else {
 #if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
@@ -234,13 +234,13 @@ void writePNGtoMemStb(const vpImage<unsigned char> &I, std::vector<unsigned char
 */
 void writePNGtoMemStb(const vpImage<vpRGBa> &I_color, std::vector<unsigned char> &buffer, bool saveAlpha)
 {
-  const int height = I_color.getRows();
-  const int width = I_color.getCols();
+  const int height = static_cast<int>(I_color.getRows());
+  const int width = static_cast<int>(I_color.getCols());
   const int channels = saveAlpha ? 4 : 3;
 
   custom_stbi_mem_context context;
   context.last_pos = 0;
-  buffer.resize(height * width * channels);
+  buffer.resize(static_cast<size_t>(height) * static_cast<size_t>(width) * static_cast<size_t>(channels));
   context.context = (void *)buffer.data();
 
   const int stride_bytes = 0;
@@ -250,14 +250,14 @@ void writePNGtoMemStb(const vpImage<vpRGBa> &I_color, std::vector<unsigned char>
       reinterpret_cast<unsigned char *>(I_color.bitmap), stride_bytes);
   }
   else {
-    unsigned char *bitmap = new unsigned char[height * width * channels];
-    vpImageConvert::RGBaToRGB(reinterpret_cast<unsigned char *>(I_color.bitmap), bitmap, height*width);
+    unsigned char *bitmap = new unsigned char[static_cast<size_t>(height) * static_cast<size_t>(width) * static_cast<size_t>(channels)];
+    vpImageConvert::RGBaToRGB(reinterpret_cast<unsigned char *>(I_color.bitmap), bitmap, static_cast<size_t>(height) * static_cast<size_t>(width));
     result = stbi_write_png_to_func(custom_stbi_write_mem, &context, width, height, channels, bitmap, stride_bytes);
     delete[] bitmap;
   }
 
   if (result) {
-    buffer.resize(context.last_pos);
+    buffer.resize(static_cast<size_t>(context.last_pos));
   }
   else {
 #if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98

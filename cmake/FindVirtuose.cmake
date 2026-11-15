@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,33 +37,43 @@
 #
 #############################################################################
 
-set(VIRTUOSE_API $ENV{VIRTUOSE_HOME})
+
+set(VIRTUOSE_SEARCH_HINTS
+  ${VIRTUOSE_HOME}
+  $ENV{VIRTUOSE_HOME}
+)
+
 if(UNIX)
-  list(APPEND VIRTUOSE_API /home/soft/virtuose/VirtuoseAPI_v4_03)
-  list(APPEND VIRTUOSE_API /home/soft/virtuose/VirtuoseAPI_v3_98)
-  list(APPEND VIRTUOSE_API /home/soft/virtuose/Livraison_3_97/VirtuoseAPI_v3_97)
-  list(APPEND VIRTUOSE_API /home/soft/virtuose/Livraison_3_90/VirtuoseAPI_v3_93)
-  list(APPEND VIRTUOSE_API /local/virtuose-6D/Livraison_3_90/VirtuoseAPI_v3_93)
+  # Inria specific install locations
+  set(VIRTUOSE_SEARCH_PATHS
+    /home/soft/virtuose/VirtuoseAPI_v4_03
+    /home/soft/virtuose/VirtuoseAPI_v3_98
+    /home/soft/virtuose/Livraison_3_97/VirtuoseAPI_v3_97
+    /home/soft/virtuose/Livraison_3_90/VirtuoseAPI_v3_93
+    /local/virtuose-6D/Livraison_3_90/VirtuoseAPI_v3_93
+  )
 
   set(VIRTUOSE_OS "linux")
 
   if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    list(APPEND VIRTUOSE_ARCH "x64")
+    set(VIRTUOSE_ARCH "x64")
   else()
-    list(APPEND VIRTUOSE_ARCH "x86")
+    set(VIRTUOSE_ARCH "x86")
   endif()
 elseif(MSVC)
-  list(APPEND VIRTUOSE_API "C:/VirtuoseAPI_v4_03")
-  list(APPEND VIRTUOSE_API "C:/VirtuoseAPI_v3_98")
-  list(APPEND VIRTUOSE_API "C:/VirtuoseAPI_v3_97")
-  list(APPEND VIRTUOSE_API "C:/VirtuoseAPI_v3_93")
+  set(VIRTUOSE_SEARCH_PATHS
+    "C:/VirtuoseAPI_v4_03"
+    "C:/VirtuoseAPI_v3_98"
+    "C:/VirtuoseAPI_v3_97"
+    "C:/VirtuoseAPI_v3_93"
+  )
 
   set(VIRTUOSE_OS win)
 
   if(CMAKE_CL_64)
-    list(APPEND VIRTUOSE_ARCH "x64")
+    set(VIRTUOSE_ARCH "x64")
   else()
-    list(APPEND VIRTUOSE_ARCH "Win32")
+    set(VIRTUOSE_ARCH "Win32")
   endif()
 
   if(MSVC_VERSION EQUAL 1400)
@@ -85,60 +95,44 @@ elseif(MSVC)
   elseif(MSVC_VERSION MATCHES "^19[34][0-9]$")
     set(VIRTUOSE_MSVC_RUNTIME VC2022)
   endif()
-
 else()
   return()
 endif()
 
-set(VIRTUOSE_API_INC "")
-set(VIRTUOSE_API_LIB "")
-if(UNIX)
-  foreach(api_ ${VIRTUOSE_API})
-    list(APPEND VIRTUOSE_API_INC "${api_}")
-    list(APPEND VIRTUOSE_API_LIB "${api_}/${VIRTUOSE_OS}/lib/${VIRTUOSE_ARCH}")
-  endforeach()
-elseif(MSVC)
-  foreach(api_ ${VIRTUOSE_API})
-    list(APPEND VIRTUOSE_API_INC "${api_}")
-    list(APPEND VIRTUOSE_API_LIB "${api_}/${VIRTUOSE_OS}/lib/${VIRTUOSE_ARCH}")
-    list(APPEND VIRTUOSE_API_LIB "${api_}/${VIRTUOSE_OS}/lib/${VIRTUOSE_MSVC_RUNTIME}/${VIRTUOSE_ARCH}")
-  endforeach()
-endif()
-
-find_path(VIRTUOSE_INCLUDE_DIRS VirtuoseAPI.h
-  PATHS
-    ${VIRTUOSE_API_INC}
+find_path(VIRTUOSE_INCLUDE_DIR VirtuoseAPI.h
+  HINTS ${VIRTUOSE_SEARCH_HINTS}
+  PATHS ${VIRTUOSE_SEARCH_PATHS}
 )
 
 if(UNIX)
-  find_library(VIRTUOSE_LIBRARIES
+  find_library(VIRTUOSE_LIBRARY
     NAMES virtuose
-    PATHS
-      ${VIRTUOSE_API_LIB}
+    HINTS ${VIRTUOSE_SEARCH_HINTS}
+    PATHS ${VIRTUOSE_SEARCH_PATHS}
+    PATH_SUFFIXES ${VIRTUOSE_OS}/lib/${VIRTUOSE_ARCH}
   )
+  if(VIRTUOSE_LIBRARY)
+    set(VIRTUOSE_LIBRARIES ${VIRTUOSE_LIBRARY})
+  endif()
 elseif(MSVC)
-  set(VIRTUOSE_API_LIB_DEBUG "")
-  set(VIRTUOSE_API_LIB_RELEASE "")
-  foreach(api_ ${VIRTUOSE_API})
-    list(APPEND VIRTUOSE_API_LIB_DEBUG "${api_}/${VIRTUOSE_OS}/lib/${VIRTUOSE_MSVC_RUNTIME}/${VIRTUOSE_ARCH}/DebugMD")
-    list(APPEND VIRTUOSE_API_LIB_RELEASE "${api_}/${VIRTUOSE_OS}/lib/${VIRTUOSE_MSVC_RUNTIME}/${VIRTUOSE_ARCH}/ReleaseMD")
-  endforeach()
+  set(_virtuose_lib_dir ${VIRTUOSE_OS}/lib/${VIRTUOSE_MSVC_RUNTIME}/${VIRTUOSE_ARCH})
   find_library(VIRTUOSE_LIBRARIES_DEBUG
     NAMES virtuoseDLL
-    PATHS
-      ${VIRTUOSE_API_LIB_DEBUG}
+    HINTS ${VIRTUOSE_SEARCH_HINTS}
+    PATHS ${VIRTUOSE_SEARCH_PATHS}
+    PATH_SUFFIXES ${_virtuose_lib_dir}/DebugMD
   )
   find_library(VIRTUOSE_LIBRARIES_RELEASE
     NAMES virtuoseDLL
-    PATHS
-      ${VIRTUOSE_API_LIB_RELEASE}
+    HINTS ${VIRTUOSE_SEARCH_HINTS}
+    PATHS ${VIRTUOSE_SEARCH_PATHS}
+    PATH_SUFFIXES ${_virtuose_lib_dir}/ReleaseMD
   )
 
   if(VIRTUOSE_LIBRARIES_DEBUG AND VIRTUOSE_LIBRARIES_RELEASE)
     set(VIRTUOSE_LIBRARIES
       debug ${VIRTUOSE_LIBRARIES_DEBUG}
       optimized ${VIRTUOSE_LIBRARIES_RELEASE})
-
   elseif(VIRTUOSE_LIBRARIES_DEBUG)
     set(VIRTUOSE_LIBRARIES ${VIRTUOSE_LIBRARIES_DEBUG})
   elseif(VIRTUOSE_LIBRARIES_RELEASE)
@@ -146,17 +140,16 @@ elseif(MSVC)
   endif()
 endif()
 
-if(VIRTUOSE_LIBRARIES AND VIRTUOSE_INCLUDE_DIRS)
+if(VIRTUOSE_LIBRARIES AND VIRTUOSE_INCLUDE_DIR)
+  set(VIRTUOSE_INCLUDE_DIRS ${VIRTUOSE_INCLUDE_DIR})
   set(VIRTUOSE_FOUND TRUE)
 else()
   set(VIRTUOSE_FOUND FALSE)
 endif()
 
 mark_as_advanced(
-  VIRTUOSE_INCLUDE_DIRS
-  VIRTUOSE_LIBRARIES
+  VIRTUOSE_INCLUDE_DIR
+  VIRTUOSE_LIBRARY
   VIRTUOSE_LIBRARIES_DEBUG
   VIRTUOSE_LIBRARIES_RELEASE
-  VIRTUOSE_INC_SEARCH_PATH
-  VIRTUOSE_LIB_SEARCH_PATH
 )

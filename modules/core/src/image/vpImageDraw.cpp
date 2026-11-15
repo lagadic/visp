@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,8 +70,8 @@ void DrawLine(vpImage<Type> &canvas, int x1, int y1, int x2, int y2, const Type 
   const int w = static_cast<int>(canvas.getWidth()) - 1;
   const int h = static_cast<int>(canvas.getHeight()) - 1;
 
-  if (x1 < 0 || y1 < 0 || (x1 - w) > 0 || (y1 - h) > 0 || x2 < 0 || y2 < 0 || (x2 - w) > 0 || (y2 - h) > 0) {
-    if ((x1 < 0 && x2 < 0) || (y1 < 0 && y2 < 0) || ((x1 - w) > 0 && (x2 - w) > 0) || ((y1 - h) > 0 && (y2 - h) > 0)) {
+  if (x1 < 0 || y1 < 0 || x1 > w || y1 > h || x2 < 0 || y2 < 0 || x2 > w || y2 > h) {
+    if ((x1 < 0 && x2 < 0) || (y1 < 0 && y2 < 0) || (x1 > w && x2 > w) || (y1 > h && y2 > h)) {
       return;
     }
 

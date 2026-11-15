@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -176,12 +176,12 @@ bool getOptions(int argc, const char *argv[], std::string &input_folder, std::st
   return true;
 }
 
-void checkData(unsigned int cpt_frame, const std::string &input_folder, const std::string &input_pattern,
+void checkData(int cpt_frame, const std::string &input_folder, const std::string &input_pattern,
                bool &color_found, std::string &color_ext,
                bool &depth_found, std::string &depth_ext,
                bool &infra_found, std::string &infra_ext,
                bool &pcl_found, std::string &pcl_ext,
-               unsigned int &frame_first, unsigned int &frame_last)
+               int &frame_first, int &frame_last)
 {
   // Check if color present
   {
@@ -189,7 +189,7 @@ void checkData(unsigned int cpt_frame, const std::string &input_folder, const st
     ext.push_back(".jpg");
     ext.push_back(".png");
     for (size_t i = 0; i < ext.size(); ++i) {
-      std::string f = vpIoTools::formatString(input_folder + "/color_image_" + input_pattern + ext[i], cpt_frame);
+      std::string f = vpIoTools::formatString(input_folder + "/color_image_" + input_pattern + ext[i], static_cast<unsigned int>(cpt_frame));
       if (vpIoTools::checkFilename(f)) {
         color_ext = ext[i];
         color_found = true;
@@ -206,7 +206,7 @@ void checkData(unsigned int cpt_frame, const std::string &input_folder, const st
     ext.push_back(".npz");
 #endif
     for (size_t i = 0; i < ext.size(); ++i) {
-      std::string f = vpIoTools::formatString(input_folder + "/depth_image_" + input_pattern + ext[i], cpt_frame);
+      std::string f = vpIoTools::formatString(input_folder + "/depth_image_" + input_pattern + ext[i], static_cast<unsigned int>(cpt_frame));
       if (vpIoTools::checkFilename(f)) {
         depth_ext = ext[i];
         depth_found = true;
@@ -221,7 +221,7 @@ void checkData(unsigned int cpt_frame, const std::string &input_folder, const st
     ext.push_back(".jpg");
     ext.push_back(".png");
     for (size_t i = 0; i < ext.size(); ++i) {
-      std::string f = vpIoTools::formatString(input_folder + "/infrared_image_" + input_pattern + ext[i], cpt_frame);
+      std::string f = vpIoTools::formatString(input_folder + "/infrared_image_" + input_pattern + ext[i], static_cast<unsigned int>(cpt_frame));
       if (vpIoTools::checkFilename(f)) {
         infra_ext = ext[i];
         infra_found = true;
@@ -240,7 +240,7 @@ void checkData(unsigned int cpt_frame, const std::string &input_folder, const st
     ext.push_back(".pcd");
 #endif
     for (size_t i = 0; i < ext.size(); ++i) {
-      std::string f = vpIoTools::formatString(input_folder + "/point_cloud_" + input_pattern + ext[i], cpt_frame);
+      std::string f = vpIoTools::formatString(input_folder + "/point_cloud_" + input_pattern + ext[i], static_cast<unsigned int>(cpt_frame));
       if (vpIoTools::checkFilename(f)) {
         pcl_ext = ext[i];
         pcl_found = true;
@@ -287,11 +287,12 @@ bool readData(int cpt, const std::string &input_folder, const std::string &input
 #endif
 )
 {
-  filename_color = vpIoTools::formatString(input_folder + "/color_image_" + input_pattern + color_ext, cpt);
-  filename_depth = vpIoTools::formatString(input_folder + "/depth_image_" + input_pattern + depth_ext, cpt);
-  filename_infra = vpIoTools::formatString(input_folder + "/infrared_image_" + input_pattern + infra_ext, cpt);
+  unsigned int cpt_ = static_cast<unsigned int>(cpt);
+  filename_color = vpIoTools::formatString(input_folder + "/color_image_" + input_pattern + color_ext, cpt_);
+  filename_depth = vpIoTools::formatString(input_folder + "/depth_image_" + input_pattern + depth_ext, cpt_);
+  filename_infra = vpIoTools::formatString(input_folder + "/infrared_image_" + input_pattern + infra_ext, cpt_);
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
-  filename_pcl = vpIoTools::formatString(input_folder + "/point_cloud_" + input_pattern + pcl_ext, cpt);
+  filename_pcl = vpIoTools::formatString(input_folder + "/point_cloud_" + input_pattern + pcl_ext, cpt_);
 #endif
 
   if (!vpIoTools::checkFilename(filename_color) && !vpIoTools::checkFilename(filename_depth) &&
@@ -494,13 +495,13 @@ int main(int argc, const char *argv[])
     writer.setFileName(output_folder + "/" + opt_input_pattern + ".png");
   }
 
-  unsigned int cpt_frame = 0;
+  int cpt_frame = 0;
   bool color_found = false;
   bool depth_found = false;
   bool infra_found = false;
   bool pcl_found = false;
   std::string color_ext, depth_ext, infra_ext, pcl_ext;
-  unsigned int frame_first = 0, frame_last = 0;
+  int frame_first = 0, frame_last = 0;
 
   checkData(cpt_frame, opt_input_folder, opt_input_pattern,
             color_found, color_ext,
@@ -571,19 +572,19 @@ int main(int argc, const char *argv[])
       }
       if (depth_found) {
         if (opt_display_colored_depth) {
-          d2->init(I_depth_color, I_color.getWidth() + 80, 0, "Depth image");
+          d2->init(I_depth_color, static_cast<int>(I_color.getWidth()) + 80, 0, "Depth image");
         }
         else {
-          d2->init(I_depth_gray, I_color.getWidth() + 80, 0, "Depth image");
+          d2->init(I_depth_gray, static_cast<int>(I_color.getWidth()) + 80, 0, "Depth image");
         }
       }
       if (infra_found) {
-        d3->init(I_infra, I_color.getWidth() + 80, I_color.getHeight() + 70, "Infrared image");
+        d3->init(I_infra, static_cast<int>(I_color.getWidth()) + 80, static_cast<int>(I_color.getHeight()) + 70, "Infrared image");
       }
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
       if (pcl_found) {
         if (pointcloud->size() > 0) {
-          pcl_viewer.setPosition(0, I_color.getHeight() + 70);
+          pcl_viewer.setPosition(0, static_cast<int>(I_color.getHeight()) + 70);
           pcl_viewer.setWindowName("3D point cloud");
           pcl_viewer.startThread(std::ref(mutex), pointcloud);
         }

@@ -100,8 +100,7 @@ BEGIN_VISP_NAMESPACE
  * carres du systeme a * x = b, d * x = 0. sdiag  Vecteur de taille "n"
  * contenant les elements diagonaux de la matrice triangulaire superieure "s".
  */
-  int VISP_EXPORT qrsolv(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, double *x, double *sdiag,
-                         double *wa);
+  int qrsolv(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, double *x, double *sdiag, double *wa);
 
   /*
    * PROCEDURE  : enorm
@@ -129,7 +128,7 @@ BEGIN_VISP_NAMESPACE
    * Sinon, la valeur -1 est retournee et la variable globale "errno" est
    * initialisee pour indiquee le type de l'erreur.
    */
-double VISP_EXPORT enorm(const double *x, int n);
+double enorm(const double *x, int n);
 
 /* PROCEDURE  : lmpar
  *
@@ -202,8 +201,8 @@ double VISP_EXPORT enorm(const double *x, int n);
  * RETOUR  :
  * En cas de succes, la valeur 0.0 est retournee.
  */
-int VISP_EXPORT lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, double *delta, double *par,
-                      double *x, double *sdiag, double *wa1, double *wa2);
+int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, double *delta, double *par,
+          double *x, double *sdiag, double *wa1, double *wa2);
 
 /*
  * PROCEDURE  : pythag
@@ -218,7 +217,7 @@ int VISP_EXPORT lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double
  * RETOUR  :
  * La procedure retourne la racine carre de a^2 + b^2.
  */
-double VISP_EXPORT pythag(double a, double b);
+double pythag(double a, double b);
 
 /*
  * PROCEDURE  : qrfac
@@ -264,8 +263,7 @@ double VISP_EXPORT pythag(double a, double b);
  *    correspondantes de la matrice "a". Si cette information n'est
  *    pas requise, acnorm coincide avec rdiag.
  */
-int VISP_EXPORT qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt, int lipvt, double *rdiag, double *acnorm,
-                      double *wa);
+int qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt, int lipvt, double *rdiag, double *acnorm, double *wa);
 
 /**
  * \brief Function pointer towards a method that evaluates a function and its Jacobian.
@@ -377,11 +375,11 @@ typedef void (*ComputeFunctionAndJacobian)(int m, int n, double *xc, double *fve
  * En cas de succes, la valeur zero est retournee.
  * Sinon la valeur -1 est retournee.
  */
-int VISP_EXPORT lmder(ComputeFunctionAndJacobian ptr_fcn,
-                      int m, int n, double *x, double *fvec, double *fjac, int ldfjac, double ftol, double xtol,
-                      double gtol, unsigned int maxfev, double *diag, int mode, const double factor, int nprint,
-                      int *info, unsigned int *nfev, int *njev, int *ipvt, double *qtf, double *wa1, double *wa2,
-                      double *wa3, double *wa4);
+int lmder(ComputeFunctionAndJacobian ptr_fcn,
+          int m, int n, double *x, double *fvec, double *fjac, int ldfjac, double ftol, double xtol,
+          double gtol, unsigned int maxfev, double *diag, int mode, const double factor, int nprint,
+          int *info, unsigned int *nfev, int *njev, int *ipvt, double *qtf, double *wa1, double *wa2,
+          double *wa3, double *wa4);
 
 /*
  * PROCEDURE    : lmder1
@@ -462,9 +460,9 @@ int VISP_EXPORT lmder(ComputeFunctionAndJacobian ptr_fcn,
  * En cas de succes, la valeur zero est retournee.
  * Sinon, la valeur -1.
  */
-int VISP_EXPORT lmder1(ComputeFunctionAndJacobian ptr_fcn,
-                       int m, int n, double *x, double *fvec, double *fjac, int ldfjac, double tol, int *info,
-                       int *ipvt, int lwa, double *wa);
+int lmder1(ComputeFunctionAndJacobian ptr_fcn,
+           int m, int n, double *x, double *fvec, double *fjac, int ldfjac, double tol, int *info,
+           int *ipvt, int lwa, double *wa);
 
 END_VISP_NAMESPACE
 

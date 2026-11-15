@@ -1,47 +1,57 @@
-.. _Examples:
+.. Tutorials:
 
-Examples
+Tutorials
 ====================
 
 
-Robot interface
+Image Manipulation
 -----------------------
 
 .. toctree::
     :glob:
-    :maxdepth: 2
+    :maxdepth: 1
 
-    robot/*
+    image/tutorial-image-getting-started.rst
+    image/tutorial-image-display.rst
+    image/tutorial-image-io.rst
+    image/tutorial-image-drawings.rst
+    image/tutorial-image-interactions.rst
+    image/tutorial-image-filter.rst
 
 
-
-Visual servoing
+Camera Acquisition
 -----------------------
 
 .. toctree::
     :glob:
-    :maxdepth: 2
+    :maxdepth: 1
 
-    vs/*
+    camera/tutorial-camera-realsense.rst
 
 
-
-Tracking
+AprilTag Detection
 -----------------------
 
 .. toctree::
     :glob:
-    :maxdepth: 2
+    :maxdepth: 1
 
-    tracking/*
+    detection/tutorial-detection-apriltag.rst
 
+Segmentation
+------------
 
+.. toctree::
+    :glob:
+    :maxdepth: 1
 
-Other tools
+    segmentation/tutorial-color-segmentation.rst
+
+Visual Servoing
 -----------------------
 
 .. toctree::
     :glob:
-    :maxdepth: 2
+    :maxdepth: 1
 
-    misc/*
+    visual-servoing/tutorial-visual-servoing-franka.rst

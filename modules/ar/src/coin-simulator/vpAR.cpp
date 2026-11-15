@@ -107,7 +107,7 @@ void vpAR::setImage(vpImage<unsigned char> &I)
 
   if ((internal_width != I.getWidth()) || (internal_height != I.getHeight())) {
     vpERROR_TRACE("The image size is different from the view size ");
-    throw(vpException(vpException::dimensionError), "The image size is different from the view size");
+    throw(vpException(vpException::dimensionError, "The image size is different from the view size"));
   }
 
   background = true;
@@ -129,7 +129,7 @@ void vpAR::setImage(vpImage<vpRGBa> &I)
 {
   if ((internal_width != I.getWidth()) || (internal_height != I.getHeight())) {
     vpERROR_TRACE("The image size is different from the view size ");
-    throw(vpException(vpException::dimensionError), "The image size is different from the view size");
+    throw(vpException(vpException::dimensionError, "The image size is different from the view size"));
   }
 
   background = true;

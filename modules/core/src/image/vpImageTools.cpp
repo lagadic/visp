@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -633,12 +633,12 @@ double interpolationNearest(const vpImage<unsigned char> &I, const vpImagePoint 
   int y2 = static_cast<int>(ceil(point.get_j()));
   double v1, v2;
   if (x1 == x2) {
-    v1 = I(x1, y1);
-    v2 = I(x1, y2);
+    v1 = I(static_cast<unsigned int>(x1), static_cast<unsigned int>(y1));
+    v2 = I(static_cast<unsigned int>(x1), static_cast<unsigned int>(y2));
   }
   else {
-    v1 = ((x2 - point.get_i()) * I(x1, y1)) + ((point.get_i() - x1) * I(x2, y1));
-    v2 = ((x2 - point.get_i()) * I(x1, y2)) + ((point.get_i() - x1) * I(x2, y2));
+    v1 = ((x2 - point.get_i()) * I(static_cast<unsigned int>(x1), static_cast<unsigned int>(y1))) + ((point.get_i() - x1) * I(static_cast<unsigned int>(x2), static_cast<unsigned int>(y1)));
+    v2 = ((x2 - point.get_i()) * I(static_cast<unsigned int>(x1), static_cast<unsigned int>(y2))) + ((point.get_i() - x1) * I(static_cast<unsigned int>(x2), static_cast<unsigned int>(y2)));
   }
   if (y1 == y2) {
     return v1;
@@ -659,7 +659,8 @@ double vpImageTools::interpolate(const vpImage<unsigned char> &I, const vpImageP
 {
   switch (method) {
   case INTERPOLATION_NEAREST:
-    return I(vpMath::round(point.get_i()), vpMath::round(point.get_j()));
+    return I(static_cast<unsigned int>(vpMath::round(point.get_i())),
+             static_cast<unsigned int>(vpMath::round(point.get_j())));
   case INTERPOLATION_LINEAR: {
     return interpolationNearest(I, point);
   }
@@ -681,8 +682,8 @@ double vpImageTools::interpolate(const vpImage<unsigned char> &I, const vpImageP
 */
 void vpImageTools::extract(const vpImage<unsigned char> &src, vpImage<unsigned char> &dst, const vpRectOriented &r)
 {
-  unsigned int x_d = vpMath::round(r.getHeight());
-  unsigned int y_d = vpMath::round(r.getWidth());
+  unsigned int x_d = static_cast<unsigned int>(vpMath::round(r.getHeight()));
+  unsigned int y_d = static_cast<unsigned int>(vpMath::round(r.getWidth()));
   double x1 = r.getTopLeft().get_i();
   double y1 = r.getTopLeft().get_j();
   double t = r.getOrientation();
@@ -708,8 +709,8 @@ void vpImageTools::extract(const vpImage<unsigned char> &src, vpImage<unsigned c
 */
 void vpImageTools::extract(const vpImage<unsigned char> &src, vpImage<double> &dst, const vpRectOriented &r)
 {
-  unsigned int x_d = vpMath::round(r.getHeight());
-  unsigned int y_d = vpMath::round(r.getWidth());
+  unsigned int x_d = static_cast<unsigned int>(vpMath::round(r.getHeight()));
+  unsigned int y_d = static_cast<unsigned int>(vpMath::round(r.getWidth()));
   double x1 = r.getTopLeft().get_i();
   double y1 = r.getTopLeft().get_j();
   double t = r.getOrientation();
@@ -802,9 +803,10 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
 #endif
     for (int cpt = 0; cpt < end; ++cpt) {
       unsigned int i_width = I.getWidth();
+      unsigned int cpt_u = static_cast<unsigned int>(cpt);
       for (unsigned int j = 0; j < (i_width - width_tpl); j += step_u) {
-        I_score[vec_step_v[cpt]][j] =
-          normalizedCorrelation(I_double, I_tpl_double, II, IIsq, II_tpl, IIsq_tpl, vec_step_v[cpt], j);
+        I_score[vec_step_v[cpt_u]][j] =
+          normalizedCorrelation(I_double, I_tpl_double, II, IIsq, II_tpl, IIsq_tpl, vec_step_v[cpt_u], j);
       }
     }
 #endif
@@ -950,7 +952,8 @@ void vpImageTools::remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, c
 #endif
   for (int i = 0; i < I_height; ++i) {
 #if defined(VISP_HAVE_SIMDLIB)
-    SimdRemap(reinterpret_cast<unsigned char *>(I.bitmap), 4, I.getWidth(), I.getHeight(), i * I.getWidth(), mapU.data,
+    SimdRemap(reinterpret_cast<unsigned char *>(I.bitmap), 4, I.getWidth(), I.getHeight(),
+              static_cast<size_t>(i) * static_cast<size_t>(I.getWidth()), mapU.data,
               mapV.data, mapDu.data, mapDv.data, reinterpret_cast<unsigned char *>(Iundist.bitmap));
 #else
     const unsigned int i_ = static_cast<unsigned int>(i);
@@ -1096,7 +1099,10 @@ int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturat
 #pragma omp parallel for reduction(+:cpt_in_range)
 #endif
   for (int i = 0; i < size_; ++i) {
-    bool check_h_low_high_hue = (h_low <= hue[i]) && (hue[i] <= h_high);
+    bool check_h_low_high_hue = (
+      ((h_low <= h_high) && ((h_low <= hue[i]) && (hue[i] <= h_high))) ||
+      ((h_low > h_high) && ((h_low <= hue[i]) || (hue[i] <= h_high)))
+    );
     bool check_s_low_high_saturation = (s_low <= saturation[i]) && (saturation[i] <= s_high);
     bool check_v_low_high_value = (v_low <= value[i]) && (value[i] <= v_high);
     if (check_h_low_high_hue && check_s_low_high_saturation && check_v_low_high_value) {
@@ -1161,7 +1167,10 @@ int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturat
 #pragma omp parallel for reduction(+:cpt_in_range)
 #endif
   for (int i = 0; i < size_; ++i) {
-    bool check_h_low_high_hue = (h_low <= hue[i]) && (hue[i] <= h_high);
+    bool check_h_low_high_hue = (
+      ((h_low <= h_high) && ((h_low <= hue[i]) && (hue[i] <= h_high))) ||
+      ((h_low > h_high) && ((h_low <= hue[i]) || (hue[i] <= h_high)))
+    );
     bool check_s_low_high_saturation = (s_low <= saturation[i]) && (saturation[i] <= s_high);
     bool check_v_low_high_value = (v_low <= value[i]) && (value[i] <= v_high);
     if (check_h_low_high_hue && check_s_low_high_saturation && check_v_low_high_value) {

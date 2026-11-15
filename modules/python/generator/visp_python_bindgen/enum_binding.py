@@ -109,21 +109,30 @@ def resolve_enums_and_typedefs_to_enums(root_scope: NamespaceScope, mapping: Dic
   match_id = lambda repr, enum_id: repr.id is not None and enum_id is not None and repr.id == enum_id
   match_name = lambda repr, full_name: repr.name is not None and full_name is not None and repr.name == full_name
   enum_repr_is_ready = lambda repr: repr.name is not None and repr.values is not None
+  def accumulate_data(scope: Union[NamespaceScope, ClassScope], scope_prefix=''):
+    new_scope_prefix = scope_prefix
+    if isinstance(scope, NamespaceScope) and scope.name != '':
+      new_scope_prefix = scope_prefix + scope.name + '::'
+    elif isinstance(scope, ClassScope):
+      if not is_anonymous_name(scope.class_decl.typename):
+        new_scope_prefix = scope_prefix + get_typename(scope.class_decl.typename, {}, mapping)
 
-  def accumulate_data(scope: Union[NamespaceScope, ClassScope]):
+    # new_scope_prefix =  scope_prefix + scope.name + '::' if isinstance(scope, NamespaceScope) else scope_prefix + get_typename(scope.class_decl.typename, {}, mapping)
     if isinstance(scope, ClassScope):
       if scope.class_decl.access is not None and scope.class_decl.access != 'public':
         return
     for cls in scope.classes:
-      accumulate_data(cls)
+      accumulate_data(cls, new_scope_prefix)
     if isinstance(scope, NamespaceScope):
       for namespace in scope.namespaces:
-        accumulate_data(scope.namespaces[namespace])
+        accumulate_data(scope.namespaces[namespace], new_scope_prefix)
     for enum in scope.enums:
       public_access = True
       anonymous_enum, enum_id = is_anonymous_name(enum.typename)
 
-      full_name = get_typename(enum.typename, {}, mapping) if not anonymous_enum else None
+      full_name = get_typename(enum.typename, {}, mapping, keep_visp_namespace=True) if not anonymous_enum else None
+      if full_name is not None: # Add parent prefix
+        full_name = new_scope_prefix + full_name
       # If in a namespace or parent class, this symbol can be referenced from outside and the visibility will be incorrect
       if enum.access is not None and enum.access != 'public':
         public_access = False
@@ -176,14 +185,12 @@ def resolve_enums_and_typedefs_to_enums(root_scope: NamespaceScope, mapping: Dic
 def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodule, header: 'HeaderFile') -> List[SingleObjectBindings]:
 
   final_data, filtered_reprs = resolve_enums_and_typedefs_to_enums(root_scope, mapping)
-
   for repr in filtered_reprs:
     logging.info(f'Enum {repr} was ignored, because it is incomplete (missing values or name)')
 
   result: List['SingleObjectBindings'] = []
   final_reprs = []
   for repr in final_data:
-
     enum_config = submodule.get_enum_config(repr.name)
     if enum_config['ignore']:
       filtered_reprs.append(repr)
@@ -209,7 +216,10 @@ def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Subm
 
     for segment in name_segments[:-1]:
       full_segment_name = mapping.get(segment)
-      if full_segment_name is not None and submodule.class_should_be_ignored(full_segment_name):
+      if full_segment_name is None:
+        continue
+      full_segment_name = full_segment_name.replace('visp::', '')
+      if submodule.class_should_be_ignored(full_segment_name):
         parent_ignored = True
         ignored_parent_name = full_segment_name
         break

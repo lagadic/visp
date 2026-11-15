@@ -29,7 +29,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Try to find OpenCV framework.
+# Try to find Panda3D framework.
 #
 # Panda3D_FOUND
 # Panda3D_INCLUDE_DIRS
@@ -37,28 +37,16 @@
 #
 #############################################################################
 
-set(PANDA3D_INCLUDE_SEARCH_PATHS
-  $ENV{Panda3D_DIR}/include
-  $ENV{Panda3D_DIR}/built/include
-  ${Panda3D_DIR}/include
-  ${Panda3D_DIR}/built/include
-  /usr/include/panda3d
-  /usr/local/include/panda3d
-  /Library/Developer/Panda3D/include
-)
 
-set(PANDA3D_LIBRARIES_SEARCH_PATHS
-  $ENV{Panda3D_DIR}/lib
-  $ENV{Panda3D_DIR}/built/lib
-  $ENV{Panda3D_DIR}/bin
-  ${Panda3D_DIR}/lib
-  ${Panda3D_DIR}/built/lib
-  ${Panda3D_DIR}/bin
-  /usr/lib/panda3d
-  /usr/local/lib/panda3d
-  /usr/lib/x86_64-linux-gnu/panda3d
-  /Library/Developer/Panda3D/lib
+set(Panda3D_SEARCH_HINTS
+  ${Panda3D_DIR}
+  ${Panda3D_DIR_HINT} # Panda3D_DIR value set by the user before being reset by find_package(Panda3D) in config mode
+  $ENV{Panda3D_DIR}
 )
+set(Panda3D_SEARCH_PATHS "")
+if(APPLE)
+  list(APPEND Panda3D_SEARCH_PATHS /Library/Developer/Panda3D)
+endif()
 
 set(PANDA3D_LIBS
   panda p3framework pandaexpress
@@ -72,7 +60,12 @@ set(PANDA3D_LIBS
 set(Panda3D_LIBRARIES "")
 set(ALL_LIBS_FOUND TRUE)
 foreach(lib_name ${PANDA3D_LIBS})
-  find_library(Panda3D_${lib_name}_LIBRARY NAMES "lib${lib_name}" ${lib_name} PATHS ${PANDA3D_LIBRARIES_SEARCH_PATHS})
+  find_library(Panda3D_${lib_name}_LIBRARY
+    NAMES "lib${lib_name}" ${lib_name}
+    HINTS ${Panda3D_SEARCH_HINTS}
+    PATHS ${Panda3D_SEARCH_PATHS}
+    PATH_SUFFIXES panda3d lib lib/panda3d built/lib bin
+  )
   if(NOT Panda3D_${lib_name}_LIBRARY)
     set(ALL_LIBS_FOUND FALSE)
   else()
@@ -82,14 +75,19 @@ foreach(lib_name ${PANDA3D_LIBS})
   mark_as_advanced(Panda3D_${lib_name}_LIBRARY)
 endforeach()
 
-find_path(Panda3D_INCLUDE_DIRS panda.h PATHS ${PANDA3D_INCLUDE_SEARCH_PATHS} PATH_SUFFIXES panda3d)
+find_path(Panda3D_INCLUDE_DIRS panda.h
+  HINTS ${Panda3D_SEARCH_HINTS}
+  PATHS ${Panda3D_SEARCH_PATHS}
+  PATH_SUFFIXES panda3d include include/panda3d built/include
+)
 
 include(FindPackageHandleStandardArgs)
 # Handle the QUIETLY and REQUIRED arguments and set the Panda3D_FOUND to TRUE
 # if all listed variables are TRUE
-find_package_handle_standard_args(Panda3D DEFAULT_MSG ALL_LIBS_FOUND Panda3D_INCLUDE_DIRS)
+find_package_handle_standard_args(MyPanda3D DEFAULT_MSG ALL_LIBS_FOUND Panda3D_INCLUDE_DIRS)
 
-if(Panda3D_FOUND)
+if(MyPanda3D_FOUND)
+  set(Panda3D_FOUND TRUE)
   vp_parse_header2(Panda3D "${Panda3D_INCLUDE_DIRS}/pandaVersion.h" PANDA_VERSION_STR)
 endif()
 

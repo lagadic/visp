@@ -89,12 +89,12 @@ int main(int argc, const char **argv)
   vpDisplay::display(I_res);
 
   vpDisplay::displayText(I_res, 30, 20, "Huang", vpColor::red);
-  vpDisplay::displayText(I_res, 30, 20 + I.getWidth(), "Intermodes", vpColor::red);
-  vpDisplay::displayText(I_res, 30, 20 + 2 * I.getWidth(), "IsoData", vpColor::red);
-  vpDisplay::displayText(I_res, 30 + I.getHeight(), 20, "Mean", vpColor::red);
-  vpDisplay::displayText(I_res, 30 + I.getHeight(), 20 + I.getWidth(), "Original", vpColor::red);
-  vpDisplay::displayText(I_res, 30 + I.getHeight(), 20 + 2 * I.getWidth(), "Otsu", vpColor::red);
-  vpDisplay::displayText(I_res, 30 + 2 * I.getHeight(), 20, "Triangle", vpColor::red);
+  vpDisplay::displayText(I_res, 30, 20 + static_cast<int>(I.getWidth()), "Intermodes", vpColor::red);
+  vpDisplay::displayText(I_res, 30, 20 + 2 * static_cast<int>(I.getWidth()), "IsoData", vpColor::red);
+  vpDisplay::displayText(I_res, 30 + static_cast<int>(I.getHeight()), 20, "Mean", vpColor::red);
+  vpDisplay::displayText(I_res, 30 + static_cast<int>(I.getHeight()), 20 + static_cast<int>(I.getWidth()), "Original", vpColor::red);
+  vpDisplay::displayText(I_res, 30 + static_cast<int>(I.getHeight()), 20 + 2 * static_cast<int>(I.getWidth()), "Otsu", vpColor::red);
+  vpDisplay::displayText(I_res, 30 + 2 * static_cast<int>(I.getHeight()), 20, "Triangle", vpColor::red);
 
   vpDisplay::flush(I_res);
   vpDisplay::getClick(I_res);

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,11 +39,46 @@
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpRobotFranka.h>
 
+#include <locale>
+#include <regex>
+#include <sstream>
+
 #include "vpForceTorqueGenerator_impl.h"
 #include "vpJointPosTrajGenerator_impl.h"
 #include "vpJointVelTrajGenerator_impl.h"
 
 BEGIN_VISP_NAMESPACE
+
+#if !defined(DOXYGEN_SHOULD_SKIP_THIS) && (VISP_HAVE_FRANKA_VERSION >= 0x000F00)
+namespace
+{
+/*!
+ * Get the value of attribute `name` in the XML start tag `tag`.
+ */
+bool getXmlAttribute(const std::string &tag, const std::string &name, std::string &value)
+{
+  const std::regex re("\\b" + name + "\\s*=\\s*\"([^\"]*)\"");
+  std::smatch m;
+  if (std::regex_search(tag, m, re)) {
+    value = m[1];
+    return true;
+  }
+  return false;
+}
+
+/*!
+ * Convert a string into a double independently of the current locale (URDF uses '.' as decimal separator).
+ */
+bool toDouble(const std::string &str, double &value)
+{
+  std::istringstream iss(str);
+  iss.imbue(std::locale::classic());
+  iss >> value;
+  return !iss.fail();
+}
+} // namespace
+#endif // !DOXYGEN_SHOULD_SKIP_THIS && libfranka >= 0.15
+
 /*!
 
   Default constructor.
@@ -53,7 +88,8 @@ vpRobotFranka::vpRobotFranka()
   : vpRobot(), m_handler(nullptr), m_gripper(nullptr), m_model(nullptr), m_positioningVelocity(20.), m_velControlThread(),
   m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
   m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
-  m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
+  m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(),
+  m_franka_model(vpFrankaModel::kPanda), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
   m_franka_address()
 {
   init();
@@ -69,7 +105,8 @@ vpRobotFranka::vpRobotFranka(const std::string &franka_address, franka::Realtime
   : vpRobot(), m_handler(nullptr), m_gripper(nullptr), m_model(nullptr), m_positioningVelocity(20.), m_velControlThread(),
   m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
   m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
-  m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
+  m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(),
+  m_franka_model(vpFrankaModel::kPanda), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
   m_franka_address()
 {
   init();
@@ -86,7 +123,8 @@ vpRobotFranka::vpRobotFranka(const std::string &franka_address, vpRealtimeConfig
   : vpRobot(), m_handler(nullptr), m_gripper(nullptr), m_model(nullptr), m_positioningVelocity(20.), m_velControlThread(),
   m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
   m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
-  m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
+  m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(),
+  m_franka_model(vpFrankaModel::kPanda), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
   m_franka_address()
 {
   init();
@@ -95,15 +133,111 @@ vpRobotFranka::vpRobotFranka(const std::string &franka_address, vpRealtimeConfig
 
 /*!
  * Initialize internal vars, such as min, max joint positions, max velocity and acceleration.
+ * Until connect() detects the robot model, the Panda limits are used.
  */
 void vpRobotFranka::init()
 {
   nDof = 7;
 
-  m_q_min = std::array<double, 7>{-2.8973, -1.7628, -2.8973, -3.0718, -2.8973, -0.0175, -2.8973};
-  m_q_max = std::array<double, 7>{2.8973, 1.7628, 2.8973, -0.0698, 2.8973, 3.7525, 2.8973};
-  m_dq_max = std::array<double, 7>{2.1750, 2.1750, 2.1750, 2.1750, 2.6100, 2.6100, 2.6100};
-  m_ddq_max = std::array<double, 7>{15.0, 7.5, 10.0, 12.5, 15.0, 20.0, 20.0};
+  m_franka_model = vpFrankaModel::kPanda;
+  setJointLimits(m_franka_model);
+}
+
+/*!
+ * Set the joint position, velocity and acceleration limits of the given robot model, as specified by
+ * Franka Robotics.
+ * \param[in] model : Robot model.
+ */
+void vpRobotFranka::setJointLimits(const vpFrankaModel &model)
+{
+  switch (model) {
+  case vpFrankaModel::kPanda:
+    m_q_min = std::array<double, 7>{-2.8973, -1.7628, -2.8973, -3.0718, -2.8973, -0.0175, -2.8973};
+    m_q_max = std::array<double, 7>{2.8973, 1.7628, 2.8973, -0.0698, 2.8973, 3.7525, 2.8973};
+    m_dq_max = std::array<double, 7>{2.1750, 2.1750, 2.1750, 2.1750, 2.6100, 2.6100, 2.6100};
+    m_ddq_max = std::array<double, 7>{15.0, 7.5, 10.0, 12.5, 15.0, 20.0, 20.0};
+    break;
+  case vpFrankaModel::kFR3:
+    m_q_min = std::array<double, 7>{-2.7437, -1.7837, -2.9007, -3.0421, -2.8065, 0.5445, -3.0159};
+    m_q_max = std::array<double, 7>{2.7437, 1.7837, 2.9007, -0.1518, 2.8065, 4.5169, 3.0159};
+    m_dq_max = std::array<double, 7>{2.62, 2.62, 2.62, 2.62, 5.26, 4.18, 5.26};
+    m_ddq_max = std::array<double, 7>{10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0};
+    break;
+  }
+}
+
+/*!
+ * Set the joint position and velocity limits from the URDF model provided by the robot itself.
+ * Only available with libfranka >= 0.15 (FR3). Joint names are either `joint<i>` or `<prefix>_joint<i>`.
+ * \return true when the limits of the 7 joints were found, false otherwise (limits are then unchanged).
+ */
+bool vpRobotFranka::setJointLimitsFromRobotModel()
+{
+#if (VISP_HAVE_FRANKA_VERSION >= 0x000F00)
+  if (!m_handler) {
+    return false;
+  }
+  std::string urdf;
+  try {
+    urdf = m_handler->getRobotModel();
+  }
+  catch (const franka::Exception &) {
+    return false;
+  }
+
+  std::array<double, 7> q_min = m_q_min, q_max = m_q_max, dq_max = m_dq_max;
+  std::array<bool, 7> found { {false, false, false, false, false, false, false} };
+  const std::regex re_arm_joint("(?:^|_)joint([1-7])$");
+
+  size_t pos = 0;
+  while ((pos = urdf.find("<joint", pos)) != std::string::npos) {
+    size_t tag_end = urdf.find('>', pos);
+    if (tag_end == std::string::npos) {
+      break;
+    }
+    const std::string tag = urdf.substr(pos, tag_end - pos + 1);
+    pos = tag_end;
+    std::string name, type;
+    if (!getXmlAttribute(tag, "name", name) || !getXmlAttribute(tag, "type", type) || type != "revolute") {
+      continue; // also skips <joint name="..."/> references inside <transmission>
+    }
+    std::smatch m;
+    if (!std::regex_search(name, m, re_arm_joint)) {
+      continue;
+    }
+    size_t body_end = urdf.find("</joint>", tag_end);
+    size_t limit_pos = urdf.find("<limit", tag_end);
+    if (body_end == std::string::npos || limit_pos == std::string::npos || limit_pos > body_end) {
+      continue;
+    }
+    const std::string limit_tag = urdf.substr(limit_pos, urdf.find('>', limit_pos) - limit_pos + 1);
+    std::string lower, upper, velocity;
+    double lower_value = 0., upper_value = 0., velocity_value = 0.;
+    if (!getXmlAttribute(limit_tag, "lower", lower) || !getXmlAttribute(limit_tag, "upper", upper) ||
+        !toDouble(lower, lower_value) || !toDouble(upper, upper_value)) {
+      continue;
+    }
+    const size_t i = static_cast<size_t>(std::stoi(m[1].str()) - 1);
+    q_min[i] = lower_value;
+    q_max[i] = upper_value;
+    if (getXmlAttribute(limit_tag, "velocity", velocity) && toDouble(velocity, velocity_value)) {
+      dq_max[i] = velocity_value;
+    }
+    found[i] = true;
+  }
+
+  for (size_t i = 0; i < found.size(); ++i) {
+    if (!found[i]) {
+      return false;
+    }
+  }
+  m_q_min = q_min;
+  m_q_max = q_max;
+  m_dq_max = dq_max;
+  return true;
+#else
+  return false;
+#endif
 }
 
 /*!
@@ -144,6 +278,20 @@ void vpRobotFranka::connect(const std::string &franka_address, franka::RealtimeC
 
   m_franka_address = franka_address;
   m_handler = new franka::Robot(franka_address, realtime_config);
+
+  // The libfranka version determines the robot model: a Panda runs robot server version <= 5, which only
+  // accepts libfranka <= 0.9, while an FR3 runs robot server version >= 6, which requires libfranka >= 0.10.
+  // A connection with another combination is refused above with franka::IncompatibleVersionException.
+#if (VISP_HAVE_FRANKA_VERSION >= 0x000A00)
+  m_franka_model = vpFrankaModel::kFR3;
+#else
+  m_franka_model = vpFrankaModel::kPanda;
+#endif
+  setJointLimits(m_franka_model);
+  if (m_franka_model == vpFrankaModel::kFR3) {
+    // Use the limits of the URDF provided by the robot when available (libfranka >= 0.15)
+    setJointLimitsFromRobotModel();
+  }
 
   std::array<double, 7> lower_torque_thresholds_nominal { {25.0, 25.0, 22.0, 20.0, 19.0, 17.0, 14.} };
   std::array<double, 7> upper_torque_thresholds_nominal { {35.0, 35.0, 32.0, 30.0, 29.0, 27.0, 24.0} };
@@ -212,7 +360,7 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
 
   franka::RobotState robot_state = getRobotInternalState();
   vpColVector q(7);
-  for (int i = 0; i < 7; i++) {
+  for (unsigned int i = 0; i < 7; ++i) {
     q[i] = robot_state.q[i];
   }
 
@@ -225,7 +373,7 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
     position.resize(6);
     vpHomogeneousMatrix fMe = get_fMe(q);
     vpPoseVector fPe(fMe);
-    for (size_t i = 0; i < 6; i++) {
+    for (unsigned int i = 0; i < 6; ++i) {
       position[i] = fPe[i];
     }
     break;
@@ -234,7 +382,7 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
     position.resize(6);
     vpHomogeneousMatrix fMc = get_fMc(q);
     vpPoseVector fPc(fMc);
-    for (size_t i = 0; i < 6; i++) {
+    for (unsigned int i = 0; i < 6; ++i) {
       position[i] = fPc[i];
     }
     break;
@@ -266,22 +414,25 @@ void vpRobotFranka::getForceTorque(const vpRobot::vpControlFrameType frame, vpCo
   switch (frame) {
   case JOINT_STATE: {
     force.resize(7);
-    for (int i = 0; i < 7; i++)
+    for (unsigned int i = 0; i < 7; ++i) {
       force[i] = robot_state.tau_J[i];
+    }
 
     break;
   }
   case END_EFFECTOR_FRAME: {
     force.resize(6);
-    for (int i = 0; i < 6; i++)
+    for (unsigned int i = 0; i < 6; ++i) {
       force[i] = robot_state.K_F_ext_hat_K[i];
+    }
     break;
   }
   case TOOL_FRAME: {
     // end-effector frame
     vpColVector eFe(6);
-    for (int i = 0; i < 6; i++)
+    for (unsigned int i = 0; i < 6; ++i) {
       eFe[i] = robot_state.K_F_ext_hat_K[i];
+    }
 
     // Transform in tool frame
     vpHomogeneousMatrix cMe = get_eMc().inverse();
@@ -321,7 +472,7 @@ void vpRobotFranka::getVelocity(const vpRobot::vpControlFrameType frame, vpColVe
 
   case JOINT_STATE: {
     d_position.resize(7);
-    for (int i = 0; i < 7; i++) {
+    for (unsigned int i = 0; i < 7; ++i) {
       d_position[i] = robot_state.dq[i];
     }
     break;
@@ -351,7 +502,7 @@ void vpRobotFranka::getCoriolis(vpColVector &coriolis)
   coriolis_ = m_model->coriolis(robot_state);
 
   coriolis.resize(7);
-  for (int i = 0; i < 7; i++) {
+  for (unsigned int i = 0; i < 7; ++i) {
     coriolis[i] = coriolis_[i];
   }
 }
@@ -373,7 +524,7 @@ void vpRobotFranka::getGravity(vpColVector &gravity)
   gravity_ = m_model->gravity(robot_state);
 
   gravity.resize(7);
-  for (int i = 0; i < 7; i++) {
+  for (unsigned int i = 0; i < 7; ++i) {
     gravity[i] = gravity_[i];
   }
 }
@@ -395,8 +546,8 @@ void vpRobotFranka::getMass(vpMatrix &mass)
   mass_ = m_model->mass(robot_state); // column-major
 
   mass.resize(7, 7); // row-major
-  for (size_t i = 0; i < 7; i++) {
-    for (size_t j = 0; j < 7; j++) {
+  for (unsigned int i = 0; i < 7; ++i) {
+    for (unsigned int j = 0; j < 7; ++j) {
       mass[i][j] = mass_[j * 7 + i];
     }
   }
@@ -419,16 +570,17 @@ vpHomogeneousMatrix vpRobotFranka::get_fMe(const vpColVector &q)
   }
 
   std::array<double, 7> q_array;
-  for (size_t i = 0; i < 7; i++)
+  for (unsigned int i = 0; i < 7; ++i) {
     q_array[i] = q[i];
+  }
 
   franka::RobotState robot_state = getRobotInternalState();
 
   std::array<double, 16> pose_array =
     m_model->pose(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE, robot_state.EE_T_K);
   vpHomogeneousMatrix fMe;
-  for (unsigned int i = 0; i < 4; i++) {
-    for (unsigned int j = 0; j < 4; j++) {
+  for (unsigned int i = 0; i < 4; ++i) {
+    for (unsigned int j = 0; j < 4; ++j) {
       fMe[i][j] = pose_array[j * 4 + i];
     }
   }
@@ -474,35 +626,17 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpPoseV
     throw(vpException(vpException::fatalError, "Cannot get Franka joint position as a pose vector"));
   }
 
-  franka::RobotState robot_state = getRobotInternalState();
-
-  std::array<double, 16> pose_array = robot_state.O_T_EE;
-  vpHomogeneousMatrix fMe;
-  for (unsigned int i = 0; i < 4; i++) {
-    for (unsigned int j = 0; j < 4; j++) {
-      fMe[i][j] = pose_array[j * 4 + i];
-    }
-  }
-
-  switch (frame) {
-  case END_EFFECTOR_FRAME: {
-    pose.buildFrom(fMe);
-    break;
-  }
-  case TOOL_FRAME: {
-    pose.buildFrom(fMe * m_eMc);
-    break;
-  }
-  default: {
-    throw(vpException(vpException::fatalError, "Cannot get Franka cartesian position: not implemented"));
-  }
-  }
+  vpColVector position;
+  getPosition(frame, position);
+  vpTranslationVector t(position.extract(0, 3));
+  vpThetaUVector tu(position.extract(3, 3));
+  pose.buildFrom(t, tu);
 }
 
 /*!
  * Gets the robot Jacobian in the end-effector frame relative to the end-effector frame represented as a 6x7 matrix in
- * row-major format and computed from the robot current joint position. \param[out] eJe_ : Body Jacobian expressed in
- * the end-effector frame.
+ * row-major format and computed from the robot current joint position.
+ * \param[out] eJe_ : Body Jacobian expressed in the end-effector frame.
  */
 void vpRobotFranka::get_eJe(vpMatrix &eJe_)
 {
@@ -514,8 +648,8 @@ void vpRobotFranka::get_eJe(vpMatrix &eJe_)
 
   std::array<double, 42> jacobian = m_model->bodyJacobian(franka::Frame::kEndEffector, robot_state); // column-major
   eJe_.resize(6, 7);                                                                                 // row-major
-  for (size_t i = 0; i < 6; i++) {
-    for (size_t j = 0; j < 7; j++) {
+  for (unsigned int i = 0; i < 6; ++i) {
+    for (unsigned int j = 0; j < 7; ++j) {
       eJe_[i][j] = jacobian[j * 6 + i];
     }
   }
@@ -524,8 +658,9 @@ void vpRobotFranka::get_eJe(vpMatrix &eJe_)
 
 /*!
  * Gets the robot Jacobian in the end-effector frame relative to the end-effector frame represented as a 6x7 matrix in
- * row-major format and computed from the robot current joint position. \param[in] q : 7-dim vector corresponding to the
- * robot joint position [rad]. \param[out] eJe_ : Body Jacobian expressed in the end-effector frame.
+ * row-major format and computed from the robot current joint position.
+ * \param[in] q : 7-dim vector corresponding to the robot joint position [rad].
+ * \param[out] eJe_ : Body Jacobian expressed in the end-effector frame.
  */
 void vpRobotFranka::get_eJe(const vpColVector &q, vpMatrix &eJe_)
 {
@@ -536,14 +671,15 @@ void vpRobotFranka::get_eJe(const vpColVector &q, vpMatrix &eJe_)
   franka::RobotState robot_state = getRobotInternalState();
 
   std::array<double, 7> q_array;
-  for (size_t i = 0; i < 7; i++)
+  for (unsigned int i = 0; i < 7; ++i) {
     q_array[i] = q[i];
+  }
 
   std::array<double, 42> jacobian = m_model->bodyJacobian(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE,
                                                           robot_state.EE_T_K); // column-major
   eJe_.resize(6, 7);                                                           // row-major
-  for (size_t i = 0; i < 6; i++) {
-    for (size_t j = 0; j < 7; j++) {
+  for (unsigned int i = 0; i < 6; ++i) {
+    for (unsigned int j = 0; j < 7; ++j) {
       eJe_[i][j] = jacobian[j * 6 + i];
     }
   }
@@ -552,8 +688,8 @@ void vpRobotFranka::get_eJe(const vpColVector &q, vpMatrix &eJe_)
 
 /*!
  * Gets the robot Jacobian in the end-effector frame relative to the base frame represented as a 6x7 matrix in row-major
- * format and computed from the robot current joint position. \param[out] fJe_ : Zero Jacobian expressed in the base
- * frame.
+ * format and computed from the robot current joint position.
+ * \param[out] fJe_ : Zero Jacobian expressed in the base frame.
  */
 void vpRobotFranka::get_fJe(vpMatrix &fJe_)
 {
@@ -565,8 +701,8 @@ void vpRobotFranka::get_fJe(vpMatrix &fJe_)
 
   std::array<double, 42> jacobian = m_model->zeroJacobian(franka::Frame::kEndEffector, robot_state); // column-major
   fJe_.resize(6, 7);                                                                                 // row-major
-  for (size_t i = 0; i < 6; i++) {
-    for (size_t j = 0; j < 7; j++) {
+  for (unsigned int i = 0; i < 6; ++i) {
+    for (unsigned int j = 0; j < 7; ++j) {
       fJe_[i][j] = jacobian[j * 6 + i];
     }
   }
@@ -575,8 +711,9 @@ void vpRobotFranka::get_fJe(vpMatrix &fJe_)
 
 /*!
  * Gets the robot Jacobian in the end-effector frame relative to the base frame represented as a 6x7 matrix in row-major
- * format and computed from the robot joint position given as input. \param[in] q : 7-dim vector corresponding to the
- * robot joint position [rad]. \param[out] fJe_ : Zero Jacobian expressed in the base frame.
+ * format and computed from the robot joint position given as input.
+ * \param[in] q : 7-dim vector corresponding to the robot joint position [rad].
+ * \param[out] fJe_ : Zero Jacobian expressed in the base frame.
  */
 void vpRobotFranka::get_fJe(const vpColVector &q, vpMatrix &fJe_)
 {
@@ -593,14 +730,15 @@ void vpRobotFranka::get_fJe(const vpColVector &q, vpMatrix &fJe_)
   franka::RobotState robot_state = getRobotInternalState();
 
   std::array<double, 7> q_array;
-  for (size_t i = 0; i < 7; i++)
+  for (unsigned int i = 0; i < 7; ++i) {
     q_array[i] = q[i];
+  }
 
   std::array<double, 42> jacobian = m_model->zeroJacobian(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE,
                                                           robot_state.EE_T_K); // column-major
   fJe_.resize(6, 7);                                                           // row-major
-  for (size_t i = 0; i < 6; i++) {
-    for (size_t j = 0; j < 7; j++) {
+  for (unsigned int i = 0; i < 6; ++i) {
+    for (unsigned int j = 0; j < 7; ++j) {
       fJe_[i][j] = jacobian[j * 6 + i];
     }
   }
@@ -657,7 +795,7 @@ void vpRobotFranka::setPosition(const vpRobot::vpControlFrameType frame, const v
     double speed_factor = m_positioningVelocity / 100.;
 
     std::array<double, 7> q_goal;
-    for (size_t i = 0; i < 7; i++) {
+    for (unsigned int i = 0; i < 7; ++i) {
       q_goal[i] = position[i];
     }
 
@@ -687,8 +825,7 @@ void vpRobotFranka::setPosition(const vpRobot::vpControlFrameType frame, const v
 
   Set the maximal velocity percentage to use for a position control.
 
-  \param[in] velocity : Percentage of the maximal velocity. Values should
-  be in ]0:100].
+  \param[in] velocity : Percentage of the maximal velocity. Values should be in ]0:100].
 
 */
 void vpRobotFranka::setPositioningVelocity(double velocity) { m_positioningVelocity = velocity; }
@@ -866,7 +1003,8 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
 
     vpColVector vel_sat = vpRobot::saturateVelocities(vel, vel_max, true);
 
-    for (size_t i = 0; i < m_dq_des.size(); i++) { // TODO create a function to convert
+    std::lock_guard<std::mutex> lock(m_mutex);
+    for (unsigned int i = 0; i < m_dq_des.size(); ++i) { // TODO create a function to convert
       m_dq_des[i] = vel_sat[i];
     }
 
@@ -883,11 +1021,14 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
     }
     vpColVector vel_max(6);
 
-    for (unsigned int i = 0; i < 3; i++)
+    for (unsigned int i = 0; i < 3; ++i) {
       vel_max[i] = getMaxTranslationVelocity();
-    for (unsigned int i = 3; i < 6; i++)
+    }
+    for (unsigned int i = 3; i < 6; ++i) {
       vel_max[i] = getMaxRotationVelocity();
+    }
 
+    std::lock_guard<std::mutex> lock(m_mutex);
     m_v_cart_des = vpRobot::saturateVelocities(vel, vel_max, true);
 
     break;
@@ -908,7 +1049,7 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
   }
 }
 
-/*
+/*!
   Apply a force/torque to the robot.
 
   \param[in] frame : Control frame in which the force/torque is applied.
@@ -931,7 +1072,8 @@ void vpRobotFranka::setForceTorque(const vpRobot::vpControlFrameType frame, cons
                              ft.size());
     }
 
-    for (size_t i = 0; i < m_tau_J_des.size(); i++) { // TODO create a function to convert
+    std::lock_guard<std::mutex> lock(m_mutex);
+    for (unsigned int i = 0; i < m_tau_J_des.size(); ++i) { // TODO create a function to convert
       m_tau_J_des[i] = ft[i];
     }
     // TODO: Introduce force/torque saturation
@@ -948,6 +1090,7 @@ void vpRobotFranka::setForceTorque(const vpRobot::vpControlFrameType frame, cons
                              ft.size());
     }
 
+    std::lock_guard<std::mutex> lock(m_mutex);
     m_ft_cart_des = ft;
     // TODO: Introduce force/torque saturation
 
@@ -977,6 +1120,9 @@ franka::RobotState vpRobotFranka::getRobotInternalState()
   franka::RobotState robot_state;
 
   if (!m_velControlThreadIsRunning && !m_ftControlThreadIsRunning) {
+    // The first readOnce() clears the residual UDP buffer if the robot was idle.
+    // The second waits for the most recent 1 kHz packet.
+    m_handler->readOnce();
     robot_state = m_handler->readOnce();
 
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -992,29 +1138,71 @@ franka::RobotState vpRobotFranka::getRobotInternalState()
 
 /*!
   Gets minimal joint values.
+
+  The limits depend on the robot model detected by connect() (see getFrankaModel()). On an FR3 with
+  libfranka >= 0.15 they are read from the URDF provided by the robot, otherwise they are the values specified
+  by Franka Robotics for the robot model. Before connecting, the Panda limits are returned.
+
   \return A 7-dimension vector that contains the minimal joint values for the 7 dof.
   All the values are expressed in radians.
  */
 vpColVector vpRobotFranka::getJointMin() const
 {
   vpColVector q_min(m_q_min.size());
-  for (size_t i = 0; i < m_q_min.size(); i++)
+  for (unsigned int i = 0; i < m_q_min.size(); ++i) {
     q_min[i] = m_q_min[i];
+  }
 
   return q_min;
 }
 /*!
   Gets maximum joint values.
+
+  See getJointMin() for the origin of the limits.
+
   \return A 7-dimension vector that contains the maximum joint values for the 7 dof.
   All the values are expressed in radians.
  */
 vpColVector vpRobotFranka::getJointMax() const
 {
   vpColVector q_max(m_q_max.size());
-  for (size_t i = 0; i < m_q_max.size(); i++)
+  for (unsigned int i = 0; i < m_q_max.size(); ++i) {
     q_max[i] = m_q_max[i];
+  }
 
   return q_max;
+}
+
+/*!
+  Gets maximum joint velocities of the robot model detected by connect().
+
+  See getJointMin() for the origin of the limits.
+
+  \return A 7-dimension vector that contains the maximum joint velocities for the 7 dof in rad/s.
+ */
+vpColVector vpRobotFranka::getJointVelocityMax() const
+{
+  vpColVector dq_max(m_dq_max.size());
+  for (unsigned int i = 0; i < m_dq_max.size(); ++i) {
+    dq_max[i] = m_dq_max[i];
+  }
+
+  return dq_max;
+}
+
+/*!
+  Gets maximum joint accelerations of the robot model detected by connect(), as specified by Franka Robotics.
+
+  \return A 7-dimension vector that contains the maximum joint accelerations for the 7 dof in rad/s^2.
+ */
+vpColVector vpRobotFranka::getJointAccelerationMax() const
+{
+  vpColVector ddq_max(m_ddq_max.size());
+  for (unsigned int i = 0; i < m_ddq_max.size(); ++i) {
+    ddq_max[i] = m_ddq_max[i];
+  }
+
+  return ddq_max;
 }
 
 /*!
@@ -1094,13 +1282,13 @@ R: 0.1 0.3 -0.25 -80.5 80 0 0
   The code below shows how to read a position from a file and move the robot to
   this position.
   \code
-vpRobotFranka robot;
-vpColVector q;        // Joint position
-robot.readPosFile("myposition.pos", q); // Set the joint position from the file
-robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+  vpRobotFranka robot;
+  vpColVector q;        // Joint position
+  robot.readPosFile("myposition.pos", q); // Set the joint position from the file
+  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
-robot.setPositioningVelocity(5); // Positioning velocity set to 5%
-robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint position
+  robot.setPositioningVelocity(5); // Positioning velocity set to 5%
+  robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint position
   \endcode
 
   \sa savePosFile(), move()
@@ -1145,15 +1333,16 @@ bool vpRobotFranka::readPosFile(const std::string &filename, vpColVector &q)
       std::istringstream ss(line);
       std::string key_;
       ss >> key_;
-      for (unsigned int i = 0; i < njoints; i++)
+      for (unsigned int i = 0; i < njoints; ++i) {
         ss >> q[i];
+      }
       pos_found = true;
       break;
     }
   }
 
   // converts rotations from degrees into radians
-  for (unsigned int i = 0; i < njoints; i++) {
+  for (unsigned int i = 0; i < njoints; ++i) {
     q[i] = vpMath::rad(q[i]);
   }
 
@@ -1384,5 +1573,5 @@ END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotFranka.cpp.o) has
 // no symbols
-void dummy_vpRobotFranka() { }
+void dummy_vpRobotFranka() {}
 #endif

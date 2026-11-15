@@ -608,7 +608,7 @@ unsigned int vpViper::getInverseKinematics(const vpHomogeneousMatrix &fMc, vpCol
   the six joints.
 
   \f[
-  ^f{\bf M}_c = ^f{\bf M}_e \; ^e{\bf M}_c
+  ^f{\bf M}_c = ^f{\bf M}_e \; ^{\mathrm{ee}}\mathbf{M}_{\mathrm{c}}
   \f]
 
   This method is the same than getForwardKinematics(const vpColVector & q).
@@ -1277,7 +1277,7 @@ void vpViper::set_eMc(const vpTranslationVector &etc_, const vpRxyzVector &erc_)
 
   Print on the output stream \e os the robot parameters (joint
   min/max, coupling factor between axis 5 and 6, hand-to-eye constant
-  homogeneous matrix \f$^e{\bf M}_c \f$.
+  homogeneous matrix \f$^{\mathrm{ee}}\mathbf{M}_{\mathrm{c}} \f$.
 
   \param os : Output stream.
   \param viper : Robot parameters.

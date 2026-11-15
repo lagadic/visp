@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,13 +118,13 @@ double evaluate(const vpColVector &coeffs, const unsigned int &height, const uns
    */
 template<typename T>
 void display(const vpColVector &coeffs, const vpImage<T> &I, const vpColor &color,
-             const unsigned int &vertPosLegend, const unsigned int &horPosLegend)
+             const int &vertPosLegend, const int &horPosLegend)
 {
 #if defined(VISP_HAVE_DISPLAY)
-  unsigned int width = I.getWidth();
+  int width = static_cast<int>(I.getWidth());
   vpTutoParabolaModel model(coeffs, I.getHeight(), I.getWidth());
-  for (unsigned int u = 0; u < width; ++u) {
-    unsigned int v = static_cast<unsigned int>(model.eval(u));
+  for (int u = 0; u < width; ++u) {
+    int v = static_cast<int>(model.eval(u));
     vpDisplay::displayPoint(I, v, u, color, 1);
     vpDisplay::displayText(I, vertPosLegend, horPosLegend, "Particle Filter model", color);
   }
@@ -334,7 +334,7 @@ vpColVector computeInitialGuess(tutorial::vpTutoCommonData &data)
   }
 
   // Update display and wait for click
-  lmsFitter.display(data.m_I_orig, vpColor::red, static_cast<unsigned int>(data.m_ipLegend.get_v() + 2 * data.m_legendOffset.get_v()), static_cast<unsigned int>(data.m_ipLegend.get_u()));
+  lmsFitter.display(data.m_I_orig, vpColor::red, static_cast<int>(data.m_ipLegend.get_v() + 2 * data.m_legendOffset.get_v()), static_cast<int>(data.m_ipLegend.get_u()));
   vpDisplay::displayText(data.m_I_orig, data.m_ipLegend + data.m_legendOffset, "A click to continue.", data.m_colorLegend);
   vpDisplay::flush(data.m_I_orig);
   vpDisplay::getClick(data.m_I_orig, waitForClick);
@@ -359,7 +359,7 @@ public:
     : m_degree(degree)
     , m_height(height)
     , m_width(width)
-  { }
+  {}
 
   /**
    * \brief Compute the "weighted average" of polynomial models, by sampling control points and
@@ -499,11 +499,12 @@ int main(const int argc, const char *argv[])
     return returnCode;
   }
   tutorial::vpTutoMeanSquareFitting lmsFitter(data.m_degree, data.m_I_orig.getHeight(), data.m_I_orig.getWidth());
-  const unsigned int vertOffset = static_cast<unsigned int>(data.m_legendOffset.get_i());
-  const unsigned int horOffset = static_cast<unsigned int>(data.m_ipLegend.get_j());
-  const unsigned int legendLmsVert = data.m_I_orig.getHeight() - 3 * vertOffset;
-  const unsigned int legendLmsHor = horOffset;
-  const unsigned int legendPFVert = data.m_I_orig.getHeight() - 2 * vertOffset, legendPFHor = horOffset;
+  const int vertOffset = static_cast<int>(data.m_legendOffset.get_i());
+  const int horOffset = static_cast<int>(data.m_ipLegend.get_j());
+  const int legendLmsVert = static_cast<int>(data.m_I_orig.getHeight()) - 3 * vertOffset;
+  const int legendLmsHor = horOffset;
+  const int legendPFVert = static_cast<int>(data.m_I_orig.getHeight()) - 2 * vertOffset;
+  const int legendPFHor = horOffset;
 
   // Initialize the attributes of the PF
   //! [Initial_estimates]
@@ -519,10 +520,10 @@ int main(const int argc, const char *argv[])
     double ampliMax = data.m_pfRatiosAmpliMax[i] * X0[i];
     stdevsPF.push_back(ampliMax / 3.);
   }
-  unsigned long seedPF; // Seed for the random generators of the PF
+  long seedPF; // Seed for the random generators of the PF
   const float period = 33.3f; // 33.3ms i.e. 30Hz
   if (data.m_pfSeed < 0) {
-    seedPF = static_cast<unsigned long>(vpTime::measureTimeMicros());
+    seedPF = static_cast<long>(vpTime::measureTimeMicros());
   }
   else {
     seedPF = data.m_pfSeed;

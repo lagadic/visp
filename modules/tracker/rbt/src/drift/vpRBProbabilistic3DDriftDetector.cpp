@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,10 @@
 
 #include <visp3/rbt/vpRBFeatureTracker.h>
 
+#ifdef VISP_HAVE_OPENMP
+#include <omp.h>
+#endif
+
 #if defined(VISP_HAVE_NLOHMANN_JSON)
 #include VISP_NLOHMANN_JSON(json.hpp)
 #endif
@@ -51,30 +55,47 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
     return 1.0;
   }
     // Step 0: project all points
+
+  int nbPoints = static_cast<int>(m_points.size()); // int because OpenMP on Windows does not support uint
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (int i = 0; i < static_cast<int>(m_points.size()); ++i) {
-    vpStored3DSurfaceColorPoint &p = m_points[i];
+  for (int i = 0; i < nbPoints; ++i) {
+    const unsigned int i_ = static_cast<unsigned int>(i);
+    vpStored3DSurfaceColorPoint &p = m_points[i_];
     p.update(cTo, frame.renders.cMo, frame.cam);
   }
-
-
-
 
   // Step 1: gather points visible in both images and in render
 
   std::vector<vpStored3DSurfaceColorPoint *> visiblePoints;
+  std::vector<std::vector<vpStored3DSurfaceColorPoint *>> visiblePointsPerThread;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
 #endif
   {
+#ifdef VISP_HAVE_OPENMP
+#pragma omp single
+    {
+      unsigned int numThreads = static_cast<unsigned int>(omp_get_num_threads());
+      visiblePointsPerThread.resize(numThreads);
+    }
+#else
+    {
+      visiblePointsPerThread.resize(1);
+    }
+#endif
+#ifdef VISP_HAVE_OPENMP
+    unsigned int threadIdx = static_cast<unsigned int>(omp_get_thread_num());
+#else
+    unsigned int threadIdx = 0;
+#endif
     std::vector<vpStored3DSurfaceColorPoint *> visiblePointsLocal;
 #ifdef VISP_HAVE_OPENMP
-#pragma omp for
+#pragma omp for schedule(static)
 #endif
-    for (int i = 0; i < static_cast<int>(m_points.size()); ++i) {
-      vpStored3DSurfaceColorPoint &p = m_points[i];
+    for (int i = 0; i < nbPoints; ++i) {
+      vpStored3DSurfaceColorPoint &p = m_points[static_cast<unsigned int>(i)];
       p.visible = true;
       if (
         p.projRenderPx[0] < 2 || static_cast<unsigned int>(p.projRenderPx[0]) >= frame.IRGB.getWidth() - 2
@@ -87,7 +108,7 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
 
       float ZrenderMap = frame.renders.depth[p.projRenderPx[1]][p.projRenderPx[0]];
       // Version 2: compare previous projection with render, this does not filter occlusions
-      if (ZrenderMap == 0.f || fabs(p.renderX[2] - ZrenderMap) > m_maxError3D) {
+      if (ZrenderMap <= 0.0f || std::fabs(p.renderX[2] - ZrenderMap) > m_maxError3D) {
         p.visible = false;
         continue;
       }
@@ -132,12 +153,11 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
         visiblePointsLocal.push_back(&p);
       }
     }
-#ifdef VISP_HAVE_OPENMP
-#pragma omp critical
-#endif
-    {
-      visiblePoints.insert(visiblePoints.end(), visiblePointsLocal.begin(), visiblePointsLocal.end());
-    }
+    visiblePointsPerThread[threadIdx] = std::move(visiblePointsLocal);
+  }
+  // Concatenate in thread order so that the result does not depend on thread scheduling
+  for (const std::vector<vpStored3DSurfaceColorPoint *> &points : visiblePointsPerThread) {
+    visiblePoints.insert(visiblePoints.end(), points.begin(), points.end());
   }
   if (visiblePoints.size() > 0) {
     bool useMedian = false;
@@ -146,19 +166,42 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
     scores.reserve(visiblePoints.size());
     score = 0.0;
     double weightSum = 0.0;
+    std::vector<std::vector<double>> scoresPerThread;
+    std::vector<double> scorePerThread, weightSumPerThread;
 
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel
 #endif
     {
+#ifdef VISP_HAVE_OPENMP
+#pragma omp single
+      {
+        unsigned int numThreads = static_cast<unsigned int>(omp_get_num_threads());
+        scoresPerThread.resize(numThreads);
+        scorePerThread.resize(numThreads, 0.0);
+        weightSumPerThread.resize(numThreads, 0.0);
+      }
+#else
+      {
+        scoresPerThread.resize(1);
+        scorePerThread.resize(1, 0.0);
+        weightSumPerThread.resize(1, 0.0);
+      }
+#endif
+#ifdef VISP_HAVE_OPENMP
+      unsigned int threadIdx = static_cast<unsigned int>(omp_get_thread_num());
+#else
+      unsigned int threadIdx = 0;
+#endif
       std::vector<double> scoresLocal;
       double weightSumLocal = 0.0;
       double scoreLocal = 0.0;
+      int nbVisiblePoints = static_cast<int>(visiblePoints.size()); // int because OpenMP on Windows does not support uint
 #ifdef VISP_HAVE_OPENMP
-#pragma omp for
+#pragma omp for schedule(static)
 #endif
-      for (int i = 0; i < static_cast<int>(visiblePoints.size()); ++i) {
-        vpStored3DSurfaceColorPoint *p = visiblePoints[i];
+      for (int i = 0; i < nbVisiblePoints; ++i) {
+        vpStored3DSurfaceColorPoint *p = visiblePoints[static_cast<unsigned int>(i)];
 
         const bool hasCorrectDepth = frame.hasDepth() && frame.depth[p->projCurrPx[1]][p->projCurrPx[0]] > 0.f;
         const double Z = hasCorrectDepth ? frame.depth[p->projCurrPx[1]][p->projCurrPx[0]] : 0.0;
@@ -198,14 +241,15 @@ double vpRBProbabilistic3DDriftDetector::score(const vpRBFeatureTrackerInput &fr
         scoreLocal += proba * weight;
         p->updateColor(averageColor, static_cast<float>(m_colorUpdateRate * probaDepth));
       }
-#ifdef VISP_HAVE_OPENMP
-#pragma omp critical
-#endif
-      {
-        scores.insert(scores.end(), scoresLocal.begin(), scoresLocal.end());
-        score += scoreLocal;
-        weightSum += weightSumLocal;
-      }
+      scoresPerThread[threadIdx] = std::move(scoresLocal);
+      scorePerThread[threadIdx] = scoreLocal;
+      weightSumPerThread[threadIdx] = weightSumLocal;
+    }
+    // Accumulate in thread order so that the floating point sums do not depend on thread scheduling
+    for (size_t t = 0; t < scoresPerThread.size(); ++t) {
+      scores.insert(scores.end(), scoresPerThread[t].begin(), scoresPerThread[t].end());
+      score += scorePerThread[t];
+      weightSum += weightSumPerThread[t];
     }
     if (!useMedian) {
       // Use average score, may be more sensitive to outliers
@@ -330,8 +374,8 @@ void vpRBProbabilistic3DDriftDetector::loadRepresentation(const std::string &fil
   if (!f.good()) {
     throw vpException(vpException::ioError, "Could not open file %s", filename.c_str());
   }
-
-  nlohmann::json j = nlohmann::json::parse(f);
+  // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+  nlohmann::json j = nlohmann::json::parse(f, nullptr, true, true);
   f.close();
   m_points = j;
 }

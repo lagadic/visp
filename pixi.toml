@@ -1,6 +1,6 @@
 [workspace]
 authors = ["Olivier Roussel <olivier.roussel@inria.fr>"]
-channels = ["conda-forge", "https://prefix.dev/panda3d-forge"]
+channels = ["conda-forge"]
 name = "visp"
 platforms = ["linux-64", "linux-aarch64", "osx-64", "win-64", "osx-arm64"]
 version = "3.6.0"
@@ -26,6 +26,7 @@ nlohmann_json = "*"
 ogre = ">=14.4.1"
 libxml2-devel = "*"
 librealsense = "*"
+apriltag = "*"
 
 [target.unix.dependencies]
 xorg-libx11 = "*"
@@ -42,6 +43,10 @@ zbar = "*"
 [target.osx.dependencies]
 llvm-openmp = "*"
 zbar = "*"
+libharfbuzz-devel=">=14.4.0"
+
+[target.osx-64.dependencies]
+doxygen = "1.17.0"
 
 [activation]
 scripts = ["development/scripts/pixi/activation.sh"]
@@ -93,7 +98,7 @@ VISP_ENABLE_TEST_WITHOUT_DISPLAY = "OFF"
 init-testing = { cmd = "bash ./development/scripts/pixi/xvfb.sh" }
 
 [feature.rbt]
-dependencies = { panda3d = { version = ">=1.10.15", channel = "https://prefix.dev/panda3d-forge" } }
+dependencies = { panda3d = ">=1.10.16" }
 
 [feature.doc]
 dependencies = { doxygen = "*", mathjax = "*" }

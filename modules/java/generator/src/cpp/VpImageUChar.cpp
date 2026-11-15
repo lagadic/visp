@@ -34,7 +34,7 @@ extern "C" {
   JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageUChar_n_1VpImageUChar__II(JNIEnv *env, jclass, jint r, jint c)
   {
     (void)env;
-    return (jlong) new vpImage<u_char>(r, c);
+    return (jlong) new vpImage<u_char>(static_cast<unsigned int>(r), static_cast<unsigned int>(c));
   }
 
   // Java Method:    VpImageUChar(int r, int c, byte val)
@@ -42,7 +42,7 @@ extern "C" {
                                                                                jbyte value)
   {
     (void)env;
-    return (jlong) new vpImage<u_char>(r, c, (u_char)value);
+    return (jlong) new vpImage<u_char>(static_cast<unsigned int>(r), static_cast<unsigned int>(c), (u_char)value);
   }
 
   // Java Method:    VpImageUChar(byte[] array, int height, int width, boolean copyData)
@@ -62,7 +62,7 @@ extern "C" {
   {
     (void)env;
     vpImage<u_char> *me = (vpImage<u_char> *)address; // TODO: check for nullptr
-    return me->getCols();
+    return static_cast<jint>(me->getCols());
   }
 
   // Java Method:    getRows()
@@ -70,7 +70,7 @@ extern "C" {
   {
     (void)env;
     vpImage<u_char> *me = (vpImage<u_char> *)address; // TODO: check for nullptr
-    return me->getRows();
+    return static_cast<jint>(me->getRows());
   }
 
   // Java Method:    getPixel(int i, int j)
@@ -78,15 +78,15 @@ extern "C" {
   {
     (void)env;
     vpImage<u_char> *me = (vpImage<u_char> *)address; // TODO: check for nullptr
-    return (*me)(i, j);
+    return static_cast<jint>((*me)(static_cast<unsigned int>(i), static_cast<unsigned int>(j)));
   }
 
   // Java Method:    getPixels()
   JNIEXPORT jbyteArray JNICALL Java_org_visp_core_VpImageUChar_n_1getPixels(JNIEnv *env, jclass, jlong address)
   {
     vpImage<u_char> *me = (vpImage<u_char> *)address; // TODO: check for nullptr
-    jbyteArray ret = env->NewByteArray(me->getNumberOfPixel());
-    env->SetByteArrayRegion(ret, 0, me->getNumberOfPixel(), (jbyte *)me->bitmap);
+    jbyteArray ret = env->NewByteArray(static_cast<jint>(me->getNumberOfPixel()));
+    env->SetByteArrayRegion(ret, 0, static_cast<jint>(me->getNumberOfPixel()), (jbyte *)me->bitmap);
     return ret;
   }
 

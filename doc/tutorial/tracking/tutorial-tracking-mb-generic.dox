@@ -1484,7 +1484,6 @@ to use a camera in order to test the tracker live.
 This example tries to use the first grabber that is available in the following list:
 - vpV4l2Grabber
 - vp1394TwoGrabber
-- vp1394CMUGrabber
 - vpFlyCaptureGrabber
 - vpRealSense2
 - cv::VideoCapture
@@ -1503,7 +1502,6 @@ $ cd $VISP_WS/visp/tutorial/tracking/model-based/generic
 $ gedit tutorial-mb-generic-tracker-live.cpp
 #undef VISP_HAVE_V4L2
 #undef VISP_HAVE_DC1394
-#undef VISP_HAVE_CMU1394
 #undef VISP_HAVE_FLYCAPTURE
 //#undef VISP_HAVE_REALSENSE2
 \endcode

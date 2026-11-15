@@ -20,116 +20,161 @@ Note that all the material (source code and images) described in this tutorial i
 In this section we show how to build an existing project that uses ViSP as third-party and CMake for the build
 mechanism. As a use case we will use the `image` project that is part of ViSP tutorials. The source code comes from
 https://github.com/lagadic/visp/tutorial/image. It contains a set of source files `tutorial-viewer.cpp`,
-`tutorial-image-viewer.cpp` and a `CMakeLists.txt` file. We show here how to get these files and build them.
+`tutorial-image-viewer.cpp` and a `CMakeLists.txt` file. We show here how to get these files and build them on
+Unix-like systems or Windows.
 
-\subsection started_quick_unix 1.1. On unix-like OS
+\htmlonly
+<div class="tab-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="openTab(event, 'unix')">Unix-like</button>
+    <button class="tab-btn" onclick="openTab(event, 'windows')">Windows</button>
+  </div>
 
-1. If you did \ref tutorial_install_pkg you have to create a workspace. If you did \ref tutorial_install_src jump to
-point 2. since your workspace should be already existing.<br>
-Check if `VISP_WS` environment var exists:
-\code{.sh}
+  <div data-tab="unix" class="tab-content" style="display:block;">
+    <ol>
+      <li>
+        If you did <a href="tutorial_install_pkg.html">Installation from packages</a> you have to create a workspace.
+        If you did <a href="tutorial_install_src.html">Installation from source code</a> jump to point 2. since your
+        workspace should be already existing.<br>
+        Check if <code>VISP_WS</code> environment var exists:
+        <pre class="fragment">
 $ env | grep VISP_WS
-\endcode
-If it returns an empty string, create a workspace with:
-\code{.sh}
+        </pre>
+        If it returns an empty string, create a workspace with:
+        <pre class="fragment">
 $ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
 $ source ~/.bashrc
 $ mkdir -p $VISP_WS
-\endcode
-
-2. Copy the source code from `tutorial/image` ViSP folder
-\code{.sh}
+        </pre>
+      </li>
+      <li>
+        Copy the source code from <code>tutorial/image</code> ViSP folder
+        <pre class="fragment">
 $ cd $VISP_WS
 $ cp -p -r visp/tutorial/image .
-\endcode
-or donwload it from https://github.com/lagadic/visp/tree/master/tutorial/image.
-
-3. Create a build folder
-\code{.sh}
+        </pre>
+        or download it from
+        <a href="https://github.com/lagadic/visp/tree/master/tutorial/image">https://github.com/lagadic/visp/tree/master/tutorial/image</a>.
+      </li>
+      <li>
+        Create a build folder
+        <pre class="fragment">
 $ mkdir -p $VISP_WS/image/build
 $ cd $VISP_WS/image/build
-\endcode
-
-4. Run CMake in build directory<br>
-If you did \ref tutorial_install_pkg, run:
-\code{.sh}
+        </pre>
+      </li>
+      <li>
+        Run CMake in build directory<br>
+        If you did <a href="tutorial_install_pkg.html">Installation from packages</a>, run:
+        <pre class="fragment">
 $ cmake .. -DCMAKE_BUILD_TYPE=Release
-\endcode
-Otherwise if you did \ref tutorial_install_src, indicate where to find ViSP thanks to `VISP_DIR` var:
-\code{.sh}
+        </pre>
+        Otherwise if you did <a href="tutorial_install_src.html">Installation from source code</a>, indicate where to
+        find ViSP thanks to <code>VISP_DIR</code> var:
+        <pre class="fragment">
 $ cmake .. -DCMAKE_BUILD_TYPE=Release -DVISP_DIR=$VISP_WS/visp-build
-\endcode
-
-5. Build `tutorial-viewer` example
-\code{.sh}
+        </pre>
+      </li>
+      <li>
+        Build <code>tutorial-viewer</code> example
+        <pre class="fragment">
 $ make tutorial-viewer
-\endcode
-
-6. Run `tutorial-viewer` example
-\code{.sh}
+        </pre>
+      </li>
+      <li>
+        Run <code>tutorial-viewer</code> example
+        <pre class="fragment">
 $ ./tutorial-viewer monkey.pgm
-\endcode
+        </pre>
+      </li>
+    </ol>
+  </div>
 
-\subsection started_quick_win 1.2. On windows OS
-
-1. If you did \ref tutorial_install_src jump to point 2. since your workspace should be already created.<br>
-Open a `cmd` Command Prompt and check if `VISP_WS` environment var exists:
-\code{.sh}
+  <div data-tab="windows" class="tab-content" style="display:none;">
+    <ol>
+      <li>
+        If you did <a href="tutorial_install_src.html">Installation from source code</a> jump to point 2. since your
+        workspace should be already created.<br>
+        Open a <code>cmd</code> Command Prompt and check if <code>VISP_WS</code> environment var exists:
+        <pre class="fragment">
 C:\> set | findstr VISP_WS
-\endcode
-If it returns an empty string, create a workspace with:
-\code{.sh}
+        </pre>
+        If it returns an empty string, create a workspace with:
+        <pre class="fragment">
 C:\> mkdir C:\visp-ws
 C:\> setx VISP_WS=C:\visp-ws
 C:\> exit
-\endcode
-
-2. Get the source code in your workspace <br>
-You can either copy the source code from `%%VISP_WS%/tutorial/image` folder if you follow one of the
-\ref tutorial_install_src tutorials
-\code{.sh}
+        </pre>
+      </li>
+      <li>
+        Get the source code in your workspace<br>
+        You can either copy the source code from <code>%VISP_WS%/tutorial/image</code> folder if you follow one of the
+        <a href="tutorial_install_src.html">Installation from source code</a> tutorials
+        <pre class="fragment">
 C:\> xcopy /E /I %VISP_WS%\visp\tutorial\image %VISP_WS%\image
-\endcode
-or downloading it from https://github.com/lagadic/visp/tutorial/image.
-
-3. Create a build folder
-\code{.sh}
+        </pre>
+        or download it from
+        <a href="https://github.com/lagadic/visp/tree/master/tutorial/image">https://github.com/lagadic/visp/tree/master/tutorial/image</a>.
+      </li>
+      <li>
+        Create a build folder
+        <pre class="fragment">
 C:\> mkdir %VISP_WS%\image\build
 C:\> cd %VISP_WS%\image\build
-\endcode
-
-4. Run CMake in build folder and indicate where to find ViSP thanks to `VISP_DIR` var.<br>
-  - If your are using Visual Studio 17 2022 and 64 bits hardware, run:
-\code{.sh}
+        </pre>
+      </li>
+      <li>
+        Run CMake in build folder and indicate where to find ViSP thanks to <code>VISP_DIR</code> var.
+        <ul>
+          <li>
+            If you are using Visual Studio 17 2022 and 64 bits hardware, run:
+            <pre class="fragment">
 C:\> cmake -G "Visual Studio 17 2022" -A "x64" .. -DVISP_DIR=%VISP_WS%\visp-build-vc17
-\endcode
-  - Or if your are using Visual Studio 16 2019 and 64 bits hardware, run:
-\code{.sh}
+            </pre>
+          </li>
+          <li>
+            Or if you are using Visual Studio 16 2019 and 64 bits hardware, run:
+            <pre class="fragment">
 C:\> cmake -G "Visual Studio 16 2019" -A "x64" .. -DVISP_DIR=%VISP_WS%\visp-build-vc16
-\endcode
-  - Or if your are using Visual Studio 15 2017 and 64 bits hardware, run:
-\code{.sh}
+            </pre>
+          </li>
+          <li>
+            Or if you are using Visual Studio 15 2017 and 64 bits hardware, run:
+            <pre class="fragment">
 C:\> cmake -G "Visual Studio 15 2017" -A "x64" .. -DVISP_DIR=%VISP_WS%\visp-build-vc15
-\endcode
-  - Or if your are using Visual Studio 14 2015 and 64 bits hardware, run:
-\code{.sh}
+            </pre>
+          </li>
+          <li>
+            Or if you are using Visual Studio 14 2015 and 64 bits hardware, run:
+            <pre class="fragment">
 C:\> cmake -G "Visual Studio 14 2015" -A "x64" .. -DVISP_DIR=%VISP_WS%\visp-build-vc14
-\endcode
-  - Or if your are rather using MinGW-w64, run:
-\code{.sh}
+            </pre>
+          </li>
+          <li>
+            Or if you are rather using MinGW-w64, run:
+            <pre class="fragment">
 C:\> cmake -G "MinGW Makefiles" .. -DVISP_DIR=%VISP_WS%\visp-build-mingw
-\endcode
-
-5. Build `tutorial-viewer` example
-\code{.sh}
+            </pre>
+          </li>
+        </ul>
+      </li>
+      <li>
+        Build <code>tutorial-viewer</code> example
+        <pre class="fragment">
 C:\> cmake --build . --config Release --target tutorial-viewer
-\endcode
-
-6. Run `tutorial-viewer` example
-\code{.sh}
+        </pre>
+      </li>
+      <li>
+        Run <code>tutorial-viewer</code> example
+        <pre class="fragment">
 C:\> cd Release
 C:\> tutorial-viewer.exe monkey.pgm
-\endcode
+        </pre>
+      </li>
+    </ol>
+  </div>
+</div>
+\endhtmlonly
 
 \section started_advanced 2. Advanced getting started
 

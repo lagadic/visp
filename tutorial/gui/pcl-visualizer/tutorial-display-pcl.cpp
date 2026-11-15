@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
       i++;
     }
     else if (std::string(argv[i]) == "--order" && i + 1 < argc) {
-      opt_order = atoi(argv[i + 1]);
+      opt_order = static_cast<unsigned int>(std::atoi(argv[i + 1]));
       i++;
     }
     else if (std::string(argv[i]) == "--x-lim" && i + 2 < argc) {
@@ -133,8 +133,8 @@ int main(int argc, char *argv[])
       i += 2;
     }
     else if (std::string(argv[i]) == "--reso" && i + 2 < argc) {
-      opt_reso.first = atoi(argv[i + 1]);
-      opt_reso.second = atoi(argv[i + 2]);
+      opt_reso.first = static_cast<unsigned int>(std::atoi(argv[i + 1]));
+      opt_reso.second = static_cast<unsigned int>(std::atoi(argv[i + 2]));
       i += 2;
     }
     else if (std::string(argv[i]) == "--display-mode" && i + 1 < argc) {

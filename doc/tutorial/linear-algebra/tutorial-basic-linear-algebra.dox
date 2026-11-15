@@ -2,11 +2,12 @@
   \page tutorial-basic-linear-algebra Tutorial: Basic linear algebra operations
   \tableofcontents
 
-\section linear-algebra-into Introduction
+\section linear-algebra-into 1. Introduction
 
 This tutorial focuses on basic linear algebra operations such as vector and matrix multiplication.
 
-In ViSP, such basic operations are mainly implemented in vpMatrix class and are using BLAS/LAPACK dgemm (double general matrix multiplication) and dgemv (double general matrix vector multiplication) functions in order to:
+In ViSP, such basic operations are mainly implemented in vpMatrix class and are using BLAS/LAPACK dgemm
+(double general matrix multiplication) and dgemv (double general matrix vector multiplication) functions in order to:
 - multiply two matrices using either:
   - vpMatrix::mult2Matrices(const vpMatrix &, const vpMatrix &, vpMatrix &)
   - vpMatrix::operator*(const vpMatrix &) const
@@ -20,24 +21,35 @@ In ViSP, such basic operations are mainly implemented in vpMatrix class and are 
   - vpMatrix::AAt()
   - vpMatrix::AAt(vpMatrix &) const
 
-These optimized operations are based on the use of [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) third-party libraries. Several [optimized third-party](https://wiki.debian.org/DebianScience/LinearAlgebraLibraries) implementations are available for BLAS/LAPACK, but only one of the following third-party is used at the same time:
+These optimized operations are based on the use of
+[BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) and
+[LAPACK](https://en.wikipedia.org/wiki/LAPACK) third-party libraries.
+Several [optimized third-party](https://wiki.debian.org/DebianScience/LinearAlgebraLibraries) implementations are
+available for BLAS/LAPACK, but only one of the following third-party is used at the same time:
 
-- [MKL](https://software.intel.com/en-us/mkl) for Intel Math Kernel Library. It provides an optimized BLAS and an optimized subset of LAPACK. 
+- [MKL](https://software.intel.com/en-us/mkl) for Intel Math Kernel Library. It provides an optimized BLAS and an
+  optimized subset of LAPACK.
   - To install MKL on Ubuntu proceed with:
-    - [Download oneAPI Base Toolkit](https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onemkl.html) where `oneMKL` is included by selecting "Operating System: Linux", "Distribution: Web & Local" and "Installer Type: Local". At the time this tutorial was written we downloaded  `l_BaseKit_p_2021.1.0.2659_offline.sh`.
+    - [Download oneAPI Base Toolkit](https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onemkl.html)
+      where `oneMKL` is included by selecting "Operating System: Linux", "Distribution: Web & Local" and
+      "Installer Type: Local". At the time this tutorial was written we downloaded  `l_BaseKit_p_2021.1.0.2659_offline.sh`.
     - Run the installer as `sudo`.
       \verbatim
 $ sudo sh l_BaseKit_p_2021.1.0.2659_offline.sh
       \endverbatim
     - Customize your installation to change Installation Location: `/opt/intel/oneapi`
-    - Now you have to [set environment variables](https://software.intel.com/content/www/us/en/develop/documentation/get-started-with-intel-oneapi-base-linux/top/before-you-begin.html#before-you-begin_GUID-338EB548-7DB6-410E-B4BF-E65C017389C4) to be able to use MKL. To this end to make these environment variables permanent, source `setvars.sh` script in bashrc file running:
+    - Now you have to
+      [set environment variables](https://software.intel.com/content/www/us/en/develop/documentation/get-started-with-intel-oneapi-base-linux/top/before-you-begin.html#before-you-begin_GUID-338EB548-7DB6-410E-B4BF-E65C017389C4)
+      to be able to use MKL. To this end to make these environment variables permanent, source `setvars.sh` script in
+      `bashrc` file running:
       \verbatim
 $ echo "source /opt/intel/oneapi/setvars.sh" >> ~/.bashrc
 $ source ~/.bashrc
 $ env | grep MKL
 MKLROOT=/opt/intel/oneapi/mkl/latest
       \endverbatim
-- [OpenBLAS](https://www.openblas.net/) an optimized BLAS library. It provides only an optimized BLAS and uses LAPACK reference implementation.
+- [OpenBLAS](https://www.openblas.net/) an optimized BLAS library. It provides only an optimized BLAS and uses LAPACK
+  reference implementation.
   - To install openBLAS on Ubuntu proceed with:
     \verbatim
 $ sudo apt install libopenblas-dev
@@ -46,12 +58,14 @@ $ sudo apt install libopenblas-dev
     \verbatim
 $ brew install openblas
     \endverbatim
-- [Atlas](http://math-atlas.sourceforge.net/) for Automatically Tuned Linear Algebra Software. It provides an optimized BLAS and an optimized subset of LAPACK. 
+- [Atlas](http://math-atlas.sourceforge.net/) for Automatically Tuned Linear Algebra Software. It provides an optimized
+  BLAS and an optimized subset of LAPACK.
   - To install Atlas on Ubuntu proceed with:
     \verbatim
 $ sudo apt install libatlas-base-dev
     \endverbatim
-- [GSL](http://math-atlas.sourceforge.net/) for GNU Scientific Library, that only implements the C interface, not the Fortran interface. It provides only an optimized BLAS and uses LAPACK reference implementation.
+- [GSL](http://math-atlas.sourceforge.net/) for GNU Scientific Library, that only implements the C interface, not the
+  Fortran interface. It provides only an optimized BLAS and uses LAPACK reference implementation.
   - To install GSL on Ubuntu proceed with:
     \verbatim
 $ sudo apt install libgsl-dev
@@ -60,18 +74,25 @@ $ sudo apt install libgsl-dev
     \verbatim
 $ brew install gsl
     \endverbatim
-- [Netlib](https://www.netlib.org/) a collection of mathematical software. It provides a reference implementation for BLAS and LAPACK. 
+- [Netlib](https://www.netlib.org/) a collection of mathematical software. It provides a reference implementation for
+  BLAS and LAPACK.
   - To install Netlib on Ubuntu proceed with:
     \verbatim
 $ sudo apt install liblapack-dev libblas-dev
     \endverbatim
 
-If none of these third-parties is installed, ViSP provides a build-in version of Lapack that is not optimized and that could be used instead. Note that depending on our test performances some linear algebra operations may use lapack built-in or naive code when we found that it runs faster.
+If none of these third-parties is installed, ViSP provides a build-in version of Lapack that is not optimized and that
+could be used instead. Note that depending on our test performances some linear algebra operations may use lapack
+built-in or naive code when we found that it runs faster.
 
 \note
-- When at least one of the following third-party between `MKL`, `OpenBLAS`, `Atlas`, `GSL` or `Netlib` is installed `VISP_HAVE_LAPACK` macro is defined in `vpConfig.h` file.
-There is also a more specific macro that is defined with the used 3rd party as suffix, `VISP_HAVE_LAPACK_MKL`, `VISP_HAVE_LAPACK_OPENBLAS`, `VISP_HAVE_LAPACK_ATLAS`, `VISP_HAVE_LAPACK_GSL` and `VISP_HAVE_LAPACK_NETLIB` respectively.
-- When none of these third-parties is used, as explained previously lapack build-in is used and `VISP_HAVE_LAPACK` and `VISP_HAVE_LAPACK_BUILT_IN` macro are then defined.
+- When at least one of the following third-party between `MKL`, `OpenBLAS`, `Atlas`, `GSL` or `Netlib` is installed
+  `VISP_HAVE_LAPACK` macro is defined in `vpConfig.h` file.
+  There is also a more specific macro that is defined with the used 3rd party as suffix,
+  `VISP_HAVE_LAPACK_MKL`, `VISP_HAVE_LAPACK_OPENBLAS`, `VISP_HAVE_LAPACK_ATLAS`, `VISP_HAVE_LAPACK_GSL` and
+  `VISP_HAVE_LAPACK_NETLIB` respectively.
+- When none of these third-parties is used, as explained previously lapack build-in is used and `VISP_HAVE_LAPACK`
+  and `VISP_HAVE_LAPACK_BUILT_IN` macro are then defined.
 - During cmake configuration you will be asked to select one of these third-party
   \verbatim
 $ cd $VISP_WS/visp-build
@@ -81,7 +102,9 @@ $ ccmake ../visp
   \verbatim
 USE_BLAS/LAPACK           [ MKL | OpenBLAS | Atlas | GSL | Netlib ]
   \endverbatim
-- Note also that if you select `OpenBLAS`, or `Atlas`, or `Netlib` there is the possibility to change the used third-party during run time, without re-building ViSP. On Ubuntu, this could be achieved using [update-alternatives](https://wiki.debian.org/DebianScience/LinearAlgebraLibraries):
+- Note also that if you select `OpenBLAS`, or `Atlas`, or `Netlib` there is the possibility to change the used
+  third-party during run time, without re-building ViSP. On Ubuntu, this could be achieved using
+  [update-alternatives](https://wiki.debian.org/DebianScience/LinearAlgebraLibraries):
 
   Selecting LAPACK implementation:
   \verbatim
@@ -117,17 +140,26 @@ USE_BLAS/LAPACK                  MKL
   \verbatim
 USE_BLAS/LAPACK                  GSL
   \endverbatim
-  there is no possibility to switch to `OpenBLAS`, or `Atlas` or `Netlib` during run time. You need to modify `USE_BLAS/LAPACK` cmake option and build again ViSP.
+  there is no possibility to switch to `OpenBLAS`, or `Atlas` or `Netlib` during run time. You need to modify
+  `USE_BLAS/LAPACK` cmake option and build again ViSP.
 
-\section linear-algebra-which Which BLAS/LAPACK 3rd-party for basic operations
+\section linear-algebra-which 2. Which BLAS/LAPACK 3rd-party for basic operations
 
-Since performance depends on the OS and the size of the matrices or vectors that you manipulate, there is not a clear answer to this question, but from our experience **we recommend to use MKL** that seems usually faster than OpenBLAS, Atlas, GSL and Netlib at least on a 8 cores laptop running Ubuntu 18.04.
+Since performance depends on the OS and the size of the matrices or vectors that you manipulate, there is not a clear
+answer to this question, but from our experience **we recommend to use MKL** that seems usually faster than OpenBLAS,
+Atlas, GSL and Netlib at least on a 8 cores laptop running Ubuntu 18.04.
 
-We also experienced that using MKL, OpenBLAS, Atlas, GSL or Netlib `dgemm` and `dgemv` functionalities on small matrices or vectors is not always a good option since using them bring an additional processing cost. That's why since ViSP 3.3.1 we introduce vpMatrix::setLapackMatrixMinSize() function that allows the user to specify the minimum vector size or the minimum matrix rows or columns size from which Lapack `dgemm` and `dgemv` are used. Default min size is set to 0 (meaning that Lapack is always used). This min size could be retrieved using vpMatrix::getLapackMatrixMinSize(). 
+We also experienced that using MKL, OpenBLAS, Atlas, GSL or Netlib `dgemm` and `dgemv` functionalities on small
+matrices or vectors is not always a good option since using them bring an additional processing cost. That's why since
+ViSP 3.3.1 we introduce vpMatrix::setLapackMatrixMinSize() function that allows the user to specify the minimum vector
+size or the minimum matrix rows or columns size from which Lapack `dgemm` and `dgemv` are used. Default min size is set
+to 0 (meaning that Lapack is always used). This min size could be retrieved using vpMatrix::getLapackMatrixMinSize().
 
-\subsection linear-algebra-bench Benchmarking BLAS/LAPACK 3rd-party
+\subsection linear-algebra-bench 2.1. Benchmarking BLAS/LAPACK 3rd-party
 
-To help the user to select the appropriate third-party between MKL, OpenBLAS, Atlas, GSL and Netlib with regard to the use-case, there is a benchmark that could be useful. It compares the performances between a naive implementation and an optimized version of basic linear operations.
+To help the user to select the appropriate third-party between MKL, OpenBLAS, Atlas, GSL and Netlib with regard to the
+use-case, there is a benchmark that could be useful. It compares the performances between a naive implementation and an
+optimized version of basic linear operations.
 
 \verbatim
 $ cd $VISP_WS/visp-build/modules/core
@@ -150,58 +182,63 @@ benchmark name                                  samples       iterations    esti
                                                 mean          low mean      high mean
                                                 std dev       low std dev   high std dev
 -------------------------------------------------------------------------------
-(3x3)x(3x3) - Naive code                                100          237    2.0382 ms 
-                                                      88 ns        87 ns        93 ns 
-                                                      13 ns         1 ns        24 ns 
-                                                                                      
-(3x3)x(3x3) - ViSP                                      100          213    2.0448 ms 
-                                                      88 ns        88 ns        89 ns 
-                                                       1 ns         0 ns         3 ns 
-                                                                                      
-(6x6)x(6x6) - Naive code                                100           95    2.0615 ms 
-                                                     210 ns       210 ns       212 ns 
-                                                       3 ns         0 ns         7 ns 
-                                                                                      
-(6x6)x(6x6) - ViSP                                      100           93    2.0646 ms 
-                                                     222 ns       221 ns       224 ns 
-                                                       4 ns         0 ns         9 ns 
-                                                                                      
-(8x8)x(8x8) - Naive code                                100           54    2.0682 ms 
-                                                     380 ns       379 ns       381 ns 
-                                                       3 ns         0 ns         8 ns 
-                                                                                      
-(8x8)x(8x8) - ViSP                                      100           48    2.0736 ms 
-                                                     432 ns       431 ns       435 ns 
-                                                       6 ns         0 ns        15 ns 
-                                                                                      
-(10x10)x(10x10) - Naive code                            100           31    2.0925 ms 
-                                                     709 ns       682 ns       767 ns 
-                                                     194 ns       103 ns       322 ns 
-                                                                                      
-(10x10)x(10x10) - ViSP                                  100           46    2.0608 ms 
-                                                     447 ns       444 ns       462 ns 
-                                                      30 ns         0 ns        73 ns 
-                                                                                      
-(20x20)x(20x20) - Naive code                            100            4    2.1844 ms 
-                                                   5.426 us     5.418 us     5.445 us 
-                                                      54 ns         6 ns       109 ns 
-                                                                                      
-(20x20)x(20x20) - ViSP                                  100           18    2.1474 ms 
-                                                   1.189 us     1.172 us     1.268 us 
-                                                     159 ns        11 ns       379 ns 
-                                                                                      
-(6x200)x(200x6) - Naive code                            100            3    2.2248 ms 
-                                                   7.206 us     7.194 us     7.239 us 
-                                                      90 ns         5 ns       179 ns 
-                                                                                      
-(6x200)x(200x6) - ViSP                                  100            3    2.1648 ms 
-                                                   7.343 us     7.266 us     7.467 us 
-                                                     490 ns       332 ns       679 ns 
+(3x3)x(3x3) - Naive code                                100          237    2.0382 ms
+                                                      88 ns        87 ns        93 ns
+                                                      13 ns         1 ns        24 ns
+
+(3x3)x(3x3) - ViSP                                      100          213    2.0448 ms
+                                                      88 ns        88 ns        89 ns
+                                                       1 ns         0 ns         3 ns
+
+(6x6)x(6x6) - Naive code                                100           95    2.0615 ms
+                                                     210 ns       210 ns       212 ns
+                                                       3 ns         0 ns         7 ns
+
+(6x6)x(6x6) - ViSP                                      100           93    2.0646 ms
+                                                     222 ns       221 ns       224 ns
+                                                       4 ns         0 ns         9 ns
+
+(8x8)x(8x8) - Naive code                                100           54    2.0682 ms
+                                                     380 ns       379 ns       381 ns
+                                                       3 ns         0 ns         8 ns
+
+(8x8)x(8x8) - ViSP                                      100           48    2.0736 ms
+                                                     432 ns       431 ns       435 ns
+                                                       6 ns         0 ns        15 ns
+
+(10x10)x(10x10) - Naive code                            100           31    2.0925 ms
+                                                     709 ns       682 ns       767 ns
+                                                     194 ns       103 ns       322 ns
+
+(10x10)x(10x10) - ViSP                                  100           46    2.0608 ms
+                                                     447 ns       444 ns       462 ns
+                                                      30 ns         0 ns        73 ns
+
+(20x20)x(20x20) - Naive code                            100            4    2.1844 ms
+                                                   5.426 us     5.418 us     5.445 us
+                                                      54 ns         6 ns       109 ns
+
+(20x20)x(20x20) - ViSP                                  100           18    2.1474 ms
+                                                   1.189 us     1.172 us     1.268 us
+                                                     159 ns        11 ns       379 ns
+
+(6x200)x(200x6) - Naive code                            100            3    2.2248 ms
+                                                   7.206 us     7.194 us     7.239 us
+                                                      90 ns         5 ns       179 ns
+
+(6x200)x(200x6) - ViSP                                  100            3    2.1648 ms
+                                                   7.343 us     7.266 us     7.467 us
+                                                     490 ns       332 ns       679 ns
 \endverbatim
 
-As stated in the introduction, if you install OpenBLAS, Atlas and Netlib don't forget that with Ubuntu you can select which of these third-party is used during run time using `update-alternatives --config liblapack.so.3-x86_64-linux-gnu`, meaning that there is no need to run CMake and build ViSP again. Configuring with CMake and building ViSP is only mandatory if you want to change from MKL to one of OpenBLAS, Atlas or Netlib third-party, and vice-versa.
+As stated in the introduction, if you install OpenBLAS, Atlas and Netlib don't forget that with Ubuntu you can select
+which of these third-party is used during run time using `update-alternatives --config liblapack.so.3-x86_64-linux-gnu`,
+meaning that there is no need to run CMake and build ViSP again. Configuring with CMake and building ViSP is only
+mandatory if you want to change from MKL to one of OpenBLAS, Atlas or Netlib third-party, and vice-versa.
 
-There is also the possibility to run the benchmark modifying the minimum size of matrices and vector requested to enable Blas/Lapack usage in order to see the effect on your platform and tune this parameter. For example to use always Blas/Lapack even for small matrices you can set minimum size to 0:
+There is also the possibility to run the benchmark modifying the minimum size of matrices and vector requested to
+enable Blas/Lapack usage in order to see the effect on your platform and tune this parameter. For example to use always
+Blas/Lapack even for small matrices you can set minimum size to 0:
 
 \verbatim
 ./perfMatrixMultiplication --benchmark --lapack-min-size 0
@@ -224,64 +261,68 @@ benchmark name                                  samples       iterations    esti
                                                 mean          low mean      high mean
                                                 std dev       low std dev   high std dev
 -------------------------------------------------------------------------------
-(3x3)x(3x3) - Naive code                                100          231    2.0097 ms 
-                                                      92 ns        87 ns       106 ns 
-                                                      39 ns        17 ns        81 ns 
-                                                                                      
-(3x3)x(3x3) - ViSP                                      100           84    2.0328 ms 
-                                                     233 ns       232 ns       237 ns 
-                                                       7 ns         0 ns        18 ns 
-                                                                                      
-(6x6)x(6x6) - Naive code                                100           95     2.033 ms 
-                                                     209 ns       208 ns       210 ns 
-                                                       2 ns         0 ns         5 ns 
-                                                                                      
-(6x6)x(6x6) - ViSP                                      100           70      2.03 ms 
-                                                     293 ns       292 ns       301 ns 
-                                                      16 ns         0 ns        38 ns 
-                                                                                      
-(8x8)x(8x8) - Naive code                                100           53    2.0405 ms 
-                                                     379 ns       379 ns       381 ns 
-                                                       4 ns         0 ns         9 ns 
-                                                                                      
-(8x8)x(8x8) - ViSP                                      100           61    2.0313 ms 
-                                                     333 ns       330 ns       342 ns 
-                                                      19 ns         2 ns        47 ns 
-                                                                                      
-(10x10)x(10x10) - Naive code                            100           30     2.055 ms 
-                                                     667 ns       665 ns       671 ns 
-                                                       9 ns         1 ns        20 ns 
-                                                                                      
-(10x10)x(10x10) - ViSP                                  100           46    2.0654 ms 
-                                                     490 ns       461 ns       542 ns 
-                                                     194 ns       122 ns       278 ns 
-                                                                                      
-(20x20)x(20x20) - Naive code                            100            4    2.5972 ms 
-                                                   6.441 us     6.434 us     6.466 us 
-                                                      60 ns         8 ns       141 ns 
-                                                                                      
-(20x20)x(20x20) - ViSP                                  100           18     2.133 ms 
-                                                   1.179 us     1.163 us     1.253 us 
-                                                     149 ns         9 ns       355 ns 
-                                                                                      
-(6x200)x(200x6) - Naive code                            100            3    2.1447 ms 
-                                                   7.172 us     7.159 us     7.206 us 
-                                                      94 ns         5 ns       189 ns 
-                                                                                      
-(6x200)x(200x6) - ViSP                                  100           12    2.2092 ms 
-                                                   1.852 us     1.839 us     1.901 us 
-                                                     120 ns         2 ns       287 ns 
+(3x3)x(3x3) - Naive code                                100          231    2.0097 ms
+                                                      92 ns        87 ns       106 ns
+                                                      39 ns        17 ns        81 ns
+
+(3x3)x(3x3) - ViSP                                      100           84    2.0328 ms
+                                                     233 ns       232 ns       237 ns
+                                                       7 ns         0 ns        18 ns
+
+(6x6)x(6x6) - Naive code                                100           95     2.033 ms
+                                                     209 ns       208 ns       210 ns
+                                                       2 ns         0 ns         5 ns
+
+(6x6)x(6x6) - ViSP                                      100           70      2.03 ms
+                                                     293 ns       292 ns       301 ns
+                                                      16 ns         0 ns        38 ns
+
+(8x8)x(8x8) - Naive code                                100           53    2.0405 ms
+                                                     379 ns       379 ns       381 ns
+                                                       4 ns         0 ns         9 ns
+
+(8x8)x(8x8) - ViSP                                      100           61    2.0313 ms
+                                                     333 ns       330 ns       342 ns
+                                                      19 ns         2 ns        47 ns
+
+(10x10)x(10x10) - Naive code                            100           30     2.055 ms
+                                                     667 ns       665 ns       671 ns
+                                                       9 ns         1 ns        20 ns
+
+(10x10)x(10x10) - ViSP                                  100           46    2.0654 ms
+                                                     490 ns       461 ns       542 ns
+                                                     194 ns       122 ns       278 ns
+
+(20x20)x(20x20) - Naive code                            100            4    2.5972 ms
+                                                   6.441 us     6.434 us     6.466 us
+                                                      60 ns         8 ns       141 ns
+
+(20x20)x(20x20) - ViSP                                  100           18     2.133 ms
+                                                   1.179 us     1.163 us     1.253 us
+                                                     149 ns         9 ns       355 ns
+
+(6x200)x(200x6) - Naive code                            100            3    2.1447 ms
+                                                   7.172 us     7.159 us     7.206 us
+                                                      94 ns         5 ns       189 ns
+
+(6x200)x(200x6) - ViSP                                  100           12    2.2092 ms
+                                                   1.852 us     1.839 us     1.901 us
+                                                     120 ns         2 ns       287 ns
 \endverbatim
 
-\subsection linear-algebra-compar BLAS/LAPACK performance comparison
+\subsection linear-algebra-compar 2.2. BLAS/LAPACK performance comparison
 
-The following table gives some results obtained on Ubuntu 18.04 with a DELL Laptop equipped with an Intel® Core™ i7-8650U CPU @ 1.90GHz × 8 and 32 GB RAM. Results were obtained using Intel MKL version 2020.0.166. Other 3rd parties were installed from ubuntu packages. Performance execution time was obtained using:
+The following table gives some results obtained on Ubuntu 18.04 with a DELL Laptop equipped with an
+Intel® Core™ i7-8650U CPU @ 1.90GHz × 8 and 32 GB RAM. Results were obtained using Intel MKL version 2020.0.166.
+Other 3rd parties were installed from ubuntu packages. Performance execution time was obtained using:
 \verbatim
 $ ./perfMatrixMultiplication --benchmark --lapack-min-size 0
 \endverbatim
-that was build setting the appropriate `USE_BLAS/LAPACK=[ MKL | OpenBLAS | Atlas | GSL | Netlib ]` CMake option during configuration.
+that was build setting the appropriate `USE_BLAS/LAPACK=[ MKL | OpenBLAS | Atlas | GSL | Netlib ]` CMake option during
+configuration.
 
-Moreover, when `OpenBLAS`, `Atlas` or `Netlib` were selected we used `update-alternatives` tool to selected the corresponding BLAS / LAPACK library using:
+Moreover, when `OpenBLAS`, `Atlas` or `Netlib` were selected we used `update-alternatives` tool to selected the
+corresponding BLAS / LAPACK library using:
 \verbatim
 $ sudo update-alternatives --config liblapack.so.3-x86_64-linux-gnu
 $ sudo update-alternatives --config libblas.so.3-x86_64-linux-gnu
@@ -309,7 +350,7 @@ The previous table shows the following trend:
 - OpenBLAS and Atlas have similar intermediate performance results
 - GSL, Netlib and lapack built-in and operations performed without lapack are the slowest with similar results.
 
-The following table compares execution time obtained running `./modules/mbt/testGenericTracker -d -D`: 
+The following table compares execution time obtained running `./modules/mbt/testGenericTracker -d -D`:
 
 |     sample step     |     MKL    |  OpenBLAS  |    Atlas   |     GSL    |   Netlib   |  built-in |
 |:-------------------:|:----------:|:----------:|:----------:|:----------:|:----------:|:---------:|
@@ -317,7 +358,8 @@ The following table compares execution time obtained running `./modules/mbt/test
 
 Here also, better results are obtained with MKL.
 
-The next table compares execution time obtained running `./example/direct-visual-servoing/photometricVisualServoingWithoutVpServo -c -d`:
+The next table compares execution time obtained running
+`./example/direct-visual-servoing/photometricVisualServoingWithoutVpServo -c -d`:
 
 |     MKL    |   OpenBLAS  |    Atlas   |     GSL    |   Netlib   |  built-in  |
 |:----------:|:-----------:|:----------:|:----------:|:----------:|:----------:|
@@ -325,7 +367,7 @@ The next table compares execution time obtained running `./example/direct-visual
 
 Here MKL and OpenBLAS bring similar performances.
 
-\section linear-algebra-next Next tutorial
+\section linear-algebra-next 3. Next tutorial
 
 You are now ready to to continue with tutorials dedicated to \ref tutorial_image.
 

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  * \brief Class which provides a simulator for the robot Afma6.
  */
 
-#ifndef vpSimulatorAfma6_HH
-#define vpSimulatorAfma6_HH
+#ifndef VP_SIMULATOR_AFMA6_H
+#define VP_SIMULATOR_AFMA6_H
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpAfma6.h>

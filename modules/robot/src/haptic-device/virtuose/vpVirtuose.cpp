@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
 */
 
 #include <visp3/core/vpException.h>
+#include <visp3/core/vpMath.h>
 #include <visp3/robot/vpVirtuose.h>
 
 #ifdef VISP_HAVE_VIRTUOSE
@@ -196,10 +197,12 @@ vpPoseVector vpVirtuose::getAvatarPosition() const
     throw(vpException(vpException::fatalError, "Error calling virtGetAvatarPosition: error code %d", err));
   }
   else {
-    for (int i = 0; i < 3; i++)
+    for (unsigned int i = 0; i < 3; i++) {
       translation[i] = position_[i];
-    for (int i = 0; i < 4; i++)
+    }
+    for (unsigned int i = 0; i < 4; i++) {
       quaternion[i] = position_[3 + i];
+    }
 
     vpThetaUVector thetau(quaternion);
 
@@ -231,10 +234,12 @@ vpPoseVector vpVirtuose::getBaseFrame() const
     throw(vpException(vpException::fatalError, "Error calling virtGetBaseFrame: error code %d", err));
   }
   else {
-    for (int i = 0; i < 3; i++)
+    for (unsigned int i = 0; i < 3; i++) {
       translation[i] = position_[i];
-    for (int i = 0; i < 4; i++)
+    }
+    for (unsigned int i = 0; i < 4; i++) {
       quaternion[i] = position_[3 + i];
+    }
 
     vpThetaUVector thetau(quaternion);
 
@@ -395,10 +400,12 @@ vpPoseVector vpVirtuose::getObservationFrame() const
     throw(vpException(vpException::fatalError, "Error calling virtGetObservationFrame: error code %d", err));
   }
   else {
-    for (int i = 0; i < 3; i++)
+    for (unsigned int i = 0; i < 3; i++) {
       translation[i] = position_[i];
-    for (int i = 0; i < 4; i++)
+    }
+    for (unsigned int i = 0; i < 4; i++) {
       quaternion[i] = position_[3 + i];
+    }
 
     vpThetaUVector thetau(quaternion);
 
@@ -429,10 +436,12 @@ vpPoseVector vpVirtuose::getPhysicalPosition() const
     throw(vpException(vpException::fatalError, "Error calling virtGetPhysicalPosition: error code %d", err));
   }
   else {
-    for (int i = 0; i < 3; i++)
+    for (unsigned int i = 0; i < 3; i++) {
       translation[i] = position_[i];
-    for (int i = 0; i < 4; i++)
+    }
+    for (unsigned int i = 0; i < 4; i++) {
       quaternion[i] = position_[3 + i];
+    }
 
     vpThetaUVector thetau(quaternion);
 
@@ -460,8 +469,9 @@ vpColVector vpVirtuose::getPhysicalVelocity() const
     throw(vpException(vpException::fatalError, "Error calling virtGetPhysicalSpeed: error code %s",
                       virtGetErrorMessage(err)));
   }
-  for (unsigned int i = 0; i < 6; i++)
+  for (unsigned int i = 0; i < 6; i++) {
     vel[i] = speed[i];
+  }
   return vel;
 }
 
@@ -486,10 +496,12 @@ vpPoseVector vpVirtuose::getPosition() const
     throw(vpException(vpException::fatalError, "Error calling virtGetPosition: error code %d", err));
   }
   else {
-    for (int i = 0; i < 3; i++)
+    for (unsigned int i = 0; i < 3; i++) {
       translation[i] = position_[i];
-    for (int i = 0; i < 4; i++)
+    }
+    for (unsigned int i = 0; i < 4; i++) {
       quaternion[i] = position_[3 + i];
+    }
 
     vpThetaUVector thetau(quaternion);
 
@@ -530,8 +542,9 @@ vpColVector vpVirtuose::getVelocity() const
     int err = virtGetErrorCode(m_virtContext);
     throw(vpException(vpException::fatalError, "Cannot get haptic device velocity: %s", virtGetErrorMessage(err)));
   }
-  for (unsigned int i = 0; i < 6; i++)
+  for (unsigned int i = 0; i < 6; i++) {
     vel[i] = speed[i];
+  }
   return vel;
 }
 
@@ -613,8 +626,9 @@ void vpVirtuose::setArticularForce(const vpColVector &articularForce)
   }
 
   float *articular_force = new float[m_njoints];
-  for (unsigned int i = 0; i < m_njoints; i++)
+  for (unsigned int i = 0; i < m_njoints; i++) {
     articular_force[i] = static_cast<float>(articularForce[i]);
+  }
 
   if (virtSetArticularForce(m_virtContext, articular_force)) {
     delete[] articular_force;
@@ -644,8 +658,9 @@ void vpVirtuose::setArticularPosition(const vpColVector &articularPosition)
   }
 
   float *articular_position = new float[m_njoints];
-  for (unsigned int i = 0; i < m_njoints; i++)
+  for (unsigned int i = 0; i < m_njoints; i++) {
     articular_position[i] = static_cast<float>(articularPosition[i]);
+  }
 
   if (virtSetArticularPosition(m_virtContext, articular_position)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -674,8 +689,9 @@ void vpVirtuose::setArticularVelocity(const vpColVector &articularVelocity)
   }
 
   float *articular_velocity = new float[m_njoints];
-  for (unsigned int i = 0; i < m_njoints; i++)
+  for (unsigned int i = 0; i < m_njoints; i++) {
     articular_velocity[i] = static_cast<float>(articularVelocity[i]);
+  }
 
   if (virtSetArticularSpeed(m_virtContext, articular_velocity)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -703,10 +719,12 @@ void vpVirtuose::setBaseFrame(const vpPoseVector &position)
   position.extract(translation);
   position.extract(quaternion);
 
-  for (int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; i++) {
     position_[i] = static_cast<float>(translation[i]);
-  for (int i = 0; i < 4; i++)
+  }
+  for (unsigned int i = 0; i < 4; i++) {
     position_[3 + i] = static_cast<float>(quaternion[i]);
+  }
 
   if (virtSetBaseFrame(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -756,8 +774,9 @@ void vpVirtuose::setForce(const vpColVector &force)
   }
 
   float virtforce[6];
-  for (unsigned int i = 0; i < 6; i++)
+  for (unsigned int i = 0; i < 6; i++) {
     virtforce[i] = static_cast<float>(force[i]);
+  }
 
   if (virtSetForce(m_virtContext, virtforce)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -826,10 +845,12 @@ void vpVirtuose::setObservationFrame(const vpPoseVector &position)
   position.extract(translation);
   position.extract(quaternion);
 
-  for (int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; i++) {
     position_[i] = static_cast<float>(translation[i]);
-  for (int i = 0; i < 4; i++)
+  }
+  for (unsigned int i = 0; i < 4; i++) {
     position_[3 + i] = static_cast<float>(quaternion[i]);
+  }
 
   if (virtSetObservationFrame(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -906,10 +927,12 @@ void vpVirtuose::setPosition(vpPoseVector &position)
   position.extract(translation);
   position.extract(quaternion);
 
-  for (int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; i++) {
     position_[i] = static_cast<float>(translation[i]);
-  for (int i = 0; i < 4; i++)
+  }
+  for (unsigned int i = 0; i < 4; i++) {
     position_[3 + i] = static_cast<float>(quaternion[i]);
+  }
 
   if (virtSetPosition(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -967,7 +990,7 @@ void vpVirtuose::setTimeStep(const float &timeStep)
 {
   init();
 
-  if (m_period != timeStep) {
+  if (!vpMath::equal(m_period, timeStep)) {
     m_period = timeStep;
 
     if (virtSetTimeStep(m_virtContext, m_period)) {
@@ -992,8 +1015,9 @@ void vpVirtuose::setVelocity(vpColVector &velocity)
   }
 
   float speed[6];
-  for (unsigned int i = 0; i < 6; i++)
+  for (unsigned int i = 0; i < 6; i++) {
     speed[i] = static_cast<float>(velocity[i]);
+  }
 
   if (virtSetSpeed(m_virtContext, speed)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -1052,5 +1076,5 @@ void vpVirtuose::stopPeriodicFunction()
 END_VISP_NAMESPACE
 #else
 // Work around to avoid warning
-void dummy_vpVirtuose() { }
+void dummy_vpVirtuose() {}
 #endif

@@ -4,7 +4,7 @@
 
 \tableofcontents
 
-\section mb_Blender_intro Introduction
+\section mb_Blender_intro 1. Introduction
 
 This tutorial will show how to use [Blender](https://www.blender.org/), a free and open source 3D creation
 suite, to create a simple textured object like a tee box, generate color and depth images from a virtual RGB-D
@@ -30,11 +30,11 @@ Note that all the material (source code, input video, CAD model or XML settings 
 part of ViSP source code (in `tracking/model-based/generic-rgbd-blender` folder) and could be found in
 https://github.com/lagadic/visp/tree/master/tracking/model-based/generic-rgbd-blender.
 
-\section mb_Blender_setup Considered setup
+\section mb_Blender_setup 2. Considered setup
 Remember that for each object considered by the model-based tracker, you need a \ref mb_generic_model
 (`object_name.cao` or `object_name.wrl`) and a file for \ref mb_generic_init by mouse click (`object_name.init`).
 
-\subsection mb_Blender_setup_teabox Tea box objet
+\subsection mb_Blender_setup_teabox 2.1. Tea box objet
 
 In this tutorial we will consider a tea box. The CAD model file (`teabox.cao`) and the init file (`teabox.init`)
 are provided in `model/teabox` folder:
@@ -61,7 +61,7 @@ Analysing `teabox.cao` we can see that the box dimensions are the following (see
 - Length (from point 0 to point 3): 0.165 meters
 - Width (from point 0 to point 7): 0.068 meters
 
-\subsection mb_Blender_setup_rgbd RGB-D camera
+\subsection mb_Blender_setup_rgbd 2.2. RGB-D camera
 
 We will also consider a RGB-D camera where the left camera is a classical color camera and the right camera
 a depth camera. The distance between left and right cameras is 10 cm.
@@ -98,12 +98,12 @@ resolution are the following:
   p_y = \frac{f \times \text{image height}}{\text{sensor height}}
 \f]
 
-\section mb_Blender_scene Create your scene with Blender
+\section mb_Blender_scene 3. Create your scene with Blender
 
 In this section, we will create the corresponding tea box, RGB-D camera and define an initial and final RGB-D camera
 pose used to animate the scene.
 
-\subsection mb_Blender_scene_create_teabox Create tea box object
+\subsection mb_Blender_scene_create_teabox 3.1. Create tea box object
 
 Here we will show how to create with Blender a box with the following dimensions:
 - Height: 0.08 meters
@@ -158,7 +158,7 @@ To this end:
 
 This ends the creation of a textured box that matches the `"teabox.cao"` cad model.
 
-\subsection mb_Blender_scene_camera_color Color camera settings
+\subsection mb_Blender_scene_camera_color 3.2. Color camera settings
 
 Here you will set the color camera image resolution to `640x480` to match a VGA camera resolution, set the focal length
 to f = 35 mm, and the sensor size to 32 mm x 24 mm. Note that the width / height ratio must be the same for the image
@@ -191,7 +191,7 @@ To this end:
 For curiosity you can now render an image of your object (shortcut: F12) and obtain an image like the following:
 \image html img-Blender-camera-color-render.jpg
 
-\subsection mb_Blender_scene_depth_camera Add a depth camera
+\subsection mb_Blender_scene_depth_camera 3.3. Add a depth camera
 
 To simulate an RGB-D camera, we need to add a second camera to retrieve the depth map and set the appropriate
 parameters to match the desired intrinsic parameters following the same instructions as in previous section.
@@ -226,7 +226,7 @@ them together using the Blender parenting concept:
 - Once done, you can see that `"Camera_L"` has for child `"Camera_L"` (14)
 \image html img-Blender-camera-depth-parenting-done.jpg
 
-\subsection mb_Blender_scene_generate_depth Enable depth maps
+\subsection mb_Blender_scene_generate_depth 3.4. Enable depth maps
 
 If you enter menu `"Render > Render Image"` you will see only the box seen by the color left camera.
 To be able to render color and depth, you need to enable `"Stereoscopy"`. To this end:
@@ -260,7 +260,7 @@ $ ls /tmp/teabox/depth
 Image0001_L.exr	      Image0001_R.exr
 \endcode
 
-\subsection mb_Blender_create_trajectory Create a camera trajectory
+\subsection mb_Blender_create_trajectory 3.5. Create a camera trajectory
 
 We are now ready to animate the scene. First we have to define the camera initial position. This can be done easily:
 - Switch to `"3D Vieport"` (shortcut: Shift-F5)
@@ -299,7 +299,7 @@ This completes the configuration of the scene in Blender. We strongly recommend 
 \note The project used to create this tutorial is available in
 `$VISP_WS/visp/tutorial/tracking/model-based/generic-rgbd-blender/data/teabox/blender/teabox.blend`.
 
-\section mb_Blender_data Generate full data
+\section mb_Blender_data 4. Generate full data
 
 Here we want to run `get_camera_pose_teabox.py` Python script inside Blender to:
 - animate the RGB-D camera and retrieve in `"/tmp/teabox"` folder
@@ -357,7 +357,7 @@ By default, for each camera (`"Camera_L"` and `"Camera_R"`) we render the color 
 The script will remove useless generated files by removing depth images corresponding to `"Camera_L"` and color
 images from `"Camera_R"`.
 
-\subsection mb_Blender_data_color_intrinsics How to get only camera intrinsics
+\subsection mb_Blender_data_color_intrinsics 4.1. How to get only camera intrinsics
 
 If you are only interested to see which are the camera intrinsics of a given camera set in Blender, we provide
 `get_camera_intrinsics.py` Python script in `$VISP_WS/visp/tutorial/tracking/model-based/generic-rgbd-blender/`
@@ -411,9 +411,9 @@ Intrinsics for Camera_R are K =
             (  0.0000,   0.0000,   1.0000)>
 ```
 
-\section mb_Blender_mbt Run model-based tracker on simulated data
+\section mb_Blender_mbt 5. Run model-based tracker on simulated data
 
-\subsection mb_Blender_mbt_src Source code
+\subsection mb_Blender_mbt_src 5.1. Source code
 The following C++ sample file also available in tutorial-mb-generic-tracker-rgbd-blender.cpp reads color and depth
 images, pointcloud is recreated using the depth camera intrinsic parameters. The ground truth data are read and
 printed along with the estimated camera pose by the model-based tracker. Since depth data are stored in `OpenEXR`
@@ -424,7 +424,7 @@ file format, OpenCV is used for the reading.
 \note Here the depth values are manually clipped in order to simulate the depth range of a depth sensor.
 This probably can be done directly in Blender.
 
-\subsection mb_Blender_mbt_run Usage on simulated data
+\subsection mb_Blender_mbt_run 5.2. Usage on simulated data
 
 Once build, to get tutorial-mb-generic-tracker-rgbd-blender.cpp usage, just run:
 \code{.sh}
@@ -479,7 +479,7 @@ You should be able to see similar tracking results as the one given in the next 
 $ ./tutorial-mb-generic-tracker-rgbd-blender --data-path /tmp/teabox --display-ground-truth
 \endcode
 
-\section mb_Blender_next Next tutorial
+\section mb_Blender_next 6. Next tutorial
 
 - You are now ready to see the next \ref tutorial-tracking-tt.
 

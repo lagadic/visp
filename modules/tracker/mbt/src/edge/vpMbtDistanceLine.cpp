@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ vpMbtDistanceLine::vpMbtDistanceLine()
   : name(), index(0), cam(), me(nullptr), isTrackedLine(true), isTrackedLineWithVisibility(true), wmean(1), featureline(),
   poly(), useScanLine(false), meline(), line(nullptr), p1(nullptr), p2(nullptr), L(), error(), nbFeature(), nbFeatureTotal(0),
   Reinit(false), hiddenface(nullptr), Lindex_polygon(), Lindex_polygon_tracked(), isvisible(false)
-{ }
+{}
 
 /*!
   Basic destructor useful to deallocate the memory.
@@ -377,12 +377,12 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
         vpMeterPixelConversion::convertPoint(cam, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
         vpMeterPixelConversion::convertPoint(cam, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
-        unsigned int initRange_;
+        int initRange_;
         if (initRange < 0) {
           initRange_ = defaultRange;
         }
         else {
-          initRange_ = static_cast<unsigned int>(initRange);
+          initRange_ = initRange;
         }
         int oldInitRange = me->getInitRange();
         me->setInitRange(initRange_);

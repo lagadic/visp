@@ -76,7 +76,7 @@ bool read_data(unsigned int cpt, const std::string &video_color_images, const st
 }
 } // namespace
 
-void usage(const char **argv, int error, const std::string &data_path, const std::string &model_path, int first_frame)
+void usage(const char **argv, int error, const std::string &data_path, const std::string &model_path, unsigned int first_frame)
 {
   std::cout << "Synopsis" << std::endl
     << "  " << argv[0]
@@ -142,7 +142,7 @@ int main(int argc, const char **argv)
       i++;
     }
     else if (std::string(argv[i]) == "--depth-dense-mode" && i + 1 < argc) {
-      opt_denseMode = static_cast<unsigned int>(atoi(argv[i + 1]));
+      opt_denseMode = atoi(argv[i + 1]);
       if (opt_denseMode < 0 || opt_denseMode > 1) {
         usage(argv, 0, opt_data_path, opt_model_path, opt_first_frame);
         return EXIT_FAILURE;
@@ -150,7 +150,7 @@ int main(int argc, const char **argv)
       i++;
     }
     else if (std::string(argv[i]) == "--depth-normals-mode" && i + 1 < argc) {
-      opt_normalsMode = static_cast<unsigned int>(atoi(argv[i + 1]));
+      opt_normalsMode = atoi(argv[i + 1]);
       if (opt_normalsMode < 0 || opt_normalsMode > 1) {
         usage(argv, 0, opt_data_path, opt_model_path, opt_first_frame);
         return EXIT_FAILURE;
@@ -158,7 +158,7 @@ int main(int argc, const char **argv)
       i++;
     }
     else if (std::string(argv[i]) == "--me-mode" && i + 1 < argc) {
-      opt_meMode = static_cast<unsigned int>(atoi(argv[i + 1]));
+      opt_meMode = atoi(argv[i + 1]);
       if (opt_meMode < 0 || opt_meMode > 1) {
         usage(argv, 0, opt_data_path, opt_model_path, opt_first_frame);
         return EXIT_FAILURE;
@@ -166,7 +166,7 @@ int main(int argc, const char **argv)
       i++;
     }
     else if (std::string(argv[i]) == "--klt-mode" && i + 1 < argc) {
-      opt_kltMode = static_cast<unsigned int>(atoi(argv[i + 1]));
+      opt_kltMode = atoi(argv[i + 1]);
       if (opt_kltMode < 0 || opt_kltMode > 1) {
         usage(argv, 0, opt_data_path, opt_model_path, opt_first_frame);
         return EXIT_FAILURE;
@@ -403,13 +403,13 @@ int main(int argc, const char **argv)
         {
           std::stringstream ss;
           ss << "Nb features: " << tracker.getError().size();
-          vpDisplay::displayText(I, I.getHeight() - 50, 20, ss.str(), vpColor::red);
+          vpDisplay::displayText(I, static_cast<int>(I.getHeight()) - 50, 20, ss.str(), vpColor::red);
         }
         {
           std::stringstream ss;
           ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt()
             << ", dense depth " << tracker.getNbFeaturesDepthDense() << ", depth normals " << tracker.getNbFeaturesDepthNormal();
-          vpDisplay::displayText(I, I.getHeight() - 30, 20, ss.str(), vpColor::red);
+          vpDisplay::displayText(I, static_cast<int>(I.getHeight()) - 30, 20, ss.str(), vpColor::red);
         }
       }
 

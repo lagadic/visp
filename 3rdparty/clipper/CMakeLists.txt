@@ -34,3 +34,8 @@ if(NOT BUILD_SHARED_LIBS)
 endif()
 
 vp_set_source_file_compile_flag(clipper.cpp -Wno-float-equal -Wno-class-memaccess)
+
+set_target_properties(${CLIPPER_LIBRARY} PROPERTIES
+  CXX_VISIBILITY_PRESET hidden
+  VISIBILITY_INLINES_HIDDEN ON
+)

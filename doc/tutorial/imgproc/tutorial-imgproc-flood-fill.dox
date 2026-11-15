@@ -3,7 +3,7 @@
 \page tutorial-imgproc-flood-fill Tutorial: Flood fill algorithm
 \tableofcontents
 
-\section imgproc_flood_fill_intro Introduction
+\section imgproc_flood_fill_intro 1. Introduction
 
 This tutorial will show you how to use the <a href="https://en.wikipedia.org/wiki/Flood_fill">flood fill</a> algorithm to fill connected areas in an image. This method is used for instance in raster graphics editor to perform the "bucket" fill tool.
 
@@ -19,7 +19,7 @@ To explore the neighborhood, a 4-connexity or 8-connexity search are possible:
 
 \image html img-tutorial-flood-fill-8-connexity.png "8-connexity"
 
-\section imgproc_flood_fill_example Example code
+\section imgproc_flood_fill_example 2. Example code
 
 The following example also available in tutorial-flood-fill.cpp will mimic the "bucket" fill tool:
 
@@ -70,7 +70,7 @@ Here are some steps illustrated with images:
 
 \image html img-tutorial-flood-fill-bucket-fill.png "Raster image after bucket fill"
 
-\section imgproc_flood_fill_next Next tutorial
+\section imgproc_flood_fill_next 3. Next tutorial
 
 You can now read the \ref tutorial-imgproc-count-coins, for a final tutorial that will illustrate some of the image processing techniques presented in these tutorials on a specific use case: how to count the number of coins in an image.
 

@@ -27,7 +27,14 @@ Other projects | Build Status |
 [visp_started](https://github.com/lagadic/visp_started) | [![ubuntu_3rdparty_workflow](https://github.com/lagadic/visp/actions/workflows/ubuntu-3rdparty.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/ubuntu-3rdparty.yml)
 
 
-ViSP is a cross-platform library (Linux, Windows, MacOS, iOS, Android) that allows prototyping and developing applications using visual tracking and visual servoing technics at the heart of the researches done now by Inria <a href="https://team.inria.fr/rainbow">Rainbow team</a> and before 2018 by <a href="https://team.inria.fr/lagadic">Lagadic team</a>. ViSP is able to compute control laws that can be applied to robotic systems. It provides a set of visual features that can be tracked using real time image processing or computer vision algorithms. ViSP provides also simulation capabilities. ViSP can be useful in robotics, computer vision, augmented reality and computer animation. Our <a href="https://www.youtube.com/user/VispTeam">YouTube channel</a> gives an overview of the applications that could be tackled.
+ViSP is a cross-platform library (Linux, Windows, MacOS, iOS, Android) that allows prototyping and developing
+applications using visual tracking and visual servoing technics at the heart of the researches done now by Inria
+<a href="https://team.inria.fr/rainbow">Rainbow team</a> and before 2018 by
+<a href="https://team.inria.fr/lagadic">Lagadic team</a>. ViSP is able to compute control laws that can be applied to
+robotic systems. It provides a set of visual features that can be tracked using real time image processing or computer
+vision algorithms. ViSP provides also simulation capabilities. ViSP can be useful in robotics, computer vision,
+augmented reality and computer animation. Our <a href="https://www.youtube.com/user/VispTeam">YouTube channel</a>
+gives an overview of the applications that could be tackled.
 
 #### Citing ViSP
 Please cite <a href="https://inria.hal.science/inria-00351899">ViSP</a> in your publications if it helps your research:
@@ -55,7 +62,8 @@ To cite the <a href="https://inria.hal.science/hal-01853972v1">generic model-bas
    Year = {2018}
 }
 ```
-To cite <a href="https://hal.science/hal-01246370v1">pose estimation algorithms and hands-on survey</a> illustrated with <a href="https://github.com/lagadic/camera_localization">ViSP examples</a>:
+To cite <a href="https://hal.science/hal-01246370v1">pose estimation algorithms and hands-on survey</a> illustrated
+with <a href="https://github.com/lagadic/camera_localization">ViSP examples</a>:
 ```
 @article{Marchand16a,
    Author = {Marchand, E. and Uchiyama, H. and Spindler, F.},

@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  */
 
 #include <visp3/rbt/vpRBVisualOdometryUtils.h>
+#include <visp3/core/vpImageFilter.h>
 
 #include <visp3/core/vpMatrix.h>
 #include <visp3/rbt/vpRBFeatureTrackerInput.h>
@@ -75,22 +76,32 @@ vpRBVisualOdometryUtils::computeIndicesObjectAndEnvironment(const vpMatrix &keyp
 
   for (unsigned int i = 0; i < keypoints.getRows(); ++i) {
     double u = keypoints[i][0], v = keypoints[i][1];
-    if (u < 0.0 || v < 0.0 || u >= w || v >= h) {
+    if (u < 2.0 || v < 2.0 || u >= w - 2 || v >= h - 2) {
       continue;
     }
-    const unsigned int ui = static_cast<unsigned int>(u), vi = static_cast<unsigned int>(v);
+    const int ui = static_cast<int>(u), vi = static_cast<int>(v);
     const double Z = static_cast<double>(renderDepth[vi][ui]);
 
     if (Z > 0.0) { // Potential object candidate
-      if (!useMask || frame.mask[vi][ui] > minMaskConfidence) {
-        bool notTooCloseToEdge = testDistanceEdge(u, v, thresholdObject);
+      double maskValue = 1.f;
+      if (useMask) {
+        maskValue = 0.f;
+        for (int ki = -1; ki <= 1; ++ki) {
+          for (int kj = -1; kj <= 1; ++kj) {
+            maskValue += frame.mask[static_cast<unsigned int>(vi + ki)][static_cast<unsigned int>(ui + kj)];
+          }
+        }
+        maskValue /= 9.f;
+      }
+      if (!useMask || maskValue >= minMaskConfidence) {
+        bool notTooCloseToEdge = thresholdObject <= 0 || testDistanceEdge(u, v, thresholdObject);
         if (notTooCloseToEdge) {
           objIndices.push_back(i);
         }
       }
     }
     else { // Env candidate
-      bool notTooCloseToEdge = testDistanceEdge(u, v, thresholdEnv);
+      bool notTooCloseToEdge = thresholdEnv <= 0 || testDistanceEdge(u, v, thresholdEnv);
       if (notTooCloseToEdge) {
         envIndices.push_back(i);
       }
@@ -131,14 +142,15 @@ void vpRBVisualOdometryUtils::levenbergMarquardtKeypoints2D(const vpMatrix &poin
     for (int i = 0; i < static_cast<int>(points3d.getRows()); ++i) {
       const double X = cXt[0][i] + t[0], Y = cXt[1][i] + t[1], Z = cXt[2][i] + t[2];
       const double x = X / Z, y = Y / Z;
-      e[i * 2] = x - observations[i][0];
-      e[i * 2 + 1] = y - observations[i][1];
+      unsigned int i_ = static_cast<unsigned int>(i);
+      e[i_ * 2] = x - observations[i_][0];
+      e[i_ * 2 + 1] = y - observations[i_][1];
 
-      L[i * 2][0] = -1.0 / Z; L[i * 2][1] = 0.0; L[i * 2][2] = x / Z;
-      L[i * 2][3] = x * y; L[i * 2][4] = -(1.0 + x * x); L[i * 2][5] = y;
+      L[i_ * 2][0] = -1.0 / Z; L[i_ * 2][1] = 0.0; L[i_ * 2][2] = x / Z;
+      L[i_ * 2][3] = x * y; L[i_ * 2][4] = -(1.0 + x * x); L[i_ * 2][5] = y;
 
-      L[i * 2 + 1][0] = 0.0; L[i * 2 + 1][1] = -1.0 / Z; L[i * 2 + 1][2] = y / Z;
-      L[i * 2 + 1][3] = 1.0 + y * y; L[i * 2 + 1][4] = -(x * y); L[i * 2 + 1][5] = -x;
+      L[i_ * 2 + 1][0] = 0.0; L[i_ * 2 + 1][1] = -1.0 / Z; L[i_ * 2 + 1][2] = y / Z;
+      L[i_ * 2 + 1][3] = 1.0 + y * y; L[i_ * 2 + 1][4] = -(x * y); L[i_ * 2 + 1][5] = -x;
     }
 
     robust.MEstimator(vpRobust::TUKEY, e, weights);
@@ -163,10 +175,10 @@ void vpRBVisualOdometryUtils::levenbergMarquardtKeypoints2D(const vpMatrix &poin
     }
     // if (improvementFactor < 1.0) {
     mu *= parameters.muIterFactor;
-  // }
-  // else {
-  //   mu /= parameters.muIterFactor;
-  // }
+    // }
+    // else {
+    //   mu /= parameters.muIterFactor;
+    // }
     errorNormPrev = errorNormCurr;
   }
 }
@@ -202,24 +214,25 @@ void vpRBVisualOdometryUtils::levenbergMarquardtKeypoints3D(const vpMatrix &poin
 #pragma omp parallel for
 #endif
     for (int i = 0; i < static_cast<int>(points3d.getRows()); ++i) {
+      unsigned int i_ = static_cast<unsigned int>(i);
       const double X = cXt[0][i] + t[0], Y = cXt[1][i] + t[1], Z = cXt[2][i] + t[2];
 
-      e[i * 3] = X - observations[i][0];
-      e[i * 3 + 1] = Y - observations[i][1];
-      e[i * 3 + 2] = Z - observations[i][2];
+      e[i_ * 3] = X - observations[i_][0];
+      e[i_ * 3 + 1] = Y - observations[i_][1];
+      e[i_* 3 + 2] = Z - observations[i_][2];
 
-      L[i * 3][0] = -1;
-      L[i * 3 + 1][1] = -1;
-      L[i * 3 + 2][2] = -1;
+      L[i_ * 3][0] = -1;
+      L[i_ * 3 + 1][1] = -1;
+      L[i_ * 3 + 2][2] = -1;
 
-      L[i * 3][4] = -Z;
-      L[i * 3][5] = Y;
+      L[i_ * 3][4] = -Z;
+      L[i_ * 3][5] = Y;
 
-      L[i * 3 + 1][3] = Z;
-      L[i * 3 + 1][5] = -X;
+      L[i_ * 3 + 1][3] = Z;
+      L[i_ * 3 + 1][5] = -X;
 
-      L[i * 3 + 2][3] = -Y;
-      L[i * 3 + 2][4] = X;
+      L[i_ * 3 + 2][3] = -Y;
+      L[i_ * 3 + 2][4] = X;
     }
 
     robust.MEstimator(vpRobust::TUKEY, e, weights);

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2026 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,30 +38,34 @@
 #
 #############################################################################
 
-find_path(COMEDI_INCLUDE_DIRS comedilib.h
-  PATHS
-    $ENV{COMEDI_HOME}/include
-    /usr/include
-    /usr/local/include
+
+set(COMEDI_SEARCH_HINTS
+  ${COMEDI_HOME}
+  $ENV{COMEDI_HOME}
 )
 
-find_library(COMEDI_LIBRARIES
+find_path(COMEDI_INCLUDE_DIR comedilib.h
+  HINTS ${COMEDI_SEARCH_HINTS}
+  PATH_SUFFIXES include
+)
+
+find_library(COMEDI_LIBRARY
   NAMES comedi
-  PATHS
-    $ENV{COMEDI_HOME}/lib
-    /usr/lib
-    /usr/local/lib
+  HINTS ${COMEDI_SEARCH_HINTS}
+  PATH_SUFFIXES lib
 )
 
-if(COMEDI_LIBRARIES AND COMEDI_INCLUDE_DIRS)
+if(COMEDI_LIBRARY AND COMEDI_INCLUDE_DIR)
+  set(COMEDI_INCLUDE_DIRS ${COMEDI_INCLUDE_DIR})
+  set(COMEDI_LIBRARIES ${COMEDI_LIBRARY})
   set(COMEDI_FOUND TRUE)
-  vp_parse_header("${COMEDI_INCLUDE_DIRS}/comedilib_version.h" COMEDILIB_VERSION_LINES COMEDILIB_VERSION_MAJOR COMEDILIB_VERSION_MINOR COMEDILIB_VERSION_MICRO)
+  vp_parse_header("${COMEDI_INCLUDE_DIR}/comedilib_version.h" COMEDILIB_VERSION_LINES COMEDILIB_VERSION_MAJOR COMEDILIB_VERSION_MINOR COMEDILIB_VERSION_MICRO)
   set(COMEDI_VERSION "${COMEDILIB_VERSION_MAJOR}.${COMEDILIB_VERSION_MINOR}.${COMEDILIB_VERSION_MICRO}")
 else()
   set(COMEDI_FOUND FALSE)
 endif()
 
 mark_as_advanced(
-  COMEDI_INCLUDE_DIRS
-  COMEDI_LIBRARIES
+  COMEDI_INCLUDE_DIR
+  COMEDI_LIBRARY
 )

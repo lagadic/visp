@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ class vp_createPointClass
 public:
   int value;
 
-  vp_createPointClass() : value(0) { }
+  vp_createPointClass() : value(0) {}
 
   int vp_createPoint(vpFeaturePoint &fp, const vpPoint &v)
   {
@@ -214,12 +214,17 @@ int main()
 #if defined(VISP_HAVE_MODULE_VISUAL_FEATURES) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) \
    && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
-    if (test_pose(false))
+    if (test_pose(false)) {
+      std::cout << "Test pose estimation from features failed" << std::endl;
       return EXIT_FAILURE;
+    }
 
-    if (test_pose(true))
+    if (test_pose(true)) {
+      std::cout << "Test robust pose estimation from features failed" << std::endl;
       return EXIT_FAILURE;
+    }
 
+    std::cout << "Test pose estimation from features succeeded" << std::endl;
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {

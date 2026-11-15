@@ -77,7 +77,6 @@ undef all the grabbers except the one that you want to use.
 \code
 #undef VISP_HAVE_V4L2
 #undef VISP_HAVE_DC1394
-#undef VISP_HAVE_CMU1394
 #undef VISP_HAVE_FLYCAPTURE
 //#undef VISP_HAVE_REALSENSE2 <- If available this is the grabber that will be used
 #undef HAVE_OPENCV_HIGHGUI
@@ -106,7 +105,7 @@ Here we create a gray level image container \c I that will contain the images ac
 
 Then, we create a grabber instance, first for an usb camera under Unix if libv4l (Video 4 Linux) is available,
 secondly for a firewire camera under Unix if libdc1394 3rd party is available,
-then for a firewire camera under Windows if CMU1394 3rd party is available, next for an camera working with Flycapture
+then for for an camera working with Flycapture
 SDK, then for a Realsense camera, and finally with OpenCV if none of the previous 3rd party are available.
 The \ref tutorial-grabber gives more details concerning the framegrabbing.
 

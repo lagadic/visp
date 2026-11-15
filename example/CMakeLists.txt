@@ -83,7 +83,7 @@ visp_add_subdirectory(reflex-takktile          REQUIRED_DEPS visp_core visp_robo
 visp_add_subdirectory(robot-simulator/afma6    REQUIRED_DEPS visp_core visp_vs visp_robot visp_io visp_gui)
 visp_add_subdirectory(robot-simulator/camera   REQUIRED_DEPS visp_core visp_vs visp_robot visp_io visp_gui)
 visp_add_subdirectory(robot-simulator/viper850 REQUIRED_DEPS visp_core visp_vs visp_robot visp_io visp_gui)
-visp_add_subdirectory(servo-afma6              REQUIRED_DEPS visp_core visp_blob visp_vs visp_robot visp_sensor visp_vision visp_gui)
+visp_add_subdirectory(servo-afma6              REQUIRED_DEPS visp_core visp_blob visp_detection visp_vs visp_robot visp_sensor visp_vision visp_gui)
 visp_add_subdirectory(servo-biclops            REQUIRED_DEPS visp_core visp_detection visp_vs visp_robot visp_sensor visp_gui)
 visp_add_subdirectory(servo-bebop2             REQUIRED_DEPS visp_core visp_vs visp_robot visp_gui visp_detection)
 visp_add_subdirectory(servo-flir-ptu           REQUIRED_DEPS visp_core visp_robot visp_vision visp_gui visp_vs visp_visual_features visp_detection visp_sensor)

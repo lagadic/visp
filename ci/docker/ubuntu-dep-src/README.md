@@ -3,7 +3,8 @@
 ## Build docker image from Dockerfile
 
 - We suppose here that you already installed docker.
-If this is not the case, follow instructions provided for [Ubuntu](https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-docker.html#install_docker_engine_ubuntu) or [MacOS](https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-docker.html#install_docker_engine_mac).
+If this is not the case, follow instructions provided
+[here](https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-docker.html#install_docker_engine).
 
 - Get ViSP source code
   ```

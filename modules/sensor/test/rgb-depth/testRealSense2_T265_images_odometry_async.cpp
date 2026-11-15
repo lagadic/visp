@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,11 +85,11 @@ int main()
       if (rs2::frameset fs = frame.as<rs2::frameset>()) {
         // With callbacks, all synchronized stream will arrive in a single frameset.
         rs2::video_frame left_frame = fs.get_fisheye_frame(1);
-        size_t size = left_frame.get_width() * left_frame.get_height();
+        size_t size = static_cast<size_t>(left_frame.get_width() * left_frame.get_height());
         memcpy(I_left.bitmap, left_frame.get_data(), size);
 
         rs2::video_frame right_frame = fs.get_fisheye_frame(2);
-        size = right_frame.get_width() * right_frame.get_height();
+        size = static_cast<size_t>(right_frame.get_width() * right_frame.get_height());
         memcpy(I_right.bitmap, right_frame.get_data(), size);
 
         rs2_pose pose_data = fs.get_pose_frame().get_pose_data();
@@ -159,9 +159,9 @@ int main()
       // Open vpRealSense2 object according to configuration and with the callback to be called.
     g.open(config, callback);
 
-    I_left.resize(g.getIntrinsics(RS2_STREAM_FISHEYE, 1).height, g.getIntrinsics(RS2_STREAM_FISHEYE, 1).width);
+    I_left.resize(static_cast<unsigned int>(g.getIntrinsics(RS2_STREAM_FISHEYE, 1).height), static_cast<unsigned int>(g.getIntrinsics(RS2_STREAM_FISHEYE, 1).width));
 
-    I_right.resize(g.getIntrinsics(RS2_STREAM_FISHEYE, 2).height, g.getIntrinsics(RS2_STREAM_FISHEYE, 2).width);
+    I_right.resize(static_cast<unsigned int>(g.getIntrinsics(RS2_STREAM_FISHEYE, 2).height), static_cast<unsigned int>(g.getIntrinsics(RS2_STREAM_FISHEYE, 2).width));
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX display_left;  // Left image
@@ -199,9 +199,9 @@ int main()
       vpMeterPixelConversion::convertPoint(cam, cextMc[0][3] / cextMc[2][3], cextMc[1][3] / cextMc[2][3], frame_origin);
       frame_origins.push_back(std::make_pair(confidence, frame_origin));
 
-      vpDisplay::displayText(I_left, 15 * display_scale, 15 * display_scale, "Click to quit", vpColor::red);
-      vpDisplay::displayText(I_right, 15 * display_scale, 15 * display_scale, "Click to quit", vpColor::red);
-      vpDisplay::displayText(I_pose, 15, 15, "Click to quit", vpColor::red);
+      vpDisplay::displayText(I_left, 15 * static_cast<int>(display_scale), 15 * static_cast<int>(display_scale), "Click to quit", vpColor::red);
+      vpDisplay::displayText(I_right, 15 * static_cast<int>(display_scale), 15 * static_cast<int>(display_scale), "Click to quit", vpColor::red);
+      vpDisplay::displayText(I_pose, 15 * static_cast<int>(display_scale), 15 * static_cast<int>(display_scale), "Click to quit", vpColor::red);
 
       vpDisplay::displayFrame(I_pose, cextMc_0, cam, 0.1, vpColor::none, 2); // First frame
       vpDisplay::displayFrame(I_pose, cextMc, cam, 0.1, vpColor::none, 2);

@@ -108,7 +108,7 @@ vpJsonArgumentParser &vpJsonArgumentParser::addFlag(const std::string &name, boo
 
       name_copy.erase(0, pos + m_nestSeparator.length());
       if (create && !f->contains(token)) {
-        (*f)[token] = {};
+        (*f)[token] = { };
       }
       else if (!f->contains(token)) {
         return nullptr;
@@ -116,7 +116,7 @@ vpJsonArgumentParser &vpJsonArgumentParser::addFlag(const std::string &name, boo
       f = &(f->at(token));
     }
     if (create && !f->contains(name_copy)) {
-      (*f)[name_copy] = {};
+      (*f)[name_copy] = { };
     }
     else if (!f->contains(name_copy)) {
       return nullptr;
@@ -151,7 +151,7 @@ vpJsonArgumentParser &vpJsonArgumentParser::addFlag(const std::string &name, boo
   return *this;
 }
 
-void vpJsonArgumentParser::parse(int argc, const char *argv[])
+bool vpJsonArgumentParser::parse(int argc, const char *argv[])
 {
   json j;
   const std::vector<std::string> arguments(argv + 1, argv + argc);
@@ -172,7 +172,7 @@ void vpJsonArgumentParser::parse(int argc, const char *argv[])
       ss << "Could not open JSON file " << jsonFileName << "! Make sure it exists and is readable" << std::endl;
       throw vpException(vpException::ioError, ss.str());
     }
-    j = json::parse(jsonFile);
+    j = json::parse(jsonFile, nullptr, true, true);
     jsonFile.close();
   }
   // Parse command line arguments
@@ -185,12 +185,12 @@ void vpJsonArgumentParser::parse(int argc, const char *argv[])
     if (!stop_for_loop) {
       if (arg == "-h" || arg == "--help") {
         std::cout << help() << std::endl;
-        exit(1);
+        return false;
       }
 
       if (m_parsers.find(arg) != m_parsers.end()) {
         if (m_argumentType[arg] == WITH_FIELD) {
-          if (i < argc - 1) {
+          if (i  + 1 < argc) {
             m_updaters[arg](j, std::string(argv[i + 1]));
             ++i;
           }
@@ -214,6 +214,8 @@ void vpJsonArgumentParser::parse(int argc, const char *argv[])
   for (const auto &parser : m_parsers) {
     parser.second(j);
   }
+
+  return true;
 }
 
 END_VISP_NAMESPACE

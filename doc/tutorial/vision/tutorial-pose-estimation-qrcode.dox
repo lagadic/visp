@@ -3,7 +3,7 @@
 \page tutorial-pose-estimation-qrcode Tutorial: Pose estimation from QRcode
 \tableofcontents
 
-\section tutorial_pose_qrcode_intro Introduction
+\section tutorial_pose_qrcode_intro 1. Introduction
 
 This tutorial shows how to use \ref tutorial-detection-barcode and \ref tutorial-pose-estimation in order to
 estimate the pose of a QRcode. After a first step that enables QRcode detection, the pose estimation process is
@@ -18,7 +18,7 @@ https://github.com/lagadic/visp/tree/master/tutorial/computer-vision.
 Note also that ViSP has to be built with zbar 3rd party library that enables barcode detection. See
  <a href="https://visp.inria.fr/3rd_zbar">zbar quick installation guide</a>.
 
-\section tutorial_pose_qrcode_est Pose estimation of a QRcode
+\section tutorial_pose_qrcode_est 2. Pose estimation of a QRcode
 
 In this section we consider the case of an image that may contain a 12 by 12 cm square QRcode. The camera should
 be calibrated (see \ref tutorial-calibration-intrinsic). For each QRcode that is detected thanks to vpDetectorQRCode
@@ -47,7 +47,7 @@ g.aquire(I);
 where \c g is nothing more than a grabber instantiated as a vp1394TwoGrabber, vpFlyCaptureGrabber, vpV4l2Grabber or
 vpRealSense. How to implement framegrabbing is explained in \ref tutorial-grabber.
 
-\section tutorial_pose_qrcode_next Next tutorial
+\section tutorial_pose_qrcode_next 3. Next tutorial
 
 You are now ready to see the next \ref tutorial-homography that shows how to estimate an homography from points.
 

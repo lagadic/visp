@@ -43,8 +43,12 @@
 
 namespace py = pybind11;
 
-void bindings_vpDot2(py::class_<vpDot2, std::shared_ptr<vpDot2>, vpTracker> &pyDot2)
+void bindings_vpDot2(py::class_<VISP_NAMESPACE_ADDRESSING vpDot2, std::shared_ptr<VISP_NAMESPACE_ADDRESSING vpDot2>, VISP_NAMESPACE_ADDRESSING vpTracker> &pyDot2)
 {
+#ifdef ENABLE_VISP_NAMESPACE
+  using namespace VISP_NAMESPACE_NAME;
+#endif
+
   pyDot2.def_static("defineDots", [](std::vector<vpDot2> &dots,
                                      const std::string &dotFile,
                                      vpImage<unsigned char> &I,

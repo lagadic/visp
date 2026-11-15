@@ -49,44 +49,64 @@ vpPoseFeatures::~vpPoseFeatures() { clear(); }
 
 void vpPoseFeatures::clear()
 {
-  for (int i = static_cast<int>(m_featurePoint_Point_list.size()) - 1; i >= 0; i--)
-    delete m_featurePoint_Point_list[static_cast<unsigned int>(i)].desiredFeature;
+  size_t nbElts = m_featurePoint_Point_list.size();
+  for (size_t i = 0; i < nbElts; ++i) {
+    delete m_featurePoint_Point_list[i].desiredFeature;
+  }
   m_featurePoint_Point_list.clear();
 
-  for (int i = static_cast<int>(m_featurePoint3D_Point_list.size()) - 1; i >= 0; i--)
-    delete m_featurePoint3D_Point_list[static_cast<unsigned int>(i)].desiredFeature;
+  nbElts = m_featurePoint3D_Point_list.size();
+  for (size_t i = 0; i < nbElts; ++i) {
+    delete m_featurePoint3D_Point_list[i].desiredFeature;
+  }
   m_featurePoint3D_Point_list.clear();
 
-  for (int i = static_cast<int>(m_featureVanishingPoint_Point_list.size()) - 1; i >= 0; i--)
-    delete m_featureVanishingPoint_Point_list[static_cast<unsigned int>(i)].desiredFeature;
+  nbElts = m_featureVanishingPoint_Point_list.size();
+  for (size_t i = 0; i < nbElts; ++i) {
+    delete m_featureVanishingPoint_Point_list[i].desiredFeature;
+  }
   m_featureVanishingPoint_Point_list.clear();
 
-  for (int i = static_cast<int>(m_featureVanishingPoint_DuoLine_list.size()) - 1; i >= 0; i--)
-    delete m_featureVanishingPoint_DuoLine_list[static_cast<unsigned int>(i)].desiredFeature;
+  nbElts = m_featureVanishingPoint_DuoLine_list.size();
+  for (size_t i = 0; i < nbElts; ++i) {
+    delete m_featureVanishingPoint_DuoLine_list[i].desiredFeature;
+  }
   m_featureVanishingPoint_DuoLine_list.clear();
 
-  for (int i = static_cast<int>(m_featureEllipse_Sphere_list.size()) - 1; i >= 0; i--)
-    delete m_featureEllipse_Sphere_list[static_cast<unsigned int>(i)].desiredFeature;
+  nbElts = m_featureEllipse_Sphere_list.size();
+  for (size_t i = 0; i < nbElts; ++i) {
+    delete m_featureEllipse_Sphere_list[i].desiredFeature;
+  }
   m_featureEllipse_Sphere_list.clear();
 
-  for (int i = static_cast<int>(m_featureEllipse_Circle_list.size()) - 1; i >= 0; i--)
-    delete m_featureEllipse_Circle_list[static_cast<unsigned int>(i)].desiredFeature;
+  nbElts = m_featureEllipse_Circle_list.size();
+  for (size_t i = 0; i < nbElts; ++i) {
+    delete m_featureEllipse_Circle_list[i].desiredFeature;
+  }
   m_featureEllipse_Circle_list.clear();
 
-  for (int i = static_cast<int>(m_featureLine_Line_list.size()) - 1; i >= 0; i--)
-    delete m_featureLine_Line_list[static_cast<unsigned int>(i)].desiredFeature;
+  nbElts = m_featureLine_Line_list.size();
+  for (size_t i = 0; i < nbElts; ++i) {
+    delete m_featureLine_Line_list[i].desiredFeature;
+  }
   m_featureLine_Line_list.clear();
 
-  for (int i = static_cast<int>(m_featureLine_DuoLineInt_List.size()) - 1; i >= 0; i--)
-    delete m_featureLine_DuoLineInt_List[static_cast<unsigned int>(i)].desiredFeature;
+  nbElts = m_featureLine_DuoLineInt_List.size();
+  for (size_t i = 0; i < nbElts; ++i) {
+    delete m_featureLine_DuoLineInt_List[i].desiredFeature;
+  }
   m_featureLine_DuoLineInt_List.clear();
 
-  for (int i = static_cast<int>(m_featureSegment_DuoPoints_list.size()) - 1; i >= 0; i--)
-    delete m_featureSegment_DuoPoints_list[static_cast<unsigned int>(i)].desiredFeature;
+  nbElts = m_featureSegment_DuoPoints_list.size();
+  for (size_t i = 0; i < nbElts; ++i) {
+    delete m_featureSegment_DuoPoints_list[i].desiredFeature;
+  }
   m_featureSegment_DuoPoints_list.clear();
 
-  for (int i = static_cast<int>(m_featureSpecific_list.size()) - 1; i >= 0; i--)
-    delete m_featureSpecific_list[static_cast<unsigned int>(i)];
+  nbElts = m_featureSpecific_list.size();
+  for (size_t i = 0; i < nbElts; ++i) {
+    delete m_featureSpecific_list[i];
+  }
   m_featureSpecific_list.clear();
 
   m_maxSize = 0;

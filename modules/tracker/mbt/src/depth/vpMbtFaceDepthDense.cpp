@@ -48,6 +48,12 @@
 #define __FMA__ 1
 #endif
 
+// _mm_fmadd_pd() is declared in immintrin.h, not in emmintrin.h. It should be included explicitly since FMA may be
+// enabled by default by the compiler (e.g. when targeting x86-64-v3) even if no other header includes it
+#if defined(VISP_HAVE_SSE2) && defined(__FMA__)
+#include <immintrin.h>
+#endif
+
 #if defined _WIN32 && defined(_M_ARM64)
 #define _ARM64_DISTINCT_NEON_TYPES
 #include <Intrin.h>

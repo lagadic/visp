@@ -2,7 +2,7 @@
   \page tutorial-hsv-segmentation-pcl Tutorial: Point cloud segmentation using HSV color scale
   \tableofcontents
 
-\section hsv_pcl_intro Introduction
+\section hsv_pcl_intro 1. Introduction
 
 This tutorial follows \ref tutorial-hsv-segmentation-live.
 
@@ -17,7 +17,7 @@ Note that all the material (source code and images) described in this tutorial i
 (in `tutorial/segmentation/color` folder) and could be found in
 https://github.com/lagadic/visp/tree/master/tutorial/segmentation/color.
 
-\section hsv_pcl_segmentation Point cloud segmentation
+\section hsv_pcl_segmentation 2. Point cloud segmentation
 
 In \ref tutorial-hsv-segmentation-intro the pipeline to achieve the HSV color segmentation was to:
 - load or acquire an RGB image
@@ -59,7 +59,7 @@ $ ./tutorial-hsv-segmentation-pcl --hsv-thresholds calib/hsv-thresholds.yml
 
 In the next section we show how to display the point cloud.
 
-\section hsv_pcl-viewer Point could viewer
+\section hsv_pcl-viewer 3. Point could viewer
 
 In tutorial-hsv-segmentation-pcl-viewer.cpp you will find an extension of the previous code with the introduction
 of vpDisplayPCL class that allows to visualize the point cloud in 3D with optionally additional texture information
@@ -103,8 +103,8 @@ $ ./tutorial-hsv-segmentation-pcl-viewer --hsv-thresholds calib/hsv-thresholds.y
 </p>
 \endhtmlonly
 
-\section hsv_pcl_issue Known issue
-\subsection hsv_pcl_issue_segfault Segfault in PCL viewer
+\section hsv_pcl_issue 4. Known issue
+\subsection hsv_pcl_issue_segfault 4.1. Segfault in PCL viewer
 
 There is a known issue related to the call to PCLVisualizer::spinOnce() function that is used in vpDisplayPCL class.
 This issue is reported in https://github.com/PointCloudLibrary/pcl/issues/5237 and occurs with PCL 1.12.1 and
@@ -139,7 +139,7 @@ $ cmake ../visp
 $ make -j$(nproc)
 \endverbatim
 
-\subsection hsv_pcl_issue_MacOs Known issue on MacOS
+\subsection hsv_pcl_issue_MacOs 4.2. Known issue on MacOS
 
 On MacOS, you can face the following error:
 \code
@@ -150,7 +150,7 @@ This problem seems to be due to VTK library that does not like to be run in a no
 You can use the vpDisplayPCL class in monothread mode using the method vpDisplayPCL::display. See the
 [PCL issue](https://github.com/PointCloudLibrary/pcl/issues/253#issuecomment-29716100) for more details.
 
-\subsection hsv_pcl_issue_xserver Known issue when using VTK and the server X backends
+\subsection hsv_pcl_issue_xserver 4.3. Known issue when using VTK and the server X backends
 
 When the PCL library relies on the VTK library and X11 library as backends for the viewer, you
 may face the following error if you create either two viewers in threaded mode or one viewer in
@@ -164,7 +164,7 @@ X Error of failed request:  BadAccess (attempt to access private resource denied
   Current serial number in output stream:  407
 \endcode
 
-\section hsv_pcl_next Next tutorial
+\section hsv_pcl_next 5. Next tutorial
 
 You are now ready to see how to continue with \ref tutorial-grabber.
 

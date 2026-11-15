@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,10 +105,10 @@ public:
    */
   template<typename T>
   void display(const VISP_NAMESPACE_ADDRESSING vpImage<T> &I, const VISP_NAMESPACE_ADDRESSING vpColor &color,
-               const unsigned int &vertPosLegend, const unsigned int &horPosLegend)
+               const int &vertPosLegend, const int &horPosLegend)
   {
-    unsigned int width = I.getWidth();
-    for (unsigned int u = 0; u < width; ++u) {
+    int width = static_cast<int>(I.getWidth());
+    for (int u = 0; u < width; ++u) {
       int v = static_cast<int>(model(u));
       VISP_NAMESPACE_ADDRESSING vpDisplay::displayPoint(I, v, u, color, 1);
       VISP_NAMESPACE_ADDRESSING vpDisplay::displayText(I, vertPosLegend, horPosLegend, "Least-mean square model", color);

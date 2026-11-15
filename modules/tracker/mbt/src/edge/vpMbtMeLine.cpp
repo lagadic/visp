@@ -54,7 +54,7 @@ BEGIN_VISP_NAMESPACE
 */
 vpMbtMeLine::vpMbtMeLine()
   : vpMeLine(), imin(0), imax(0), jmin(0), jmax(0), expecteddensity(0.)
-{ }
+{}
 
 /*!
  * Copy constructor.
@@ -128,12 +128,18 @@ void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoi
   }
 }
 
-/*!
-  Seek along the line defined by its equation, the two extremities of the line.
-  This function is useful in case of translation of the line.
 
-  \param I : Image in which the line appears.
-*/
+/*!
+ * Seek new moving edge points along the line extension.
+ *
+ * This method attempts to find and add up to 3 new moving edge points beyond
+ * each extremity of the current line segment in the image. This is particularly
+ * useful to handle line translations or to extend the tracking range.
+ *
+ * \param[in] I Input image in which the line appears and where tracking is performed.
+ *
+ * \return The total number of successfully added moving edge points.
+ */
 unsigned int vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
 {
   int nbrows = static_cast<int>(I.getHeight());
@@ -141,7 +147,9 @@ unsigned int vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
 
   // Point extremities strictly on the straight line
   vpImagePoint ip1, ip2;
-  getExtremities(ip1, ip2);
+  if (getExtremities(ip1, ip2) == false) {
+    return 0;
+  }
   double id1 = ip1.get_i();
   double jd1 = ip1.get_j();
   double id2 = ip2.get_i();

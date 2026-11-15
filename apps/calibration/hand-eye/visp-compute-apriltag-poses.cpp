@@ -36,7 +36,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_PUGIXML)
+#if defined(VISP_HAVE_PUGIXML) && defined(VISP_HAVE_APRILTAG)
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpXmlParserCamera.h>
@@ -124,7 +124,12 @@ int main(int argc, const char **argv)
   bool opt_interactive = true;
 
   vpDetectorAprilTag::vpAprilTagFamily tag_family = vpDetectorAprilTag::TAG_36h11;
+
+#if defined(VISP_HAVE_APRILTAG_POSE_FCT)
   vpDetectorAprilTag::vpPoseEstimationMethod pose_estimation_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+#else
+  vpDetectorAprilTag::vpPoseEstimationMethod pose_estimation_method = vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS;
+#endif
 
   float quad_decimate = 1.0;
   vpDetectorAprilTag detector(tag_family);

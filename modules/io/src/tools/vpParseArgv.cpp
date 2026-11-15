@@ -83,7 +83,7 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
   int dstIndex;             /* Index into argv to which next unused
                              * argument should be copied (never greater
                              * than srcIndex). */
-  int argc;                 /* # arguments in argv still to process. */
+  unsigned int argc;        /* # arguments in argv still to process. Unsigned to avoid -Wstrict-overflow warnings */
   size_t length;            /* Number of characters in current argument. */
   unsigned long long nargs; /* Number of following arguments to get. */
 
@@ -92,14 +92,11 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
   if (!(flags & ARGV_NO_PRINT))                                                                                        \
   (void)fprintf
 
-  if (flags & ARGV_DONT_SKIP_FIRST_ARG) {
-    srcIndex = dstIndex = 0;
-    argc = *argcPtr;
-  }
-  else {
-    srcIndex = dstIndex = 1;
-    argc = *argcPtr - 1;
-  }
+  const int nbSkippedArgs = (flags & ARGV_DONT_SKIP_FIRST_ARG) ? 0 : 1;
+  srcIndex = dstIndex = nbSkippedArgs;
+  // Avoid computing (*argcPtr - 1) without guard, which triggers -Wstrict-overflow
+  // and would lead to a negative argc when *argcPtr is 0
+  argc = (*argcPtr > nbSkippedArgs) ? static_cast<unsigned int>(*argcPtr - nbSkippedArgs) : 0;
 
   while (argc > 0) {
     curArg = argv[srcIndex];
@@ -291,10 +288,11 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
     case ARGV_GENFUNC: {
       handlerProc2 = (int (*)(const char *dst, const char *key, int valargc, const char **argument))infoPtr->src;
 
-      argc = (*handlerProc2)(infoPtr->dst, infoPtr->key, argc, argv + srcIndex);
-      if (argc < 0) {
+      int remainingArgc = (*handlerProc2)(infoPtr->dst, infoPtr->key, static_cast<int>(argc), argv + srcIndex);
+      if (remainingArgc < 0) {
         return true;
       }
+      argc = static_cast<unsigned int>(remainingArgc);
       break;
     }
 
@@ -348,8 +346,8 @@ missingArg:
 void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
 {
   vpArgvInfo *infoPtr;
-  int width;
-  int numSpaces;
+  size_t width;
+  size_t numSpaces;
 #define NUM_SPACES 20
   static char spaces[] = "                    ";
   /*   char tmp[30]; */
@@ -368,11 +366,11 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
   width = 4;
   for (unsigned int i = 0; i < 2; ++i) {
     for (infoPtr = i ? defaultTable : argTable; infoPtr->type != ARGV_END; ++infoPtr) {
-      int length;
+      size_t length;
       if (infoPtr->key == nullptr) {
         continue;
       }
-      length = static_cast<int>(strlen(infoPtr->key));
+      length = strlen(infoPtr->key);
       if (length > width) {
         width = length;
       }
@@ -387,7 +385,7 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
         continue;
       }
       FPRINTF(stderr, "\n %s:", infoPtr->key);
-      numSpaces = width + 1 - static_cast<int>(strlen(infoPtr->key));
+      numSpaces = ((width + 1) >= strlen(infoPtr->key) ? ((width + 1) - strlen(infoPtr->key)) : 0);
       while (numSpaces > 0) {
         if (numSpaces >= NUM_SPACES) {
           FPRINTF(stderr, "%s", spaces);
@@ -395,7 +393,7 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
         else {
           FPRINTF(stderr, "%s", spaces + NUM_SPACES - numSpaces);
         }
-        numSpaces -= NUM_SPACES;
+        numSpaces = (numSpaces >= NUM_SPACES ? numSpaces - NUM_SPACES : 0);
       }
       FPRINTF(stderr, "%s", infoPtr->help);
       switch (infoPtr->type) {

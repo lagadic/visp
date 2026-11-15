@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -252,7 +252,7 @@ int vpUDPServer::receive(std::string &msg, std::string &hostInfo, int timeoutMs)
       return length < 0 ? -1 : 0;
     }
 
-    msg = std::string(m_buf, length);
+    msg = std::string(m_buf, static_cast<size_t>(length));
 
     /* getnameinfo: determine who sent the datagram */
     char hostname[NI_MAXHOST];
@@ -338,7 +338,8 @@ int vpUDPServer::send(const std::string &msg, const std::string &hostname, int p
 /* send the message to the client */
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   return static_cast<int>(
-      sendto(m_socketFileDescriptor, msg.c_str(), msg.size(), 0, (struct sockaddr *)&m_clientAddress, m_clientLength));
+      sendto(m_socketFileDescriptor, msg.c_str(), msg.size(), 0, (struct sockaddr *)&m_clientAddress,
+             static_cast<socklen_t>(m_clientLength)));
 #else
   return sendto(m_socketFileDescriptor, msg.c_str(), static_cast<int>(msg.size()), 0, (struct sockaddr *)&m_clientAddress,
                 m_clientLength);
@@ -347,5 +348,5 @@ int vpUDPServer::send(const std::string &msg, const std::string &hostname, int p
 END_VISP_NAMESPACE
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpUDPServer.cpp.o) has no symbols
-void dummy_vpUDPServer() { }
+void dummy_vpUDPServer() {}
 #endif

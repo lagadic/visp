@@ -106,7 +106,7 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
 
   bool only_1 = false;
   bool only_2 = false;
-  int iter = 0;
+  unsigned int iter = 0;
   const unsigned int val_3 = 3;
 
   unsigned int n = 0;
@@ -144,7 +144,7 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
     }
 
     vpMatrix L(2, 3), Lp;
-    int k = 0;
+    unsigned int k = 0;
     for (unsigned int i = 0; i < nbpoint; ++i) {
       if ((std::fabs(c2P[i].get_x() + 1) > std::fabs(vpMath::maximum(c2P[i].get_x(), 1.))) &&
           (std::fabs(c1P[i].get_x() + 1) > std::fabs(vpMath::maximum(c1P[i].get_x(), 1.)))) {
@@ -302,7 +302,7 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
 
   bool only_1 = true;
   bool only_2 = false;
-  int iter = 0;
+  unsigned int iter = 0;
   unsigned int n = 0;
   n = nbpoint;
 
@@ -318,7 +318,6 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
   double d1, d2;
 
   double r = 1e10;
-  iter = 0;
   vpMatrix sTR;
   bool stop = false;
   while ((!vpMath::equal(r_1, r, m_threshold_displacement)) && (stop == false)) {

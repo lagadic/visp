@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,8 +64,6 @@ static void scaleFilter(
 
 BEGIN_VISP_NAMESPACE
 // // Initialization methods
-
-vpImage<vpCannyEdgeDetection::EdgeType> vpCannyEdgeDetection::m_edgePointsCandidates;
 
 vpCannyEdgeDetection::vpCannyEdgeDetection()
   : m_filteringAndGradientType(vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING)
@@ -154,7 +152,8 @@ vpCannyEdgeDetection::initFromJSON(const std::string &jsonPath)
   }
   json j;
   try {
-    j = json::parse(file);
+    // Activating allow_exceptions and ignore_comments parameters by setting them to  true
+    j = json::parse(file, nullptr, true, true);
   }
   catch (json::parse_error &e) {
     std::stringstream msg;
@@ -257,8 +256,11 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
   float upperThreshold = m_upperThreshold;
   float lowerThreshold = m_lowerThreshold;
   if (upperThreshold < 0) {
-    upperThreshold = vpImageFilter::computeCannyThreshold(I, lowerThreshold, &m_dIx, &m_dIy, m_gaussianKernelSize,
-                                                          m_gaussianStdev, m_gradientFilterKernelSize, m_lowerThresholdRatio,
+    upperThreshold = vpImageFilter::computeCannyThreshold(I, lowerThreshold, &m_dIx, &m_dIy,
+                                                          static_cast<unsigned int>(m_gaussianKernelSize),
+                                                          m_gaussianStdev,
+                                                          static_cast<unsigned int>(m_gradientFilterKernelSize),
+                                                          m_lowerThresholdRatio,
                                                           m_upperThresholdRatio, m_filteringAndGradientType, mp_mask);
   }
   else if (m_lowerThreshold < 0) {
@@ -529,9 +531,9 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
           if ((grad >= gradPlus) && (grad >= gradMinus)) {
             // Keeping the edge point that has the highest gradient
 #ifdef VISP_HAVE_OPENMP
-            localMemoryEdgeCandidates.push_back(std::pair<unsigned int, float>(iter, grad));
+            localMemoryEdgeCandidates.push_back(std::pair<unsigned int, float>(static_cast<unsigned int>(iter), grad));
 #else
-            m_edgeCandidateAndGradient.push_back(std::pair<unsigned int, float>(iter, grad));
+            m_edgeCandidateAndGradient.push_back(std::pair<unsigned int, float>(static_cast<unsigned int>(iter), grad));
 #endif
           }
         }
@@ -584,7 +586,7 @@ vpCannyEdgeDetection::performHysteresisThresholding(const float &lowerThreshold,
     std::vector<unsigned int> localMemoryEdgeCandidates;
 #endif
     for (int id = istart; id < istop; ++id) {
-      const std::pair<unsigned int, float> &candidate = m_edgeCandidateAndGradient[id];
+      const std::pair<unsigned int, float> &candidate = m_edgeCandidateAndGradient[static_cast<std::size_t>(id)];
       if (candidate.second >= upperThreshold) {
 #ifdef VISP_HAVE_OPENMP
         localMemoryEdgeCandidates.push_back(candidate.first);
@@ -690,7 +692,7 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const unsigned int &coordinat
           }
           else if (type_candidate == WEAK_EDGE) {
             // Checking if the WEAK_EDGE neighbor has a STRONG_EDGE neighbor
-            hasFoundStrongEdge = recursiveSearchForStrongEdge(iterTest);
+            hasFoundStrongEdge = recursiveSearchForStrongEdge(static_cast<unsigned int>(iterTest));
           }
         }
         catch (...) {
@@ -706,8 +708,8 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const unsigned int &coordinat
     if (m_storeListEdgePoints) {
       if (m_edgeMap.bitmap[coordinates] != var_uc_255) {
         // Edge point not added yet to the edge list
-        unsigned int row = coordinates / nbCols;
-        unsigned int col = coordinates % nbCols;
+        unsigned int row = static_cast<unsigned int>(coordinates) / static_cast<unsigned int>(nbCols);
+        unsigned int col = static_cast<unsigned int>(coordinates) % static_cast<unsigned int>(nbCols);
         m_edgePointsList.push_back(vpImagePoint(row, col));
       }
     }
