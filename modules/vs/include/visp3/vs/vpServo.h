@@ -277,7 +277,7 @@ public:
   //      init_fVe(false), eJe(), init_eJe(false), fJe(), init_fJe(false),
   //      errorComputed(false), interactionMatrixComputed(false), dim_task(0),
   //      taskWasKilled(false), forceInteractionMatrixComputation(false),
-  //      WpW(), I_WpW(), P(), sv(), mu(4.), e1_initial()
+  //      WpW(), I_WpW(), P(), sv(), mu(4.), m_error_initial()
   //  {
   //    throw vpException(vpException::functionNotImplementedError, "Not
   //    implemented!");
@@ -434,12 +434,12 @@ public:
    * The form of the control law considered here is the following:
    *
    * \f[
-   * {\bf \dot q} = \pm \lambda {{\bf \widehat J}_e}^+ {\bf e} \mp \lambda {{\bf
-   * \widehat J}_{e(0)}}^+ {{\bf e}(0)} \exp(-\mu t) \f]
+   * {\bf \dot q} = \mp \lambda {{\bf \widehat J}_e}^+ \left( {\bf e} - {\bf e}(0) \exp(-\mu t) \right)
+   * \f]
    *
    * where :
    * - \f${\bf \dot q}\f$ is the resulting continuous velocity command to apply
-   *   to the robot.
+   *   to the robot. At \f$t=0\f$, \f${\bf \dot q} = 0\f$.
    * - the sign of the control law depends on the eye-in-hand or eye-to-hand
    *   configuration.
    * - \f$\bf J\f$ is the Jacobian of the task. It is function of the interaction
@@ -448,12 +448,13 @@ public:
    * - \f$t\f$ is the time given as parameter of this method.
    * - \f$\mu\f$ is a gain that is set by default to 4 and that could be modified
    *   using setMu().
-   * - \f${\bf \widehat J}_{e(0)}^+ {\bf e}(0)\f$ is the value of \f${\bf
-   *   \widehat J}_e^+ {\bf e}\f$ when \f$t=0\f$. This value is internally stored
-   *   either at the first call of this method, or when \e t parameter is set to 0.
+   * - \f${\bf e}(0)\f$ is the value of the error \f${\bf e}\f$ when \f$t=0\f$.
+   *   This value is internally stored either at the first call of this method, when \e t parameter is set to 0,
+   *   or when the dimension of the task changed (a feature was added or removed).
    *
-   * \param t : Time in second. When set to zero, \f${{\bf \widehat J}_{e(0)}}^+
-   * {{\bf e}(0)}\f$ is refreshed internally.
+   * \param t : Time in second. When set to zero, \f${\bf e}(0)\f$ is refreshed internally.
+   *
+   * \return The velocity command \f${\bf \dot q}\f$.
    */
   vpColVector computeControlLaw(double t);
 
@@ -469,13 +470,13 @@ public:
    * The form of the control law considered here is the following:
    *
    * \f[
-   * {\bf \dot q} = \pm \lambda {{\bf \widehat J}_e}^+ {\bf e} + \left({\bf \dot
-   * e}(0) \mp \lambda {{\bf \widehat J}_{e(0)}}^+ {{\bf e}(0)}\right) \exp(-\mu
-   * t) \f]
+   * {\bf \dot q} = \mp \lambda {{\bf \widehat J}_e}^+ {\bf e} + \left({\bf \dot q}(0) \pm \lambda {{\bf
+   * \widehat J}_e}^+ {\bf e}(0)\right) \exp(-\mu t)
+   * \f]
    *
    * where :
    * - \f${\bf \dot q}\f$ is the resulting continuous velocity command to apply
-   *   to the robot.
+   *   to the robot. At \f$t=0\f$, \f${\bf \dot q} = {\bf \dot q}(0)\f$.
    * - the sign of the control law depends on the eye-in-hand or eye-to-hand
    *   configuration.
    * - \f$\bf J\f$ is the Jacobian of the task. It is function of the interaction
@@ -484,15 +485,20 @@ public:
    * - \f$t\f$ is the time given as parameter of this method.
    * - \f$\mu\f$ is a gain that is set by default to 4 and that could be modified
    *   using setMu().
-   * - \f${\bf \widehat J}_{e(0)}^+ {\bf e}(0)\f$ is the value of \f${\bf
-   *   \widehat J}_e^+ {\bf e}\f$ when \f$t=0\f$. This value is internally stored
-   * either at the first call of this method, or when \e t parameter is set to 0.
+   * - \f${\bf \dot q}(0)\f$ is the velocity command applied to the robot when \f$t=0\f$, typically the last
+   *   velocity computed before switching to this task.
+   * - \f${\bf e}(0)\f$ is the value of the error \f${\bf e}\f$ when \f$t=0\f$.
+   *   This value is internally stored either at the first call of this method, when \e t parameter is set to 0,
+   *   or when the dimension of the task changed (a feature was added or removed).
    *
-   * \param t : Time in second. When set to zero, \f${{\bf \widehat J}_{e(0)}}^+
-   * {{\bf e}(0)}\f$ is refreshed internally. \param e_dot_init : Initial value
-   * of \f${\bf \dot e}(0)\f$.
+   * \param t : Time in second. When set to zero, \f${\bf e}(0)\f$ is refreshed internally.
+   * \param q_dot_init : Velocity command \f${\bf \dot q}(0)\f$ applied to the robot at \f$t=0\f$. Its
+   * dimension should be the same as the one of \f${\bf \dot q}\f$. The same value should be given at each call
+   * of this method.
+   *
+   * \return The velocity command \f${\bf \dot q}\f$.
    */
-  vpColVector computeControlLaw(double t, const vpColVector &e_dot_init);
+  vpColVector computeControlLaw(double t, const vpColVector &q_dot_init);
 
   /*!
    * Compute the error \f$\bf e =(s - s^*)\f$ between the current set of visual
@@ -1420,11 +1426,11 @@ protected:
   double mu;
 
   /*!
-   * First primary task value \f${\bf \widehat J}_e^+ {\bf e}\f$ used in the control
+   * Initial value of the error \f${\bf e}(0)\f$ used in the control
    * law with the task sequencing approach when time is initial \f$t=0\f$.
    * \see computeControlLaw(double) and computeControlLaw(double, const vpColVector &)
    */
-  vpColVector e1_initial;
+  vpColVector m_error_initial;
 
   //! Boolean to know if cJc is identity (for fast computation)
   bool iscJcIdentity;
