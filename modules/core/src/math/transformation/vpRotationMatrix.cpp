@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2024 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,8 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
 
+#include "../matrix/private/vpSIMDUtils.h"
+
 // Rotation classes
 #include <visp3/core/vpRotationMatrix.h>
 
@@ -50,6 +52,177 @@
 #include <math.h>
 
 BEGIN_VISP_NAMESPACE
+
+/*!
+ * Rotate a set of vectors by this rotation matrix.
+ * \param input : Input matrix containing vectors to rotate. By default, each column is a 3D vector with 3 rows.
+ * When `isTransposed` is true, each row is a 3D vector with 3 columns.
+ * \param output : Output matrix containing rotated vectors. Has the same layout and size as the input matrix.
+ * \param isTransposed : If true, input matrix is transposed (each row is a 3D vector).
+**/
+void vpRotationMatrix::rotateVectors(const vpMatrix &input, vpMatrix &output, bool isTransposed) const
+{
+  output.resize(input.getRows(), input.getCols(), false, false);
+  if (isTransposed) {
+    if (input.getCols() != 3) {
+      throw vpException(vpException::dimensionError, "Input matrix should have 3 columns");
+    }
+    double *inputData = input.data;
+    double *outputData = output.data;
+#if defined(VISP_HAVE_AVX)
+    __m256d rows[] = {
+      _mm256_setr_pd(rowPtrs[0][0], rowPtrs[0][1], rowPtrs[0][2], 0.0),
+      _mm256_setr_pd(rowPtrs[1][0], rowPtrs[1][1], rowPtrs[1][2], 0.0),
+      _mm256_setr_pd(rowPtrs[2][0], rowPtrs[2][1], rowPtrs[2][2], 0.0),
+    };
+
+    double result[4];
+
+    for (unsigned int i = 0; i < input.getRows(); ++i) {
+      const __m256d xyzw = _mm256_setr_pd(inputData[0], inputData[1], inputData[2], 0.0);
+
+      const __m256d rs[] = {
+        _mm256_mul_pd(rows[0], xyzw),
+        _mm256_mul_pd(rows[1], xyzw),
+        _mm256_mul_pd(rows[2], xyzw),
+      };
+
+      __m256d rs_half_sum1 = _mm256_hadd_pd(rs[0], rs[1]);
+
+
+      _mm256_storeu_pd(result, rs_half_sum1);
+      __m128d hi = _mm256_extractf128_pd(rs[2], 1);   // [A3, A2]
+      __m128d lo = _mm256_castpd256_pd128(rs[2]);     // [A1, A0]
+
+      __m128d sum2 = _mm_add_pd(lo, hi);          // [A3+A1, A2+A0]
+      __m128d sum1 = _mm_hadd_pd(sum2, sum2);     // [total, total]
+      double total = _mm_cvtsd_f64(sum1);
+
+      outputData[0] = result[0] + result[2];
+      outputData[1] = result[1] + result[3];
+      outputData[2] = total;
+
+      inputData += 3;
+      outputData += 3;
+    }
+
+#elif VISP_HAVE_SSE3
+    __m128d row01_lo = _mm_loadu_pd(rowPtrs[0]);
+    __m128d row01_hi = _mm_loadu_pd(rowPtrs[1]);
+    __m128d row2_xy = _mm_loadu_pd(rowPtrs[2]);
+
+    // Preload third column as scalars
+    double c0 = rowPtrs[0][2];
+    double c1 = rowPtrs[1][2];
+    double c2 = rowPtrs[2][2];
+
+    for (unsigned i = 0; i < input.getRows(); ++i) {
+
+      const __m128d xy = _mm_loadu_pd(inputData);
+
+      const double z = inputData[2];
+      // const __m128d zz = _mm_set_pd(z, z);
+
+      __m128d mul0 = _mm_mul_pd(row01_lo, xy);
+      __m128d mul1 = _mm_mul_pd(row01_hi, xy);
+      __m128d r01 = _mm_hadd_pd(mul0, mul1);
+      __m128d mul2 = _mm_mul_pd(row2_xy, xy);
+
+      // Adding scalars at the end without using simd is faster
+      // __m128d mulzz = _mm_mul_pd(row01_z, zz);
+      // r01 = _mm_add_pd(r01, mulzz);
+
+      // store result
+      outputData[0] = _mm_cvtsd_f64(r01) + c0 * z;
+      outputData[1] = _mm_cvtsd_f64(_mm_unpackhi_pd(r01, r01)) + c1 * z;
+      outputData[2] = _mm_cvtsd_f64(_mm_hadd_pd(mul2, mul2)) + c2 * z;
+
+      inputData += 3;
+      outputData += 3;
+    }
+#else
+    double *r0 = rowPtrs[0];
+    double *r1 = rowPtrs[1];
+    double *r2 = rowPtrs[2];
+
+    for (unsigned int i = 0; i < input.getRows(); ++i) {
+      outputData[0] = r0[0] * inputData[0] + r0[1] * inputData[1] + r0[2] * inputData[2];
+      outputData[1] = r1[0] * inputData[0] + r1[1] * inputData[1] + r1[2] * inputData[2];
+      outputData[2] = r2[0] * inputData[0] + r2[1] * inputData[1] + r2[2] * inputData[2];
+      inputData += 3;
+      outputData += 3;
+    }
+#endif
+  }
+  else { // 3xN matrix
+    if (input.getRows() != 3) {
+      throw vpException(vpException::dimensionError, "Expected input to have 3 rows");
+    }
+    double *inputX = input[0];
+    double *inputY = input[1];
+    double *inputZ = input[2];
+    double *outputX = output[0];
+    double *outputY = output[1];
+    double *outputZ = output[2];
+
+#if defined(VISP_HAVE_AVX) || defined(VISP_HAVE_SSE2) || defined(VISP_HAVE_AVX2)
+
+    vpSIMD::Register elems[9];
+    for (unsigned int i = 0; i < 9; ++i) {
+      elems[i] = vpSIMD::set1(data[i]);
+    }
+    for (int i = 0; i <= static_cast<int>(input.getCols()) - vpSIMD::numLanes; i += vpSIMD::numLanes) {
+      const vpSIMD::Register x4 = vpSIMD::loadu(inputX);
+      const vpSIMD::Register y4 = vpSIMD::loadu(inputY);
+      const vpSIMD::Register z4 = vpSIMD::loadu(inputZ);
+
+      vpSIMD::Register dp1 = vpSIMD::mul(x4, elems[0]);
+      dp1 = vpSIMD::fma(y4, elems[1], dp1);
+      dp1 = vpSIMD::fma(z4, elems[2], dp1);
+      vpSIMD::Register dp2 = vpSIMD::mul(x4, elems[3]);
+      dp2 = vpSIMD::fma(y4, elems[4], dp2);
+      dp2 = vpSIMD::fma(z4, elems[5], dp2);
+      vpSIMD::Register dp3 = vpSIMD::mul(x4, elems[6]);
+      dp3 = vpSIMD::fma(y4, elems[7], dp3);
+      dp3 = vpSIMD::fma(z4, elems[8], dp3);
+
+      vpSIMD::storeu(outputX, dp1);
+      vpSIMD::storeu(outputY, dp2);
+      vpSIMD::storeu(outputZ, dp3);
+
+      inputX += vpSIMD::numLanes; inputY += vpSIMD::numLanes; inputZ += vpSIMD::numLanes;
+      outputX += vpSIMD::numLanes; outputY += vpSIMD::numLanes; outputZ += vpSIMD::numLanes;
+    }
+    double *r0 = rowPtrs[0];
+    double *r1 = rowPtrs[1];
+    double *r2 = rowPtrs[2];
+
+    for (unsigned int i = (input.getCols() / vpSIMD::numLanes) * vpSIMD::numLanes; i < input.getCols(); ++i) {
+      // std::cout << "i = " << i << std::endl;
+      double X = *inputX, Y = *inputY, Z = *inputZ;
+      *outputX = r0[0] * X + r0[1] * Y + r0[2] * Z;
+      *outputY = r1[0] * X + r1[1] * Y + r1[2] * Z;
+      *outputZ = r2[0] * X + r2[1] * Y + r2[2] * Z;
+      ++inputX; ++inputY; ++inputZ;
+      ++outputX; ++outputY; ++outputZ;
+    }
+#else
+    double *r0 = rowPtrs[0];
+    double *r1 = rowPtrs[1];
+    double *r2 = rowPtrs[2];
+
+    for (unsigned int i = 0; i < input.getCols(); ++i) {
+      double X = *inputX, Y = *inputY, Z = *inputZ;
+      *outputX = r0[0] * X + r0[1] * Y + r0[2] * Z;
+      *outputY = r1[0] * X + r1[1] * Y + r1[2] * Z;
+      *outputZ = r2[0] * X + r2[1] * Y + r2[2] * Z;
+      ++inputX; ++inputY; ++inputZ;
+      ++outputX; ++outputY; ++outputZ;
+    }
+#endif
+  }
+}
+
 const unsigned int vpRotationMatrix::constr_val_3 = 3;
 /*!
   Initialize the rotation matrix as identity.
