@@ -120,7 +120,7 @@ parties are optional and should be considered only by expert developers.
 First you have to get OpenCV:
 - From https://opencv.org/releases/ download the latest OpenCV for Windows. In our case we got
 `opencv-4.12.0-windows.exe` Win pack installer.
-- Extract the content of the archive in your workspace `%%VISP_WS%/3rdparty`.
+- Extract the content of the archive in your workspace `%%VISP_WS%\3rdparty`.
 \image html img-win-extract-opencv.jpg
 - The installer extract all the material in `%%VISP_WS%\3rdparty\opencv`.
 - We strongly recommend to rename this folder to a name that contain OpenCV version like
@@ -549,7 +549,7 @@ To build ViSP documentation, you have first to install [Doxygen](http://www.doxy
 - [Download](http://www.doxygen.nl/download.html) binary distribution for Windows. At the time this tutorial
 was written, we downloaded `doxygen-1.9.4-setup.exe`
 - Run the installer following default options
-- Create a folder that will contain third-parties
+- If it has not already been done, create a folder that will contain third-parties
 \code{.sh}
 C:\\> mkdir %VISP_WS%\3rdparty
 \endcode
