@@ -48,8 +48,8 @@ vpTemplateTrackerZNCCInverseCompositional::vpTemplateTrackerZNCCInverseCompositi
 
 void vpTemplateTrackerZNCCInverseCompositional::initCompInverse(const vpImage<unsigned char> &I)
 {
-  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
-  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 
   for (unsigned int point = 0; point < templateSize; point++) {
     int i = ptTemplate[point].y;
@@ -70,16 +70,16 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
   initCompInverse(I);
 
   if (blur)
-    vpImageFilter::filter(I, BI, fgG, taillef);
-  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
-  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 
   vpImage<double> dIxx, dIxy, dIyx, dIyy;
-  vpImageFilter::getGradX(dIx, dIxx, fgdG, taillef);
-  vpImageFilter::getGradY(dIx, dIxy, fgdG, taillef);
+  vpImageFilter::getGradX(dIx, dIxx, fgdG);
+  vpImageFilter::getGradY(dIx, dIxy, fgdG);
 
-  vpImageFilter::getGradX(dIy, dIyx, fgdG, taillef);
-  vpImageFilter::getGradY(dIy, dIyy, fgdG, taillef);
+  vpImageFilter::getGradX(dIy, dIyx, fgdG);
+  vpImageFilter::getGradY(dIy, dIyy, fgdG);
 
   Warp->computeCoeff(p);
   double Ic, dIcx = 0., dIcy = 0.;
@@ -232,7 +232,7 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
 void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigned char> &I)
 {
   if (blur)
-    vpImageFilter::filter(I, BI, fgG, taillef);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
 
   vpColVector dpinv(nbParam);
   double Ic;

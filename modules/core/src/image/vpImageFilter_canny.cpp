@@ -37,7 +37,8 @@
 #include <visp3/core/vpCannyEdgeDetection.h>
 
 BEGIN_VISP_NAMESPACE
-
+namespace vpImageFilter
+{
 /**
 * \brief Get the list of available vpCannyBackendType.
 *
@@ -46,7 +47,7 @@ BEGIN_VISP_NAMESPACE
 * \param[in] suf The suffix of the list.
 * \return std::string The list of available items.
 */
-std::string vpImageFilter::vpCannyBackendTypeList(const std::string &pref, const std::string &sep,
+std::string vpCannyBackendTypeList(const std::string &pref, const std::string &sep,
                                                   const std::string &suf)
 {
   std::string list(pref);
@@ -62,12 +63,12 @@ std::string vpImageFilter::vpCannyBackendTypeList(const std::string &pref, const
 }
 
 /**
- * \brief Cast a \b vpImageFilter::vpCannyBackendTypeToString into a string, to know its name.
+ * \brief Cast a \b vpCannyBackendTypeToString into a string, to know its name.
  *
  * \param[in] type The type that must be casted into a string.
  * \return std::string The corresponding name.
  */
-std::string vpImageFilter::vpCannyBackendTypeToString(const vpImageFilter::vpCannyBackendType &type)
+std::string vpCannyBackendTypeToString(const vpCannyBackendType &type)
 {
   std::string name;
   switch (type) {
@@ -80,19 +81,19 @@ std::string vpImageFilter::vpCannyBackendTypeToString(const vpImageFilter::vpCan
   case CANNY_COUNT_BACKEND:
     return "unknown-backend";
   default: {
-    throw(vpException(vpException::fatalError, "Unsupported canny backend type in vpImageFilter::vpCannyBackendTypeToString()"));
+    throw(vpException(vpException::fatalError, "Unsupported canny backend type in vpCannyBackendTypeToString()"));
   }
   }
   return name;
 }
 
 /**
- * \brief Cast a string into a \b vpImageFilter::vpCannyBackendTypeToString.
+ * \brief Cast a string into a \b vpCannyBackendTypeToString.
  *
  * \param[in] name The name of the backend.
- * \return vpImageFilter::vpCannyBackendTypeToString The corresponding enumeration value.
+ * \return vpCannyBackendTypeToString The corresponding enumeration value.
  */
-vpImageFilter::vpCannyBackendType vpImageFilter::vpCannyBackendTypeFromString(const std::string &name)
+vpCannyBackendType vpCannyBackendTypeFromString(const std::string &name)
 {
   vpCannyBackendType type(CANNY_COUNT_BACKEND);
   std::string nameLowerCase = vpIoTools::toLowerCase(name);
@@ -118,7 +119,7 @@ vpImageFilter::vpCannyBackendType vpImageFilter::vpCannyBackendTypeFromString(co
  * \param[in] suf The suffix of the list.
  * \return std::string The list of available items.
  */
-std::string vpImageFilter::vpGetCannyFiltAndGradTypes(const std::string &pref, const std::string &sep,
+std::string vpGetCannyFiltAndGradTypes(const std::string &pref, const std::string &sep,
                                                                const std::string &suf)
 {
   std::string list(pref);
@@ -134,12 +135,12 @@ std::string vpImageFilter::vpGetCannyFiltAndGradTypes(const std::string &pref, c
 }
 
 /**
- * \brief Cast a \b vpImageFilter::vpCannyFilteringAndGradientType into a string, to know its name.
+ * \brief Cast a \b vpCannyFilteringAndGradientType into a string, to know its name.
  *
  * \param[in] type The type that must be casted into a string.
  * \return std::string The corresponding name.
  */
-std::string vpImageFilter::vpCannyFiltAndGradTypeToStr(const vpImageFilter::vpCannyFilteringAndGradientType &type)
+std::string vpCannyFiltAndGradTypeToStr(const vpCannyFilteringAndGradientType &type)
 {
   std::string name;
   switch (type) {
@@ -152,19 +153,19 @@ std::string vpImageFilter::vpCannyFiltAndGradTypeToStr(const vpImageFilter::vpCa
   case CANNY_COUNT_FILTERING:
     return "unknown-filtering";
   default: {
-    throw(vpException(vpException::fatalError, "Unsupported canny backend type in vpImageFilter::vpCannyFiltAndGradTypeToStr()"));
+    throw(vpException(vpException::fatalError, "Unsupported canny backend type in vpCannyFiltAndGradTypeToStr()"));
   }
   }
   return name;
 }
 
 /**
- * \brief Cast a string into a \b vpImageFilter::vpCannyFilteringAndGradientType.
+ * \brief Cast a string into a \b vpCannyFilteringAndGradientType.
  *
  * \param[in] name The name of the backend.
- * \return vpImageFilter::vpCannyFilteringAndGradientType The corresponding enumeration value.
+ * \return vpCannyFilteringAndGradientType The corresponding enumeration value.
  */
-vpImageFilter::vpCannyFilteringAndGradientType vpImageFilter::vpCannyFiltAndGradTypeFromStr(const std::string &name)
+vpCannyFilteringAndGradientType vpCannyFiltAndGradTypeFromStr(const std::string &name)
 {
   vpCannyFilteringAndGradientType type(CANNY_COUNT_FILTERING);
   std::string nameLowerCase = vpIoTools::toLowerCase(name);
@@ -201,11 +202,11 @@ vpImageFilter::vpCannyFilteringAndGradientType vpImageFilter::vpCannyFiltAndGrad
  * the upper threshold.
  * \return The upper Canny edge filter threshold.
  */
-float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_dIx, const cv::Mat *p_cv_dIy,
+float computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_dIx, const cv::Mat *p_cv_dIy,
                                            float &lowerThresh, const unsigned int &gaussianKernelSize,
                                            const float &gaussianStdev, const unsigned int &apertureGradient,
                                            const float &lowerThresholdRatio, const float &upperThresholdRatio,
-                                           const vpImageFilter::vpCannyFilteringAndGradientType &filteringType)
+                                           const vpCannyFilteringAndGradientType &filteringType)
 {
   if ((lowerThresholdRatio <= 0.f) || (lowerThresholdRatio >= 1.f)) {
     std::stringstream errMsg;
@@ -312,7 +313,7 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
     // First grab the source image Isrc.
 
     // Apply the Canny edge operator and set the Icanny image.
-    vpImageFilter::canny(Isrc, Icanny, gaussianFilterSize, thresholdCanny, apertureSobel);
+    canny(Isrc, Icanny, gaussianFilterSize, thresholdCanny, apertureSobel);
     return (0);
   }
   \endcode
@@ -327,11 +328,11 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
   of the thresholdCanny .
   \param[in] apertureSobel : Size of the mask for the Sobel operator (odd number).
 */
-void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
+void canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
                           const unsigned int &gaussianFilterSize, const float &thresholdCanny,
                           const unsigned int &apertureSobel)
 {
-  vpImageFilter::canny(Isrc, Ires, gaussianFilterSize, thresholdCanny / 3.f, thresholdCanny, apertureSobel);
+  canny(Isrc, Ires, gaussianFilterSize, thresholdCanny / 3.f, thresholdCanny, apertureSobel);
 }
 
 /*!
@@ -363,7 +364,7 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
     // First grab the source image Isrc.
 
     // Apply the Canny edge operator and set the Icanny image.
-    vpImageFilter::canny(Isrc, Icanny, gaussianFilterSize, lowerThresholdCanny, upperThresholdCanny, apertureSobel);
+    canny(Isrc, Icanny, gaussianFilterSize, lowerThresholdCanny, upperThresholdCanny, apertureSobel);
     return (0);
   }
   \endcode
@@ -381,7 +382,7 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
   of the thresholdCanny .
   \param[in] apertureSobel : Size of the mask for the Sobel operator (odd number).
 */
-void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
+void canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
                           const unsigned int &gaussianFilterSize,
                           const float &lowerThreshold, const float &upperThreshold,
                           const unsigned int &apertureSobel)
@@ -434,7 +435,7 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
  *   // First grab the source image Isrc.
  *
  *   // Apply the Canny edge operator and set the Icanny image.
- *   vpImageFilter::canny(Isrc, Icanny, gaussianFilterSize, lowerThresholdCanny, upperThresholdCanny, apertureSobel,
+ *   canny(Isrc, Icanny, gaussianFilterSize, lowerThresholdCanny, upperThresholdCanny, apertureSobel,
  *                       gaussianStdev, lowerThresholdRatio, upperThresholdRatio, normalizeGradient,
  *                       cannyBackend, filteringType);
  *   return (0);
@@ -467,7 +468,7 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
  * stage of the Canny algorithm.
  * \param[in] p_mask : Optional image mask that indicates where Canny edge detection has to be computed.
  */
-void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
+void canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
                           const unsigned int &gaussianFilterSize,
                           const float &lowerThreshold, const float &upperThreshold, const unsigned int &apertureGradient,
                           const float &gaussianStdev, const float &lowerThresholdRatio, const float &upperThresholdRatio,
@@ -500,7 +501,7 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
 #endif
     vpImageConvert::convert(edges_cvmat, Ires);
 #else
-    std::string errMsg("[vpImageFilter::canny]You asked for CANNY_OPENCV_BACKEND but ViSP has not been compiled with OpenCV");
+    std::string errMsg("[canny]You asked for CANNY_OPENCV_BACKEND but ViSP has not been compiled with OpenCV");
     throw(vpException(vpException::badValue, errMsg));
 #endif
   }
@@ -527,6 +528,6 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
     edgeDetector.setMask(p_mask);
     Ires = edgeDetector.detect(Isrc);
   }
+  }
 }
-
 END_VISP_NAMESPACE

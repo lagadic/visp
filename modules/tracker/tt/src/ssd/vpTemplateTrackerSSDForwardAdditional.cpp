@@ -50,9 +50,9 @@ vpTemplateTrackerSSDForwardAdditional::vpTemplateTrackerSSDForwardAdditional(vpT
 void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned char> &I)
 {
   if (blur)
-    vpImageFilter::filter(I, BI, fgG, taillef);
-  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
-  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 
   dW = 0;
 

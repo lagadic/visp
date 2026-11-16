@@ -128,6 +128,38 @@ class HeaderFile():
         if self.documentation_holder_path is None:
           self.documentation_holder_path = DocumentationData.get_xml_path_if_exists(name_cpp_no_template, DocumentationObjectKind.Class)
 
+    # If no class documentation was found, look for the documentation of the namespaces that are exposed as Python submodules
+    if self.documentation_holder_path is None:
+      for namespace_name, _ in self.get_named_namespaces(self.header_repr.namespace):
+        if self.submodule.get_namespace_config(namespace_name) is not None:
+          self.documentation_holder_path = DocumentationData.get_xml_path_if_exists(namespace_name, DocumentationObjectKind.Namespace)
+          if self.documentation_holder_path is not None:
+            break
+
+  @staticmethod
+  def namespace_prefix_to_name(namespace_prefix: str) -> str:
+    '''
+    Convert a namespace prefix as built when parsing the header (e.g. "visp::vpImageFilter::")
+    into the namespace name used in the configuration (e.g. "vpImageFilter").
+    '''
+    return namespace_prefix.removeprefix('visp::').removesuffix('::')
+
+  def get_named_namespaces(self, ns: NamespaceScope, namespace_prefix: str = ''):
+    '''
+    Recursively list the (non anonymous) namespaces of a scope, as a list of (name, scope) tuples, where name is the
+    C++ name of the namespace without the "visp::" prefix.
+    '''
+    res = []
+    for sub_ns_name, sub_ns in ns.namespaces.items():
+      if sub_ns_name == '':
+        continue
+      sub_prefix = namespace_prefix + sub_ns_name + '::'
+      name = HeaderFile.namespace_prefix_to_name(sub_prefix)
+      if name != '':
+        res.append((name, sub_ns))
+      res.extend(self.get_named_namespaces(sub_ns, sub_prefix))
+    return res
+
   def run_preprocessor(self):
     logging.info(f'Preprocessing header {self.path.name}')
     tmp_dir = self.submodule.submodule_file_path.parent / "tmp"
@@ -211,12 +243,21 @@ class HeaderFile():
       for cls in ns.classes:
         self.generate_class(bindings_container, cls, self.environment)
 
+    # Parse functions that are not linked to a class
+    namespace_bindings = BindingsContainer()
+    self.parse_sub_namespace(namespace_bindings, self.header_repr.namespace)
+    # Namespaces that are exposed as Python submodules should be declared before the enums they contain...
+    for sob in namespace_bindings.object_bindings:
+      if sob.declaration is not None:
+        bindings_container.add_bindings(SingleObjectBindings(sob.object_names, sob.declaration, [], sob.object_type))
+
     enum_bindings = get_enum_bindings(self.header_repr.namespace, self.environment.mapping, self.submodule, self)
     for enum_binding in enum_bindings:
       bindings_container.add_bindings(enum_binding)
 
-    # Parse functions that are not linked to a class
-    self.parse_sub_namespace(bindings_container, self.header_repr.namespace)
+    # ... but their functions should be defined after the enum values, which may be used as default arguments
+    for sob in namespace_bindings.object_bindings:
+      bindings_container.add_bindings(SingleObjectBindings(sob.object_names, None, sob.definitions, sob.object_type))
 
   def parse_sub_namespace(self, bindings_container: BindingsContainer, ns: NamespaceScope, namespace_prefix = '', is_root=True) -> None:
     '''
@@ -227,7 +268,13 @@ class HeaderFile():
     if not is_root and ns.name == '': # Anonymous namespace, only visible in header, so we ignore it
       return
 
-    functions_with_configs, rejected_functions = get_bindable_functions_with_config(self.submodule, ns.functions, self.environment.mapping)
+    # A namespace may be exposed as a Python submodule, if it is listed in the "namespaces" field of the configuration.
+    # Otherwise, its functions are directly exposed in the module
+    namespace_name = HeaderFile.namespace_prefix_to_name(namespace_prefix)
+    namespace_config = self.submodule.get_namespace_config(namespace_name) if namespace_name != '' else None
+
+    functions_with_configs, rejected_functions = get_bindable_functions_with_config(self.submodule, ns.functions, self.environment.mapping,
+                                                                                    namespace_name if namespace_config is not None else None)
 
     # Log rejected functions
     rejection_strs = []
@@ -239,12 +286,28 @@ class HeaderFile():
       logging.warning(f'Rejected function in namespace: {ns.name}')
       logging.warning('\n' + '\n'.join(rejection_strs))
 
-    bound_object = BoundObjectNames('submodule', self.submodule.name, namespace_prefix, namespace_prefix)
+    declaration = None
+    if namespace_config is None:
+      bound_object = BoundObjectNames('submodule', self.submodule.name, namespace_prefix, namespace_prefix)
+    else:
+      python_name = namespace_config['python_name']
+      python_ident = f'py{python_name}'
+      # The C++ name without "visp::" is used to look for the documentation
+      bound_object = BoundObjectNames(python_ident, python_name, namespace_name, namespace_prefix)
+      namespace_doc = None
+      if self.documentation_holder is not None:
+        namespace_doc = self.documentation_holder.get_documentation_for_class(namespace_name, {}, {})
+      doc_str = f', {namespace_doc.documentation}' if namespace_doc is not None else ''
+      declaration = f'py::module_ {python_ident} = submodule.def_submodule("{python_name}"{doc_str});'
+
     defs = []
     for function, function_config in functions_with_configs:
       defs.append(define_method(function, function_config, False, {}, self, self.environment, bound_object)[0])
 
-    bindings_container.add_bindings(SingleObjectBindings(bound_object, None, defs, GenerationObjectType.Namespace))
+    if namespace_config is not None and namespace_config['additional_bindings'] is not None:
+      defs.append(f'{namespace_config["additional_bindings"]}({bound_object.python_ident});')
+
+    bindings_container.add_bindings(SingleObjectBindings(bound_object, declaration, defs, GenerationObjectType.Namespace))
     for sub_ns in ns.namespaces:
       logging.info(f'Parsing subnamespace {namespace_prefix + sub_ns}')
       self.parse_sub_namespace(bindings_container, ns.namespaces[sub_ns], namespace_prefix + sub_ns + '::', False)

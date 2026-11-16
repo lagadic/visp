@@ -493,7 +493,7 @@ def get_bindable_methods_with_config(submodule: 'Submodule', methods: List[types
 
   return bindable_methods, rejected_methods
 
-def get_bindable_functions_with_config(submodule: 'Submodule', functions: List[types.Function], mapping) -> Tuple[List[Tuple[types.Function, Dict]], List[RejectedMethod]]:
+def get_bindable_functions_with_config(submodule: 'Submodule', functions: List[types.Function], mapping, namespace_name: Optional[str] = None) -> Tuple[List[Tuple[types.Function, Dict]], List[RejectedMethod]]:
   bindable_functions = []
   rejected_functions = []
   # Order of predicates is important: The first predicate that matches will be the one shown in the log, and they do not all have the same importance
@@ -505,7 +505,7 @@ def get_bindable_functions_with_config(submodule: 'Submodule', functions: List[t
     (lambda m, _: is_unsupported_return_type(m.return_type), NotGeneratedReason.ReturnType)
   ]
   for function in functions:
-    function_config = submodule.get_method_config(None, function, {}, mapping)
+    function_config = submodule.get_method_config(None, function, {}, mapping, namespace_name)
     method_can_be_bound = True
     for predicate, motive in filtering_predicates_and_motives:
       if predicate(function, function_config): # Function should be rejected
