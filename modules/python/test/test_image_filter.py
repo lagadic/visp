@@ -40,6 +40,7 @@ import numpy as np
 import pytest
 
 from visp.core import ImageGray, ImageFloat, ImageDouble, ImageBool, ArrayDouble2D, ArrayFloat2D, ColVector
+from visp.core import ImageHSVucFS, ImageHSVucLS, ImageHSVd
 from visp.core import ImageFilter
 
 
@@ -198,3 +199,37 @@ def test_canny():
   ImageFilter.canny(I, Ic2, 5, -1., -1., 3, 1., 0.6, 0.8, True,
                     ImageFilter.CANNY_VISP_BACKEND, ImageFilter.CANNY_GBLUR_SOBEL_FILTERING, None)
   assert Ic2.numpy().any()
+
+@pytest.mark.parametrize('ImageType', [ImageHSVucFS, ImageHSVucLS, ImageHSVd])
+def test_gaussian_blur_hsv(ImageType):
+  dtype = np.float64 if ImageType is ImageHSVd else np.uint8
+  max_value = 1. if ImageType is ImageHSVd else 100
+  values = np.zeros((40, 50, 3), dtype=dtype)
+  values[10:30, 15:35] = max_value
+  I = ImageType(values)
+
+  size = 7
+  Iblur = ImageType()
+  ImageFilter.gaussianBlur(I, Iblur, size, 0., True)
+  assert Iblur.getRows() == I.getRows() and Iblur.getCols() == I.getCols()
+  # The step edges are smoothed
+  assert 0 < Iblur.numpy()[20, 15, 2] < max_value
+
+  # Gaussian blur is a separable filter: same result as filterX() followed by filterY()
+  kernel = ArrayDouble2D()
+  ImageFilter.getGaussianKernel(kernel, size, 0., True)
+  Ix, Iref = ImageType(), ImageType()
+  ImageFilter.filterX(I, Ix, kernel)
+  ImageFilter.filterY(Ix, Iref, kernel)
+  np.testing.assert_allclose(Iblur.numpy().astype(np.float64), Iref.numpy().astype(np.float64), atol=1e-6)
+
+  # Default parameters
+  Iblur_default = ImageType()
+  ImageFilter.gaussianBlur(I, Iblur_default)
+  np.testing.assert_array_equal(Iblur_default.numpy(), Iblur.numpy())
+
+  # Pixels outside of the mask are not computed
+  Iblur_mask = ImageType()
+  ImageFilter.gaussianBlur(I, Iblur_mask, size=size, sigma=0., normalize=True, mask=make_mask())
+  assert not np.array_equal(Iblur.numpy(), Iblur_mask.numpy())
+  np.testing.assert_array_equal(Iblur_mask.numpy()[:, :25], Iblur.numpy()[:, :25])
