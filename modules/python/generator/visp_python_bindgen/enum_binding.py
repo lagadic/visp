@@ -77,14 +77,20 @@ def is_anonymous_name(typename: types.PQName) -> Tuple[bool, int]:
       return True, segment.id
   return False, None
 
-def get_owner_py_ident(owner_name: str, root_scope: NamespaceScope) -> Optional[str]:
+def get_owner_py_ident(owner_name: str, root_scope: NamespaceScope, submodule: Optional[Submodule] = None) -> Optional[str]:
   '''
   Get the the owner's identifier (variable in generated code).
-  If the owner is not an exported symbol (exported symbols are classes, enums, structs) then None is returned
+  If the owner is not an exported symbol (exported symbols are classes, enums, structs and namespaces exposed as
+  Python submodules) then None is returned
   '''
   scope = get_cpp_identifier_scope(owner_name, root_scope)
 
   if isinstance(scope, NamespaceScope):
+    namespace_name = owner_name.removeprefix('visp::').removeprefix('visp')
+    if submodule is not None and namespace_name != '':
+      namespace_config = submodule.get_namespace_config(namespace_name)
+      if namespace_config is not None:
+        return f'py{namespace_config["python_name"]}'
     return None
 
   return f'py{get_name(scope.class_decl.typename).replace("vp", "")}' #TODO: fix for custom names
@@ -102,6 +108,18 @@ def get_cpp_identifier_scope(fully_qualified_name: str, root_scope: Union[Namesp
       if ns == first_segment:
         return get_cpp_identifier_scope('::'.join(remainder), root_scope.namespaces[ns])
   return root_scope
+
+def join_scope_and_name(scope_prefix: str, name: str) -> str:
+  '''
+  Prepend a scope prefix (e.g. "visp::vpImageFilter::") to a name that may already be partially qualified
+  (e.g. "vpImageFilter::vpCannyBackendType"), without repeating the namespaces they have in common.
+  '''
+  prefix_segments = [s for s in scope_prefix.split('::') if s != '']
+  name_segments = name.split('::')
+  for k in range(min(len(prefix_segments), len(name_segments) - 1), 0, -1):
+    if prefix_segments[-k:] == name_segments[:k]:
+      return '::'.join(prefix_segments[:-k] + name_segments)
+  return '::'.join(prefix_segments + name_segments)
 
 def resolve_enums_and_typedefs_to_enums(root_scope: NamespaceScope, mapping: Dict) -> Tuple[List[EnumRepr], List[EnumRepr]]:
   final_data: List[EnumRepr] = []
@@ -132,7 +150,7 @@ def resolve_enums_and_typedefs_to_enums(root_scope: NamespaceScope, mapping: Dic
 
       full_name = get_typename(enum.typename, {}, mapping, keep_visp_namespace=True) if not anonymous_enum else None
       if full_name is not None: # Add parent prefix
-        full_name = new_scope_prefix + full_name
+        full_name = join_scope_and_name(new_scope_prefix, full_name)
       # If in a namespace or parent class, this symbol can be referenced from outside and the visibility will be incorrect
       if enum.access is not None and enum.access != 'public':
         public_access = False
@@ -229,7 +247,7 @@ def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Subm
       continue
 
     owner_full_name = '::'.join(name_segments[:-1])
-    owner_py_ident = get_owner_py_ident(owner_full_name, root_scope) or 'submodule'
+    owner_py_ident = get_owner_py_ident(owner_full_name, root_scope, submodule) or 'submodule'
     py_ident = f'py{owner_py_ident}{py_name}'
     py_args = ['py::arithmetic()']
     if enum_doc is not None:

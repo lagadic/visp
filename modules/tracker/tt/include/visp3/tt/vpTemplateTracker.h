@@ -45,6 +45,7 @@
 #include <math.h>
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/tt/vpTemplateTrackerHeader.h>
 #include <visp3/tt/vpTemplateTrackerWarp.h>
@@ -117,8 +118,8 @@ protected:
   bool useBrent;
   unsigned int nbIterBrent;
   unsigned int taillef;
-  double *fgG;
-  double *fgdG;
+  vpArray2D<double> fgG;
+  vpArray2D<double> fgdG;
   double ratioPixelIn;
   int mod_i;
   int mod_j; // variable de sampling de zone de reference
@@ -158,11 +159,11 @@ public:
     ptTemplateCompo(nullptr), ptTemplateCompoPyr(nullptr), zoneTracked(nullptr), zoneTrackedPyr(nullptr), pyr_IDes(nullptr), H(),
     Hdesire(), HdesirePyr(nullptr), HLM(), HLMdesire(), HLMdesirePyr(nullptr), HLMdesireInverse(),
     HLMdesireInversePyr(nullptr), G(), gain(0), thresholdGradient(0), costFunctionVerification(false), blur(false),
-    useBrent(false), nbIterBrent(0), taillef(0), fgG(nullptr), fgdG(nullptr), ratioPixelIn(0), mod_i(0), mod_j(0),
+    useBrent(false), nbIterBrent(0), taillef(0), fgG(), fgdG(), ratioPixelIn(0), mod_i(0), mod_j(0),
     nbParam(), lambdaDep(0), iterationMax(0), iterationGlobale(0), diverge(false), nbIteration(0),
     useCompositionnal(false), useInverse(false), Warp(nullptr), p(), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(),
     zoneRef_()
-  { }
+  {}
   VP_EXPLICIT vpTemplateTracker(vpTemplateTrackerWarp *_warp);
   virtual ~vpTemplateTracker();
 
@@ -293,7 +294,7 @@ protected:
   void computeOptimalBrentGain(const vpImage<unsigned char> &I, vpColVector &tp, double tMI, vpColVector &direction,
                                double &alpha);
   virtual double getCost(const vpImage<unsigned char> &I, const vpColVector &tp) = 0;
-  void getGaussianBluredImage(const vpImage<unsigned char> &I) { vpImageFilter::filter(I, BI, fgG, taillef); }
+  void getGaussianBluredImage(const vpImage<unsigned char> &I) { vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG); }
   virtual void initHessienDesired(const vpImage<unsigned char> &I) = 0;
   virtual void initHessienDesiredPyr(const vpImage<unsigned char> &I);
   void initPosEvalRMS(const vpColVector &p);
