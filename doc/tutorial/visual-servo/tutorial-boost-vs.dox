@@ -19,7 +19,7 @@ provided in vpServo class lead to the following control law
 \f$ \dot {\bf q} = \pm \lambda {{\bf \widehat J}_e}^+ {\bf e}\f$ where the sign is negative for an eye-in-hand servo
 and positive for an eye-to-hand servo, \f$\lambda\f$ is a constant gain, \f$ {\bf \widehat J}_e\f$ is the task Jacobian
 and \f$\bf e \f$ is the error to regulate to zero. As described in \cite Chaumette06a, this control law ensure an
-exponential decoupled decrease of the error \f${\dot {\bf e}} =  \pm \lambda {\bf e}\f$.
+exponential decoupled decrease of the error \f${\dot {\bf e}} = - \lambda {\bf e}\f$.
 
 This behavior is illustrated with the next figure, where we see the exponential decrease of the eight visual features
 (x and y for each point) and the corresponding six velocities that are applied to the robot controller. As a
@@ -54,13 +54,14 @@ while(1) {
 \section adaptive_gain 2. Using an adaptive gain
 
 As implemented in tutorial-ibvs-4pts-plotter-gain-adaptive.cpp it is possible to adapt the gain \f$ \lambda \f$ in
-order to depend on the infinity norm of the task Jacobian. The usage of an adaptive gain rather than a constant gain
+order to depend on the infinity norm of \f${{\bf \widehat J}_e}^+ {\bf e}\f$. The usage of an adaptive gain rather than a constant gain
 allows to reduce the convergence time. In that case the gain becomes:
 
 \f[ \lambda (x) = (\lambda_0 - \lambda_\infty) e^{ -\frac{ \lambda'_0}{\lambda_0 - \lambda_\infty}x} + \lambda_\infty \f]
 
 where:
-- \f$ x = ||{\bf e}||_{\infty} \f$ is the infinity norm of the task Jacobian to consider.
+- \f$ x = ||{{\bf \widehat J}_e}^+ {\bf e}||_{\infty} \f$ is the infinity norm of the task Jacobian pseudo-inverse
+  multiplied by the error to regulate.
 - \f$\lambda_0 = \lambda(0)\f$ is the gain in 0, that is for very small values of \f$||{\bf e}||\f$
 - \f$\lambda_\infty = \lambda_{||{\bf e}|| \rightarrow \infty}\lambda(||{\bf e}||)\f$ is the gain
   to infinity, that is for very high values of \f$||{\bf e}||\f$
@@ -114,12 +115,14 @@ task.setLambda(lambda);
 As implemented in tutorial-ibvs-4pts-plotter-continuous-gain-adaptive.cpp it is also possible to ensure continuous
 sequencing to avoid velocity discontinuities. This behavior is achieved by introducing an additional term to the
 general form of the control law. This additional term comes from the task sequencing approach described in
-\cite Mansard07e equation (17). It allows to compute continuous velocities by avoiding abrupt changes in the command.
+\cite Mansard07e equations (12) and (17). It allows to compute continuous velocities by avoiding abrupt changes in the
+command.
 
-The form of the control law considered here is the following:
+Instead of the exponential decrease \f${\dot {\bf e}} = - \lambda {\bf e}\f$, the error is constrained to follow
+\f${\dot {\bf e}} = - \lambda {\bf e} + \lambda {\bf e}(0) \exp(-\mu t)\f$, which leads to the following control law:
 
 \f[
-{\bf \dot q} = \pm \lambda {{\bf \widehat J}_e}^+ {\bf e} \mp \lambda {{\bf \widehat J}_{e(0)}}^+ {{\bf e}(0)} \exp(-\mu t)
+{\bf \dot q} = \mp \lambda {{\bf \widehat J}_e}^+ \left( {\bf e} - {\bf e}(0) \exp(-\mu t) \right)
 \f]
 
 where :
@@ -129,13 +132,15 @@ where :
 - \f$\bf e = (s-s^*)\f$ is the error to regulate.
 - \f$t\f$ is the time.
 - \f$\mu\f$ is a gain. We recommend to set this value to 4.
-- \f${\bf \widehat J}_{e(0)}^+ {\bf e}(0)\f$ is the value of \f${\bf \widehat J}_e^+ {\bf e}\f$ when \f$t=0\f$.
+- \f${\bf e}(0)\f$ is the value of the error \f$\bf e\f$ when \f$t=0\f$.
+
+At \f$t=0\f$ the velocity is equal to zero, and the additional term vanishes after a transient period whose duration
+is set by \f$\mu\f$.
 
 The effect of continuous sequencing is illustrated in the next figure where during the first iterations velocities
 are starting from zero.
 
-\image html img-ibvs-control-law-continuous-adaptive.png "Convergence in 98 iterations with an adaptive gain and
-continuous sequencing."
+\image html img-ibvs-control-law-continuous-adaptive.png "Convergence in 98 iterations with an adaptive gain and continuous sequencing."
 
 This behavior can be reproduced running tutorial-ibvs-4pts-plotter-continuous-gain-adaptive.cpp example.
 Compared to the previous code given in \ref adaptive_gain and available in tutorial-ibvs-4pts-plotter-gain-adaptive.cpp,
@@ -143,6 +148,20 @@ here after we give the new line of code that were introduced to ensure continuou
 
 \code
       vpColVector v = task.computeControlLaw(iter*robot.getSamplingTime());
+\endcode
+
+If the robot is already moving when the servo starts, for example when switching from a previous task, the velocity
+\f${\bf \dot q}(0)\f$ applied to the robot at \f$t=0\f$ can be given to ensure continuity. The control law becomes:
+
+\f[
+{\bf \dot q} = \mp \lambda {{\bf \widehat J}_e}^+ {\bf e} + \left({\bf \dot q}(0) \pm \lambda
+{{\bf \widehat J}_e}^+ {\bf e}(0)\right) \exp(-\mu t)
+\f]
+
+and is computed using:
+
+\code
+      vpColVector v = task.computeControlLaw(t, q_dot_init);
 \endcode
 
 \section boost_vs_next 4. Next tutorial

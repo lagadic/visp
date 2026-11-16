@@ -50,7 +50,7 @@ vpServo::vpServo()
   interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false), cVf(), init_cVf(false),
   fVe(), init_fVe(false), eJe(), init_eJe(false), fJe(), init_fJe(false), errorComputed(false),
   interactionMatrixComputed(false), dim_task(0), taskWasKilled(false), forceInteractionMatrixComputation(false),
-  WpW(), I_WpW(), P(), sv(), mu(4.), e1_initial(), iscJcIdentity(true), cJc(6, 6), m_first_iteration(true),
+  WpW(), I_WpW(), P(), sv(), mu(4.), m_error_initial(), iscJcIdentity(true), cJc(6, 6), m_first_iteration(true),
   m_pseudo_inverse_threshold(1e-6)
 {
   cJc.eye();
@@ -61,7 +61,7 @@ vpServo::vpServo(vpServoType servo_type)
   desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1), interactionMatrixType(DESIRED),
   inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false), cVf(), init_cVf(false), fVe(), init_fVe(false), eJe(),
   init_eJe(false), fJe(), init_fJe(false), errorComputed(false), interactionMatrixComputed(false), dim_task(0),
-  taskWasKilled(false), forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4), e1_initial(),
+  taskWasKilled(false), forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4), m_error_initial(),
   iscJcIdentity(true), cJc(6, 6), m_first_iteration(true)
 {
   cJc.eye();
@@ -906,17 +906,17 @@ vpColVector vpServo::computeControlLaw(double t)
     e1 = WpW * J1p * error;
   }
 
-  // memorize the initial e1 value if the function is called the first time
-  // or if the time given as parameter is equal to 0.
-  if (m_first_iteration || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
-    e1_initial = e1;
+  // Memorize the initial error e(0) if the function is called the first time,
+  // if the time given as parameter is equal to 0, or if the task dimension
+  // changed (a feature was added or removed) since e(0) was memorized.
+  if (m_first_iteration || (std::fabs(t) < std::numeric_limits<double>::epsilon()) ||
+      (m_error_initial.getRows() != error.getRows())) {
+    m_error_initial = error;
   }
-  // Security check. If size of e1_initial and e1 differ, that means that
-  // e1_initial was not set
-  if (e1_initial.getRows() != e1.getRows())
-    e1_initial = e1;
 
-  e = -lambda(e1) * e1 + lambda(e1) * e1_initial * exp(-mu * t);
+  // Continuous control law, see equation (12) in [Mansard07e] with q_dot = J^+ e_dot:
+  // q_dot = J^+(t) (-lambda e + lambda e(0) exp(-mu t))
+  e = -lambda(e1) * e1 + lambda(e1) * (J1p * m_error_initial) * exp(-mu * t);
 
   I.eye(J1.getCols());
 
@@ -927,7 +927,7 @@ vpColVector vpServo::computeControlLaw(double t)
   return e;
 }
 
-vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
+vpColVector vpServo::computeControlLaw(double t, const vpColVector &q_dot_init)
 {
   vpVelocityTwistMatrix cVa; // Twist transformation matrix
   vpMatrix aJe;              // Jacobian
@@ -1025,17 +1025,17 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
     e1 = WpW * J1p * error;
   }
 
-  // memorize the initial e1 value if the function is called the first time
-  // or if the time given as parameter is equal to 0.
-  if (m_first_iteration || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
-    e1_initial = e1;
+  // Memorize the initial error e(0) if the function is called the first time,
+  // if the time given as parameter is equal to 0, or if the task dimension
+  // changed (a feature was added or removed) since e(0) was memorized.
+  if (m_first_iteration || (std::fabs(t) < std::numeric_limits<double>::epsilon()) ||
+      (m_error_initial.getRows() != error.getRows())) {
+    m_error_initial = error;
   }
-  // Security check. If size of e1_initial and e1 differ, that means that
-  // e1_initial was not set
-  if (e1_initial.getRows() != e1.getRows())
-    e1_initial = e1;
 
-  e = -lambda(e1) * e1 + (e_dot_init + lambda(e1) * e1_initial) * exp(-mu * t);
+  // Continuous control law, see equation (12) in [Mansard07e] with q_dot = J^+ e_dot:
+  // q_dot = -lambda J^+(t) e + (q_dot(0) + lambda J^+(t) e(0)) exp(-mu t)
+  e = -lambda(e1) * e1 + (q_dot_init + lambda(e1) * (J1p * m_error_initial)) * exp(-mu * t);
 
   I.eye(J1.getCols());
 
