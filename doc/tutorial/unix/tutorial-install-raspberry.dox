@@ -258,12 +258,18 @@ To build ViSP documentation, you have first to install Doxygen package:
 \verbatim
 $ sudo apt-get install doxygen graphviz texlive-latex-base
 \endverbatim
+To have a more modern visual of the documentation, please install Doxygen Awesome:
+\code{.sh}
+$ mkdir -p $VISP_WS/3rdparty
+$ cd $VISP_WS/3rdparty
+$ git clone https://github.com/jothepro/doxygen-awesome-css.git
+\endcode
 Then you can proceed with:
-\verbatim
+\code{.sh}
 $ cd $VISP_WS/visp-build
-$ cmake ../visp
+$ cmake ../visp -DDOXYGEN_AWESOME_DIR=$VISP_WS/3rdparty/doxygen-awesome-css
 $ make -j4 visp_doc
-\endverbatim
+\endcode
 The generated documentation is then available in `$VISP_WS/visp-build/doc/html/index.html`
 
 \note

@@ -339,13 +339,22 @@ To build ViSP documentation, you have first to install [Doxygen](http://www.doxy
 - [Download](http://www.doxygen.nl/download.html) binary distribution for Windows. At the time this tutorial
 was written, we downloaded `doxygen-1.9.4-setup.exe`
 - Run the installer following default options
+- Create a folder that will contain third-parties
+\code{.sh}
+C:\\> mkdir %VISP_WS%\3rdparty
+\endcode
+- Download Doxygen Awesome to build a more modern documentation:
+\code{.sh}
+C:\\> cd %VISP_WS%\3rdparty
+C:\\> git clone https://github.com/jothepro/doxygen-awesome-css.git
+\endcode
 - Open a new `cmd` Command Prompt and enter build directory
 \code{.sh}
 C:\\> cd %VISP_WS%\visp-build-vc17
 \endcode
 - Run CMake in build directory:
 \code{.sh}
-C:\\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\visp
+C:\\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\visp -DDOXYGEN_AWESOME_DIR=$VISP_WS/3rdparty/doxygen-awesome-css
 \endcode
 - Build documentation using:
 \code{.sh}

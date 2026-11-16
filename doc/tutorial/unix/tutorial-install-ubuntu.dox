@@ -553,10 +553,17 @@ Since Ubuntu 22.04, to render Latex formula you need also to install `texlive-la
 $ sudo apt install texlive-latex-extra
 \endcode
 
+To have a more modern visual of the documentation, please install Doxygen Awesome:
+\code{.sh}
+$ mkdir -p $VISP_WS/3rdparty
+$ cd $VISP_WS/3rdparty
+$ git clone https://github.com/jothepro/doxygen-awesome-css.git
+\endcode
+
 Then you can proceed with:
 \code{.sh}
-$ cd ${VISP_WS}/visp-build
-$ cmake ../visp
+$ cd $VISP_WS/visp-build
+$ cmake ../visp -DDOXYGEN_AWESOME_DIR=$VISP_WS/3rdparty/doxygen-awesome-css
 $ make -j$(nproc) visp_doc
 \endcode
 The generated documentation is then available in `${VISP_WS}/visp-build/doc/html/index.html`
