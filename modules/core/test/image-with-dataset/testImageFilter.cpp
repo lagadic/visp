@@ -519,7 +519,7 @@ int main(int argc, const char *argv[])
       std::cout << "\nTime to do separableFilter: " << t << " ms" << std::endl;
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
-      test = check_results(matImg_sobel_x, Iu, I_sep_filtered.getRows() / 2, kernel_sobel_x.getCols() / 2);
+      test = check_results(matImg_sobel_x, I_sep_filtered, kernel_sep_y.size() / 2, kernel_sep_x.size() / 2);
       std::cout << "(I_sep_filtered == matImg_sobel_x)? " << test << std::endl;
 
       if (!test) {
