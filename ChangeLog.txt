@@ -41,6 +41,8 @@ ViSP 3.7.1 (current version)
       parameter
     . Python bindings generator can now expose a C++ namespace as a Python submodule. vpImageFilter namespace is
       exposed as visp.core.ImageFilter submodule, without its deprecated functions nor its detail namespace
+    . Improve vpImageFilter usability by using vpArray2D instead of raw pointers
+    . Add unit tests for the Python bindings of core.ImageFilter, imgproc.equalizeHistogram and imgproc.gammaCorrection
   - Applications
     . Camera intrinsic calibration app: visp-calibrate-camera.cpp
       - Add lens distortion displacement map visualization

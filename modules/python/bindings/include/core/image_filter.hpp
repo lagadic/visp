@@ -1015,6 +1015,9 @@ inline void bindings_vpImageFilter(py::module_ &pyImageFilter)
   define_gaussianBlur<float, float>(pyImageFilter);
   define_gaussianBlur<double, double>(pyImageFilter);
   define_gaussianBlur<vpRGBa, vpRGBa>(pyImageFilter);
+  define_gaussianBlur<vpHSV<unsigned char, false>, vpHSV<unsigned char, false>>(pyImageFilter);
+  define_gaussianBlur<vpHSV<unsigned char, true>, vpHSV<unsigned char, true>>(pyImageFilter);
+  define_gaussianBlur<vpHSV<double, true>, vpHSV<double, true>>(pyImageFilter);
 
   define_partialDerivative<unsigned char, float>(pyImageFilter);
   define_partialDerivative<unsigned char, double>(pyImageFilter);
