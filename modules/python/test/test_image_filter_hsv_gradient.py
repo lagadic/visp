@@ -40,7 +40,7 @@ import pytest
 from visp.core import ImageDouble, ImageFloat
 from visp.core import ImageFilter
 
-from hsv_test_utils import HSV_TYPES, PATTERNS, make_hsv_image, make_mask
+from hsv_test_utils import HSV_TYPES, PATTERNS, SIZE, make_hsv_image, make_mask
 
 FILTER_TYPES = [ImageFilter.CANNY_GBLUR_SOBEL_FILTERING, ImageFilter.CANNY_GBLUR_SCHARR_FILTERING]
 
@@ -51,6 +51,14 @@ def smoothing_kernel(filter_type):
   if filter_type == ImageFilter.CANNY_GBLUR_SCHARR_FILTERING:
     return np.array([3., 10., 3.]) / 32.
   raise ValueError('Wrong type of filtering')
+
+
+def make_dirty_output(OutType):
+  '''
+  Output image pre-filled with a non-zero value, to check that the gradient functions reset all the pixels
+  that are not computed (borders and pixels outside the mask) instead of relying on the memory being zeroed.
+  '''
+  return OutType(SIZE, SIZE, 123.)
 
 
 def reference_gradient(I, mask, filter_type):
@@ -92,13 +100,13 @@ def test_hsv_gradient_filter(OutType, hsv_type, pattern, nb_thread, filter_type,
   GIx_ref, GIy_ref = reference_gradient(I, mask, filter_type)
   atol = 1e-3
 
-  GIx, GIy = OutType(), OutType()
+  GIx, GIy = make_dirty_output(OutType), make_dirty_output(OutType)
   ImageFilter.gradientFilter(I, GIx, GIy, nb_thread, mask, filter_type)
   np.testing.assert_allclose(GIx.numpy(), GIx_ref, atol=atol)
   np.testing.assert_allclose(GIy.numpy(), GIy_ref, atol=atol)
 
   # Same results when computing each direction separately
-  GIx, GIy = OutType(), OutType()
+  GIx, GIy = make_dirty_output(OutType), make_dirty_output(OutType)
   ImageFilter.gradientFilterX(I, GIx, nb_thread, mask, filter_type)
   ImageFilter.gradientFilterY(I, GIy, nb_thread, mask, filter_type)
   np.testing.assert_allclose(GIx.numpy(), GIx_ref, atol=atol)
@@ -108,7 +116,7 @@ def test_hsv_gradient_filter(OutType, hsv_type, pattern, nb_thread, filter_type,
 @pytest.mark.parametrize('hsv_type', list(HSV_TYPES.keys()))
 def test_hsv_gradient_filter_default_args(hsv_type):
   I = make_hsv_image(hsv_type, 'pyramid')
-  GIx, GIy = ImageDouble(), ImageDouble()
+  GIx, GIy = make_dirty_output(ImageDouble), make_dirty_output(ImageDouble)
   # Default: all threads, no mask, Sobel filtering
   ImageFilter.gradientFilter(I, GIx, GIy)
   GIx_ref, GIy_ref = reference_gradient(I, None, ImageFilter.CANNY_GBLUR_SOBEL_FILTERING)

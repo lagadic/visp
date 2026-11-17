@@ -2011,7 +2011,7 @@ template <typename ArithmeticType, typename FilterType, bool useFullScale>
 void gradientFilterY(const vpImage<vpHSV<ArithmeticType, useFullScale>> &I, vpImage<FilterType> &GIy, const int &nbThread, const vpImage<bool> *p_mask, const vpCannyFilteringAndGradientType &type)
 {
   const unsigned int nbRows = I.getRows(), nbCols = I.getCols();
-  GIy.resize(nbRows, nbCols);
+  GIy.resize(nbRows, nbCols, 0.);
   std::vector<FilterType> filter(3);
   FilterType scale;
   switch (type) {
