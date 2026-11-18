@@ -2,20 +2,14 @@
   description = "Open Source Visual Servoing Platform";
 
   inputs = {
-    flake-utils.url = "github:numtide/flake-utils";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.zst";
   };
 
-  outputs =
-    { flake-utils, nixpkgs, ... }:
-    flake-utils.lib.eachDefaultSystem (
-      system:
-      let
-        pkgs = nixpkgs.legacyPackages.${system};
-        visp = pkgs.callPackage ./default.nix { };
-      in
-      {
-        packages.default = visp;
-      }
-    );
+  outputs = inputs: {
+    packages = builtins.mapAttrs (system: pkgs: {
+      visp = pkgs.callPackage ./default.nix { };
+
+      default = inputs.self.packages.${system}.visp;
+    }) inputs.nixpkgs.legacyPackages;
+  };
 }
