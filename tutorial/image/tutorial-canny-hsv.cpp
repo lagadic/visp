@@ -334,12 +334,12 @@ int main(int argc, const char *argv[])
   FilterType scaleX, scaleY;
   switch (options.m_filteringType) {
   case vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING:
-    scaleX = vpImageFilter::getScharrKernelX(derFilterX.data, 1);
-    scaleY = vpImageFilter::getScharrKernelY(derFilterY.data, 1);
+    scaleX = vpImageFilter::getScharrKernelX(derFilterX, 3);
+    scaleY = vpImageFilter::getScharrKernelY(derFilterY, 3);
     break;
   case vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING:
-    scaleX = vpImageFilter::getSobelKernelX(derFilterX.data, 1);
-    scaleY = vpImageFilter::getSobelKernelY(derFilterY.data, 1);
+    scaleX = vpImageFilter::getSobelKernelX(derFilterX, 3);
+    scaleY = vpImageFilter::getSobelKernelY(derFilterY, 3);
     break;
   default:
     throw vpException(vpException::notImplementedError, "Other type of filter not handled for uchar");

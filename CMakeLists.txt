@@ -396,6 +396,22 @@ endif()
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}")
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
+if(APPLE)
+  # Conda compilers set LDFLAGS with -Wl,-rpath,$CONDA_PREFIX/lib, that CMake copies in CMAKE_<TYPE>_LINKER_FLAGS.
+  # When ViSP is installed in $CONDA_PREFIX, this rpath is the same as CMAKE_INSTALL_RPATH. Since it is already
+  # embedded at link time, at install time "install_name_tool -add_rpath" fails with "would duplicate path" and the
+  # build tree rpath is not removed from the installed libraries. Remove this redundant rpath from the linker flags,
+  # it is anyway added by CMake to the build and install rpaths.
+  string(REGEX REPLACE "([][+.*()^$?|\\\\])" "\\\\\\1" _install_rpath_regex "${CMAKE_INSTALL_RPATH}")
+  foreach(_flags_var CMAKE_EXE_LINKER_FLAGS CMAKE_SHARED_LINKER_FLAGS CMAKE_MODULE_LINKER_FLAGS)
+    if(${_flags_var} MATCHES "-Wl,-rpath,${_install_rpath_regex}/?( |$)")
+      string(REGEX REPLACE "-Wl,-rpath,${_install_rpath_regex}/?( |$)" "" ${_flags_var} "${${_flags_var}}")
+      string(STRIP "${${_flags_var}}" ${_flags_var})
+      message(STATUS "Removed redundant -Wl,-rpath,${CMAKE_INSTALL_RPATH} from ${_flags_var}")
+    endif()
+  endforeach()
+endif()
+
 if(ANDROID)
   vp_update(VISP_JNI_INSTALL_PATH "${VISP_LIB_INSTALL_PATH}")
 elseif(INSTALL_CREATE_DISTRIB)

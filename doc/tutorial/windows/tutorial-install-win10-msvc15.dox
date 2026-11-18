@@ -123,9 +123,9 @@ First you have to get OpenCV:
 - From https://opencv.org/releases/ download the latest OpenCV for Windows. In our case we got
 `opencv-4.5.1-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the previous
 OpenCV releases starting from 3.4.0 version.
-- Extract the content of the archive in your workspace `%%VISP_WS%`.
+- Extract the content of the archive in your workspace `%%VISP_WS%\3rdparty`.
 \image html img-win-extract-opencv.jpg
-- The installer extract all the material in `%%VISP_WS%\opencv`.
+- The installer extract all the material in `%%VISP_WS%\3rdparty\opencv`.
 - We strongly recommend to rename this folder to a name that contain OpenCV version like
   `%%VISP_WS%\3rdparty\opencv-4.5.1`.
 
@@ -500,13 +500,22 @@ To build ViSP documentation, you have first to install [Doxygen](http://www.doxy
 - [Download](http://www.doxygen.nl/download.html) binary distribution for Windows. At the time this tutorial
 was written, we downloaded `doxygen-1.8.20-setup.exe`
 - Run the installer following default options
+- If it has not already been done, create a folder that will contain third-parties
+\code{.sh}
+C:\\> mkdir %VISP_WS%\3rdparty
+\endcode
+- Download Doxygen Awesome to build a more modern documentation:
+\code{.sh}
+C:\\> cd %VISP_WS%\3rdparty
+C:\\> git clone https://github.com/jothepro/doxygen-awesome-css.git
+\endcode
 - Open a new `cmd` Command Prompt and enter build directory
 \code{.sh}
 C:\\> cd %VISP_WS%\visp-build-vc15
 \endcode
 - Run CMake in build directory:
 \code{.sh}
-C:\\> cmake -G "Visual Studio 15 2017" -A "x64" %VISP_WS%\visp
+C:\\> cmake -G "Visual Studio 15 2017" -A "x64" %VISP_WS%\visp -DDOXYGEN_AWESOME_DIR=$VISP_WS/3rdparty/doxygen-awesome-css
 \endcode
 - Build documentation using:
 \code{.sh}

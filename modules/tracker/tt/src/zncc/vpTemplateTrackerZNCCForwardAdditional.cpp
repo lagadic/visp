@@ -47,16 +47,16 @@ vpTemplateTrackerZNCCForwardAdditional::vpTemplateTrackerZNCCForwardAdditional(v
 void vpTemplateTrackerZNCCForwardAdditional::initHessienDesired(const vpImage<unsigned char> &I)
 {
   if (blur)
-    vpImageFilter::filter(I, BI, fgG, taillef);
-  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
-  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 
   vpImage<double> dIxx, dIxy, dIyx, dIyy;
-  vpImageFilter::getGradX(dIx, dIxx, fgdG, taillef);
-  vpImageFilter::getGradY(dIx, dIxy, fgdG, taillef);
+  vpImageFilter::getGradX(dIx, dIxx, fgdG);
+  vpImageFilter::getGradY(dIx, dIxy, fgdG);
 
-  vpImageFilter::getGradX(dIy, dIyx, fgdG, taillef);
-  vpImageFilter::getGradY(dIy, dIyy, fgdG, taillef);
+  vpImageFilter::getGradX(dIy, dIyx, fgdG);
+  vpImageFilter::getGradY(dIy, dIyy, fgdG);
 
   Warp->computeCoeff(p);
   double IW, dIWx, dIWy;
@@ -150,9 +150,9 @@ void vpTemplateTrackerZNCCForwardAdditional::initHessienDesired(const vpImage<un
 void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned char> &I)
 {
   if (blur)
-    vpImageFilter::filter(I, BI, fgG, taillef);
-  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
-  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 
   dW = 0;
 

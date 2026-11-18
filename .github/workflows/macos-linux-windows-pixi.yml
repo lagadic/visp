@@ -78,3 +78,8 @@ jobs:
         shell: bash -el {0}
         run: |
           pixi run -e ${{ matrix.environment }} test
+
+      - name: Run Python tests [MacOS/Linux/Windows]
+        shell: bash -el {0}
+        run: |
+          pixi run -e ${{ matrix.environment }} python-test

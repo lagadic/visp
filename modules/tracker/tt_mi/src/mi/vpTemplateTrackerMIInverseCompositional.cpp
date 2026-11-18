@@ -90,14 +90,14 @@ void vpTemplateTrackerMIInverseCompositional::initCompInverse(const vpImage<unsi
 {
   ptTemplateSupp = new vpTemplateTrackerPointSuppMIInv[templateSize];
 
-  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
-  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG);
 
   if (ApproxHessian != HESSIAN_NONSECOND && ApproxHessian != HESSIAN_0 && ApproxHessian != HESSIAN_NEW &&
       ApproxHessian != HESSIAN_YOUCEF) {
-    vpImageFilter::getGradX(dIx, d2Ix, fgdG, taillef);
-    vpImageFilter::getGradY(dIx, d2Ixy, fgdG, taillef);
-    vpImageFilter::getGradY(dIy, d2Iy, fgdG, taillef);
+    vpImageFilter::getGradX(dIx, d2Ix, fgdG);
+    vpImageFilter::getGradY(dIx, d2Ixy, fgdG);
+    vpImageFilter::getGradY(dIy, d2Iy, fgdG);
   }
   double Nc_255_ = (Nc - 1) / 255.;
   Warp->computeCoeff(p);
@@ -133,7 +133,7 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(const vpImage<u
   Nbpoint = 0;
 
   if (blur)
-    vpImageFilter::filter(I, BI, fgG, taillef);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
 
   zeroProbabilities();
   Warp->computeCoeff(p);
@@ -203,7 +203,7 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
   dW = 0;
 
   if (blur)
-    vpImageFilter::filter(I, BI, fgG, taillef);
+    vpImageFilter::separableFilter<unsigned char, double, double>(I, BI, fgG);
 
   lambda = lambdaDep;
   double MI = 0, MIprec = -1000;

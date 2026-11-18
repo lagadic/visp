@@ -1,6 +1,6 @@
 /*
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2025 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2026 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ vpServo::vpServo()
   interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false), cVf(), init_cVf(false),
   fVe(), init_fVe(false), eJe(), init_eJe(false), fJe(), init_fJe(false), errorComputed(false),
   interactionMatrixComputed(false), dim_task(0), taskWasKilled(false), forceInteractionMatrixComputation(false),
-  WpW(), I_WpW(), P(), sv(), mu(4.), e1_initial(), iscJcIdentity(true), cJc(6, 6), m_first_iteration(true),
+  WpW(), I_WpW(), P(), sv(), mu(4.), m_error_initial(), iscJcIdentity(true), cJc(6, 6), m_first_iteration(true),
   m_pseudo_inverse_threshold(1e-6)
 {
   cJc.eye();
@@ -61,7 +61,7 @@ vpServo::vpServo(vpServoType servo_type)
   desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1), interactionMatrixType(DESIRED),
   inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false), cVf(), init_cVf(false), fVe(), init_fVe(false), eJe(),
   init_eJe(false), fJe(), init_fJe(false), errorComputed(false), interactionMatrixComputed(false), dim_task(0),
-  taskWasKilled(false), forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4), e1_initial(),
+  taskWasKilled(false), forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4), m_error_initial(),
   iscJcIdentity(true), cJc(6, 6), m_first_iteration(true)
 {
   cJc.eye();
@@ -906,17 +906,17 @@ vpColVector vpServo::computeControlLaw(double t)
     e1 = WpW * J1p * error;
   }
 
-  // memorize the initial e1 value if the function is called the first time
-  // or if the time given as parameter is equal to 0.
-  if (m_first_iteration || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
-    e1_initial = e1;
+  // Memorize the initial error e(0) if the function is called the first time,
+  // if the time given as parameter is equal to 0, or if the task dimension
+  // changed (a feature was added or removed) since e(0) was memorized.
+  if (m_first_iteration || (std::fabs(t) < std::numeric_limits<double>::epsilon()) ||
+      (m_error_initial.getRows() != error.getRows())) {
+    m_error_initial = error;
   }
-  // Security check. If size of e1_initial and e1 differ, that means that
-  // e1_initial was not set
-  if (e1_initial.getRows() != e1.getRows())
-    e1_initial = e1;
 
-  e = -lambda(e1) * e1 + lambda(e1) * e1_initial * exp(-mu * t);
+  // Continuous control law, see equation (12) in [Mansard07e] with q_dot = J^+ e_dot:
+  // q_dot = J^+(t) (-lambda e + lambda e(0) exp(-mu t))
+  e = -lambda(e1) * e1 + lambda(e1) * (J1p * m_error_initial) * exp(-mu * t);
 
   I.eye(J1.getCols());
 
@@ -927,7 +927,7 @@ vpColVector vpServo::computeControlLaw(double t)
   return e;
 }
 
-vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
+vpColVector vpServo::computeControlLaw(double t, const vpColVector &q_dot_init)
 {
   vpVelocityTwistMatrix cVa; // Twist transformation matrix
   vpMatrix aJe;              // Jacobian
@@ -1025,17 +1025,17 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
     e1 = WpW * J1p * error;
   }
 
-  // memorize the initial e1 value if the function is called the first time
-  // or if the time given as parameter is equal to 0.
-  if (m_first_iteration || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
-    e1_initial = e1;
+  // Memorize the initial error e(0) if the function is called the first time,
+  // if the time given as parameter is equal to 0, or if the task dimension
+  // changed (a feature was added or removed) since e(0) was memorized.
+  if (m_first_iteration || (std::fabs(t) < std::numeric_limits<double>::epsilon()) ||
+      (m_error_initial.getRows() != error.getRows())) {
+    m_error_initial = error;
   }
-  // Security check. If size of e1_initial and e1 differ, that means that
-  // e1_initial was not set
-  if (e1_initial.getRows() != e1.getRows())
-    e1_initial = e1;
 
-  e = -lambda(e1) * e1 + (e_dot_init + lambda(e1) * e1_initial) * exp(-mu * t);
+  // Continuous control law, see equation (12) in [Mansard07e] with q_dot = J^+ e_dot:
+  // q_dot = -lambda J^+(t) e + (q_dot(0) + lambda J^+(t) e(0)) exp(-mu t)
+  e = -lambda(e1) * e1 + (q_dot_init + lambda(e1) * (J1p * m_error_initial)) * exp(-mu * t);
 
   I.eye(J1.getCols());
 
@@ -1183,11 +1183,29 @@ vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, cons
   computeProjectionOperators(J1, I, I_WpW, error, P);
 
   for (unsigned int i = 0; i < n; i++) {
-    q_l0_min[i] = qmin[i] + rho * (qmax[i] - qmin[i]);
-    q_l0_max[i] = qmax[i] - rho * (qmax[i] - qmin[i]);
+    const double range = qmax[i] - qmin[i];
+    if (!vpMath::isFinite(range)) {
+      // Unlimited joint, for instance with qmin = std::numeric_limits<double>::lowest() and
+      // qmax = std::numeric_limits<double>::max(): qmax - qmin overflows, and the thresholds computed from it would be
+      // infinite or nan, putting the joint out of the safe zone. The joint is always kept in the safe zone.
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      q_l0_min[i] = std::numeric_limits<double>::lowest();
+      q_l1_min[i] = std::numeric_limits<double>::lowest();
+#else
+      q_l0_min[i] = -std::numeric_limits<double>::max();
+      q_l1_min[i] = -std::numeric_limits<double>::max();
+#endif
+      q_l0_max[i] = std::numeric_limits<double>::max();
+      q_l1_max[i] = std::numeric_limits<double>::max();
+      g[i][i] = 0;
+      continue;
+    }
 
-    q_l1_min[i] = q_l0_min[i] - rho * rho1 * (qmax[i] - qmin[i]);
-    q_l1_max[i] = q_l0_max[i] + rho * rho1 * (qmax[i] - qmin[i]);
+    q_l0_min[i] = qmin[i] + rho * range;
+    q_l0_max[i] = qmax[i] - rho * range;
+
+    q_l1_min[i] = q_l0_min[i] - rho * rho1 * range;
+    q_l1_max[i] = q_l0_max[i] + rho * rho1 * range;
 
     if (q[i] < q_l0_min[i]) {
       g[i][i] = -1;
@@ -1215,15 +1233,24 @@ vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, cons
         q2_i = -(1 + lambda_tune) * b * Pg_i;
       }
       else {
-        // Zone C2: Limit b to 1 to prevent interference with other joints
-        double b_clamped = std::min(b, 1.0);
-        if (q[i] >= q_l0_max[i] && q[i] <= q_l1_max[i]) {
-          lambda_l = 1 / (1 + exp(-12 * ((q[i] - q_l0_max[i]) / (q_l1_max[i] - q_l0_max[i])) + 6));
-        }
-        else if (q[i] >= q_l1_min[i] && q[i] <= q_l0_min[i]) {
-          lambda_l = 1 / (1 + exp(-12 * ((q[i] - q_l0_min[i]) / (q_l1_min[i] - q_l0_min[i])) + 6));
-        }
-        q2_i = -lambda_l * (1 + lambda_tune) * b_clamped * Pg_i;
+        // Zone C2: the avoidance task is gradually injected with the sigmoid tuning function lambda_l, normalized so
+        // that lambda_l = 0 at q_l0 and lambda_l = 1 at q_l1.
+        // Close to q_l0, b is limited to 1 to prevent interference with other joints. It goes gradually to its
+        // unlimited value of zone C1 when approaching q_l1, so that the avoidance velocity is continuous at q_l1.
+        // Otherwise, when b > 1, the avoidance velocity jumps by a factor b at q_l1, which makes the joint oscillate
+        // around q_l1.
+        const double q_l0 = (q[i] >= q_l0_max[i]) ? q_l0_max[i] : q_l0_min[i];
+        const double q_l1 = (q[i] >= q_l0_max[i]) ? q_l1_max[i] : q_l1_min[i];
+        // Normalized position in the transition zone, 0 at q_l0 and 1 at q_l1
+        const double r = (vpMath::abs(q_l1 - q_l0) > std::numeric_limits<double>::epsilon()) ? ((q[i] - q_l0) / (q_l1 - q_l0)) : 1.0;
+        const double sigmoid_0 = 1. / (1. + std::exp(6.));  // Sigmoid at q_l0
+        const double sigmoid_1 = 1. / (1. + std::exp(-6.)); // Sigmoid at q_l1
+        const double sigmoid = 1. / (1. + std::exp(-12. * r + 6.));
+        lambda_l = (sigmoid - sigmoid_0) / (sigmoid_1 - sigmoid_0);
+
+        const double b_clamped = std::min(b, 1.0);
+        const double b_c2 = b_clamped + lambda_l * (b - b_clamped);
+        q2_i = -lambda_l * (1 + lambda_tune) * b_c2 * Pg_i;
       }
     }
     q2 = q2 + q2_i;

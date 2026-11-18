@@ -11,7 +11,7 @@ Goal
 In this tutorial you will learn how to:
 
 - Apply a filter to an image.
-- Use the :py:class:`~visp.core.ImageFilter` class.
+- Use the :py:mod:`~visp.core.ImageFilter` module.
 
 Prerequisites
 ---------------------------
@@ -65,7 +65,7 @@ Explanation
 ---------------------------
 
 We first import the classes required to read, convert, and display
-images. We also import the :py:class:`~visp.core.ImageFilter` who provides filter methods, like the Gaussian blur function:
+images. We also import the :py:mod:`~visp.core.ImageFilter` module that provides filter functions, like the Gaussian blur function:
 
 .. literalinclude:: /examples/image/tutorial-image-filter.py
   :language: python
@@ -78,7 +78,7 @@ We read the image ``monkey.jpeg`` as a grayscale image:
   :start-at: # Read the image
   :end-at:   sys.exit()
 
-We then create an output image and apply a Gaussian blur with the method :py:meth:`~visp.core.ImageFilter.gaussianBlur`, with a filter size of
+We then create an output image and apply a Gaussian blur with the function :py:func:`~visp.core.ImageFilter.gaussianBlur`, with a filter size of
 ``7``, while letting ViSP determine the Gaussian standard
 deviation automatically using ``0``:
 

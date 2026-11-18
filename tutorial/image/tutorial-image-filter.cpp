@@ -107,7 +107,7 @@ int main(int argc, char **argv)
     //! [Convolution kernel]
     //! [Convolution]
     vpImage<double> Gx;
-    vpImageFilter::filter(I, Gx, K);
+    vpImageFilter::filter(I, Gx, K, true);
     //! [Convolution]
     display(Gx, "Sobel x");
 

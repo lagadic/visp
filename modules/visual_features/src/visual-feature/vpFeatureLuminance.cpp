@@ -208,8 +208,8 @@ vpFeatureLuminance &vpFeatureLuminance::buildFrom(vpImage<unsigned char> &I)
 
   for (unsigned int i = bord; i < (nbr - bord); ++i) {
     for (unsigned int j = bord; j < (nbc - bord); ++j) {
-      Ix = px * vpImageFilter::derivativeFilterX(I, i, j);
-      Iy = py * vpImageFilter::derivativeFilterY(I, i, j);
+      Ix = px * vpImageFilter::detail::derivativeFilterX(I, i, j);
+      Iy = py * vpImageFilter::detail::derivativeFilterY(I, i, j);
 
       // Calcul de Z
       pixInfo[l].I = I[i][j];
