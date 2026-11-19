@@ -84,7 +84,11 @@ foreach(visp_lib ${VISP_LIBRARIES})
   get_target_property(n ${visp_lib} OUTPUT_NAME)
 endforeach()
 
-set_target_properties(_visp PROPERTIES EXCLUDE_FROM_ALL TRUE)
+# By default, the bindings are only built on demand (visp_python_bindings target) and installed with pip.
+# In packaging mode, they are part of "all" so that the CMake install target can install them.
+if(NOT INSTALL_PYTHON_BINDINGS)
+  set_target_properties(_visp PROPERTIES EXCLUDE_FROM_ALL TRUE)
+endif()
 
 target_include_directories(_visp PUBLIC include) # Include directory containing custom bindings
 target_include_directories(_visp PUBLIC ${VISP_INCLUDE_DIRS})
@@ -98,5 +102,33 @@ if(PYTHON3INTERP_FOUND)
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/visp" "${CMAKE_CURRENT_BINARY_DIR}/visp"
     COMMAND ${PYTHON3_EXECUTABLE} -m pip install  ${_pip_args} "${CMAKE_CURRENT_BINARY_DIR}"
     DEPENDS _visp
+  )
+endif()
+
+# Install with CMake (packaging mode).
+# The build rpath is kept so that the module can be imported from the build tree (stubs, doc, tests).
+# At install time, CMake replaces it with INSTALL_RPATH, which is relative to the module location
+# so that no reference to the build directory remains and the install tree is relocatable.
+if(INSTALL_PYTHON_BINDINGS)
+  set(_visp_python_pkg_dir "${VISP_PYTHON_INSTALL_DIR}/visp")
+  file(RELATIVE_PATH _visp_python_rel_lib_dir
+    "${CMAKE_INSTALL_PREFIX}/${_visp_python_pkg_dir}"
+    "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}"
+  )
+  if(APPLE)
+    set(_visp_python_origin "@loader_path")
+  else()
+    set(_visp_python_origin "$ORIGIN")
+  endif()
+  set_target_properties(_visp PROPERTIES INSTALL_RPATH "${_visp_python_origin}/${_visp_python_rel_lib_dir}")
+
+  install(TARGETS _visp
+    LIBRARY DESTINATION "${_visp_python_pkg_dir}" COMPONENT python
+    RUNTIME DESTINATION "${_visp_python_pkg_dir}" COMPONENT python
+  )
+  install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/visp/"
+    DESTINATION "${_visp_python_pkg_dir}"
+    COMPONENT python
+    PATTERN "__pycache__" EXCLUDE
   )
 endif()

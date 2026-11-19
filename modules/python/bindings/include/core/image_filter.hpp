@@ -295,12 +295,12 @@ Example usage:
   assert Iout.getCols() == Iin.getCols()
   assert Iout.numpy().any()
 )doc",
-    py::arg("input"),
-    py::arg("output"),
-    py::arg("size") = 7,
-    py::arg("sigma") = 0.,
-    py::arg("normalize") = true,
-    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+py::arg("input"),
+py::arg("output"),
+py::arg("size") = 7,
+py::arg("sigma") = 0.,
+py::arg("normalize") = true,
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
 template<typename ImageType, typename FilterType>
@@ -381,18 +381,18 @@ Example usage:
   assert dIy.getCols() == Iin.getCols()
   assert dIy.numpy().any()
 )doc",
-    py::arg("I"),
-    py::arg("dIx"),
-    py::arg("dIy"),
-    py::arg("computeDx") = true,
-    py::arg("computeDy") = true,
-    py::arg("normalize") = true,
-    py::arg("gaussianKernelSize") = 5,
-    py::arg("gaussianStdev") = 2.,
-    py::arg("apertureGradient") = 3,
-    py::arg("filteringType") = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING,
-    py::arg("backend") = vpImageFilter::CANNY_VISP_BACKEND,
-    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+py::arg("I"),
+py::arg("dIx"),
+py::arg("dIy"),
+py::arg("computeDx") = true,
+py::arg("computeDy") = true,
+py::arg("normalize") = true,
+py::arg("gaussianKernelSize") = 5,
+py::arg("gaussianStdev") = 2.,
+py::arg("apertureGradient") = 3,
+py::arg("filteringType") = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING,
+py::arg("backend") = vpImageFilter::CANNY_VISP_BACKEND,
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
 template<typename ArithmeticType, bool useFullScale, typename FilterType>
@@ -433,15 +433,15 @@ Compute the lower and upper Canny edge filter thresholds of a HSV image, using G
 
 :return: A tuple (lower threshold, upper threshold) for the Canny filter.
 )doc",
-    py::arg("I"),
-    py::arg("dIx").none(true) = static_cast<std::optional<vpImage<FilterType>>>(std::nullopt),
-    py::arg("dIy").none(true) = static_cast<std::optional<vpImage<FilterType>>>(std::nullopt),
-    py::arg("gaussianKernelSize") = 5,
-    py::arg("gaussianStdev") = 2.,
-    py::arg("lowerThresholdRatio") = 0.6,
-    py::arg("upperThresholdRatio") = 0.8,
-    py::arg("filteringType") = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING,
-    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+py::arg("I"),
+py::arg("dIx").none(true) = static_cast<std::optional<vpImage<FilterType>>>(std::nullopt),
+py::arg("dIy").none(true) = static_cast<std::optional<vpImage<FilterType>>>(std::nullopt),
+py::arg("gaussianKernelSize") = 5,
+py::arg("gaussianStdev") = 2.,
+py::arg("lowerThresholdRatio") = 0.6,
+py::arg("upperThresholdRatio") = 0.8,
+py::arg("filteringType") = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING,
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
 template<typename FilterType>
@@ -515,16 +515,16 @@ Example usage:
   assert lowerThresh != 0.
   assert upperThresh != 0.
 )doc",
-    py::arg("I"),
-    py::arg("dIx").none(true) = static_cast<std::optional<vpImage<FilterType>>>(std::nullopt),
-    py::arg("dIy").none(true) = static_cast<std::optional<vpImage<FilterType>>>(std::nullopt),
-    py::arg("gaussianKernelSize") = 5,
-    py::arg("gaussianStdev") = 2.,
-    py::arg("apertureGradient") = 3,
-    py::arg("lowerThresholdRatio") = 0.6,
-    py::arg("upperThresholdRatio") = 0.8,
-    py::arg("filteringType") = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING,
-    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+py::arg("I"),
+py::arg("dIx").none(true) = static_cast<std::optional<vpImage<FilterType>>>(std::nullopt),
+py::arg("dIy").none(true) = static_cast<std::optional<vpImage<FilterType>>>(std::nullopt),
+py::arg("gaussianKernelSize") = 5,
+py::arg("gaussianStdev") = 2.,
+py::arg("apertureGradient") = 3,
+py::arg("lowerThresholdRatio") = 0.6,
+py::arg("upperThresholdRatio") = 0.8,
+py::arg("filteringType") = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING,
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
 inline void define_canny(py::module_ &pyImageFilter)
@@ -547,11 +547,10 @@ inline void define_canny(py::module_ &pyImageFilter)
        const bool &normalizeGradients,
        const vpImageFilter::vpCannyBackendType &cannyBackend,
        const vpImageFilter::vpCannyFilteringAndGradientType &cannyFilteringSteps,
-       const std::optional<vpImage<bool>> &mask) -> void
-      {
-        vpImageFilter::canny(input, output, gaussianFilterSize, lowerThreshold, upperThreshold, apertureGradient, gaussianStdev,
-                             lowerThresholdRatio, upperThresholdRatio, normalizeGradients, cannyBackend, cannyFilteringSteps,
-                             toMaskPtr(mask));
+       const std::optional<vpImage<bool>> &mask) -> void {
+         vpImageFilter::canny(input, output, gaussianFilterSize, lowerThreshold, upperThreshold, apertureGradient, gaussianStdev,
+                              lowerThresholdRatio, upperThresholdRatio, normalizeGradients, cannyBackend, cannyFilteringSteps,
+                              toMaskPtr(mask));
       },
     R"doc(
 Apply the Canny edge detector to a grayscale image.
@@ -570,19 +569,19 @@ Apply the Canny edge detector to a grayscale image.
 :param cannyFilteringSteps: The filtering + gradient operators to apply to compute the gradient in the early stage of the Canny algorithm.
 :param mask: Optional mask. True pixels are processed and False pixels are ignored.
 )doc",
-    py::arg("input"),
-    py::arg("output"),
-    py::arg("gaussianFilterSize"),
-    py::arg("lowerThreshold"),
-    py::arg("upperThreshold"),
-    py::arg("apertureGradient"),
-    py::arg("gaussianStdev"),
-    py::arg("lowerThresholdRatio"),
-    py::arg("upperThresholdRatio"),
-    py::arg("normalizeGradients"),
-    py::arg("cannyBackend"),
-    py::arg("cannyFilteringSteps"),
-    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+py::arg("input"),
+py::arg("output"),
+py::arg("gaussianFilterSize"),
+py::arg("lowerThreshold"),
+py::arg("upperThreshold"),
+py::arg("apertureGradient"),
+py::arg("gaussianStdev"),
+py::arg("lowerThresholdRatio"),
+py::arg("upperThresholdRatio"),
+py::arg("normalizeGradients"),
+py::arg("cannyBackend"),
+py::arg("cannyFilteringSteps"),
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
 template<typename ImageType, typename OutputType>
@@ -598,9 +597,8 @@ void define_filter(py::module_ &pyImageFilter)
        vpImage<OutputType> &output,
        const vpArray2D<OutputType> &filter,
        bool convolve,
-       const std::optional<vpImage<bool>> &mask) -> void
-      {
-        vpImageFilter::filter(input, output, filter, convolve, toMaskPtr(mask));
+       const std::optional<vpImage<bool>> &mask) -> void {
+         vpImageFilter::filter(input, output, filter, convolve, toMaskPtr(mask));
       },
     R"doc(
 Apply a 2D filter to an image.
@@ -611,11 +609,11 @@ Apply a 2D filter to an image.
 :param convolve: If true, perform a convolution otherwise a correlation.
 :param mask: Optional mask. True pixels are processed and False pixels are ignored.
 )doc",
-    py::arg("input"),
-    py::arg("output"),
-    py::arg("filter"),
-    py::arg("convolve") = false,
-    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+py::arg("input"),
+py::arg("output"),
+py::arg("filter"),
+py::arg("convolve") = false,
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 
   pyImageFilter.def(
     "filter",
@@ -624,9 +622,8 @@ Apply a 2D filter to an image.
        vpImage<OutputType> &Iv,
        const vpArray2D<OutputType> &filter,
        bool convolve,
-       const std::optional<vpImage<bool>> &mask) -> void
-      {
-        vpImageFilter::filter(input, Iu, Iv, filter, convolve, toMaskPtr(mask));
+       const std::optional<vpImage<bool>> &mask) -> void {
+         vpImageFilter::filter(input, Iu, Iv, filter, convolve, toMaskPtr(mask));
       },
     R"doc(
 Apply a 2D filter to an image, along the horizontal axis with the filter kernel and along the vertical axis with its transpose.
@@ -638,12 +635,12 @@ Apply a 2D filter to an image, along the horizontal axis with the filter kernel 
 :param convolve: If true, perform a convolution otherwise a correlation.
 :param mask: Optional mask. True pixels are processed and False pixels are ignored.
 )doc",
-    py::arg("input"),
-    py::arg("Iu"),
-    py::arg("Iv"),
-    py::arg("filter"),
-    py::arg("convolve") = false,
-    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+py::arg("input"),
+py::arg("Iu"),
+py::arg("Iv"),
+py::arg("filter"),
+py::arg("convolve") = false,
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
 template<typename ImageType, typename OutputType, typename FilterType>
@@ -658,9 +655,8 @@ void define_separableFilter(py::module_ &pyImageFilter)
     [](const vpImage<ImageType> &input,
        vpImage<OutputType> &output,
        const vpArray2D<FilterType> &filter,
-       const std::optional<vpImage<bool>> &mask) -> void
-      {
-        vpImageFilter::separableFilter(input, output, filter, toMaskPtr(mask));
+       const std::optional<vpImage<bool>> &mask) -> void {
+         vpImageFilter::separableFilter(input, output, filter, toMaskPtr(mask));
       },
     R"doc(
 Apply a symmetric separable filter, first along the horizontal direction and then along the vertical one.
@@ -685,10 +681,10 @@ Example usage:
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
   assert Iout.numpy().any()
 )doc",
-    py::arg("input"),
-    py::arg("output"),
-    py::arg("filter"),
-    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+py::arg("input"),
+py::arg("output"),
+py::arg("filter"),
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
 template<typename ImageType, typename OutputType, typename FilterType>
@@ -703,9 +699,8 @@ void define_directional_filter(py::module_ &pyImageFilter)
     [](const vpImage<ImageType> &input,
        vpImage<OutputType> &output,
        const vpArray2D<FilterType> &filter,
-       const std::optional<vpImage<bool>> &mask) -> void
-      {
-        vpImageFilter::filterX<ImageType, OutputType, FilterType>(input, output, filter, toMaskPtr(mask));
+       const std::optional<vpImage<bool>> &mask) -> void {
+         vpImageFilter::filterX<ImageType, OutputType, FilterType>(input, output, filter, toMaskPtr(mask));
       },
     R"doc(
 Filter along the horizontal direction.
@@ -715,19 +710,18 @@ Filter along the horizontal direction.
 :param filter: The half size filter coefficients, as a 1 x (size+1)/2 array. The first value refers to the central coefficient, the next ones to the right coefficients. Left coefficients are deduced by symmetry.
 :param mask: Optional mask. True pixels are processed and False pixels are ignored.
 )doc",
-    py::arg("input"),
-    py::arg("output"),
-    py::arg("filter"),
-    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+py::arg("input"),
+py::arg("output"),
+py::arg("filter"),
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 
   pyImageFilter.def(
     "filterY",
     [](const vpImage<ImageType> &input,
        vpImage<OutputType> &output,
        const vpArray2D<FilterType> &filter,
-       const std::optional<vpImage<bool>> &mask) -> void
-      {
-        vpImageFilter::filterY<ImageType, OutputType, FilterType>(input, output, filter, toMaskPtr(mask));
+       const std::optional<vpImage<bool>> &mask) -> void {
+         vpImageFilter::filterY<ImageType, OutputType, FilterType>(input, output, filter, toMaskPtr(mask));
       },
     R"doc(
 Filter along the vertical direction.
@@ -737,10 +731,10 @@ Filter along the vertical direction.
 :param filter: The half size filter coefficients, as a 1 x (size+1)/2 array. The first value refers to the central coefficient, the next ones to the right coefficients. Left coefficients are deduced by symmetry.
 :param mask: Optional mask. True pixels are processed and False pixels are ignored.
 )doc",
-    py::arg("input"),
-    py::arg("output"),
-    py::arg("filter"),
-    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+py::arg("input"),
+py::arg("output"),
+py::arg("filter"),
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
 template<typename FilterType>
@@ -752,9 +746,8 @@ void define_getKernels(py::module_ &pyImageFilter)
 
   pyImageFilter.def(
     "getScharrKernelX",
-    [](vpArray2D<FilterType> &filter, unsigned int size) -> FilterType
-      {
-        return vpImageFilter::getScharrKernelX(filter, size);
+    [](vpArray2D<FilterType> &filter, unsigned int size) -> FilterType {
+      return vpImageFilter::getScharrKernelX(filter, size);
       },
     R"doc(
 Get Scharr kernel for X-direction.
@@ -772,14 +765,13 @@ Example usage:
   scale = ImageFilter.getScharrKernelX(filter, 3)
   assert filter.getRows() == 3 and filter.getCols() == 3
 )doc",
-    py::arg("filter"),
-    py::arg("size"));
+py::arg("filter"),
+py::arg("size"));
 
   pyImageFilter.def(
     "getScharrKernelY",
-    [](vpArray2D<FilterType> &filter, unsigned int size) -> FilterType
-      {
-        return vpImageFilter::getScharrKernelY(filter, size);
+    [](vpArray2D<FilterType> &filter, unsigned int size) -> FilterType {
+      return vpImageFilter::getScharrKernelY(filter, size);
       },
     R"doc(
 Get Scharr kernel for Y-direction.
@@ -788,14 +780,13 @@ Get Scharr kernel for Y-direction.
 :param size: Filter size, which must be odd. For the moment, only 3 x 3 filter is handled.
 :return: Scaling factor to normalize the Scharr kernel.
 )doc",
-    py::arg("filter"),
-    py::arg("size"));
+py::arg("filter"),
+py::arg("size"));
 
   pyImageFilter.def(
     "getSobelKernelX",
-    [](vpArray2D<FilterType> &filter, unsigned int size) -> FilterType
-      {
-        return vpImageFilter::getSobelKernelX(filter, size);
+    [](vpArray2D<FilterType> &filter, unsigned int size) -> FilterType {
+      return vpImageFilter::getSobelKernelX(filter, size);
       },
     R"doc(
 Get Sobel kernel for X-direction.
@@ -813,14 +804,13 @@ Example usage:
   scale = ImageFilter.getSobelKernelX(filter, 5)
   assert filter.getRows() == 5 and filter.getCols() == 5
 )doc",
-    py::arg("filter"),
-    py::arg("size"));
+py::arg("filter"),
+py::arg("size"));
 
   pyImageFilter.def(
     "getSobelKernelY",
-    [](vpArray2D<FilterType> &filter, unsigned int size) -> FilterType
-      {
-        return vpImageFilter::getSobelKernelY(filter, size);
+    [](vpArray2D<FilterType> &filter, unsigned int size) -> FilterType {
+      return vpImageFilter::getSobelKernelY(filter, size);
       },
     R"doc(
 Get Sobel kernel for Y-direction.
@@ -829,8 +819,8 @@ Get Sobel kernel for Y-direction.
 :param size: Filter size, which must be odd. Max size is 41.
 :return: Scaling factor to normalize the Sobel kernel.
 )doc",
-    py::arg("filter"),
-    py::arg("size"));
+py::arg("filter"),
+py::arg("size"));
 }
 
 template<typename ImageType, typename FilterType>
@@ -845,9 +835,8 @@ void define_getGradXYGauss2D(py::module_ &pyImageFilter)
        vpImage<FilterType> &output,
        const vpArray2D<FilterType> &gaussianKernel,
        const vpArray2D<FilterType> &gaussianDerivativeKernel,
-       const std::optional<vpImage<bool>> &mask) -> void
-      {
-        vpImageFilter::getGradXGauss2D(input, output, gaussianKernel, gaussianDerivativeKernel, toMaskPtr(mask));
+       const std::optional<vpImage<bool>> &mask) -> void {
+         vpImageFilter::getGradXGauss2D(input, output, gaussianKernel, gaussianDerivativeKernel, toMaskPtr(mask));
       },
     R"doc(
 Compute the gradient along X after applying a gaussian filter along Y.
@@ -875,11 +864,11 @@ Example usage:
   assert Iout.getRows() == Iin.getRows() and Iout.getCols() == Iin.getCols()
   assert Iout.numpy().any()
 )doc",
-    py::arg("input"),
-    py::arg("output"),
-    py::arg("gaussianKernel"),
-    py::arg("gaussianDerivativeKernel"),
-    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+py::arg("input"),
+py::arg("output"),
+py::arg("gaussianKernel"),
+py::arg("gaussianDerivativeKernel"),
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 
   pyImageFilter.def(
     "getGradYGauss2D",
@@ -887,9 +876,8 @@ Example usage:
        vpImage<FilterType> &output,
        const vpArray2D<FilterType> &gaussianKernel,
        const vpArray2D<FilterType> &gaussianDerivativeKernel,
-       const std::optional<vpImage<bool>> &mask) -> void
-      {
-        vpImageFilter::getGradYGauss2D(input, output, gaussianKernel, gaussianDerivativeKernel, toMaskPtr(mask));
+       const std::optional<vpImage<bool>> &mask) -> void {
+         vpImageFilter::getGradYGauss2D(input, output, gaussianKernel, gaussianDerivativeKernel, toMaskPtr(mask));
       },
     R"doc(
 Compute the gradient along Y after applying a gaussian filter along X.
@@ -900,11 +888,11 @@ Compute the gradient along Y after applying a gaussian filter along X.
 :param gaussianDerivativeKernel: Gaussian derivative kernel which values should be computed using ImageFilter.getGaussianDerivativeKernel().
 :param mask: Optional mask. True pixels are processed and False pixels are ignored.
 )doc",
-    py::arg("input"),
-    py::arg("output"),
-    py::arg("gaussianKernel"),
-    py::arg("gaussianDerivativeKernel"),
-    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
+py::arg("input"),
+py::arg("output"),
+py::arg("gaussianKernel"),
+py::arg("gaussianDerivativeKernel"),
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt));
 }
 
 template<typename ArithmeticType, bool useFullScale, typename FilterType>
@@ -919,9 +907,8 @@ void define_gradientFilterHSV(py::module_ &pyImageFilter)
        vpImage<FilterType> &output,
        const int &nbThread,
        const std::optional<vpImage<bool>> &mask,
-       const vpImageFilter::vpCannyFilteringAndGradientType &filterType) -> void
-      {
-        vpImageFilter::gradientFilterX(input, output, nbThread, toMaskPtr(mask), filterType);
+       const vpImageFilter::vpCannyFilteringAndGradientType &filterType) -> void {
+         vpImageFilter::gradientFilterX(input, output, nbThread, toMaskPtr(mask), filterType);
       },
     R"doc(
 Gradient filter along the X-axis for HSV images.
@@ -932,11 +919,11 @@ Gradient filter along the X-axis for HSV images.
 :param mask: Optional mask. True pixels are processed and False pixels are ignored.
 :param filterType: The type of the gradient filter.
 )doc",
-    py::arg("input"),
-    py::arg("output"),
-    py::arg("nbThread"),
-    py::arg("mask").none(true),
-    py::arg("filterType"));
+py::arg("input"),
+py::arg("output"),
+py::arg("nbThread"),
+py::arg("mask").none(true),
+py::arg("filterType"));
 
   pyImageFilter.def(
     "gradientFilterY",
@@ -944,9 +931,8 @@ Gradient filter along the X-axis for HSV images.
        vpImage<FilterType> &output,
        const int &nbThread,
        const std::optional<vpImage<bool>> &mask,
-       const vpImageFilter::vpCannyFilteringAndGradientType &filterType) -> void
-      {
-        vpImageFilter::gradientFilterY(input, output, nbThread, toMaskPtr(mask), filterType);
+       const vpImageFilter::vpCannyFilteringAndGradientType &filterType) -> void {
+         vpImageFilter::gradientFilterY(input, output, nbThread, toMaskPtr(mask), filterType);
       },
     R"doc(
 Gradient filter along the Y-axis for HSV images.
@@ -957,11 +943,11 @@ Gradient filter along the Y-axis for HSV images.
 :param mask: Optional mask. True pixels are processed and False pixels are ignored.
 :param filterType: The type of the gradient filter.
 )doc",
-    py::arg("input"),
-    py::arg("output"),
-    py::arg("nbThread"),
-    py::arg("mask").none(true),
-    py::arg("filterType"));
+py::arg("input"),
+py::arg("output"),
+py::arg("nbThread"),
+py::arg("mask").none(true),
+py::arg("filterType"));
 
   pyImageFilter.def(
     "gradientFilter",
@@ -970,9 +956,8 @@ Gradient filter along the Y-axis for HSV images.
        vpImage<FilterType> &GIy,
        const int &nbThread,
        const std::optional<vpImage<bool>> &mask,
-       const vpImageFilter::vpCannyFilteringAndGradientType &filterType) -> void
-      {
-        vpImageFilter::gradientFilter(input, GIx, GIy, nbThread, toMaskPtr(mask), filterType);
+       const vpImageFilter::vpCannyFilteringAndGradientType &filterType) -> void {
+         vpImageFilter::gradientFilter(input, GIx, GIy, nbThread, toMaskPtr(mask), filterType);
       },
     R"doc(
 Compute the horizontal and vertical gradients for HSV images.
@@ -984,12 +969,12 @@ Compute the horizontal and vertical gradients for HSV images.
 :param mask: Optional mask. True pixels are processed and False pixels are ignored.
 :param filterType: The type of the gradient filter.
 )doc",
-    py::arg("input"),
-    py::arg("GIx"),
-    py::arg("GIy"),
-    py::arg("nbThread") = -1,
-    py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt),
-    py::arg("filterType") = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING);
+py::arg("input"),
+py::arg("GIx"),
+py::arg("GIy"),
+py::arg("nbThread") = -1,
+py::arg("mask").none(true) = static_cast<std::optional<vpImage<bool>>>(std::nullopt),
+py::arg("filterType") = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING);
 }
 
 /*
