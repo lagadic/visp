@@ -17,7 +17,5 @@ jobs:
         os: [ubuntu, macos]
     steps:
       - uses: actions/checkout@v7
-      - uses: DeterminateSystems/nix-installer-action@main
-      - uses: DeterminateSystems/flakehub-cache-action@main
-      - uses: DeterminateSystems/flake-checker-action@main
+      - uses: nixbuild/nix-quick-install-action@v35
       - run: nix build -L
