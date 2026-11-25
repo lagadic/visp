@@ -477,7 +477,7 @@ Since `pip` is not called, the dependencies of the bindings generator and of the
 in the Python environment before building:
 
 \code{.sh}
-(visp-conda-ws) $ pip install tqdm pcpp "cxxheaderparser==1.5.*" lxml "doxmlparser==1.14.*" mypy
+(visp-conda-ws) $ pip install tqdm pcpp "cxxheaderparser>=1.5,<3" lxml "doxmlparser==1.14.*" mypy
 \endcode
 
 \note If `mypy` is not found, a warning is displayed when configuring ViSP and the stubs are neither generated nor

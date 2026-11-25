@@ -102,6 +102,10 @@ class StubsGenerator():
           submodule_stub_folder.mkdir(exist_ok=True)
           submodules_stubs = submodule_stub_folder / '__init__.pyi'
           copy(pyi_file, submodules_stubs) # Copy replace old files
+      elif pyi_file.is_dir() and (pyi_file / '__init__.pyi').is_file():
+        # Module with nested submodules (e.g. core.ImageFilter): stubgen generates a package folder
+        all_submodule_names.append(pyi_file.name)
+        copytree(str(pyi_file), str(self.target_path / pyi_file.name), dirs_exist_ok=True)
 
     # Add stubs for python part
     python_stubs_path = Path(self.output_root / 'visp' / 'python')

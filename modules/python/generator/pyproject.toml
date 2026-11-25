@@ -103,7 +103,7 @@ classifiers = [  # Optional
 dependencies = [
   "tqdm",
   "pcpp",
-  "cxxheaderparser==1.5.*",
+  "cxxheaderparser>=1.5,<3",
   "lxml",
   "doxmlparser==1.14.*"
 ]
