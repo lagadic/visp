@@ -189,7 +189,8 @@ void vpRBDenseDepthTracker::computeVVSIter(const vpRBFeatureTrackerInput &frame,
 
   const unsigned int minNumFeatures = m_maxFeatures > 0 ? std::min(m_maxFeatures * 0.05, minBBSamples * 0.05) : minBBSamples * 0.05;
 
-  if (m_numFeatures < minNumFeatures) {
+  // m_numFeatures == 0 must be checked explicitly: when the render bounding box is (almost) empty, minNumFeatures is 0
+  if ((m_numFeatures == 0) || (m_numFeatures < minNumFeatures)) {
     m_numFeatures = 0;
     m_LTL = 0;
     m_LTR = 0;

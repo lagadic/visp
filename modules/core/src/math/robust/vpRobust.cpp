@@ -135,6 +135,10 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector 
   // resize vector only if the size of residue vector has changed
   unsigned int n_data = residues.getRows();
   weights.resize(n_data, false);
+  if (n_data == 0) {
+    // Nothing to weight. Without this check, the median index below would be -1 and select() would read out of bounds
+    return;
+  }
   resize(n_data);
 
   m_sorted_residues = residues;
