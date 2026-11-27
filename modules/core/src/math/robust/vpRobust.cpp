@@ -107,9 +107,9 @@ vpRobust &vpRobust::operator=(const vpRobust &&other)
 void vpRobust::resize(unsigned int n_data)
 {
   if (n_data != m_size) {
-    m_normres.resize(n_data);
-    m_sorted_normres.resize(n_data);
-    m_sorted_residues.resize(n_data);
+    m_normres.resize(n_data, false);
+    m_sorted_normres.resize(n_data, false);
+    m_sorted_residues.resize(n_data, false);
     m_size = n_data;
   }
 }
