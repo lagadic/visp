@@ -93,7 +93,11 @@ void vpRBInitializationHelper::initClick(const vpImage<T> &I, const std::string 
     std::cout << "Tracker initial pose read from " << ss.str() << ": " << std::endl << last_cMo << std::endl;
 
     vpDisplay::display(I);
-    vpDisplay::displayFrame(I, last_cMo, m_cam, 0.05, vpColor::green);
+    // Display the projection of the model at the pose read from file, as after a click initialization
+    vpRBFeatureTrackerInput frame;
+    tracker.updateRender(frame, last_cMo);
+    tracker.displaySilhouette(I, frame);
+    vpDisplay::displayFrame(I, last_cMo, m_cam, 0.05, vpColor::none);
     vpDisplay::flush(I);
 
 
@@ -292,7 +296,7 @@ void vpRBInitializationHelper::initClick(const vpImage<T> &I, const std::string 
       }
 
     }
-    vpDisplay::displayFrame(I, m_cMo, m_cam, 0.05, vpColor::red);
+    vpDisplay::displayFrame(I, m_cMo, m_cam, 0.05, vpColor::none);
 
     // save the pose into file
     if (poseSavingFilename.empty())
