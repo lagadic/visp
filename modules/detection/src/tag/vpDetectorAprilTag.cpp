@@ -914,10 +914,13 @@ public:
       const std::vector<vpImagePoint> &corners = tagsCorners[i];
       assert(corners.size() == 4);
       const unsigned int cornerId0 = 0, cornerId1 = 1, cornerId2 = 2, cornerId3 = 3;
+      // The red square drawn around corner 0 is 1/8 of the tag side, but never smaller than min_rect_size pixels,
+      // otherwise it is barely visible on small tags
+      const unsigned int min_rect_size = 10;
       const double line0_length_8 = vpImagePoint::distance(corners[cornerId0], corners[cornerId1]) / 8;
       unsigned int rect_size = static_cast<unsigned int>(line0_length_8);
-      if (line0_length_8 < 2) {
-        rect_size = 2;
+      if (rect_size < min_rect_size) {
+        rect_size = min_rect_size;
       }
       vpDisplay::displayRectangle(I, corners[cornerId0], 0, rect_size, rect_size, vpColor::red, thickness);
 
@@ -945,10 +948,13 @@ public:
       const std::vector<vpImagePoint> &corners = tagsCorners[i];
       assert(corners.size() == 4);
       const unsigned int cornerId0 = 0, cornerId1 = 1, cornerId2 = 2, cornerId3 = 3;
+      // The red square drawn around corner 0 is 1/8 of the tag side, but never smaller than min_rect_size pixels,
+      // otherwise it is barely visible on small tags
+      const unsigned int min_rect_size = 10;
       const double line0_length_8 = vpImagePoint::distance(corners[cornerId0], corners[cornerId1]) / 8;
       unsigned int rect_size = static_cast<unsigned int>(line0_length_8);
-      if (line0_length_8 < 2) {
-        rect_size = 2;
+      if (rect_size < min_rect_size) {
+        rect_size = min_rect_size;
       }
       vpDisplay::displayRectangle(I, corners[cornerId0], 0, rect_size, rect_size, vpColor::red, thickness);
 
